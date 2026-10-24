@@ -1,3 +1,5 @@
+import { emptyOperations } from '../core/operations.js';
+import type { OperationRegistry } from '../core/operations.js';
 import { parseProgram, parseInstruction, parseValue, ensure, capabilities } from '../protocol/index.js';
 import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly } from '../protocol/index.js';
 
@@ -26,20 +28,20 @@ export class ProgramBuilder {
   asset<K extends Asset['kind']>(kind: K, data: Omit<Asset,'kind'>): AssetRef<K> { this.data.assets.push({...data,kind}); return {id:data.id,kind}; }
   global(value: Slot): this { this.data.globals.push(value); return this; }
   function(value: ProgramFunction): this { this.data.functions.push(value); return this; }
-  build(): Program { return linkProgram(this.data).copy(); }
+  build(operations:OperationRegistry=emptyOperations): Program { return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
   private readonly program: Program;
-  constructor(input: unknown) { this.program = parseProgram(input); validateLinks(this.program); }
+  constructor(input: unknown,operations:OperationRegistry=emptyOperations) { this.program = parseProgram(input); validateLinks(this.program,operations); }
   copy(): Program { return parseProgram(this.program); }
   view(): DeepReadonly<Program> { return this.copy(); }
 }
-export function linkProgram(input: unknown): LinkedProgram { return new LinkedProgram(input); }
+export function linkProgram(input: unknown,operations:OperationRegistry=emptyOperations): LinkedProgram { return new LinkedProgram(input,operations); }
 export function valueKind(operand: Operand, slots: readonly Slot[]): ValueKind {
   if ('literal' in operand) return operand.literal.kind;
   const s=slots.find(s=>s.id === operand.slot); ensure(s,'SLOT',operand.slot); return s.kind;
 }
-export function validateLinks(p: Program): void {
+export function validateLinks(p: Program,operations:OperationRegistry=emptyOperations): void {
   const unique=(ids:string[],code:string)=>ensure(new Set(ids).size===ids.length,code,'Duplicate identity');
   unique(p.functions.map(f=>f.id),'FUNCTION_DUPLICATE'); unique(p.assets.map(a=>a.id),'ASSET_DUPLICATE');
   unique(p.functions.flatMap(f=>f.code.map(i=>i.at)),'ADDRESS_DUPLICATE');
@@ -71,8 +73,13 @@ export function validateLinks(p: Program): void {
         case 'i32.add.checked': dest(i.dest,'i32'); ensure(kind(i.left)==='i32'&&kind(i.right)==='i32','I32_OPERAND',i.at); break;
         case 'choice': dest(i.dest,'string'); ensure(i.options.length>0,'CHOICE_EMPTY',i.at); unique(i.options.map(o=>o.id),'CHOICE_DUPLICATE'); i.options.forEach(o=>target(o.target)); break;
         case 'stage.put': ensure(p.assets.find(a=>a.id===i.object.asset)?.kind==='image','ASSET_KIND',i.at); break;
+        case 'extension.invoke': {const op=operations.get(i.operation,i.version);op.validateArgs(i.args,i.argsSchema);op.manifest.jumpTargets.forEach(target);break;}
         case 'audio.play': ensure(p.assets.find(a=>a.id===i.asset)?.kind==='audio','ASSET_KIND',i.at); break;
       }
     }
   }
 }
+
+export {codec} from '../protocol/index.js';
+export {defineOperation,waitFor,createOperationRegistry,defineInvocationMigration} from '../core/operations.js';
+export type {OperationDefinition,OperationRegistry,OperationContext,OperationInput,OperationResult,InvocationData,TypedInvocation,SerializableWait} from '../core/operations.js';

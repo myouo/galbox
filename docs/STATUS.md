@@ -1,15 +1,11 @@
 # galbox-sdk 当前状态
 
-最后更新：2026-10-25。
+2026-10-25。Git 已初始化，M0–M2 基线提交为 `7d463b3`；当前分支 feat/stateful-operations。无远程推送或发布。
 
-本轮 M0–M2 初始引擎检查点已完成：TypeScript 生产 Core/协调器、有限 Schema/Builder、Pixi/DOM/Web Audio、IndexedDB/profile/head、Player/React 与可玩的原创《灯塔来信》。完整任务状态仅以 [tasks.json](tasks.json) 为准。
+M0–M2 与 M3-01 已完成。新实现包括受审查 codec 工厂、冻结操作表、每 invocation 状态/等待/快照、失败原子性和完整调用迁移，实际 Player 与打包消费者均已接入。完整任务状态以 tasks.json 为准。
 
-工作区初始只有任务包，没有 Git 元数据；新增正式主库、应用、原创发布数据、锁文件、CI 和测试。未创建提交或外部发布。代码依据为 [source-manifest.json](evidence/source-manifest.json)。
+最新验证：34 单元测试、13 个真实 Chromium 回归、严格检查/静态构建与 tarball 独立类型/播放/保存/迁移均通过。证据在 evidence/m3-01/REPORT.md，旧 M0–M2 报告只对应基线。API 与约束见 OPERATIONS.md 和 ADR-0003。
 
-最近验证：frozen 安装与 check 通过；26 个单元测试、13 个真实 Chromium 测试通过；tarball 在仓库外隔离安装，skipLibCheck=false 类型检查、播放/保存/恢复通过。实际命令、范围和失败修复在 [本轮证据](evidence/2026-10-25-m0-m2.md)。本地包在 `artifacts/galbox-sdk-0.1.0.tgz`，静态目录为 `apps/playground/dist`。开发服务已在本轮启动于 `http://127.0.0.1:4173/`。
+下一项 M3-02：建立 codec/source schema 身份绑定、不可变导入准备计划及 fixture-save@1 字节/摘要/附件负例。之后继续有界 recipe、独立导入 profile 和激活幂等。N-01/F-01 仍缺真实发行版/资源/原档/原作继续参照，不因此阻塞通用 SDK。
 
-运行：`pnpm install --frozen-lockfile`、`pnpm exec playwright install chromium`、`pnpm dev`。完整命令见 README。本机 `/tmp` 配额满，测试/consumer 使用 `export TMPDIR=/dev/shm`；该限制已避开，没有阻塞本轮验收。
-
-当前限制：整包资源预加载、短 WAV 的 replay/stop 恢复、基本 ADV 和绝对线性动画。M3–M5 尚未实施；移动真机/其他浏览器、性能预算、人耳体验和商业作品兼容未验证。N-01/F-01 的真实输入缺失继续保留为 blocked，详见 INPUTS_REQUIRED.md。
-
-下一项可执行任务：M3-01。先读 C09、T05/T23/T24 与 M3 支持集，在现有 OperationSpec/Schema/显式帧上实现冻结的有状态操作登记、每 invocation 状态、初始化/恢复隔离和完整 SavedInvocation 迁移；使用实际公共工厂与失败原子性测试。随后接 M3-02 的 fixture-save@1，不能将其称作真实作品兼容。
+运行仍为 pnpm install --frozen-lockfile、pnpm dev；本机测试使用 TMPDIR=/dev/shm。开发服务为运行浏览器门槛已暂时停止。未完成 M3-02～04、M4/M5 与商业作品认证。

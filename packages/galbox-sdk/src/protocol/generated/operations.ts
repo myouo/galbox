@@ -283,5 +283,22 @@ export const operationSpecs = {
       "at",
       "allow"
     ]
+  },
+  "extension.invoke": {
+    "opcode": "extension.invoke",
+    "parameters": [
+      "at",
+      "operation",
+      "version",
+      "argsSchema",
+      "args"
+    ],
+    "required": [
+      "at",
+      "operation",
+      "version",
+      "argsSchema",
+      "args"
+    ]
   }
 } as const;

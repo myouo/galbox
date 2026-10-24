@@ -1,7 +1,11 @@
-import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError } from '../protocol/index.js';
-import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction } from '../protocol/index.js';
+import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation } from '../protocol/index.js';
+import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/index.js';
+import { emptyOperations, operationContext } from './operations.js';
+import type { OperationRegistry } from './operations.js';
+export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial';}
 export type CoreEvent =
+ | OperationResume
  | {type:'reveal' | 'advance' | 'step'; prompt:number; inputId:string}
  | {type:'choose'; prompt:number; inputId:string; option:string}
  | {type:'tick'; ms:number}
@@ -25,13 +29,13 @@ export class Core {
   private textRemainder=0;
   private error:string|null=null;
   private revoked=false;
-  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, mode:'restore'|'initial'='restore') {
+  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, mode:'restore'|'initial'='restore',private readonly operations:OperationRegistry=emptyOperations) {
     ensure(mode==='restore'||mode==='initial','ACTIVATION_MODE','Unknown activation mode');
-    this.program=linkProgram(input).copy(); this.profile=parseProfile(profile);
-    if(snapshot!==undefined) { this.s=validateRestore(this.program,snapshot); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode); }
+    this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);
+    if(snapshot!==undefined) { this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode); }
     else {
       const entry=this.fn(this.program.entry);
-      this.s={version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0};
+      this.s={version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[]};
     }
   }
   private fn(id:string):ProgramFunction { const f=this.program.functions.find(f=>f.id===id); ensure(f,'FUNCTION',id); return f; }
@@ -52,12 +56,14 @@ export class Core {
   view():CoreView {return {run:parseSnapshot(this.s),profile:parseProfile(this.profile),dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()};}
   pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:{...c});}
   acknowledge(through:number,revision:number):void { ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
-  canSave():boolean {return !this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
-  private saveReason():string|null {return this.revoked?'SESSION_REVOKED':!this.s.saveAllowed?'SAVE_POLICY':this.s.status==='running'?'BUDGET_CONTINUATION':this.s.status==='failed'?'CORE_FAILED':this.s.wait?.kind==='flush'?'PROFILE_BARRIER':null;}
+  private operationSaveAllowed():boolean {const w=this.s.wait;if(w?.kind!=='operation')return true;const saved=this.s.invocations?.find(v=>v.id===w.invocation);if(!saved)return false;const op=this.operations.get(saved.operation,saved.version);return op.manifest.save==='safe'&&op.manifest.restore==='continue';}
+  canSave():boolean {return this.operationSaveAllowed()&&!this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
+  private saveReason():string|null {return !this.operationSaveAllowed()?'OPERATION_UNRESTORABLE':this.revoked?'SESSION_REVOKED':!this.s.saveAllowed?'SAVE_POLICY':this.s.status==='running'?'BUDGET_CONTINUATION':this.s.status==='failed'?'CORE_FAILED':this.s.wait?.kind==='flush'?'PROFILE_BARRIER':null;}
   capture():Snapshot {ensure(this.canSave(),'SAVE_UNAVAILABLE',this.saveReason()??'unknown');return parseSnapshot(this.s);}
   drainEffects():Effect[] {const effects=this.effects;this.effects=[];return effects;}
   revoke():void {this.revoked=true;this.effects=[];}
   private resumeEffects(mode:'restore'|'initial'):void {
+    for(const invocation of this.s.invocations??[])if(invocation.wait)invocation.wait.attempt++;
     for(const t of this.s.tasks)if(t.kind==='audio'&&['running','blocked'].includes(t.status)) {
       t.attempt++;
       if(mode==='restore'&&t.restore==='stop')t.status='cancelled';
@@ -70,6 +76,7 @@ export class Core {
   }
   accept(event:CoreEvent):void {
     if(this.revoked||this.s.status==='failed')return;
+    if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
       if(this.consumed.has(event.inputId)||!this.s.wait||!('prompt'in this.s.wait)||event.prompt!==this.s.wait.prompt)return;
       this.consumed.add(event.inputId);
@@ -122,9 +129,42 @@ export class Core {
     ensure(Number.isInteger(budget)&&budget>0,'BUDGET','Positive integer required');
     if(this.revoked)return 'stable';
     for(let j=0;j<budget&&this.s.status==='running';j++) {
-      try {this.execute(this.op());}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';this.s.status='failed';throw e;}
+      const op=this.op();try {this.execute(op);}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';if(op.op!=='extension.invoke')this.s.status='failed';throw e;}
     }
     return this.s.status==='running'?'yield':'stable';
+  }
+  private resumeOperation(event:OperationResume):void {
+    const w=this.s.wait;if(w?.kind!=='operation')return;
+    const saved=this.s.invocations?.find(v=>v.id===w.invocation);ensure(saved&&saved.wait,'RESTORE_INVOCATION','Missing active invocation');
+    if(event.invocation!==saved.id||event.request!==saved.wait.request||event.attempt!==saved.wait.attempt)return;
+    ensure(event.schema.id===saved.resumeSchema.id&&event.schema.signature===saved.resumeSchema.signature,'OPERATION_RESUME_SCHEMA',saved.id);
+    const instruction=this.op();ensure(instruction.op==='extension.invoke','OPERATION_PHASE',saved.id);this.invokeOperation(instruction,saved,event.data);
+  }
+  private invokeOperation(instruction:Extract<Instruction,{op:'extension.invoke'}>,previous?:SavedInvocation,event?:unknown):void {
+    const before={s:this.s,profile:this.profile,changes:this.changes,effects:this.effects,seq:this.progressSeq};
+    this.s=parseSnapshot(this.s);this.profile=parseProfile(this.profile);this.changes=this.pending();this.effects=[...this.effects];
+    try {
+      const op=this.operations.get(instruction.operation,instruction.version);
+      const id=previous?.id??`invocation:${++this.s.counter}`;
+      const context=operationContext(this.s.globals,this.profile);
+      const output=previous?op.resume(previous,event,context):op.start(instruction.args,context);
+      for(const action of output.actions){if(action.type==='set')this.put(action.dest,action.value);else this.setProfile(action.key,action.value);}
+      for(const effect of output.effects){
+        ensure(this.program.assets.find(a=>a.id===effect.asset)?.kind==='audio','ASSET_KIND',effect.asset);
+        const at=this.top().pc;this.execute({at,op:'audio.play',task:effect.task,asset:effect.asset,channel:effect.channel,gain:effect.gain,loop:effect.loop,restore:effect.restore});this.top().pc=at;
+      }
+      const wait=output.flow.kind==='wait'?{...output.flow.wait,attempt:(previous?.wait?.attempt??0)+1}:null;
+      const saved=op.validateSaved(parseSavedInvocation({id,operation:op.id,version:op.version,implementation:op.manifest.implementation,at:instruction.at,frameDepth:this.s.frames.length,argsSchema:op.argsSchema,stateSchema:op.stateSchema,resumeSchema:op.resumeSchema,args:previous?previous.args:instruction.args,state:output.state,phase:wait?'waiting':'completed',wait}));
+      const invocations=this.s.invocations??[];ensure(previous||invocations.length<256,'INVOCATION_LIMIT','Too many retained invocations');
+      this.s.invocations=[...invocations.filter(v=>v.id!==id),saved];
+      if(wait){this.s.wait={kind:'operation',at:instruction.at,invocation:id};this.s.status='waiting';}
+      else {
+        if(output.flow.kind==='jump'){const target=output.flow.target;ensure(this.fn(this.top().functionId).code.some(i=>i.at===target),'ADDRESS_SCOPE',target);this.top().pc=target;}
+        else this.top().pc=this.next();
+        this.s.wait=null;this.s.status='running';
+      }
+      this.error=null;
+    }catch(error){this.s=before.s;this.profile=before.profile;this.changes=before.changes;this.effects=before.effects;this.progressSeq=before.seq;this.error=error instanceof GalboxError?error.code:'OPERATION_FAILURE';throw error;}
   }
   private execute(i:Instruction):void {
     const wait=(w:NonNullable<Snapshot['wait']>)=>{this.s.wait=w;this.s.status='waiting';};
@@ -141,9 +181,10 @@ export class Core {
       }
       case 'control.return': {
         const result=i.value?this.get(i.value):undefined;const frame=this.top();ensure(frame.returnTo&&this.s.frames.length>1,'RETURN_FRAME',i.at);
-        this.s.frames.pop();if(frame.returnTo.dest){ensure(result,'RETURN_VALUE',i.at);this.put(frame.returnTo.dest,result);}this.top().pc=frame.returnTo.returnAt;return;
+        this.s.frames.pop();this.s.invocations=this.s.invocations?.filter(v=>v.frameDepth<=this.s.frames.length)??[];if(frame.returnTo.dest){ensure(result,'RETURN_VALUE',i.at);this.put(frame.returnTo.dest,result);}this.top().pc=frame.returnTo.returnAt;return;
       }
       case 'control.end':this.s.status='ended';this.s.wait=null;return;
+      case 'extension.invoke':this.invokeOperation(i);return;
       case 'value.set':this.put(i.dest,this.get(i.value));break;
       case 'i32.add.checked': {const a=this.get(i.left),b=this.get(i.right);ensure(a.kind==='i32'&&b.kind==='i32','I32_OPERAND',i.at);this.put(i.dest,i32(a.value+b.value));break;}
       case 'text.page': {const prompt=++this.s.counter;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:0,prompt};wait({kind:'text',at:i.at,prompt});return;}
@@ -181,8 +222,17 @@ export class Core {
     this.top().pc=this.next();
   }
 }
-export function validateRestore(input:unknown,snapshot:unknown):Snapshot {
-  const p=linkProgram(input).copy(),s=parseSnapshot(snapshot);
+export function validateRestore(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations):Snapshot {
+  const p=linkProgram(input,operations).copy(),s=parseSnapshot(snapshot);
+  s.invocations=s.invocations??[];
+  for(let index=0;index<s.invocations.length;index++){
+    const old=s.invocations[index];ensure(old,'RESTORE_INVOCATION','Missing invocation');
+    const frame=s.frames[old.frameDepth-1];const code=p.functions.find(f=>f.id===frame?.functionId)?.code;const target=code?.find(i=>i.at===old.at);
+    ensure(target?.op==='extension.invoke','RESTORE_INVOCATION',old.at);const saved=operations.restore(old,target);
+    ensure(saved.id===old.id&&saved.at===old.at&&saved.frameDepth===old.frameDepth,'RESTORE_INVOCATION_ID',old.id);s.invocations[index]=saved;
+    if(saved.phase==='waiting')ensure(operations.get(saved.operation,saved.version).manifest.restore==='continue','OPERATION_RESTORE_UNSUPPORTED',saved.id);
+  }
+  ensure(new Set(s.invocations.map(v=>v.id)).size===s.invocations.length,'RESTORE_INVOCATION_ID','Duplicate invocation');
   ensure(s.release===p.release,'RELEASE_MISMATCH','Snapshot release unavailable; migration required');
   ensure(s.status==='waiting'||s.status==='ended','RESTORE_PHASE','Only semantic waits and end are restorable');
   ensure(s.frames.length>0&&s.frames[0]?.functionId===p.entry&&!s.frames[0].returnTo,'RESTORE_FRAME','Invalid entry frame');
@@ -205,10 +255,12 @@ export function validateRestore(input:unknown,snapshot:unknown):Snapshot {
   if(s.status==='ended')ensure(op.op==='control.end'&&!w,'RESTORE_PHASE','End mismatch');
   else {
     ensure(w&&w.at===op.at,'RESTORE_WAIT','PC/wait mismatch');
-    ensure((w.kind==='text'&&op.op==='text.page')||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay'),'RESTORE_PHASE','Unsupported phase');
+    ensure((w.kind==='text'&&op.op==='text.page')||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke'),'RESTORE_PHASE','Unsupported phase');
     if(w.kind==='text')ensure(op.op==='text.page'&&s.text&&s.text.prompt===w.prompt&&s.text.textId===op.textId&&s.text.revision===op.revision&&s.text.content===op.content&&s.text.speaker===op.speaker&&s.text.revealed<=length(s.text.content),'RESTORE_TEXT','Text identity/content mismatch');
     if(w.kind==='choice')ensure(op.op==='choice'&&w.dest===op.dest&&JSON.stringify(w.options)===JSON.stringify(op.options),'RESTORE_CHOICE','Choice mismatch');
   }
+  const waiting=s.invocations.filter(v=>v.phase==='waiting');
+  if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);
@@ -231,4 +283,4 @@ export function validateRestore(input:unknown,snapshot:unknown):Snapshot {
   for(const o of s.stage)ensure(p.assets.find(a=>a.id===o.asset)?.kind==='image','RESTORE_ASSET',o.asset);
   return s;
 }
-export function createCore(program:unknown,profile?:unknown,snapshot?:unknown):Core {return new Core(program,profile,snapshot);}
+export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations);}

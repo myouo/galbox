@@ -1,4 +1,4 @@
-# 当前能力：M0–M2
+# 当前能力：M0–M2 + M3-01
 
 此表描述实现范围；实际通过状态和命令证据见 tasks.json 与 evidence/。
 
@@ -17,8 +17,10 @@
 | 激活 | 候选准备、最终冻结/dirty 交接、原子 head、提交后失权、迟到 generation 拒绝 |
 | UI / 生命周期 | React 默认 UI；暂停原因独立；已读快进在失焦清除；资源清理及在途提交结果 |
 | 嵌入 | protocol/core/port-kit/player/react/testing 显式 exports，tarball 独立消费 |
-| 未启用 | timed-choice、视频/热点、relative 动画、其他值族、逻辑扩展、迁移、SaveBridge、CLI |
+| 未启用 | timed-choice、视频/热点、relative 动画、其他值族、跨内容版本迁移、SaveBridge、CLI |
 
 OperationSpec 参数表由 schema 生成，可从 `galbox-sdk/protocol` 的 operationSpecs 检查。完整 opcode 列表位于 schema/protocol.json，Core 使用穷尽分派，未登记 opcode 在结构校验时即拒绝。
 
 平台证据限定当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio 路径。没有人耳音质认证、移动真机、其他浏览器、性能预算或商业作品兼容声明。全部资源预加载与回执长期保留是此初始版的规模限制，M5 再按实际负载测量。
+
+M3-01 已实现受检 codec/有状态操作、signal wait、失败原子性和 SavedInvocation 迁移，见 OPERATIONS.md；跨内容 release 与原档迁移尚不支持。

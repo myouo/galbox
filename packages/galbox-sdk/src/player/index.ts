@@ -4,6 +4,9 @@ import { parseProgram, parseSnapshot, ensure, readUnit, GalboxError } from '../p
 import type { Program, Snapshot, DeepReadonly } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/index.js';
 import { Coordinator } from '../runtime/coordinator.js';
+import { emptyOperations } from '../core/operations.js';
+import type { OperationRegistry } from '../core/operations.js';
+import type { OperationResume } from '../protocol/index.js';
 import type { Store } from '../runtime/ports.js';
 import { openStore } from '../storage/indexeddb.js';
 import { WebHost } from '../web-host/host.js';
@@ -13,7 +16,7 @@ import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;}
+export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;}
 export interface PlayerView {
   readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'disposed';readonly core:CoreView|null;readonly error:string|null;
   readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;
@@ -24,6 +27,7 @@ export class Player {
   private readonly host:WebHost;
   private readonly text:TextController;
   private readonly program:Program;
+  private readonly operations:OperationRegistry;
   private readonly abort=new AbortController();
   private store:Store|null=null;
   private ownsStore=false;
@@ -46,7 +50,7 @@ export class Player {
   readonly namespace:string;
   private readonly instance=crypto.randomUUID();
   private constructor(private readonly options:PlayerOptions){
-    this.program=linkProgram(options.program).copy();ensure(/^[a-zA-Z0-9_.-]{1,80}$/.test(options.saveCompatibilitySeries),'NAMESPACE','Invalid compatibility series');
+    this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();ensure(/^[a-zA-Z0-9_.-]{1,80}$/.test(options.saveCompatibilitySeries),'NAMESPACE','Invalid compatibility series');
     this.namespace=JSON.stringify([this.program.gameId,options.saveCompatibilitySeries]);
     this.host=new WebHost(options.mount);this.text=new TextController(options.mount);
     this.cached={title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace};
@@ -89,12 +93,12 @@ export class Player {
   private requireStore():Store {ensure(this.store&&!this.disposed,'PLAYER_DISPOSED','Player unavailable');return this.store;}
   async start():Promise<void> {
     const store=this.requireStore();const gen=++this.generation;this.lifecycle='preparing';this.publish();await this.host.unlock();
-    try {const durable=await store.read();const candidate=new Core(this.program,durable.profile);let operations=0;for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:durable.profile.revision});continue;}if(result==='stable')break;await new Promise<void>(resolve=>queueMicrotask(resolve));}await this.activate(candidate.capture(),gen,candidate.pending(),'initial');}
+    try {const durable=await store.read();const candidate=new Core(this.program,durable.profile,undefined,'initial',this.operations);let operations=0;for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:durable.profile.revision});continue;}if(result==='stable')break;await new Promise<void>(resolve=>queueMicrotask(resolve));}await this.activate(candidate.capture(),gen,candidate.pending(),'initial');}
     catch(error){this.precommitFailure(gen,error);throw error;}
   }
   async load(slot='quick'):Promise<void> {
     const store=this.requireStore(),gen=++this.generation;this.lifecycle='preparing';this.publish();
-    try {const record=await store.readSlot(slot);ensure(record,'SLOT_EMPTY',slot);const snapshot=validateRestore(this.program,record.snapshot);await this.activate(snapshot,gen);}
+    try {const record=await store.readSlot(slot);ensure(record,'SLOT_EMPTY',slot);const snapshot=validateRestore(this.program,record.snapshot,this.operations);await this.activate(snapshot,gen);}
     catch(error){this.precommitFailure(gen,error);throw error;}
   }
   private precommitFailure(gen:number,error:unknown):void {if(gen===this.generation&&!this.disposed&&this.lifecycle!=='committed-pending'){this.lifecycle=this.runtime?'playing':'ready';this.fail(error);}}
@@ -106,7 +110,7 @@ export class Player {
       try {
         if(old){await old.freeze();await old.flushAll();}
         ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale');
-        const durable=await store.read();validateRestore(this.program,snapshot);
+        const durable=await store.read();validateRestore(this.program,snapshot,this.operations);
         const id=`${this.instance}:a${gen}`;
         const initialProgress=initialChanges.length?Object.freeze({id:`${id}:initial`,baseRevision:durable.profile.revision,through:initialChanges.at(-1)?.seq??0,changes:Object.freeze(initialChanges.map(c=>c.type==='set'?Object.freeze({...c,value:Object.freeze(c.value)}):Object.freeze(c)))}):undefined;
         const activation=await store.activate(id,parseSnapshot(snapshot),durable.head?.id??null,durable.profile.revision,initialProgress);
@@ -114,7 +118,7 @@ export class Player {
         // Read the durable head again after commit. A delayed receipt cannot restore authority.
         const head=await store.read();ensure(head.head?.id===activation.id,'ACTIVATION_SUPERSEDED','Committed candidate is no longer current');
         ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Committed candidate awaits a newer activation');
-        const candidate=new Core(this.program,head.profile,snapshot,mode);
+        const candidate=new Core(this.program,head.profile,snapshot,mode,this.operations);
         const epoch=++this.epoch;this.host.setEpoch(epoch);
         const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,id,`${this.instance}:${epoch}`,this.options.budget??100);
         this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());
@@ -149,6 +153,10 @@ export class Player {
     await Promise.all([ticking,runtime.dispatch(event)]);
   }
   async step(prompt:number,epoch:number):Promise<void> {await this.input('step',prompt,epoch);}
+  async resumeOperation(event:OperationResume,epoch:number):Promise<void> {
+    if(epoch!==this.epoch||this.disposed||this.pauses.size||!this.runtime||this.lifecycle!=='playing')return;
+    const runtime=this.runtime;await Promise.all([runtime.dispatch({type:'tick',ms:this.elapsed(performance.now())}),runtime.dispatch(event)]);
+  }
   async retryAudio():Promise<void> {await this.host.unlock();for(const t of this.runtime?.view().run.tasks??[])if(t.kind==='audio'&&t.status==='blocked')await this.runtime?.dispatch({type:'retry',task:t.id});this.publish();}
   setMenu(value:boolean):void {this.menu=value;this.fast=false;this.setPause('menu',value);}
   setPaused(value:boolean):void {this.setPause('user',value);}

@@ -1,6 +1,11 @@
-import type { Program, Snapshot, Profile, Instruction, Value } from './wire.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait } from './wire.js';
 export declare const validateProgram: { (data: unknown): data is Program; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateSnapshot: { (data: unknown): data is Snapshot; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateProfile: { (data: unknown): data is Profile; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateInstruction: { (data: unknown): data is Instruction; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateValue: { (data: unknown): data is Value; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateJsonValue: { (data: unknown): data is JsonValue; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateOperationOutcome: { (data: unknown): data is OperationOutcome; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateSavedInvocation: { (data: unknown): data is SavedInvocation; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateOperationResume: { (data: unknown): data is OperationResume; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateOperationWait: { (data: unknown): data is OperationWait; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };

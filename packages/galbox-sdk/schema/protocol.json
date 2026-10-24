@@ -875,6 +875,43 @@
             "allow"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "extension.invoke",
+              "type": "string"
+            },
+            "operation": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "argsSchema": {
+              "$ref": "#/definitions/SchemaRef"
+            },
+            "args": {
+              "$ref": "#/definitions/JsonValue"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "operation",
+            "version",
+            "argsSchema",
+            "args"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1372,6 +1409,29 @@
             "at"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "operation",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "invocation": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "invocation"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1473,6 +1533,13 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647
+        },
+        "invocations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SavedInvocation"
+          },
+          "maxItems": 256
         }
       },
       "required": [
@@ -1491,6 +1558,379 @@
         "counter",
         "profileBasis",
         "logicalTime"
+      ],
+      "additionalProperties": false
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647
+        },
+        {
+          "type": "string",
+          "pattern": "^[^\\x00]{0,16384}$"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JsonValue"
+          },
+          "maxItems": 256
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/JsonValue"
+          }
+        }
+      ]
+    },
+    "SchemaRef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{0,16384}$"
+        }
+      },
+      "required": [
+        "id",
+        "signature"
+      ],
+      "additionalProperties": false
+    },
+    "OperationWait": {
+      "type": "object",
+      "properties": {
+        "resumeKind": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaRef"
+        },
+        "request": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "resumeKind",
+        "schema",
+        "request",
+        "attempt"
+      ],
+      "additionalProperties": false
+    },
+    "OperationAction": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "set",
+              "type": "string"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/Value"
+            }
+          },
+          "required": [
+            "type",
+            "dest",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "profile.set",
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/Value"
+            }
+          },
+          "required": [
+            "type",
+            "key",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "OperationEffect": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "audio",
+          "type": "string"
+        },
+        "task": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "asset": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "channel": {
+          "enum": [
+            "bgm",
+            "voice",
+            "sfx"
+          ]
+        },
+        "gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "loop": {
+          "type": "boolean"
+        },
+        "restore": {
+          "enum": [
+            "replay",
+            "stop"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "task",
+        "asset",
+        "channel",
+        "gain",
+        "loop",
+        "restore"
+      ],
+      "additionalProperties": false
+    },
+    "OperationFlow": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "continue",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "jump",
+              "type": "string"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "wait",
+              "type": "string"
+            },
+            "wait": {
+              "$ref": "#/definitions/OperationWait"
+            }
+          },
+          "required": [
+            "kind",
+            "wait"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "OperationOutcome": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "$ref": "#/definitions/JsonValue"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationAction"
+          },
+          "maxItems": 64
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationEffect"
+          },
+          "maxItems": 16
+        },
+        "flow": {
+          "$ref": "#/definitions/OperationFlow"
+        }
+      },
+      "required": [
+        "state",
+        "actions",
+        "effects",
+        "flow"
+      ],
+      "additionalProperties": false
+    },
+    "SavedInvocation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "implementation": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "at": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "frameDepth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "argsSchema": {
+          "$ref": "#/definitions/SchemaRef"
+        },
+        "stateSchema": {
+          "$ref": "#/definitions/SchemaRef"
+        },
+        "resumeSchema": {
+          "$ref": "#/definitions/SchemaRef"
+        },
+        "args": {
+          "$ref": "#/definitions/JsonValue"
+        },
+        "state": {
+          "$ref": "#/definitions/JsonValue"
+        },
+        "phase": {
+          "enum": [
+            "waiting",
+            "completed"
+          ]
+        },
+        "wait": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/OperationWait"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "operation",
+        "version",
+        "implementation",
+        "at",
+        "frameDepth",
+        "argsSchema",
+        "stateSchema",
+        "resumeSchema",
+        "args",
+        "state",
+        "phase",
+        "wait"
+      ],
+      "additionalProperties": false
+    },
+    "OperationResume": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "operation",
+          "type": "string"
+        },
+        "invocation": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "request": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "schema": {
+          "$ref": "#/definitions/SchemaRef"
+        },
+        "data": {
+          "$ref": "#/definitions/JsonValue"
+        }
+      },
+      "required": [
+        "type",
+        "invocation",
+        "request",
+        "attempt",
+        "schema",
+        "data"
       ],
       "additionalProperties": false
     }

@@ -1,4 +1,5 @@
 import 'galbox-sdk/react/style.css';
+import {counter1,operations1,program1,initialized} from './extension.js';
 import { createPlayer,createHttpProvider } from 'galbox-sdk/player';
 import { instruction,variable,set } from 'galbox-sdk/port-kit';
 import { i32,bool } from 'galbox-sdk/protocol';
@@ -21,5 +22,8 @@ button?.addEventListener('click',()=>{void(async()=>{
  if(player.getSnapshot().core?.run.text?.textId!=='opening.1')throw new Error('Did not restore');
  if(!player.getSnapshot().core?.profile.read.includes('opening.1@zh-1'))throw new Error('Lost durable read progress');
  player.dispose();if(mount.querySelector('canvas'))throw new Error('Canvas leaked');
+ const pluginProgram=program1();const plugin=await createPlayer({program:pluginProgram,operations:operations1,provider:createHttpProvider(pluginProgram,location.href),mount,saveCompatibilitySeries:'plugin-consumer'});await plugin.start();const call=plugin.getSnapshot().core?.run.invocations?.find(v=>v.phase==='waiting');if(!call?.wait)throw new Error('Plugin wait');
+ await plugin.save('plugin');await plugin.resumeOperation(counter1.result(call.wait,call.id,{kind:'continue',value:3}),plugin.getSnapshot().epoch);if(plugin.getSnapshot().core?.run.globals.n?.value!==5)throw new Error('Plugin result');
+ await plugin.load('plugin');await plugin.resumeOperation(counter1.result(call.wait,call.id,{kind:'continue',value:99}),plugin.getSnapshot().epoch);if(plugin.getSnapshot().core?.run.globals.n?.value!==2)throw new Error('Stale plugin attempt');const resumed=plugin.getSnapshot().core?.run.invocations?.find(v=>v.phase==='waiting');if(!resumed?.wait)throw new Error('Restored plugin wait');await plugin.resumeOperation(counter1.result(resumed.wait,resumed.id,{kind:'continue',value:3}),plugin.getSnapshot().epoch);if(plugin.getSnapshot().core?.run.globals.n?.value!==5||initialized()!==1)throw new Error('Plugin restore initialized twice');plugin.dispose();
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});

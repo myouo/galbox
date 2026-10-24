@@ -1,6 +1,14 @@
 /* Generated from schema/protocol.json. Do not edit. */
 
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ValueKind".
+ */
 export type ValueKind = 'i32' | 'bool' | 'string';
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Value".
+ */
 export type Value =
   | {
       kind: 'i32';
@@ -14,6 +22,10 @@ export type Value =
       kind: 'string';
       value: string;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Instruction".
+ */
 export type Instruction =
   | {
       at: string;
@@ -155,7 +167,19 @@ export type Instruction =
       at: string;
       op: 'save.policy';
       allow: boolean;
+    }
+  | {
+      at: string;
+      op: 'extension.invoke';
+      operation: string;
+      version: number;
+      argsSchema: SchemaRef;
+      args: JsonValue;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Operand".
+ */
 export type Operand =
   | {
       literal: Value;
@@ -163,7 +187,28 @@ export type Operand =
   | {
       slot: string;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "JsonValue".
+ */
+export type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | JsonValue[]
+  | {
+      [k: string]: JsonValue;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TaskStatus".
+ */
 export type TaskStatus = 'running' | 'blocked' | 'completed' | 'cancelled' | 'superseded' | 'failed';
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Wait".
+ */
 export type Wait =
   | {
       kind: 'text';
@@ -193,6 +238,42 @@ export type Wait =
   | {
       kind: 'flush';
       at: string;
+    }
+  | {
+      kind: 'operation';
+      at: string;
+      invocation: string;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "OperationAction".
+ */
+export type OperationAction =
+  | {
+      type: 'set';
+      dest: string;
+      value: Value;
+    }
+  | {
+      type: 'profile.set';
+      key: string;
+      value: Value;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "OperationFlow".
+ */
+export type OperationFlow =
+  | {
+      kind: 'continue';
+    }
+  | {
+      kind: 'jump';
+      target: string;
+    }
+  | {
+      kind: 'wait';
+      wait: OperationWait;
     };
 
 export interface Wire {
@@ -200,6 +281,10 @@ export interface Wire {
   snapshot: Snapshot;
   profile: Profile;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Program".
+ */
 export interface Program {
   version: 1;
   gameId: string;
@@ -223,6 +308,10 @@ export interface Program {
   functions: Function[];
   title: string;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Asset".
+ */
 export interface Asset {
   id: string;
   kind: 'image' | 'audio';
@@ -230,11 +319,19 @@ export interface Asset {
   sha256: string;
   mime: 'image/svg+xml' | 'image/png' | 'audio/wav';
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Slot".
+ */
 export interface Slot {
   id: string;
   kind: ValueKind;
   initial: Value;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Function".
+ */
 export interface Function {
   id: string;
   layout: 1;
@@ -253,22 +350,46 @@ export interface Function {
    */
   code: Instruction[];
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Option".
+ */
 export interface Option {
   id: string;
   text: string;
   target: string;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageObject".
+ */
 export interface StageObject {
   id: string;
   asset: string;
   position: Position;
   z: number;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Position".
+ */
 export interface Position {
   x: number;
   y: number;
   alpha: number;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SchemaRef".
+ */
+export interface SchemaRef {
+  id: string;
+  signature: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Snapshot".
+ */
 export interface Snapshot {
   version: 1;
   release: string;
@@ -302,7 +423,15 @@ export interface Snapshot {
   counter: number;
   profileBasis: number;
   logicalTime: number;
+  /**
+   * @maxItems 256
+   */
+  invocations?: SavedInvocation[];
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Frame".
+ */
 export interface Frame {
   functionId: string;
   layout: 1;
@@ -316,6 +445,10 @@ export interface Frame {
     dest?: string;
   };
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextState".
+ */
 export interface TextState {
   textId: string;
   revision: string;
@@ -324,6 +457,10 @@ export interface TextState {
   revealed: number;
   prompt: number;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Task".
+ */
 export interface Task {
   id: string;
   status: TaskStatus;
@@ -341,6 +478,10 @@ export interface Task {
   restore?: 'replay' | 'stop';
   name: string;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TaskGroup".
+ */
 export interface TaskGroup {
   id: string;
   /**
@@ -349,6 +490,39 @@ export interface TaskGroup {
   members: string[];
   consumed: boolean;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SavedInvocation".
+ */
+export interface SavedInvocation {
+  id: string;
+  operation: string;
+  version: number;
+  implementation: string;
+  at: string;
+  frameDepth: number;
+  argsSchema: SchemaRef;
+  stateSchema: SchemaRef;
+  resumeSchema: SchemaRef;
+  args: JsonValue;
+  state: JsonValue;
+  phase: 'waiting' | 'completed';
+  wait: OperationWait | null;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "OperationWait".
+ */
+export interface OperationWait {
+  resumeKind: string;
+  schema: SchemaRef;
+  request: string;
+  attempt: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Profile".
+ */
 export interface Profile {
   revision: number;
   values: {
@@ -358,4 +532,45 @@ export interface Profile {
    * @maxItems 20000
    */
   read: string[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "OperationEffect".
+ */
+export interface OperationEffect {
+  type: 'audio';
+  task: string;
+  asset: string;
+  channel: 'bgm' | 'voice' | 'sfx';
+  gain: number;
+  loop: boolean;
+  restore: 'replay' | 'stop';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "OperationOutcome".
+ */
+export interface OperationOutcome {
+  state: JsonValue;
+  /**
+   * @maxItems 64
+   */
+  actions: OperationAction[];
+  /**
+   * @maxItems 16
+   */
+  effects: OperationEffect[];
+  flow: OperationFlow;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "OperationResume".
+ */
+export interface OperationResume {
+  type: 'operation';
+  invocation: string;
+  request: string;
+  attempt: number;
+  schema: SchemaRef;
+  data: JsonValue;
 }
