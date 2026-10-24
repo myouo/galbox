@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.json","compilerOptions":{"lib":["ES2022"],"types":[]},"include":["packages/galbox-sdk/src/protocol/**/*","packages/galbox-sdk/src/core/**/*","packages/galbox-sdk/src/runtime/**/*","packages/galbox-sdk/src/program-tools/**/*","packages/galbox-sdk/src/testing/**/*"]}

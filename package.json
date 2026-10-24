@@ -1,0 +1,36 @@
+{
+  "name": "galbox-sdk-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.28.5",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "check:generated": "node scripts/generate.mjs --check",
+    "check:boundaries": "node scripts/boundaries.mjs",
+    "check": "pnpm check:generated && pnpm build:sdk && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries",
+    "test": "vitest run",
+    "build:sdk": "tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs",
+    "build": "pnpm build:sdk && vite build --config apps/playground/vite.config.ts",
+    "dev": "pnpm build:sdk && vite --config apps/playground/vite.config.ts --host 127.0.0.1",
+    "test:browser": "pnpm build && pnpm build:harness && playwright test",
+    "test:consumer": "node scripts/consumer.mjs",
+    "fixture": "tsx fixtures/standard-novel/build.ts",
+    "build:harness": "vite build --config tests/browser/harness/vite.config.ts"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vitest": "5.0.5",
+    "@playwright/test": "1.64.1",
+    "ajv": "8.20.0",
+    "json-schema-to-typescript": "16.0.0",
+    "tsx": "4.21.0",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "galbox-sdk": "workspace:*"
+  }
+}

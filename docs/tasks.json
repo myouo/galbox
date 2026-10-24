@@ -1,0 +1,954 @@
+{
+  "schema_version": 1,
+  "project": "galbox-sdk",
+  "kit_version": "1.0",
+  "design_baseline": "docs/reference/GalBox-SDK-v0.6-Implementation-Design.md",
+  "current_scope": [
+    "M0",
+    "M1",
+    "M2"
+  ],
+  "current_task": "M3-01",
+  "engine_status": "m2_complete",
+  "last_updated": "2026-10-25",
+  "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
+  "tasks": [
+    {
+      "id": "M0-01",
+      "milestone": "M0",
+      "title": "建立真实主库与工具链",
+      "depends_on": [],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "packages/galbox-sdk",
+        "pnpm-workspace.yaml",
+        "lockfile"
+      ],
+      "contracts": [
+        "C01",
+        "C12"
+      ],
+      "acceptance": [
+        "typecheck",
+        "boundaries"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M0-02",
+      "milestone": "M0",
+      "title": "有限 Schema、生成器与真实类型工厂",
+      "depends_on": [
+        "M0-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "protocol schemas",
+        "types/validators",
+        "OperationSpec initial"
+      ],
+      "contracts": [
+        "C01",
+        "C02"
+      ],
+      "acceptance": [
+        "T01",
+        "T02",
+        "T23"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M0-03",
+      "milestone": "M0",
+      "title": "真实检查脚本与 CI",
+      "depends_on": [
+        "M0-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "check/test/build scripts",
+        "CI configuration"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "T01",
+        "T02"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M1-01",
+      "milestone": "M1",
+      "title": "Builder、语义链接、值和调用 ABI",
+      "depends_on": [
+        "M0-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "program-tools",
+        "core values/frames"
+      ],
+      "contracts": [
+        "C01",
+        "C02"
+      ],
+      "acceptance": [
+        "T01",
+        "T03",
+        "T04"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M1-02",
+      "milestone": "M1",
+      "title": "同步 Core 与串行 coordinator",
+      "depends_on": [
+        "M1-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "core dispatch/resume",
+        "runtime queue/time"
+      ],
+      "contracts": [
+        "C03"
+      ],
+      "acceptance": [
+        "T06"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M1-03",
+      "milestone": "M1",
+      "title": "并行任务与终态/结果图",
+      "depends_on": [
+        "M1-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "task registry/groups",
+        "virtual Host"
+      ],
+      "contracts": [
+        "C04"
+      ],
+      "acceptance": [
+        "T07"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M1-04",
+      "milestone": "M1",
+      "title": "快照、保存权限和工作 profile",
+      "depends_on": [
+        "M1-03"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "capture/restore validation",
+        "profile deltas"
+      ],
+      "contracts": [
+        "C05",
+        "C06"
+      ],
+      "acceptance": [
+        "T04",
+        "T05",
+        "T08",
+        "T20"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M1-05",
+      "milestone": "M1",
+      "title": "原创 Headless 两路线与回放门槛",
+      "depends_on": [
+        "M1-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "fixtures/standard-novel",
+        "testing trace runner"
+      ],
+      "contracts": [
+        "C02",
+        "C03",
+        "C04",
+        "C12"
+      ],
+      "acceptance": [
+        "T06",
+        "T07",
+        "T20",
+        "fixture-routes"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M2-01",
+      "milestone": "M2",
+      "title": "Pixi 舞台、DOM 正文和语义输入",
+      "depends_on": [
+        "M1-05"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "web-host stage/text/input"
+      ],
+      "contracts": [
+        "C03",
+        "C04",
+        "C10"
+      ],
+      "acceptance": [
+        "T08",
+        "T10",
+        "T11",
+        "T22"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M2-02",
+      "milestone": "M2",
+      "title": "真实音频与资源租约",
+      "depends_on": [
+        "M1-05"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "web-host audio/assets",
+        "generated original assets"
+      ],
+      "contracts": [
+        "C04",
+        "C10"
+      ],
+      "acceptance": [
+        "T09",
+        "T12",
+        "T25",
+        "T28"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M2-03",
+      "milestone": "M2",
+      "title": "IndexedDB、profile 批次和激活存储",
+      "depends_on": [
+        "M1-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "storage adapter",
+        "runtime persistence/activation"
+      ],
+      "contracts": [
+        "C06",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "T17",
+        "T18",
+        "T19",
+        "T26"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M2-04",
+      "milestone": "M2",
+      "title": "Player/React、生命周期和可玩样例",
+      "depends_on": [
+        "M2-01",
+        "M2-02",
+        "M2-03"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "player/react",
+        "apps/playground"
+      ],
+      "contracts": [
+        "C03",
+        "C05",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "T10",
+        "T13",
+        "fixture-routes"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M2-05",
+      "milestone": "M2",
+      "title": "真实浏览器与静态构建门槛",
+      "depends_on": [
+        "M2-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "browser integration tests",
+        "static build",
+        "usage docs"
+      ],
+      "contracts": [
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "T08",
+        "T09",
+        "T10",
+        "T12",
+        "T13",
+        "T17",
+        "T18",
+        "T19",
+        "T25",
+        "T26",
+        "T28"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M2-06",
+      "milestone": "M2",
+      "title": "打包产物独立消费者 smoke",
+      "depends_on": [
+        "M2-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "tests/consumer",
+        "tarball/install verification"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "packed-consumer-smoke"
+      ],
+      "evidence": [
+        "docs/evidence/2026-10-25-m0-m2.md",
+        "docs/evidence/consumer-result.json"
+      ],
+      "blocker": null,
+      "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
+    },
+    {
+      "id": "M3-01",
+      "milestone": "M3",
+      "title": "有状态扩展与完整调用迁移",
+      "depends_on": [
+        "M1-05"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "operation factories",
+        "SavedInvocation migration"
+      ],
+      "contracts": [
+        "C01",
+        "C09"
+      ],
+      "acceptance": [
+        "T05",
+        "T23",
+        "T24"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M3-02",
+      "milestone": "M3",
+      "title": "合成 codec/source binding 与转换计划",
+      "depends_on": [
+        "M1-05"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "save-bridge codec/mapping registry",
+        "fixture-save@1"
+      ],
+      "contracts": [
+        "C01",
+        "C08"
+      ],
+      "acceptance": [
+        "T01",
+        "T23",
+        "synthetic-codec-negatives"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M3-03",
+      "milestone": "M3",
+      "title": "有界 recipe 和候选加载语义",
+      "depends_on": [
+        "M3-01",
+        "M3-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "recipe validator/executor",
+        "synthetic load hook"
+      ],
+      "contracts": [
+        "C07",
+        "C08",
+        "C09"
+      ],
+      "acceptance": [
+        "T21",
+        "T24"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M3-04",
+      "milestone": "M3",
+      "title": "导入、独立激活与崩溃/重试闭环",
+      "depends_on": [
+        "M3-03",
+        "M2-03",
+        "M2-04"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "import UI/API",
+        "transaction integration"
+      ],
+      "contracts": [
+        "C06",
+        "C07",
+        "C08"
+      ],
+      "acceptance": [
+        "T18",
+        "T19",
+        "T21",
+        "synthetic-import-flow"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M4-01",
+      "milestone": "M4",
+      "title": "CLI 标准项目与资源工作流",
+      "depends_on": [
+        "M2-06",
+        "M3-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "packages/cli init/validate/assets/dev/build",
+        "template"
+      ],
+      "contracts": [
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "template-clean-install"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M4-02",
+      "milestone": "M4",
+      "title": "分析/验证 CLI 与来源诊断",
+      "depends_on": [
+        "M3-04",
+        "M4-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "saves analyze/verify",
+        "SourceMap/PortObligation reports"
+      ],
+      "contracts": [
+        "C08",
+        "C12"
+      ],
+      "acceptance": [
+        "T15",
+        "diagnostic-location"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M4-03",
+      "milestone": "M4",
+      "title": "完整独立开发者任务与文档",
+      "depends_on": [
+        "M3-01",
+        "M3-04",
+        "M4-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "consumer extension/migration/binding",
+        "SDK guides"
+      ],
+      "contracts": [
+        "C09",
+        "C12"
+      ],
+      "acceptance": [
+        "T11",
+        "T24",
+        "packed-consumer-full"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M5-01",
+      "milestone": "M5",
+      "title": "便携备份、内容迁移与恢复失败",
+      "depends_on": [
+        "M3-04"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "backup/restore",
+        "migration policies"
+      ],
+      "contracts": [
+        "C05",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "T11",
+        "T27"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M5-02",
+      "milestone": "M5",
+      "title": "发布绑定、资源预算与必要媒体能力",
+      "depends_on": [
+        "M2-05",
+        "M4-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "release/capabilities",
+        "resource budgets",
+        "needed media paths"
+      ],
+      "contracts": [
+        "C04",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "T12",
+        "T13",
+        "T16",
+        "T22",
+        "T25",
+        "T28"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M5-03",
+      "milestone": "M5",
+      "title": "平台矩阵和实际性能验收",
+      "depends_on": [
+        "M5-01",
+        "M5-02",
+        "M4-03"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "platform/performance evidence",
+        "capability report"
+      ],
+      "contracts": [
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "T13",
+        "T28",
+        "platform-matrix",
+        "performance-measurement"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M5-04",
+      "milestone": "M5",
+      "title": "SDK alpha 构建、API 与本地发布候选",
+      "depends_on": [
+        "M5-03",
+        "M4-03"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "version/API report",
+        "SDK/CLI tarballs",
+        "alpha release notes"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "packed-consumer-full",
+        "release-dry-run"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "N-01",
+      "milestone": "N",
+      "title": "锁定水仙版本和原档输入",
+      "depends_on": [],
+      "status": "blocked",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "edition/source/save package manifest",
+        "source evidence"
+      ],
+      "contracts": [
+        "C08",
+        "C12"
+      ],
+      "acceptance": [
+        "narcissu-inputs"
+      ],
+      "evidence": [],
+      "blocker": {
+        "kind": "needs-source-evidence",
+        "reason": "缺少明确发行版、可用程序/资源、原档包及原作加载后继续参照；不得以合成格式代替。",
+        "input_document": "docs/INPUTS_REQUIRED.md"
+      },
+      "next_action": "按输入清单接收并核验真实资料；其他 SDK 任务继续。"
+    },
+    {
+      "id": "F-01",
+      "milestone": "F",
+      "title": "锁定 Fata 版本和高风险输入",
+      "depends_on": [],
+      "status": "blocked",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "edition/source/save package manifest",
+        "risk evidence"
+      ],
+      "contracts": [
+        "C08",
+        "C12"
+      ],
+      "acceptance": [
+        "fata-inputs"
+      ],
+      "evidence": [],
+      "blocker": {
+        "kind": "needs-source-evidence",
+        "reason": "缺少明确发行版、可用程序/资源、原档包及原作加载后继续参照；不得以合成格式代替。",
+        "input_document": "docs/INPUTS_REQUIRED.md"
+      },
+      "next_action": "按输入清单接收并核验真实资料；其他 SDK 任务继续。"
+    },
+    {
+      "id": "N-02",
+      "milestone": "N",
+      "title": "水仙首个真实原档继续切片",
+      "depends_on": [
+        "N-01",
+        "M3-03"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "real codec/mapping",
+        "original reference fixtures"
+      ],
+      "contracts": [
+        "C08",
+        "C12"
+      ],
+      "acceptance": [
+        "T14",
+        "T15",
+        "narcissu-slice"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "F-02",
+      "milestone": "F",
+      "title": "Fata 真实加载/全局/特殊行为切片",
+      "depends_on": [
+        "F-01",
+        "M3-03"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "real codec/mapping",
+        "high-risk fixtures"
+      ],
+      "contracts": [
+        "C06",
+        "C08",
+        "C09",
+        "C12"
+      ],
+      "acceptance": [
+        "T14",
+        "T15",
+        "fata-slice"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "N-03",
+      "milestone": "N",
+      "title": "水仙声明完整范围与导入认证",
+      "depends_on": [
+        "N-02",
+        "M4-03",
+        "M5-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "port Program/assets",
+        "coverage/fidelity/import report"
+      ],
+      "contracts": [
+        "C08",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "T14",
+        "T15",
+        "T16",
+        "T28",
+        "narcissu-certified-range"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "F-03",
+      "milestone": "F",
+      "title": "Fata 声明完整范围与导入认证",
+      "depends_on": [
+        "F-02",
+        "M4-03",
+        "M5-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "port Program/assets",
+        "coverage/fidelity/import report"
+      ],
+      "contracts": [
+        "C08",
+        "C09",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "T14",
+        "T15",
+        "T16",
+        "T28",
+        "fata-certified-range"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    },
+    {
+      "id": "M6-01",
+      "milestone": "M6",
+      "title": "最终 galbox-sdk 两作支持版汇总",
+      "depends_on": [
+        "M0-03",
+        "M2-05",
+        "M2-06",
+        "M5-04",
+        "N-03",
+        "F-03"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "final SDK candidate",
+        "two-port compatibility reports",
+        "developer workflow"
+      ],
+      "contracts": [
+        "C01",
+        "C12"
+      ],
+      "acceptance": [
+        "final-product-gate"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+    }
+  ]
+}

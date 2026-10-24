@@ -1,0 +1,57 @@
+{
+  "name": "galbox-sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "UNLICENSED",
+  "files": [
+    "dist",
+    "schema",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/player/index.d.ts",
+      "import": "./dist/player/index.js"
+    },
+    "./protocol": {
+      "types": "./dist/protocol/index.d.ts",
+      "import": "./dist/protocol/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./port-kit": {
+      "types": "./dist/program-tools/index.d.ts",
+      "import": "./dist/program-tools/index.js"
+    },
+    "./player": {
+      "types": "./dist/player/index.d.ts",
+      "import": "./dist/player/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js"
+    },
+    "./react/style.css": "./dist/react/style.css"
+  },
+  "dependencies": {
+    "pixi.js": "8.22.0"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  }
+}

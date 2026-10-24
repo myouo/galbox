@@ -1,0 +1,18 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173",
+  "status": 200,
+  "canvas": 1,
+  "textId": "main:opening-1",
+  "readCount": 0,
+  "media": {
+    "state": "available",
+    "starts": 1,
+    "ended": 0,
+    "blocked": 0,
+    "decoded": 4,
+    "active": 1
+  },
+  "errors": [],
+  "browser": "156.0.8078.4"
+}

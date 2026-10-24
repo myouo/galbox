@@ -1,0 +1,11 @@
+import { readFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import { createCore } from 'galbox-sdk/core';
+import { parseProgram } from 'galbox-sdk/protocol';
+import { MemoryStore } from 'galbox-sdk/testing';
+import { linkProgram } from 'galbox-sdk/port-kit';
+const p=parseProgram(JSON.parse(await readFile('./public/program.json','utf8')));linkProgram(p);
+const core=createCore(p);core.run(100);const save=core.capture();const restored=createCore(p,undefined,save);const actual=restored.capture();assert.deepEqual({...actual,tasks:save.tasks},save);assert.equal(actual.tasks[0].id,save.tasks[0].id);assert.equal(actual.tasks[0].attempt,save.tasks[0].attempt+1);
+const store=new MemoryStore();await store.save('headless',save,0);assert.deepEqual((await store.readSlot('headless')).snapshot,save);
+await assert.rejects(import('galbox-sdk/runtime'),{code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});
+console.log('Independent Node headless imports and restore passed');

@@ -1,0 +1,124 @@
+{
+  "artifact": "galbox-sdk Codex development task kit",
+  "kit_version": "1.0",
+  "date": "2026-10-24",
+  "format": "prompts, architecture, task ledger, acceptance and unchanged design reference",
+  "initial_implementation_scope": [
+    "M0",
+    "M1",
+    "M2"
+  ],
+  "sdk_implementation": "not_started",
+  "kit_validation": {
+    "scope": "documentation_and_task_kit_only",
+    "result": "passed",
+    "unique_tasks": 32,
+    "task_dependencies": "all exist; acyclic; M6 includes every task transitively",
+    "acceptance_families": 28,
+    "contract_groups": 12,
+    "relative_markdown_links_checked": 24,
+    "markdown_fences": "balanced",
+    "agents_md_bytes": 5240,
+    "baseline_sha256": "b86ae7fa2754b693a3319bd33664ed5779094bcaf31a329e69c6b2031d9d7f19",
+    "sdk_implementation": "not_started",
+    "sdk_tests": "not_run"
+  },
+  "manifest_hash_scope": "every other file in this kit; this manifest excludes itself",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 5240,
+      "sha256": "c29a635f2bfb1805add9e0ab7f717bf55c8814914141d1d5cc3073bb24d20b2b"
+    },
+    {
+      "path": "CODEX_CONTINUE.md",
+      "bytes": 2875,
+      "sha256": "7a2c9b5a0a569bbde9aa384a5f6c02fe3f7aec36a6aa2634cb9995a62b7ec057"
+    },
+    {
+      "path": "CODEX_START.md",
+      "bytes": 8088,
+      "sha256": "135cede2cb69436ea3048d2320ba4b76b5d29885b886c9b3700ab88828e38691"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3830,
+      "sha256": "a594691fee248b060bb4745ce9acdbc930843f88770a7dfc92065e515e126fd8"
+    },
+    {
+      "path": "docs/ACCEPTANCE.md",
+      "bytes": 7150,
+      "sha256": "67642cbfc4a4bdff6763a9ac9c381a93c9b36a9ba3e04dfdb022e572453cbd42"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 10003,
+      "sha256": "7a416a28aab3031231965c3fab75fe8af86c26f79b8a7a73aae0d6e94ee7c25d"
+    },
+    {
+      "path": "docs/CONTRACTS.md",
+      "bytes": 8606,
+      "sha256": "0dfb88e9810bbef0f8293bc87740482c265211ac0eaa94d63ab92c19abc13b53"
+    },
+    {
+      "path": "docs/FIXTURE_NOVEL.md",
+      "bytes": 5955,
+      "sha256": "f3fe4a25d40c840878f36b60f621888da324e5309fb5a0bd631373064aba3ce2"
+    },
+    {
+      "path": "docs/IMPLEMENTATION_WORKFLOW.md",
+      "bytes": 3559,
+      "sha256": "2254d8f19b8f7247da2f0eb227e83b49d7d143c72010f05b75f15016ed44a8da"
+    },
+    {
+      "path": "docs/INPUTS_REQUIRED.md",
+      "bytes": 1521,
+      "sha256": "88cea2687b05c33d7dbc73a013a5d1d99854761152866b04e6e8abde92f22e98"
+    },
+    {
+      "path": "docs/MILESTONES.md",
+      "bytes": 9913,
+      "sha256": "118f80b717ce651d83ab8ceb4889c44c161db5a6556f489afbd6aa9ac33ea6ec"
+    },
+    {
+      "path": "docs/PRODUCT.md",
+      "bytes": 3241,
+      "sha256": "bb3ad8a6e7c0db4d12313a3dd60ef9b04f4870abdfe693badc3b887ac142961d"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 1394,
+      "sha256": "b481548edd0aa19e02d70c873770aff2a230caa8c4f30f8b25c72dbf0791d535"
+    },
+    {
+      "path": "docs/decisions/0001-initial-architecture.md",
+      "bytes": 1538,
+      "sha256": "62451942d506ef28bb03dccaf34fd4a53e9cb2dfed56773e715c4a8de635e215"
+    },
+    {
+      "path": "docs/evidence/README.md",
+      "bytes": 603,
+      "sha256": "8909aa0465cf0182802bd7e5fe1a55150fe39768adff607d76015847adfa26da"
+    },
+    {
+      "path": "docs/execplans/ACTIVE.md",
+      "bytes": 953,
+      "sha256": "51e1efc805abeb9ad70d6fb86d3f3dfd31f724f56180b07a50d8f480af33c8e1"
+    },
+    {
+      "path": "docs/reference/GalBox-SDK-v0.6-Implementation-Design.md",
+      "bytes": 158144,
+      "sha256": "b86ae7fa2754b693a3319bd33664ed5779094bcaf31a329e69c6b2031d9d7f19"
+    },
+    {
+      "path": "docs/reference/SOURCES.md",
+      "bytes": 1638,
+      "sha256": "ff22fa9cc3733c79e02a35f578e799e9056b50bc0bca40b5727747c6c22231ce"
+    },
+    {
+      "path": "docs/tasks.json",
+      "bytes": 22025,
+      "sha256": "6d52df7832bf90cf4409946d43ebe670431eb99750aaabe80224cb397109d330"
+    }
+  ]
+}

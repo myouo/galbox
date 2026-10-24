@@ -1,0 +1,1 @@
+{"name":"galbox-independent-consumer","private":true,"type":"module","dependencies":{"react":"19.3.1","react-dom":"19.3.1"},"devDependencies":{"typescript":"5.9.3","vite":"8.3.5","@types/react":"19.2.7","@types/react-dom":"19.2.3"}}

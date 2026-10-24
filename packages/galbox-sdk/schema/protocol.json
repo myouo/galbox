@@ -1,0 +1,1516 @@
+{
+  "$id": "https://galbox.local/protocol-v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Wire",
+  "definitions": {
+    "Value": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "i32",
+              "type": "string"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "bool",
+              "type": "string"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "string",
+              "type": "string"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[^\\x00]{0,4096}$"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ValueKind": {
+      "type": "string",
+      "enum": [
+        "i32",
+        "bool",
+        "string"
+      ]
+    },
+    "Operand": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "literal": {
+              "$ref": "#/definitions/Value"
+            }
+          },
+          "required": [
+            "literal"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "slot": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "slot"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Slot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "kind": {
+          "$ref": "#/definitions/ValueKind"
+        },
+        "initial": {
+          "$ref": "#/definitions/Value"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "initial"
+      ],
+      "additionalProperties": false
+    },
+    "Asset": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "image",
+            "audio"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,4096}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "mime": {
+          "type": "string",
+          "enum": [
+            "image/svg+xml",
+            "image/png",
+            "audio/wav"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "sha256",
+        "mime"
+      ],
+      "additionalProperties": false
+    },
+    "Position": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "alpha"
+      ],
+      "additionalProperties": false
+    },
+    "StageObject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "asset": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "position": {
+          "$ref": "#/definitions/Position"
+        },
+        "z": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "id",
+        "asset",
+        "position",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "Option": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,4096}$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "Instruction": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "control.jump",
+              "type": "string"
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "target"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "control.branch",
+              "type": "string"
+            },
+            "left": {
+              "$ref": "#/definitions/Operand"
+            },
+            "cmp": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "lt"
+              ]
+            },
+            "right": {
+              "$ref": "#/definitions/Operand"
+            },
+            "yes": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "no": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "left",
+            "cmp",
+            "right",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "control.call",
+              "type": "string"
+            },
+            "function": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Operand"
+              },
+              "maxItems": 32
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "function",
+            "args"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "control.return",
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/definitions/Operand"
+            }
+          },
+          "required": [
+            "at",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "control.end",
+              "type": "string"
+            }
+          },
+          "required": [
+            "at",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "value.set",
+              "type": "string"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/Operand"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "dest",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "i32.add.checked",
+              "type": "string"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "left": {
+              "$ref": "#/definitions/Operand"
+            },
+            "right": {
+              "$ref": "#/definitions/Operand"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "dest",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "text.page",
+              "type": "string"
+            },
+            "textId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "speaker": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,4096}$"
+            },
+            "content": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,4096}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "textId",
+            "revision",
+            "speaker",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "text.clear",
+              "type": "string"
+            }
+          },
+          "required": [
+            "at",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "choice",
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Option"
+              },
+              "maxItems": 16
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "options",
+            "dest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "stage.put",
+              "type": "string"
+            },
+            "object": {
+              "$ref": "#/definitions/StageObject"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "object"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "stage.remove",
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "stage.animate",
+              "type": "string"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "to": {
+              "$ref": "#/definitions/Position"
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600000
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "reject"
+              ]
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "task",
+            "id",
+            "to",
+            "duration",
+            "policy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "task.join",
+              "type": "string"
+            },
+            "group": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+              },
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "group",
+            "members"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "wait.delay",
+              "type": "string"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600000
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "task",
+            "duration"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "audio.play",
+              "type": "string"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "bgm",
+                "voice",
+                "sfx"
+              ]
+            },
+            "gain": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "loop": {
+              "type": "boolean"
+            },
+            "restore": {
+              "type": "string",
+              "enum": [
+                "replay",
+                "stop"
+              ]
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "task",
+            "asset",
+            "channel",
+            "gain",
+            "loop",
+            "restore"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "audio.stop",
+              "type": "string"
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "bgm",
+                "voice",
+                "sfx"
+              ]
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "channel"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "audio.gain",
+              "type": "string"
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "bgm",
+                "voice",
+                "sfx"
+              ]
+            },
+            "gain": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "channel",
+            "gain"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "profile.set",
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/Value"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "key",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "profile.flush",
+              "type": "string"
+            }
+          },
+          "required": [
+            "at",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "checkpoint",
+              "type": "string"
+            }
+          },
+          "required": [
+            "at",
+            "op"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "save.policy",
+              "type": "string"
+            },
+            "allow": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "allow"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Function": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "layout": {
+          "const": 1,
+          "type": "integer"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Slot"
+          },
+          "maxItems": 32
+        },
+        "locals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Slot"
+          },
+          "maxItems": 128
+        },
+        "returns": {
+          "type": "string",
+          "enum": [
+            "void",
+            "i32",
+            "string",
+            "bool"
+          ]
+        },
+        "entry": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "code": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Instruction"
+          },
+          "maxItems": 10000
+        }
+      },
+      "required": [
+        "id",
+        "layout",
+        "params",
+        "locals",
+        "returns",
+        "entry",
+        "code"
+      ],
+      "additionalProperties": false
+    },
+    "Program": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "gameId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "release": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "entry": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+          },
+          "maxItems": 32
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Asset"
+          },
+          "maxItems": 256
+        },
+        "globals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Slot"
+          },
+          "maxItems": 128
+        },
+        "functions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Function"
+          },
+          "maxItems": 256
+        },
+        "title": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,128}$"
+        }
+      },
+      "required": [
+        "version",
+        "gameId",
+        "release",
+        "entry",
+        "capabilities",
+        "assets",
+        "globals",
+        "functions",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "Profile": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Value"
+          }
+        },
+        "read": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[^\\x00]{1,4096}$"
+          },
+          "maxItems": 20000
+        }
+      },
+      "required": [
+        "revision",
+        "values",
+        "read"
+      ],
+      "additionalProperties": false
+    },
+    "Frame": {
+      "type": "object",
+      "properties": {
+        "functionId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "layout": {
+          "const": 1,
+          "type": "integer"
+        },
+        "pc": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "locals": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Value"
+          }
+        },
+        "returnTo": {
+          "type": "object",
+          "properties": {
+            "callAt": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "returnAt": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "callAt",
+            "returnAt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "functionId",
+        "layout",
+        "pc",
+        "locals"
+      ],
+      "additionalProperties": false
+    },
+    "TextState": {
+      "type": "object",
+      "properties": {
+        "textId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "speaker": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,4096}$"
+        },
+        "content": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,4096}$"
+        },
+        "revealed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "textId",
+        "revision",
+        "speaker",
+        "content",
+        "revealed",
+        "prompt"
+      ],
+      "additionalProperties": false
+    },
+    "TaskStatus": {
+      "type": "string",
+      "enum": [
+        "running",
+        "blocked",
+        "completed",
+        "cancelled",
+        "superseded",
+        "failed"
+      ]
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "status": {
+          "$ref": "#/definitions/TaskStatus"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "animation",
+            "delay",
+            "audio"
+          ]
+        },
+        "elapsed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "from": {
+          "$ref": "#/definitions/Position"
+        },
+        "to": {
+          "$ref": "#/definitions/Position"
+        },
+        "asset": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "bgm",
+            "voice",
+            "sfx"
+          ]
+        },
+        "gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "loop": {
+          "type": "boolean"
+        },
+        "restore": {
+          "type": "string",
+          "enum": [
+            "replay",
+            "stop"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "kind",
+        "elapsed",
+        "duration",
+        "attempt",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "TaskGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+          },
+          "maxItems": 64
+        },
+        "consumed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "members",
+        "consumed"
+      ],
+      "additionalProperties": false
+    },
+    "Wait": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "text",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "prompt"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "choice",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Option"
+              },
+              "maxItems": 16
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "prompt",
+            "options",
+            "dest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "group",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "group": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "group"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "delay",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "task"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "flush",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Snapshot": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "release": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "frames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Frame"
+          },
+          "maxItems": 64
+        },
+        "globals": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Value"
+          }
+        },
+        "stage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StageObject"
+          },
+          "maxItems": 128
+        },
+        "text": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/TextState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextState"
+          },
+          "maxItems": 10000
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          },
+          "maxItems": 256
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TaskGroup"
+          },
+          "maxItems": 256
+        },
+        "wait": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Wait"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "saveAllowed": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "running",
+            "waiting",
+            "ended",
+            "failed"
+          ]
+        },
+        "counter": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "profileBasis": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "logicalTime": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "version",
+        "release",
+        "frames",
+        "globals",
+        "stage",
+        "text",
+        "history",
+        "tasks",
+        "groups",
+        "wait",
+        "saveAllowed",
+        "status",
+        "counter",
+        "profileBasis",
+        "logicalTime"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "program": {
+      "$ref": "#/definitions/Program"
+    },
+    "snapshot": {
+      "$ref": "#/definitions/Snapshot"
+    },
+    "profile": {
+      "$ref": "#/definitions/Profile"
+    }
+  },
+  "required": [
+    "program",
+    "snapshot",
+    "profile"
+  ],
+  "additionalProperties": false
+}

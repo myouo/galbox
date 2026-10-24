@@ -1,0 +1,20 @@
+{
+  "result": "passed",
+  "isolatedDirectory": "/dev/shm/galbox-consumer-i4HElU",
+  "installed": "/dev/shm/galbox-consumer-i4HElU/node_modules/.pnpm/galbox-sdk@file+galbox-sdk.tgz_react-dom@19.3.1_react@19.3.1__react@19.3.1/node_modules/galbox-sdk",
+  "typescript": "5.9.3",
+  "skipLibCheck": false,
+  "tarball": "artifacts/galbox-sdk-0.1.0.tgz",
+  "tarballSha256": "53109c8f8bedd168037c16a0a741e0fbf2158fddebabb0e91c35458d8bf7e937",
+  "browser": "156.0.8078.4",
+  "publicEntries": [
+    "core",
+    "protocol",
+    "port-kit",
+    "player",
+    "react",
+    "react/style.css",
+    "testing"
+  ],
+  "playSaveRestore": true
+}
