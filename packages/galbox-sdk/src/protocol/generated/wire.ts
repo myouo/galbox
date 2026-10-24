@@ -175,6 +175,12 @@ export type Instruction =
       version: number;
       argsSchema: SchemaRef;
       args: JsonValue;
+    }
+  | {
+      at: string;
+      op: 'profile.i32.add.checked';
+      key: string;
+      delta: number;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -275,6 +281,22 @@ export type OperationFlow =
       kind: 'wait';
       wait: OperationWait;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RecipeOpcode".
+ */
+export type RecipeOpcode =
+  | 'value.set'
+  | 'i32.add.checked'
+  | 'stage.put'
+  | 'stage.remove'
+  | 'text.clear'
+  | 'audio.play'
+  | 'audio.stop'
+  | 'audio.gain'
+  | 'profile.set'
+  | 'profile.i32.add.checked'
+  | 'extension.invoke';
 
 export interface Wire {
   program: Program;
@@ -573,4 +595,17 @@ export interface OperationResume {
   attempt: number;
   schema: SchemaRef;
   data: JsonValue;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RestoreRecipe".
+ */
+export interface RestoreRecipe {
+  version: 1;
+  id: string;
+  maxSteps: number;
+  /**
+   * @maxItems 128
+   */
+  steps: Instruction[];
 }

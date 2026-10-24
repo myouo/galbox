@@ -1,4 +1,4 @@
-# 当前能力：M0–M2 + M3-01/02
+# 当前能力：M0–M2 + M3-01～03
 
 此表描述实现范围；实际通过状态和命令证据见 tasks.json 与 evidence/。
 
@@ -26,3 +26,5 @@ OperationSpec 参数表由 schema 生成，可从 `galbox-sdk/protocol` 的 oper
 M3-01 已实现受检 codec/有状态操作、signal wait、失败原子性和 SavedInvocation 迁移，见 OPERATIONS.md；跨内容 release 与原档迁移尚不支持。
 
 M3-02 提供来源绑定与 fixture-save@1 准备/报告，见 SAVE_BRIDGE.md；不等于持久导入、加载钩子或原作兼容已完成。
+
+M3-03 候选恢复执行已完成；加载计数的 durable 恰好一次、独立 profile 导入与 UI 仍待 M3-04。

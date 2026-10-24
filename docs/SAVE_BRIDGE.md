@@ -1,6 +1,6 @@
 # SaveBridge：来源绑定与准备
 
-当前 M3-02 提供来源/codec/mapping 正式工厂和不可变转换计划；M3-03/04 的 recipe、导入持久化和激活尚未因此完成。
+当前 M3-02 提供来源/codec/mapping 正式工厂和不可变转换计划；M3-03 的候选 recipe 已实现，M3-04 的导入持久化和激活尚未因此完成。
 
 - 使用 `galbox-sdk/port-kit` 的 defineSaveSource、defineSaveCodec、defineSaveMapping、bindOriginalSave。泛型从 codec 一侧锚定，保留 SourceKey、schema ID 和版本；状态还保持不变型，不能用同形来源或同族不同 schema 混接。
 - 文件输入是平台中立的 `{name,bytes:Uint8Array}`。准备立即私有化 bytes；codec 通过 FormatContext 的 SHA-256 与严格 UTF-8 端口处理它们。Core 不读取 Blob/File/Node I/O。
@@ -13,3 +13,5 @@
 用 `pnpm fixture` 重建公开样本；`pnpm test:compatibility` 运行真实合成格式负例并将 N/F 报为 needs-input。`pnpm test:compatibility --require-real` 在缺少原作证据时返回 2，不能把合成格式当作 NScripter/KAG 或商业作品认证。
 
 独立打包消费者的 tests/consumer/binding.ts 另行登记自己的 synthetic source 与 mapping，证明公共工厂可被第三方使用。真实作品必须另外提供 edition、可用资源/行为、原档附件和原作继续参照。
+
+M3-03：defineRestoreRecipe/prepareRestoreRecipe 在独立候选中执行有限步骤，准备计划保留 baseline/recipe，预演不会把计数提前写回 profile。禁止互动、媒体等待、循环和未授权扩展；任何失败均回滚。实际存储导入与每次激活钩子仍由 M3-04 接续。

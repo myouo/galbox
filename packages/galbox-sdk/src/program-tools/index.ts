@@ -4,3 +4,5 @@ export {defineOperation,waitFor,createOperationRegistry,defineInvocationMigratio
 export type {OperationDefinition,OperationRegistry,OperationContext,OperationInput,OperationResult,InvocationData,TypedInvocation,SerializableWait} from '../core/operations.js';
 export {defineSaveSource,defineSaveCodec,defineSaveMapping,bindOriginalSave,createSaveBindingRegistry} from '../save-bridge/index.js';
 export type {OriginalSaveFile,FormatContext,CompatibilityBinding,PreparedImport} from '../save-bridge/index.js';
+export {defineRestoreRecipe,prepareRestoreRecipe} from '../runtime/recipe.js';
+export type {RecoveryInstruction,PreparedRecovery} from '../runtime/recipe.js';

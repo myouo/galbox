@@ -1,4 +1,4 @@
-import {codec,defineSaveSource,defineSaveCodec,defineSaveMapping,bindOriginalSave,linkProgram} from 'galbox-sdk/port-kit';
+import {codec,defineSaveSource,defineSaveCodec,defineSaveMapping,bindOriginalSave,linkProgram,defineRestoreRecipe,instruction} from 'galbox-sdk/port-kit';
 import {bool,i32,parseValue,readUnit} from 'galbox-sdk/protocol';
 import type {Snapshot,Value} from 'galbox-sdk/protocol';
 const text=codec.string('fixture.string');
@@ -37,7 +37,7 @@ export function createFixtureBinding(input:unknown){
   const globals:Record<string,Value>=Object.fromEntries(target.globals.map(v=>[v.id,parseValue(v.initial)]));globals.visits=i32(original.slot.visits);globals.route={kind:'string',value:original.slot.route};
   const snapshot:Snapshot={version:1,release:target.release,frames:[{functionId:'main',layout:1,pc:choice.at,locals:Object.fromEntries([...main.params,...main.locals].map(v=>[v.id,parseValue(v.initial)]))}],globals,
    stage:[{id:'background',asset:'shore',position:{x:0,y:0,alpha:1},z:0},{id:'light',asset:'lamp',position:{x:910,y:75,alpha:1},z:1},{id:'letter',asset:'envelope',position:{x:500,y:300,alpha:1},z:2}],text:null,history:[],tasks:[],groups:[],wait:{kind:'choice',at:choice.at,prompt:1,options:choice.options.map(o=>({...o})),dest:choice.dest},saveAllowed:true,status:'waiting',counter:1,profileBasis:0,logicalTime:0,invocations:[]};
-  return {grade:'semantic',warnings:['synthetic fixture only; no commercial save compatibility','Original fixture contains no backlog or exact media position; recover the declared choice state'],payload:{snapshot,profile:{revision:0,values:{shoreUnlocked:bool(original.global.shoreUnlocked),towerUnlocked:bool(original.global.towerUnlocked),syntheticLoadCount:i32(original.global.syntheticLoadCount)},read:[...original.global.readUnits]}}};
+  return {grade:'semantic',warnings:['synthetic fixture only; no commercial save compatibility','Original fixture contains no backlog or exact media position; recover the declared choice state'],payload:{snapshot,recipe:defineRestoreRecipe('lighthouse.synthetic-load@1',[instruction('stage.put',{at:'recipe:background',object:snapshot.stage[0]!}),instruction('stage.put',{at:'recipe:light',object:snapshot.stage[1]!}),instruction('stage.put',{at:'recipe:letter',object:snapshot.stage[2]!}),instruction('audio.play',{at:'recipe:music',task:'restored-music',asset:'bgm',channel:'bgm',gain:.3,loop:true,restore:'replay'}),instruction('profile.i32.add.checked',{at:'recipe:count',key:'syntheticLoadCount',delta:1})]),profile:{revision:0,values:{shoreUnlocked:bool(original.global.shoreUnlocked),towerUnlocked:bool(original.global.towerUnlocked),syntheticLoadCount:i32(original.global.syntheticLoadCount)},read:[...original.global.readUnits]}}};
  }});
  // Link here as well so callers cannot accidentally prepare a different fixture target.
  if(program.gameId!=='lighthouse-letters'||program.release!=='lighthouse-1')throw new Error('FIXTURE_TARGET');

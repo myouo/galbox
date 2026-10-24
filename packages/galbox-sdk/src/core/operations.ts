@@ -21,7 +21,7 @@ export interface OperationSpec<Id extends string,A,S,R extends ResumeMessage,AI 
 export interface RuntimeOperation {
   readonly id:string;readonly version:number;readonly argsSchema:Readonly<SchemaRef>;readonly stateSchema:Readonly<SchemaRef>;readonly resumeSchema:Readonly<SchemaRef>;
   readonly manifest:OperationManifest<ResumeMessage>;
-  instruction(at:string,args:unknown):Instruction;
+  instruction(at:string,args:unknown):Extract<Instruction,{op:'extension.invoke'}>;
   validateArgs(args:unknown,schema:Readonly<SchemaRef>):JsonValue;
   validateSaved(saved:unknown):SavedInvocation;
   start(args:unknown,context:OperationContext):OperationOutcome;
@@ -30,7 +30,7 @@ export interface RuntimeOperation {
 }
 export interface OperationDefinition<Id extends string,A,S,R extends ResumeMessage,RI extends string> extends RuntimeOperation {
   readonly id:Id;
-  invocation(at:string,args:NoInfer<A>):Instruction;
+  invocation(at:string,args:NoInfer<A>):Extract<Instruction,{op:'extension.invoke'}>;
   readSaved(saved:unknown):TypedInvocation<A,S,R,RI>;
   encodeInvocation(original:SavedInvocation,data:InvocationData<NoInfer<A>,NoInfer<S>,NoInfer<R>,NoInfer<RI>>):SavedInvocation;
   result(wait:Readonly<OperationWait>,invocation:string,event:NoInfer<R>):OperationResume;
@@ -73,7 +73,7 @@ export function defineOperation<const Id extends string,A,S,R extends ResumeMess
   }
   const definition:OperationDefinition<Id,A,S,R,RI>={
     id,version,argsSchema:args.identity,stateSchema:state.identity,resumeSchema:resume.identity,manifest,
-    instruction(at,input){return parseInstruction({at,op:'extension.invoke',operation:id,version,argsSchema:{...args.identity},args:args.parse(input)});},
+    instruction(at,input){const value=parseInstruction({at,op:'extension.invoke',operation:id,version,argsSchema:{...args.identity},args:args.parse(input)});ensure(value.op==='extension.invoke','OPERATION_INSTRUCTION',id);return value;},
     invocation(at,input){return definition.instruction(at,input);},
     validateArgs(input,schema){ensure(schemaEqual(schema,args.identity),'OPERATION_ARGS_SCHEMA',id);return parseJsonValue(args.parse(input));},
     validateSaved(input){readSaved(input);return parseSavedInvocation(input);},readSaved,

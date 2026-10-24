@@ -32,3 +32,6 @@ const v2=defineOperation({id:'typed.counter',version:2,args,state,resume,manifes
 defineInvocationMigration(op,v2,s=>({args:{delta:s.args.delta},state:{count:s.state.count},phase:s.phase,wait:s.wait}));
 // @ts-expect-error complete migration must return the target args schema
 defineInvocationMigration(op,v2,s=>({args:{delta:'wrong'},state:{count:s.state.count},phase:s.phase,wait:s.wait}));
+import {defineRestoreRecipe} from '../../packages/galbox-sdk/src/program-tools/index.js';
+// @ts-expect-error the real recipe factory does not permit interactive instructions
+defineRestoreRecipe('bad',[{at:'bad',op:'choice',dest:'route',options:[]}]);

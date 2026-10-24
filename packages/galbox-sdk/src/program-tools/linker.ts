@@ -14,10 +14,10 @@ export function instruction<K extends Instruction['op']>(op: K, args: Omit<Extra
   function isKind(i: Instruction): i is Extract<Instruction,{op: K}> { return i.op === op; }
   ensure(isKind(value),'OPCODE','Factory opcode mismatch'); return value;
 }
-export function set<K extends ValueKind>(at: string, dest: Variable<K>, value: Extract<Value,{kind:NoInfer<K>}>): Instruction {
+export function set<K extends ValueKind>(at: string, dest: Variable<K>, value: Extract<Value,{kind:NoInfer<K>}>): Extract<Instruction,{op:'value.set'}> {
   ensure(dest.kind === value.kind,'VALUE_KIND',dest.id); return instruction('value.set',{at,dest:dest.id,value:literal(value)});
 }
-export function imagePut(at: string, id: string, asset: AssetRef<'image'>, position: Position, z=0): Instruction {
+export function imagePut(at: string, id: string, asset: AssetRef<'image'>, position: Position, z=0): Extract<Instruction,{op:'stage.put'}> {
   ensure(asset.kind === 'image','ASSET_KIND',asset.id); return instruction('stage.put',{at,object:{id,asset:asset.id,position,z}});
 }
 export class ProgramBuilder {

@@ -912,6 +912,35 @@
             "args"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "profile.i32.add.checked",
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "delta": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "key",
+            "delta"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1931,6 +1960,54 @@
         "attempt",
         "schema",
         "data"
+      ],
+      "additionalProperties": false
+    },
+    "RecipeOpcode": {
+      "type": "string",
+      "enum": [
+        "value.set",
+        "i32.add.checked",
+        "stage.put",
+        "stage.remove",
+        "text.clear",
+        "audio.play",
+        "audio.stop",
+        "audio.gain",
+        "profile.set",
+        "profile.i32.add.checked",
+        "extension.invoke"
+      ]
+    },
+    "RestoreRecipe": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "maxSteps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Instruction"
+          },
+          "maxItems": 128
+        }
+      },
+      "required": [
+        "version",
+        "id",
+        "maxSteps",
+        "steps"
       ],
       "additionalProperties": false
     }

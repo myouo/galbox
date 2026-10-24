@@ -1,9 +1,9 @@
-import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation } from '../protocol/index.js';
+import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { emptyOperations, operationContext } from './operations.js';
 import type { OperationRegistry } from './operations.js';
-export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial';}
+export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';}
 export type CoreEvent =
  | OperationResume
  | {type:'reveal' | 'advance' | 'step'; prompt:number; inputId:string}
@@ -29,10 +29,12 @@ export class Core {
   private textRemainder=0;
   private error:string|null=null;
   private revoked=false;
-  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, mode:'restore'|'initial'='restore',private readonly operations:OperationRegistry=emptyOperations) {
-    ensure(mode==='restore'||mode==='initial','ACTIVATION_MODE','Unknown activation mode');
+  private recovering=false;
+  private reducing=false;
+  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations) {
+    ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
     this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);
-    if(snapshot!==undefined) { this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode); }
+    if(snapshot!==undefined) { this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(this.program.entry);
       this.s={version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[]};
@@ -53,15 +55,15 @@ export class Core {
   }
   private setProfile(key:string,value:Value):void {this.profile.values[key]=parseValue(value);this.changes.push({seq:++this.progressSeq,type:'set',key,value:parseValue(value)});}
   private read():void { const text=this.s.text;ensure(text,'TEXT','No page');const unit=readUnit(text);if(!this.profile.read.includes(unit)){this.profile.read.push(unit);this.changes.push({seq:++this.progressSeq,type:'read',unit});} }
-  view():CoreView {return {run:parseSnapshot(this.s),profile:parseProfile(this.profile),dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()};}
+  view():CoreView {ensure(!this.reducing,'CORE_REENTRANT','Use the reducer context');return {run:parseSnapshot(this.s),profile:parseProfile(this.profile),dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()};}
   pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:{...c});}
-  acknowledge(through:number,revision:number):void { ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
+  acknowledge(through:number,revision:number):void { ensure(!this.reducing,'CORE_REENTRANT','No receipt mutation inside a reducer');ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
   private operationSaveAllowed():boolean {const w=this.s.wait;if(w?.kind!=='operation')return true;const saved=this.s.invocations?.find(v=>v.id===w.invocation);if(!saved)return false;const op=this.operations.get(saved.operation,saved.version);return op.manifest.save==='safe'&&op.manifest.restore==='continue';}
   canSave():boolean {return this.operationSaveAllowed()&&!this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
   private saveReason():string|null {return !this.operationSaveAllowed()?'OPERATION_UNRESTORABLE':this.revoked?'SESSION_REVOKED':!this.s.saveAllowed?'SAVE_POLICY':this.s.status==='running'?'BUDGET_CONTINUATION':this.s.status==='failed'?'CORE_FAILED':this.s.wait?.kind==='flush'?'PROFILE_BARRIER':null;}
-  capture():Snapshot {ensure(this.canSave(),'SAVE_UNAVAILABLE',this.saveReason()??'unknown');return parseSnapshot(this.s);}
-  drainEffects():Effect[] {const effects=this.effects;this.effects=[];return effects;}
-  revoke():void {this.revoked=true;this.effects=[];}
+  capture():Snapshot {ensure(!this.reducing,'CORE_REENTRANT','No capture inside a reducer');ensure(this.canSave(),'SAVE_UNAVAILABLE',this.saveReason()??'unknown');return parseSnapshot(this.s);}
+  drainEffects():Effect[] {ensure(!this.reducing,'CORE_REENTRANT','No effect drain inside a reducer');const effects=this.effects;this.effects=[];return effects;}
+  revoke():void {ensure(!this.reducing,'CORE_REENTRANT','No authority mutation inside a reducer');this.revoked=true;this.effects=[];}
   private resumeEffects(mode:'restore'|'initial'):void {
     for(const invocation of this.s.invocations??[])if(invocation.wait)invocation.wait.attempt++;
     for(const t of this.s.tasks)if(t.kind==='audio'&&['running','blocked'].includes(t.status)) {
@@ -70,11 +72,12 @@ export class Core {
       else {t.status='running';this.effects.push({type:'audio',task:{...t}});}
     }
     // Acknowledged replay intentions are recreated even for one-shot channels.
-    for(const t of this.s.tasks)if(mode==='restore'&&t.kind==='audio'&&t.status==='completed'&&t.restore==='replay') {
+    for(const t of this.s.tasks)if(t.kind==='audio'&&t.status==='completed'&&t.restore==='replay') {
       t.attempt++;this.effects.push({type:'audio',task:{...t}});
     }
   }
   accept(event:CoreEvent):void {
+    ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');
     if(this.revoked||this.s.status==='failed')return;
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
@@ -126,12 +129,31 @@ export class Core {
     this.top().pc=this.next();this.s.wait=null;this.s.status='running';
   }
   run(budget:number):'yield'|'stable' {
+    ensure(!this.reducing,'CORE_REENTRANT','Reentrant execution is forbidden');
     ensure(Number.isInteger(budget)&&budget>0,'BUDGET','Positive integer required');
     if(this.revoked)return 'stable';
     for(let j=0;j<budget&&this.s.status==='running';j++) {
       const op=this.op();try {this.execute(op);}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';if(op.op!=='extension.invoke')this.s.status='failed';throw e;}
     }
     return this.s.status==='running'?'yield':'stable';
+  }
+  applyRecipe(input:unknown):void {
+    ensure(this.mode==='candidate'&&!this.revoked&&!this.recovering&&!this.reducing,'RECIPE_CANDIDATE','Recovery can only mutate an isolated candidate');
+    const recipe=parseRestoreRecipe(input);ensure(recipe.steps.length<=recipe.maxSteps,'RECIPE_BUDGET','Step count exceeds the declared bound');
+    ensure(this.s.status==='waiting'||this.s.status==='ended','RECIPE_PHASE','A semantic baseline is required');
+    const before={s:this.s,profile:this.profile,changes:this.changes,effects:this.effects,seq:this.progressSeq};
+    this.s=parseSnapshot(this.s);this.profile=parseProfile(this.profile);this.changes=this.pending();this.effects=[...this.effects];this.recovering=true;
+    try {
+      for(const raw of recipe.steps){
+        const step=parseInstruction(raw);ensure(recoveryOpcodes.some(op=>op===step.op),'RECIPE_OPCODE',step.op);
+        if(step.op==='stage.put')ensure(this.program.assets.find(a=>a.id===step.object.asset)?.kind==='image','ASSET_KIND',step.object.asset);
+        if(step.op==='audio.play')ensure(this.program.assets.find(a=>a.id===step.asset)?.kind==='audio','ASSET_KIND',step.asset);
+        const frame=this.top(),pc=frame.pc,wait=this.s.wait,status=this.s.status,existing=new Set((this.s.invocations??[]).map(v=>v.id));
+        this.execute(step);frame.pc=pc;this.s.wait=wait;this.s.status=status;this.s.invocations=this.s.invocations?.filter(v=>existing.has(v.id))??[];
+      }
+      validateRestore(this.program,this.s,this.operations);this.error=null;
+    }catch(error){this.s=before.s;this.profile=before.profile;this.changes=before.changes;this.effects=before.effects;this.progressSeq=before.seq;this.error=error instanceof GalboxError?error.code:'RECIPE_FAILURE';throw error;}
+    finally {this.recovering=false;}
   }
   private resumeOperation(event:OperationResume):void {
     const w=this.s.wait;if(w?.kind!=='operation')return;
@@ -145,9 +167,12 @@ export class Core {
     this.s=parseSnapshot(this.s);this.profile=parseProfile(this.profile);this.changes=this.pending();this.effects=[...this.effects];
     try {
       const op=this.operations.get(instruction.operation,instruction.version);
+      ensure(!this.recovering||op.manifest.recipe,'RECIPE_OPERATION','Operation is not registered for recovery');
+      op.validateArgs(previous?previous.args:instruction.args,instruction.argsSchema);
       const id=previous?.id??`invocation:${++this.s.counter}`;
       const context=operationContext(this.s.globals,this.profile);
-      const output=previous?op.resume(previous,event,context):op.start(instruction.args,context);
+      this.reducing=true;let output;try {output=previous?op.resume(previous,event,context):op.start(instruction.args,context);}finally{this.reducing=false;}
+      ensure(!this.recovering||output.flow.kind==='continue','RECIPE_CONTROL','Recipe operations cannot wait or jump');
       for(const action of output.actions){if(action.type==='set')this.put(action.dest,action.value);else this.setProfile(action.key,action.value);}
       for(const effect of output.effects){
         ensure(this.program.assets.find(a=>a.id===effect.asset)?.kind==='audio','ASSET_KIND',effect.asset);
@@ -160,7 +185,7 @@ export class Core {
       if(wait){this.s.wait={kind:'operation',at:instruction.at,invocation:id};this.s.status='waiting';}
       else {
         if(output.flow.kind==='jump'){const target=output.flow.target;ensure(this.fn(this.top().functionId).code.some(i=>i.at===target),'ADDRESS_SCOPE',target);this.top().pc=target;}
-        else this.top().pc=this.next();
+        else if(!this.recovering)this.top().pc=this.next();
         this.s.wait=null;this.s.status='running';
       }
       this.error=null;
@@ -213,13 +238,14 @@ export class Core {
       }
       case 'audio.stop':this.s.tasks.filter(t=>t.kind==='audio'&&t.channel===i.channel).forEach(t=>{t.status='cancelled';});this.effects.push({type:'audio-stop',channel:i.channel});break;
       case 'audio.gain':this.s.tasks.filter(t=>t.kind==='audio'&&t.channel===i.channel).forEach(t=>{t.gain=i.gain;});this.effects.push({type:'audio-gain',channel:i.channel,gain:i.gain});break;
+      case 'profile.i32.add.checked': {const previous=this.profile.values[i.key];ensure(previous?.kind==='i32','PROFILE_KIND',i.key);this.setProfile(i.key,i32(previous.value+i.delta));break;}
       case 'profile.set':this.setProfile(i.key,i.value);break;
       case 'profile.flush':wait({kind:'flush',at:i.at});return;
       case 'checkpoint':wait({kind:'flush',at:i.at});return;
       case 'save.policy':this.s.saveAllowed=i.allow;break;
       default: {const impossible:never=i;throw new GalboxError('UNSUPPORTED_OPCODE',String(impossible));}
     }
-    this.top().pc=this.next();
+    if(!this.recovering)this.top().pc=this.next();
   }
 }
 export function validateRestore(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations):Snapshot {

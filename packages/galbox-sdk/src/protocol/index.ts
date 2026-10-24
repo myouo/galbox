@@ -1,7 +1,7 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe } from './generated/wire.js';
 export type * from './generated/wire.js';
-export { operationSpecs } from './generated/operations.js';
+export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
 interface ReadonlyJsonArray extends ReadonlyArray<ReadonlyJsonValue> {}
 interface ReadonlyJsonObject {readonly [key:string]:ReadonlyJsonValue;}
@@ -64,3 +64,5 @@ export function parseOperationResume(input:unknown):OperationResume {const data=
 export function parseOperationWait(input:unknown):OperationWait {const data=detached(input);ensure(validateOperationWait(data),'OPERATION_WAIT',JSON.stringify(validateOperationWait.errors));return data;}
 export {codec} from './codecs.js';
 export type {ProtocolCodec,Decoded} from './codecs.js';
+
+export function parseRestoreRecipe(input:unknown):RestoreRecipe {const data=detached(input);ensure(validateRestoreRecipe(data),'SCHEMA_RECIPE',JSON.stringify(validateRestoreRecipe.errors));return data;}

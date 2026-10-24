@@ -300,5 +300,19 @@ export const operationSpecs = {
       "argsSchema",
       "args"
     ]
+  },
+  "profile.i32.add.checked": {
+    "opcode": "profile.i32.add.checked",
+    "parameters": [
+      "at",
+      "key",
+      "delta"
+    ],
+    "required": [
+      "at",
+      "key",
+      "delta"
+    ]
   }
 } as const;
+export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke"] as const;
