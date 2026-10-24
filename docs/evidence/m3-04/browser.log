@@ -1,0 +1,76 @@
+$ pnpm build && pnpm build:harness && playwright test
+$ pnpm build:sdk && vite build --config apps/playground/vite.config.ts
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 750 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-BXPKcxwa.css                        5.61 kB │ gzip:   1.96 kB
+apps/playground/dist/assets/webworkerAll-QuvIdjFJ.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-BCdovYqg.js                         15.18 kB │ gzip:   4.76 kB
+apps/playground/dist/assets/browserAll-DjZ_rFGn.js                   43.48 kB │ gzip:  11.27 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-CyL1eua2.js                     1,005.11 kB │ gzip: 194.71 kB
+
+✓ built in 524ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 741 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-PstVo28z.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-B9w21qG_.js                         18.67 kB │ gzip:   5.40 kB
+tests/browser/harness/dist/init-CCIsTtXE.js                         31.99 kB │ gzip:   9.65 kB
+tests/browser/harness/dist/browserAll-BcquLmIe.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/sdk.js                                1,699.47 kB │ gzip: 188.47 kB
+
+✓ built in 373ms
+[WebServer] (node:3911311) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3911333) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3911492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 19 tests using 1 worker
+
+(node:3911549) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/adapters.spec.ts:3:1 › browser resource identity, digest, owned bytes, cancellation lease and actual decode failure (787ms)
+  ✓   2 tests/browser/adapters.spec.ts:23:1 › real IndexedDB isolates namespaces and rejects profile/slot/head conflicts (374ms)
+  ✓   3 tests/browser/adapters.spec.ts:35:1 › public Player saves partial animation group, resumes with new audio epoch, cleans instances (4.4s)
+  ✓   4 tests/browser/adapters.spec.ts:52:1 › load generations retain current profile and a delayed older preparation never takes over (1.6s)
+  ✓   5 tests/browser/adapters.spec.ts:67:1 › save already inside storage commit reports success after dispose; resources stay released (780ms)
+  ✓   6 tests/browser/adapters.spec.ts:77:1 › blocked real audio startup retries the same task without repeating narrative updates (802ms)
+  ✓   7 tests/browser/adapters.spec.ts:88:1 › old input epoch cannot act on an identical restored prompt; pause reasons remain independent (1.4s)
+  ✓   8 tests/browser/adapters.spec.ts:98:1 › postcommit failure retries the same activation; a new load supersedes it permanently (1.1s)
+  ✓   9 tests/browser/adapters.spec.ts:110:1 › missing Web Audio fails with an explicit unavailable diagnostic and no leftover canvas (456ms)
+  ✓  10 tests/browser/adapters.spec.ts:117:1 › initial Player activation plays a stop-on-restore one-shot; subsequent load stops it (1.0s)
+  ✓  11 tests/browser/imports.spec.ts:3:1 › real UI imports into an independent profile, loads separately and preserves hooks after save/refresh (7.0s)
+  ✓  12 tests/browser/imports.spec.ts:17:1 › lost import/activation replies remain idempotent; pending retry does not reapply the hook (2.0s)
+  ✓  13 tests/browser/imports.spec.ts:27:1 › the final activation barrier hands off dirty profile before recomputing the load recipe (1.3s)
+  ✓  14 tests/browser/imports.spec.ts:35:1 › a late File read cannot clear or replace a newer prepared import (563ms)
+  ✓  15 tests/browser/player.spec.ts:17:1 › real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary profile (15.0s)
+  ✓  16 tests/browser/player.spec.ts:34:1 › menu pointer release cannot advance and repeated create/dispose releases canvas/audio (2.6s)
+  ✓  17 tests/browser/player.spec.ts:39:1 › keyboard activation consumes one stage and a menu cancels a held key (960ms)
+  ✓  18 tests/browser/player.spec.ts:43:1 › a blocked real audio start exposes a working retry button without advancing the story (2.1s)
+  ✓  19 tests/browser/synthetic.spec.ts:3:1 › synthetic binary preparation uses real Web Crypto and rejects corrupt source bytes (1.2s)
+
+  19 passed (53.7s)

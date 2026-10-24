@@ -5,7 +5,7 @@ const schema=codec.object('consumer.original@1',{locator:codec.literal('consumer
 const source=defineSaveSource('consumer-synthetic@1',schema);
 const decoder=defineSaveCodec(source,{version:1,async decode(files,context){const file=files.find(f=>f.name==='original.json');if(!file)return {status:'needs-input',code:'CONSUMER_FILE',message:'Expected original.json'};const input:unknown=JSON.parse(context.decodeUtf8(file.bytes));return {status:'ready',state:schema.parse(input)};}});
 export function consumerBinding(program:Program,snapshot:Snapshot){
- const mapping=defineSaveMapping(decoder,{id:'consumer.mapping@1',version:1,target:{gameId:program.gameId,release:program.release},convert(state){return {grade:'semantic',warnings:['synthetic consumer fixture only'],payload:{snapshot,recipe:defineRestoreRecipe('consumer.load',[instruction('profile.i32.add.checked',{at:'recipe:loads',key:'loads',delta:1})]),profile:{revision:0,values:{imported:bool(state.flag),loads:i32(4)},read:[]}}};}});
+ const mapping=defineSaveMapping(decoder,{id:'consumer.mapping@1',version:1,target:{gameId:program.gameId,release:program.release},convert(state){return {grade:'semantic',warnings:['synthetic consumer fixture only'],payload:{snapshot,onLoad:defineRestoreRecipe('consumer.on-load',[instruction('profile.i32.add.checked',{at:'recipe:on-load',key:'loads',delta:1})]),recipe:defineRestoreRecipe('consumer.load',[instruction('profile.i32.add.checked',{at:'recipe:loads',key:'loads',delta:1})]),profile:{revision:0,values:{imported:bool(state.flag),loads:i32(4)},read:[]}}};}});
  return bindOriginalSave(decoder,mapping);
 }
 const otherSource=defineSaveSource('consumer-other@1',schema);

@@ -17,3 +17,5 @@
 未启用的计时选择、视频、relative 动画、复杂 source 值、有状态扩展、迁移和 SaveBridge 明确拒绝。M3–M5 与 N/F 的义务仍由任务表保留。
 
 依赖核对参考：[Pixi Application](https://pixijs.com/8.x/guides/components/application)、[Vite 环境要求](https://vite.dev/guide/)、[Ajv standalone](https://ajv.js.org/standalone.html)。具体锁定版本以 pnpm-lock.yaml 为准。
+
+M3-04 更新：pending 重试保持语义 activation ID，另领 owner/sequence；已 activated 的记录须显式 load。此部分以 ADR-0006 及实际 Store/Player 为准。

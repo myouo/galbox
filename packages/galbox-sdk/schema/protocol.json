@@ -2010,6 +2010,186 @@
         "steps"
       ],
       "additionalProperties": false
+    },
+    "SlotMetadata": {
+      "type": "object",
+      "properties": {
+        "profileId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[^\\x00]{0,16384}$"
+        },
+        "recipe": {
+          "$ref": "#/definitions/RestoreRecipe"
+        },
+        "onLoad": {
+          "$ref": "#/definitions/RestoreRecipe"
+        },
+        "provenance": {
+          "$ref": "#/definitions/JsonValue"
+        }
+      },
+      "required": [
+        "profileId",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "StoreImport": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "slot": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "snapshot": {
+          "$ref": "#/definitions/Snapshot"
+        },
+        "profile": {
+          "$ref": "#/definitions/Profile"
+        },
+        "metadata": {
+          "$ref": "#/definitions/SlotMetadata"
+        }
+      },
+      "required": [
+        "id",
+        "slot",
+        "snapshot",
+        "profile",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "StoreImportReceipt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "slot": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "profileId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{0,16384}$"
+        }
+      },
+      "required": [
+        "id",
+        "slot",
+        "profileId",
+        "revision",
+        "signature"
+      ],
+      "additionalProperties": false
+    },
+    "ProgressChangeWire": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "seq": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "type": {
+              "const": "read",
+              "type": "string"
+            },
+            "unit": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,4096}$"
+            }
+          },
+          "required": [
+            "seq",
+            "type",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "seq": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "type": {
+              "const": "set",
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+            },
+            "value": {
+              "$ref": "#/definitions/Value"
+            }
+          },
+          "required": [
+            "seq",
+            "type",
+            "key",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ProgressBatchWire": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "baseRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "through": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "changes": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "#/definitions/ProgressChangeWire"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "baseRevision",
+        "through",
+        "changes"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

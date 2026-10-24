@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client';
 import { useEffect,useRef,useState } from 'react';
 import { createPlayer,createHttpProvider } from 'galbox-sdk/player';
+import {createSaveBindingRegistry} from 'galbox-sdk/port-kit';
+import {createFixtureBinding} from '../../../fixtures/synthetic-saves/binding.js';
 import type { Player } from 'galbox-sdk/player';
 import { DefaultUI } from 'galbox-sdk/react';
 import 'galbox-sdk/react/style.css';
@@ -9,7 +11,7 @@ function App(){
  const mount=useRef<HTMLDivElement>(null),[player,setPlayer]=useState<Player|null>(null),[error,setError]=useState('');
  useEffect(()=>{let active=true,instance:Player|undefined;void(async()=>{
   try{const response=await fetch('./program.json');if(!response.ok)throw new Error('PROGRAM_HTTP');const program:unknown=await response.json();if(!mount.current||!active)return;
-   instance=await createPlayer({program,provider:createHttpProvider(program,new URL('./',location.href).href),mount:mount.current,saveCompatibilitySeries:'1'});
+   instance=await createPlayer({program,provider:createHttpProvider(program,new URL('./',location.href).href),mount:mount.current,saveCompatibilitySeries:'1',bindings:createSaveBindingRegistry([createFixtureBinding(program)])});
    if(!active){instance.dispose();return;}setPlayer(instance);
   }catch(e){if(active)setError(e instanceof Error?e.message:String(e));}
  })();return()=>{active=false;instance?.dispose();};},[]);

@@ -15,13 +15,13 @@ export type DecodeResult<S>={readonly status:'ready';readonly state:S}|Failure;
 export interface SaveSource<Key extends string,Schema extends string,S> {readonly key:Key;readonly schema:ProtocolCodec<S,Schema>;readonly validate:(state:S)=>S;}
 export interface DecodedOriginal<Key extends string,Schema extends string,Version extends number,S> {readonly sourceKey:Key;readonly schema:Readonly<SchemaRef>&{readonly id:Schema};readonly codecVersion:Version;readonly state:DeepReadonly<S>;}
 export interface OriginalSaveCodec<Key extends string,Schema extends string,Version extends number,S> {readonly source:SaveSource<Key,Schema,S>;readonly version:Version;decode(files:readonly OriginalSaveFile[],context:FormatContext):Promise<DecodedOriginal<Key,Schema,Version,S>|Failure>;}
-export interface ImportPayload {snapshot:Snapshot;profile:Profile;recipe?:RestoreRecipe;}
+export interface ImportPayload {snapshot:Snapshot;profile:Profile;recipe?:RestoreRecipe;onLoad?:RestoreRecipe;}
 export interface MappedImport {readonly grade:'exact'|'semantic'|'checkpoint';readonly payload:ImportPayload;readonly warnings:readonly string[];}
 export interface SaveMapping<Key extends string,Schema extends string,Version extends number,S> {
-  readonly id:string;readonly version:number;readonly codec:OriginalSaveCodec<Key,Schema,Version,S>;readonly target:Readonly<{gameId:string;release:string}>;
+  readonly id:string;readonly version:number;readonly codec:OriginalSaveCodec<Key,Schema,Version,S>;readonly target:Readonly<{gameId:string;release:string}>;readonly label:string;
   convert(decoded:DecodedOriginal<Key,Schema,Version,S>,program:Program):MappedImport|Failure;
 }
-export interface ConversionReport {readonly status:'ready';readonly grade:MappedImport['grade'];readonly sourceKey:string;readonly sourceSchema:Readonly<SchemaRef>;readonly codecVersion:number;readonly mapping:string;readonly mappingVersion:number;readonly target:Readonly<{gameId:string;release:string}>;readonly files:readonly {readonly name:string;readonly sha256:string}[];readonly warnings:readonly string[];}
+export interface ConversionReport {readonly status:'ready';readonly grade:MappedImport['grade'];readonly sourceKey:string;readonly sourceSchema:Readonly<SchemaRef>;readonly codecVersion:number;readonly mapping:string;readonly mappingVersion:number;readonly target:Readonly<{gameId:string;release:string}>;readonly label:string;readonly files:readonly {readonly name:string;readonly sha256:string}[];readonly warnings:readonly string[];}
 const planBrand:unique symbol=Symbol('PreparedImport');
 export interface PreparedImport {readonly [planBrand]:true;report():ConversionReport;}
 export type PrepareResult={readonly status:'ready';readonly plan:PreparedImport}|Failure;
@@ -45,40 +45,41 @@ export function defineSaveCodec<Key extends string,Schema extends string,S,const
     const decoded=Object.freeze({sourceKey:source.key,schema:source.schema.identity,codecVersion:version,state:freezeJson(source.schema.parse(result.state))});decodedSources.set(decoded,codec);return decoded;
   }};codecs.add(codec);return Object.freeze(codec);
 }
-export function defineSaveMapping<Key extends string,Schema extends string,Version extends number,S>(codec:OriginalSaveCodec<Key,Schema,Version,S>,spec:{readonly id:string;readonly version:number;readonly target:{gameId:string;release:string};readonly convert:(state:DeepReadonly<NoInfer<S>>,program:DeepReadonly<Program>)=>MappedImport|Failure}):SaveMapping<Key,Schema,Version,S> {
-  ensure(codecs.has(codec)&&Number.isInteger(spec.version)&&spec.version>0,'SAVE_MAPPING_FACTORY','Expected a codec factory');const {id,version,convert}=spec,target=Object.freeze({...spec.target});
-  const mapping:SaveMapping<Key,Schema,Version,S>={id,version,codec,target,convert(decoded,program){
+export function defineSaveMapping<Key extends string,Schema extends string,Version extends number,S>(codec:OriginalSaveCodec<Key,Schema,Version,S>,spec:{readonly id:string;readonly version:number;readonly label?:string;readonly target:{gameId:string;release:string};readonly convert:(state:DeepReadonly<NoInfer<S>>,program:DeepReadonly<Program>)=>MappedImport|Failure}):SaveMapping<Key,Schema,Version,S> {
+  ensure(codecs.has(codec)&&Number.isInteger(spec.version)&&spec.version>0,'SAVE_MAPPING_FACTORY','Expected a codec factory');const {id,version,convert}=spec,label=spec.label??spec.id,target=Object.freeze({...spec.target});
+  const mapping:SaveMapping<Key,Schema,Version,S>={id,version,codec,target,label,convert(decoded,program){
     ensure(decodedSources.get(decoded)===codec&&decoded.sourceKey===codec.source.key&&decoded.codecVersion===codec.version&&schemaEqual(decoded.schema,codec.source.schema.identity),'SAVE_SOURCE_IDENTITY','Decoded state belongs to another codec');
     ensure(program.gameId===target.gameId&&program.release===target.release,'SAVE_TARGET','Target edition/release mismatch');return convert(decoded.state,freezeJson(parseProgram(program)));
   }};mappings.add(mapping);return Object.freeze(mapping);
 }
-export interface CompatibilityBinding<Key extends string=string,Schema extends string=string,Version extends number=number,S=unknown> {readonly sourceKey:Key;readonly schema:Schema;readonly codecVersion:Version;readonly mapping:string;prepare(files:readonly OriginalSaveFile[],context:FormatContext,program:unknown,operations?:OperationRegistry):Promise<PrepareResult>;}
+export interface CompatibilityBinding<Key extends string=string,Schema extends string=string,Version extends number=number,S=unknown> {readonly sourceKey:Key;readonly schema:Schema;readonly codecVersion:Version;readonly mapping:string;readonly label:string;prepare(files:readonly OriginalSaveFile[],context:FormatContext,program:unknown,operations?:OperationRegistry):Promise<PrepareResult>;}
 function canonicalProgram(program:Program):string {
   return JSON.stringify(program,(_key:string,value:unknown)=>value!==null&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(k=>[k,Reflect.get(value,k)])):value);
 }
 function reportCopy(report:ConversionReport):ConversionReport {return {...report,sourceSchema:{...report.sourceSchema},target:{...report.target},files:report.files.map(f=>({...f})),warnings:[...report.warnings]};}
 export function bindOriginalSave<Key extends string,Schema extends string,Version extends number,S>(codec:OriginalSaveCodec<Key,Schema,Version,S>,mapping:SaveMapping<NoInfer<Key>,NoInfer<Schema>,NoInfer<Version>,NoInfer<S>>):CompatibilityBinding<Key,Schema,Version,S> {
   ensure(codecs.has(codec)&&mappings.has(mapping)&&mapping.codec===codec,'SAVE_BINDING_IDENTITY','Codec/schema/source/version must match the mapping factory');
-  const binding:CompatibilityBinding<Key,Schema,Version,S>={sourceKey:codec.source.key,schema:codec.source.schema.identity.id,codecVersion:codec.version,mapping:mapping.id,async prepare(input,context,target,operations=emptyOperations){
+  const binding:CompatibilityBinding<Key,Schema,Version,S>={sourceKey:codec.source.key,schema:codec.source.schema.identity.id,codecVersion:codec.version,mapping:mapping.id,label:mapping.label,async prepare(input,context,target,operations=emptyOperations){
     try {
       const files=copyFiles(input),program=linkProgram(target,operations).copy(),port=formatContext(context);
       const decoded=await codec.decode(files,port);if('status'in decoded)return decoded;
       const mapped=mapping.convert(decoded,program);if('status'in mapped){ensure((mapped.status==='needs-input'||mapped.status==='unsupported')&&typeof mapped.code==='string'&&typeof mapped.message==='string','SAVE_MAPPING_RESULT','Invalid diagnostic');return Object.freeze({...mapped});}
       ensure(['exact','semantic','checkpoint'].includes(mapped.grade)&&Array.isArray(mapped.warnings)&&mapped.warnings.length<=64&&mapped.warnings.every(w=>typeof w==='string'),'IMPORT_REPORT','Invalid mapping grade/warnings');
-      const payload:ImportPayload={snapshot:validateRestore(program,mapped.payload.snapshot,operations),profile:parseProfile(mapped.payload.profile),...(mapped.payload.recipe?{recipe:parseRestoreRecipe(mapped.payload.recipe)}:{})};
+      const payload:ImportPayload={snapshot:validateRestore(program,mapped.payload.snapshot,operations),profile:parseProfile(mapped.payload.profile),...(mapped.payload.recipe?{recipe:parseRestoreRecipe(mapped.payload.recipe)}:{}),...(mapped.payload.onLoad?{onLoad:parseRestoreRecipe(mapped.payload.onLoad)}:{})};
       if(payload.recipe)prepareRestoreRecipe(program,payload.profile,payload.snapshot,payload.recipe,{operations});
       const fingerprints=[];for(const file of files)fingerprints.push({name:file.name,sha256:Array.from(await port.digest(file.bytes),b=>b.toString(16).padStart(2,'0')).join('')});
-      const report:ConversionReport={status:'ready',grade:mapped.grade,sourceKey:codec.source.key,sourceSchema:{...codec.source.schema.identity},codecVersion:codec.version,mapping:mapping.id,mappingVersion:mapping.version,target:{...mapping.target},files:fingerprints,warnings:[...mapped.warnings]};
+      const report:ConversionReport={status:'ready',grade:mapped.grade,sourceKey:codec.source.key,sourceSchema:{...codec.source.schema.identity},codecVersion:codec.version,mapping:mapping.id,mappingVersion:mapping.version,label:mapping.label,target:{...mapping.target},files:fingerprints,warnings:[...mapped.warnings]};
       const plan:PreparedImport=Object.freeze({[planBrand]:true as const,report(){return reportCopy(report);}});plans.set(plan,{payload,signature:canonicalProgram(program),report,operations});return {status:'ready',plan};
     }catch(error){return {status:'unsupported',code:error instanceof GalboxError?error.code:'SAVE_PREPARE_FAILED',message:error instanceof Error?error.message:String(error)};}
   }};bindings.add(binding);return Object.freeze(binding);
 }
 export function materializeImport(plan:PreparedImport,program:unknown,operations:OperationRegistry=emptyOperations):ImportPayload {
-  const data=plans.get(plan);ensure(data,'IMPORT_PLAN','Expected a prepared import handle');const target=linkProgram(program,operations).copy();ensure(data.operations===operations&&canonicalProgram(target)===data.signature,'IMPORT_PLAN_STALE','Target changed after preparation');return {snapshot:validateRestore(target,data.payload.snapshot,operations),profile:parseProfile(data.payload.profile),...(data.payload.recipe?{recipe:parseRestoreRecipe(data.payload.recipe)}:{})};
+  const data=plans.get(plan);ensure(data,'IMPORT_PLAN','Expected a prepared import handle');const target=linkProgram(program,operations).copy();ensure(data.operations===operations&&canonicalProgram(target)===data.signature,'IMPORT_PLAN_STALE','Target changed after preparation');return {snapshot:validateRestore(target,data.payload.snapshot,operations),profile:parseProfile(data.payload.profile),...(data.payload.recipe?{recipe:parseRestoreRecipe(data.payload.recipe)}:{}),...(data.payload.onLoad?{onLoad:parseRestoreRecipe(data.payload.onLoad)}:{})};
 }
 export class SaveBindingRegistry {
   private readonly entries:ReadonlyMap<string,CompatibilityBinding>;
   constructor(input:readonly CompatibilityBinding[]){const entries=new Map<string,CompatibilityBinding>();for(const binding of input){ensure(bindings.has(binding),'SAVE_BINDING_FACTORY','Use bindOriginalSave');const key=`${binding.sourceKey}/${binding.schema}@${binding.codecVersion}`;ensure(!entries.has(key),'SAVE_BINDING_DUPLICATE',key);entries.set(key,binding);}this.entries=entries;Object.freeze(this);}
+  list():{sourceKey:string;schema:string;version:number;label:string}[]{return [...this.entries.values()].map(b=>({sourceKey:b.sourceKey,schema:b.schema,version:b.codecVersion,label:b.label}));}
   get(sourceKey:string,schema:string,version:number):CompatibilityBinding {const value=this.entries.get(`${sourceKey}/${schema}@${version}`);ensure(value,'SAVE_BINDING_UNSUPPORTED','Unknown source/schema/codec');return value;}
 }
 export function createSaveBindingRegistry(bindings:readonly CompatibilityBinding[]):SaveBindingRegistry {return new SaveBindingRegistry(bindings);}

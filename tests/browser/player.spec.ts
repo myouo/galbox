@@ -1,6 +1,6 @@
 import { test,expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
-async function diagnostics(page:Page){return JSON.parse((await page.getByTestId('diagnostics').textContent())??'{}') as {epoch:number;lifecycle:string;globals?:{visits?:{value:number};route?:{value:string}};wait?:{kind:string;prompt?:number};profile?:{read:string[];values:Record<string,{value:boolean}>};media:{starts:number;decoded:number;active:number};};}
+async function diagnostics(page:Page){return JSON.parse((await page.getByTestId('diagnostics').textContent())??'{}') as {epoch:number;dirty?:number;lifecycle:string;globals?:{visits?:{value:number};route?:{value:string}};wait?:{kind:string;prompt?:number};profile?:{read:string[];values:Record<string,{value:boolean}>};media:{starts:number;decoded:number;active:number};};}
 async function advanceExact(page:Page){
  const before=(await diagnostics(page)).wait?.prompt;
  await page.getByTestId('advance').click();
@@ -23,7 +23,7 @@ test('real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary
  // First page is revealed: one activation advances it.
  await page.getByTestId('advance').click();await advanceExact(page);await advanceExact(page);
  await expect(page.getByRole('button',{name:'沿着海岸，寻找寄信人'})).toBeVisible();expect((await diagnostics(page)).globals?.visits?.value).toBe(1);
- await finish(page,'shore');await expect.poll(async()=>(await diagnostics(page)).profile?.values.shoreUnlocked?.value).toBe(true);
+ await finish(page,'shore');await expect.poll(async()=>(await diagnostics(page)).dirty).toBe(0);await expect.poll(async()=>(await diagnostics(page)).profile?.values.shoreUnlocked?.value).toBe(true);
  const media=(await diagnostics(page)).media;expect(media.decoded).toBe(4);expect(media.starts).toBeGreaterThanOrEqual(2);
  await page.reload();await page.getByRole('button',{name:'读取快速存档',exact:true}).click();await expect(page.getByTestId('advance')).toBeVisible();expect((await diagnostics(page)).profile?.values.shoreUnlocked?.value).toBe(true);expect((await diagnostics(page)).profile?.read).toHaveLength(9);
  expect(await page.getByTestId('story-text').innerText()).toBe(prior);
@@ -39,4 +39,9 @@ test('menu pointer release cannot advance and repeated create/dispose releases c
 test('keyboard activation consumes one stage and a menu cancels a held key',async({page})=>{
  await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).click();const advance=page.getByTestId('advance');await advance.focus();await page.keyboard.press('Enter');expect((await diagnostics(page)).profile?.read).toHaveLength(0);await page.keyboard.press('Enter');await expect.poll(async()=>(await diagnostics(page)).profile?.read.length).toBe(1);
  const before=(await diagnostics(page)).wait?.prompt;await advance.focus();await page.keyboard.down('Space');await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByRole('button',{name:'关闭',exact:true}).click();await advance.focus();await page.keyboard.up('Space');expect((await diagnostics(page)).wait?.prompt).toBe(before);expect((await diagnostics(page)).profile?.read).toHaveLength(1);
+});
+test('a blocked real audio start exposes a working retry button without advancing the story',async({page})=>{
+ await page.addInitScript(()=>{const create=AudioContext.prototype.createBufferSource;let fail=true;AudioContext.prototype.createBufferSource=function(){if(fail){fail=false;throw new Error('Device start fault');}return create.call(this);};});
+ await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).click();await page.getByRole('button',{name:'点击启用声音',exact:true}).click();await expect.poll(async()=>(await diagnostics(page)).media.starts).toBe(1);const state=await diagnostics(page);expect(state.profile?.read).toHaveLength(0);expect(state.globals?.visits?.value).toBe(0);
+ await page.getByRole('button',{name:'菜单',exact:true}).click();await expect(page.getByRole('button',{name:'点击启用声音',exact:true})).toHaveCount(0);
 });

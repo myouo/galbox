@@ -1,30 +1,28 @@
-# 当前能力：M0–M2 + M3-01～03
+# 当前能力：M0–M3
 
-此表描述实现范围；实际通过状态和命令证据见 tasks.json 与 evidence/。
+具体通过状态由 tasks.json 与 evidence/ 给出；后续任务不因本表列出目标而计为完成。
 
-| 能力 | 当前实现 |
+| 能力 | 实现范围 |
 | --- | --- |
-| Core / ABI | 同步 TS、稳定地址、显式参数/返回槽/帧、单剧情流、有限预算续跑 |
-| source 值 | bool/string/i32；checked 加法；eq/lt；无隐式转换 |
-| 图像 | 单 Pixi WebGL，原创 SVG/PNG provider，绝对 x/y/alpha 线性动画、层级 |
-| 正文 | ADV，DOM，固定 Unicode 码点揭示；显完和 advance 分离；历史 |
-| 任务 | 固定 all-success 组，完整结果/引用保存；cancelled/superseded/failed 均不是成功 |
-| 音频 | Web Audio 短 WAV；BGM/voice/sfx；真实获取、解码、启动/结束诊断、音量、重试 |
-| 音频恢复 | 显式 replay/stop；不提供采样位置精确恢复 |
-| 资源 | 整个 release 预备，release/catalog/kind/mime/字节 SHA-256 核验，私有字节与租约归还 |
-| 保存 | 当前语义等待/end；策略禁存、预算 continuation、flush/准备屏障明确拒绝 |
-| 普通 profile | 工作视图、冻结批次、幂等回执、无手动保存的已读/解锁、修订冲突 |
-| 激活 | 候选准备、最终冻结/dirty 交接、原子 head、提交后失权、迟到 generation 拒绝 |
-| UI / 生命周期 | React 默认 UI；暂停原因独立；已读快进在失焦清除；资源清理及在途提交结果 |
-| 嵌入 | protocol/core/port-kit/player/react/testing 显式 exports，tarball 独立消费 |
-| 未启用 | timed-choice、视频/热点、relative 动画、其他值族、跨内容版本迁移、SaveBridge、CLI |
+| Core / ABI | 同步 TS、稳定地址、参数/返回槽/显式帧、单剧情流、预算续跑 |
+| 值 | bool/string/checked i32；eq/lt；无隐式转换 |
+| 图像 / 正文 | 单 Pixi WebGL；绝对 x/y/alpha 线性动画；DOM ADV、码点揭示、显完/advance、历史 |
+| 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
+| 媒体 | Web Audio 短 WAV、真实获取/解码/启动/重试、音量；显式 replay/stop，不提供采样点精确续接 |
+| 资源 | release/catalog/kind/mime/字节 SHA-256 核验、私有 bytes、租约归还；整包预加载 |
+| 工作 / 持久进度 | 同步工作 profile、冻结提交批次、幂等回执、修订冲突、普通已读/解锁自动提交 |
+| 有状态操作 | 真实 codec/操作工厂、冻结表、每调用 State、signal wait、隔离和失败原子性、禁止重入 |
+| 操作迁移 | args/resume ABI 相同时的 state 迁移；否则完整 SavedInvocation 迁移并重验；缺迁移拒绝 |
+| 候选 recipe | 同一 Core dispatcher，有限 opcode/步数，拒绝真人/媒体等待/循环；候选失败全回滚 |
+| SaveBridge | 来源/schema/version 强绑定；fixture-save@1 严格字节/摘要/附件校验；不透明准备计划 |
+| 导入 | 新槽位/独立 profile/回执同事务；不自动激活；原始重建与普通保存的 onLoad hook 分离 |
+| 激活 | 最终冻结/dirty 交接/重新读取 profile；profile + candidate + head 原子提交；owner/sequence 资格与 pending 恢复 |
+| 默认 UI | React 菜单/选择/历史、导入报告/显式载入、跨刷新槽位选择；暂停原因与输入 epoch 隔离 |
+| 打包嵌入 | protocol/core/port-kit/player/react/testing/save-bridge/CSS 显式入口；独立 tarball 消费 |
+| 未实现 | timed-choice、视频/热点、relative 动画、其他 source 值族、跨内容 release 迁移、原档导出、便携备份、CLI |
 
-OperationSpec 参数表由 schema 生成，可从 `galbox-sdk/protocol` 的 operationSpecs 检查。完整 opcode 列表位于 schema/protocol.json，Core 使用穷尽分派，未登记 opcode 在结构校验时即拒绝。
+OperationSpec 与 recipe opcode 从 schema 生成。类型工厂由真实运行时校验支撑，readonly 不代替所有权。扩展为受信任同步 TS，不被称作同 realm 安全沙箱。
 
-平台证据限定当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio 路径。没有人耳音质认证、移动真机、其他浏览器、性能预算或商业作品兼容声明。全部资源预加载与回执长期保留是此初始版的规模限制，M5 再按实际负载测量。
+平台证据仅限当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio。没有移动真机、其他浏览器、人耳音质或性能预算认证。体积提示、整包预加载和长期回执留存的规模问题保留给 M5。
 
-M3-01 已实现受检 codec/有状态操作、signal wait、失败原子性和 SavedInvocation 迁移，见 OPERATIONS.md；跨内容 release 与原档迁移尚不支持。
-
-M3-02 提供来源绑定与 fixture-save@1 准备/报告，见 SAVE_BRIDGE.md；不等于持久导入、加载钩子或原作兼容已完成。
-
-M3-03 候选恢复执行已完成；加载计数的 durable 恰好一次、独立 profile 导入与 UI 仍待 M3-04。
+fixture-save@1 与消费者格式均为原创 synthetic，不提供 NScripter/KAG 或《水仙》《海市蜃楼之馆》的兼容声明。N/F 所需最小输入见 INPUTS_REQUIRED.md。

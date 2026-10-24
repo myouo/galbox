@@ -1,0 +1,21 @@
+$ pnpm build:sdk && vitest run --reporter=default --reporter=json --outputFile=docs/evidence/m3-04/unit-results.json
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+
+ RUN  v5.0.5 /home/myo/Desktop/galbox-sdk
+
+ ✓ tests/unit/persistence.test.ts (8 tests) 101ms
+ ✓ tests/unit/synthetic-save.test.ts (4 tests) 169ms
+ ✓ tests/unit/operations.test.ts (9 tests) 128ms
+ ✓ tests/unit/import-storage.test.ts (5 tests) 132ms
+ ✓ tests/unit/semantics.test.ts (10 tests) 155ms
+ ✓ tests/unit/recipe.test.ts (6 tests) 179ms
+ ✓ tests/unit/core.test.ts (7 tests) 195ms
+ ✓ tests/unit/generation.test.ts (1 test) 627ms
+   ✓ read-only generated check detects drift without repairing the file 625ms
+
+ Test Files  8 passed (8)
+      Tests  50 passed (50)
+   Start at  03:08:00
+   Duration  811ms (tests 49%, transform 26%, import 24%, worker 1%)
+
+JSON report written to /home/myo/Desktop/galbox-sdk/docs/evidence/m3-04/unit-results.json

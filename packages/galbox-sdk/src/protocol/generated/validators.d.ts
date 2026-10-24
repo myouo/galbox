@@ -1,4 +1,4 @@
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe } from './wire.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire } from './wire.js';
 export declare const validateProgram: { (data: unknown): data is Program; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateSnapshot: { (data: unknown): data is Snapshot; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateProfile: { (data: unknown): data is Profile; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
@@ -10,3 +10,6 @@ export declare const validateSavedInvocation: { (data: unknown): data is SavedIn
 export declare const validateOperationResume: { (data: unknown): data is OperationResume; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateOperationWait: { (data: unknown): data is OperationWait; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateRestoreRecipe: { (data: unknown): data is RestoreRecipe; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateSlotMetadata: { (data: unknown): data is SlotMetadata; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateStoreImport: { (data: unknown): data is StoreImport; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateProgressBatchWire: { (data: unknown): data is ProgressBatchWire; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };

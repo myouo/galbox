@@ -297,6 +297,22 @@ export type RecipeOpcode =
   | 'profile.set'
   | 'profile.i32.add.checked'
   | 'extension.invoke';
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ProgressChangeWire".
+ */
+export type ProgressChangeWire =
+  | {
+      seq: number;
+      type: 'read';
+      unit: string;
+    }
+  | {
+      seq: number;
+      type: 'set';
+      key: string;
+      value: Value;
+    };
 
 export interface Wire {
   program: Program;
@@ -608,4 +624,50 @@ export interface RestoreRecipe {
    * @maxItems 128
    */
   steps: Instruction[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SlotMetadata".
+ */
+export interface SlotMetadata {
+  profileId: string;
+  label: string;
+  recipe?: RestoreRecipe;
+  onLoad?: RestoreRecipe;
+  provenance?: JsonValue;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StoreImport".
+ */
+export interface StoreImport {
+  id: string;
+  slot: string;
+  snapshot: Snapshot;
+  profile: Profile;
+  metadata: SlotMetadata;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StoreImportReceipt".
+ */
+export interface StoreImportReceipt {
+  id: string;
+  slot: string;
+  profileId: string;
+  revision: number;
+  signature: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ProgressBatchWire".
+ */
+export interface ProgressBatchWire {
+  id: string;
+  baseRevision: number;
+  through: number;
+  /**
+   * @maxItems 10000
+   */
+  changes: ProgressChangeWire[];
 }

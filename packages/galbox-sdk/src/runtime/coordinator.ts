@@ -1,6 +1,6 @@
 import { Core } from '../core/index.js';
 import type { CoreEvent, CoreView } from '../core/index.js';
-import { ensure } from '../protocol/index.js';
+import { ensure,GalboxError } from '../protocol/index.js';
 import type { HostPort, Scheduler, Store, ProgressBatch } from './ports.js';
 interface Queued {event:CoreEvent;freeze?:boolean;resolve:()=>void;reject:(e:unknown)=>void;}
 export class Coordinator {
@@ -57,7 +57,7 @@ export class Coordinator {
         try {
           const receipt=await this.store.progress(this.batch,this.authority);
           this.core.acknowledge(receipt.through,receipt.revision);this.batch=null;this.persistenceError=null;
-        } catch(error){this.persistenceError=error instanceof Error?error.message:String(error);this.notify();throw error;}
+        } catch(error){this.persistenceError=error instanceof Error?error.message:String(error);if(error instanceof GalboxError&&error.code==='SESSION_REVOKED')this.stop(true);else this.notify();throw error;}
       }
       if(!this.stopped&&this.core.view().run.wait?.kind==='flush')await this.dispatch({type:'flushAck',revision:this.core.view().profile.revision});
       this.notify();
@@ -65,7 +65,7 @@ export class Coordinator {
     this.flushTail=next;return next;
   }
   async flushAll():Promise<void> {ensure(!this.stopped,'SESSION_REVOKED','Cannot flush a stopped session');do {await this.flush();}while(!this.stopped&&this.core.pending().length);ensure(!this.core.pending().length,'SESSION_REVOKED','Session stopped with uncommitted progress');}
-  stop():void {
-    this.stopped=true;this.core.revoke();for(const q of [...this.queue,...this.held])q.resolve();this.queue=[];this.held=[];this.current?.resolve();this.current=null;this.listeners.clear();
+  stop(notify=false):void {
+    this.stopped=true;this.core.revoke();for(const q of [...this.queue,...this.held])q.resolve();this.queue=[];this.held=[];this.current?.resolve();this.current=null;if(notify)this.notify();this.listeners.clear();
   }
 }

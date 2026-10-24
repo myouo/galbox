@@ -1,29 +1,44 @@
 import { Core, validateRestore } from '../core/index.js';
 import type { CoreView, CoreEvent, ProgressChange } from '../core/index.js';
-import { parseProgram, parseSnapshot, ensure, readUnit, GalboxError } from '../protocol/index.js';
-import type { Program, Snapshot, DeepReadonly } from '../protocol/index.js';
+import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError } from '../protocol/index.js';
+import type { Program, Snapshot, DeepReadonly, Profile, RestoreRecipe, SlotMetadata, StoreImport, JsonValue } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { Coordinator } from '../runtime/coordinator.js';
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
 import type { OperationResume } from '../protocol/index.js';
-import type { Store } from '../runtime/ports.js';
+import type { Store, Activation } from '../runtime/ports.js';
 import { openStore } from '../storage/indexeddb.js';
 import { WebHost } from '../web-host/host.js';
 import type { MediaDiagnostics } from '../web-host/host.js';
+import {prepareRestoreRecipe} from '../runtime/recipe.js';
+import {materializeImport} from '../save-bridge/index.js';
+import type {SaveBindingRegistry,PreparedImport,PrepareResult,ConversionReport,OriginalSaveFile} from '../save-bridge/index.js';
+import {webFormatContext} from '../web-host/format.js';
 import { TextController } from '../web-host/text.js';
 import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;}
+export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;}
 export interface PlayerView {
-  readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'disposed';readonly core:CoreView|null;readonly error:string|null;
-  readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;
+  readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'commit-unknown'|'disposed';readonly core:CoreView|null;readonly error:string|null;
+  readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profileId:string;readonly slots:readonly {slot:string;revision:number;profileId:string;label:string}[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
 }
+export interface ImportResult {readonly id:string;readonly slot:string;readonly profileId:string;readonly revision:number;readonly committed:true;readonly disposed:boolean;}
+interface LoadPolicy {profileId:string;recipe?:RestoreRecipe;onLoad?:RestoreRecipe;provenance?:JsonValue;slot?:string;start?:boolean;}
 export interface SaveResult {readonly slot:string;readonly revision:number;readonly disposed:boolean;}
 export class Player {
   private runtime:Coordinator|null=null;
+  private profileId='main';
+  private onLoad:RestoreRecipe|undefined;
+  private provenance:JsonValue|undefined;
+  private slots:{slot:string;revision:number;profileId:string;label:string}[]=[];
+  private importGeneration=0;
+  private importCounter=0;
+  private pendingImport:PreparedImport|null=null;
+  private lastImport:{slot:string;profileId:string}|null=null;
+  private readonly importCommits=new WeakMap<PreparedImport,{id:string;slot:string;label:string}>();
   private readonly host:WebHost;
   private readonly text:TextController;
   private readonly program:Program;
@@ -53,15 +68,15 @@ export class Player {
     this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();ensure(/^[a-zA-Z0-9_.-]{1,80}$/.test(options.saveCompatibilitySeries),'NAMESPACE','Invalid compatibility series');
     this.namespace=JSON.stringify([this.program.gameId,options.saveCompatibilitySeries]);
     this.host=new WebHost(options.mount);this.text=new TextController(options.mount);
-    this.cached={title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace};
+    this.cached={title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
   static async create(options:PlayerOptions):Promise<Player> {
-    const player=new Player(options);
+    const player=new Player(Object.freeze({...options}));
     try {
-      player.store=options.store??await openStore(player.namespace,options.database);player.ownsStore=!options.store;
-      await player.host.init(player.program,options.provider,player.abort.signal);
+      player.store=player.options.store??await openStore(player.namespace,player.options.database);player.ownsStore=!player.options.store;
+      await player.host.init(player.program,player.options.provider,player.abort.signal);
       document.addEventListener('visibilitychange',player.visibility);window.addEventListener('blur',player.blur);window.addEventListener('focus',player.focus);
-      player.frameId=requestAnimationFrame(player.frame);player.publish();return player;
+      await player.refreshSlots();const durable=await player.store.read();if(durable.head?.status==='committed-pending')player.lifecycle='committed-pending';player.frameId=requestAnimationFrame(player.frame);player.publish();return player;
     }catch(error){player.dispose();throw error;}
   }
   getSnapshot=():PlayerView=>this.cached;
@@ -69,7 +84,7 @@ export class Player {
   private publish():void {
     const core=this.runtime?.view()??null;
     if(core){this.host.render(core.run);this.text.render(core.run);}
-    this.cached={title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace};
+    this.cached={title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
     for(const listener of [...this.listeners]){try{listener();}catch(error){this.error=error instanceof Error?error.message:String(error);}}
   }
   private frame=(now:number):void=>{
@@ -91,58 +106,81 @@ export class Player {
   private fail(error:unknown):void {this.error=error instanceof Error?error.message:String(error);this.publish();}
   private inputId():string {return `${this.instance}:${++this.inputSeq}`;}
   private requireStore():Store {ensure(this.store&&!this.disposed,'PLAYER_DISPOSED','Player unavailable');return this.store;}
+  private stopRuntime():void {const runtime=this.runtime;this.runtime=null;this.unsubscribe?.();this.unsubscribe=null;runtime?.stop();}
+  private async refreshSlots():Promise<void> {
+    if(this.disposed)return;const records=await this.requireStore().listSlots?.();if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot}));this.publish();
+  }
+  private async initialCandidate(profile:Profile):Promise<Core> {
+    const candidate=new Core(this.program,profile,undefined,'initial',this.operations);let operations=0;
+    for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:profile.revision});continue;}if(result==='stable')return candidate;await new Promise<void>(resolve=>queueMicrotask(resolve));}
+  }
   async start():Promise<void> {
-    const store=this.requireStore();const gen=++this.generation;this.lifecycle='preparing';this.publish();await this.host.unlock();
-    try {const durable=await store.read();const candidate=new Core(this.program,durable.profile,undefined,'initial',this.operations);let operations=0;for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:durable.profile.revision});continue;}if(result==='stable')break;await new Promise<void>(resolve=>queueMicrotask(resolve));}await this.activate(candidate.capture(),gen,candidate.pending(),'initial');}
-    catch(error){this.precommitFailure(gen,error);throw error;}
+    this.requireStore();const gen=++this.generation;this.lifecycle='preparing';this.publish();await this.host.unlock();
+    try {await this.activate(null,gen,{profileId:'main',start:true});}catch(error){this.precommitFailure(gen,error);throw error;}
   }
   async load(slot='quick'):Promise<void> {
     const store=this.requireStore(),gen=++this.generation;this.lifecycle='preparing';this.publish();
-    try {const record=await store.readSlot(slot);ensure(record,'SLOT_EMPTY',slot);const snapshot=validateRestore(this.program,record.snapshot,this.operations);await this.activate(snapshot,gen);}
+    try {const record=await store.readSlot(slot);ensure(record,'SLOT_EMPTY',slot);const snapshot=validateRestore(this.program,record.snapshot,this.operations),metadata=record.metadata??{profileId:'main',label:slot};await this.activate(snapshot,gen,{profileId:metadata.profileId,slot,...(metadata.recipe?{recipe:metadata.recipe}:{}),...(metadata.onLoad?{onLoad:metadata.onLoad}:{}),...(metadata.provenance!==undefined?{provenance:metadata.provenance}:{})});}
     catch(error){this.precommitFailure(gen,error);throw error;}
   }
-  private precommitFailure(gen:number,error:unknown):void {if(gen===this.generation&&!this.disposed&&this.lifecycle!=='committed-pending'){this.lifecycle=this.runtime?'playing':'ready';this.fail(error);}}
-  private async activate(snapshot:Snapshot,gen:number,initialChanges:readonly ProgressChange[]=[],mode:'initial'|'restore'='restore'):Promise<void> {
+  private precommitFailure(gen:number,error:unknown):void {if(gen===this.generation&&!this.disposed&&!['committed-pending','commit-unknown'].includes(this.lifecycle)){this.lifecycle=this.runtime?'playing':'ready';this.fail(error);}}
+  private async install(activation:Activation,owner:string,gen:number):Promise<void> {
+    const store=this.requireStore(),head=await store.read(activation.profileId??'main');
+    ensure(head.head?.id===activation.id&&(head.head.owner??head.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Candidate no longer owns the durable head');
+    const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations),epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text.render(candidate.view().run);
+    const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100);this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
+    await store.confirm(activation.id,owner);const confirmed=await store.read(this.profileId);ensure(confirmed.head?.id===activation.id&&(confirmed.head.owner??confirmed.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Head changed during takeover');
+    this.lifecycle='playing';this.error=null;await runtime.start();this.publish();
+  }
+  private async activate(baseline:Snapshot|null,gen:number,policy:LoadPolicy):Promise<void> {
     const work=this.activationTail.catch(()=>{}).then(async()=>{
-      ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','A newer request replaced this candidate');
-      const store=this.requireStore(),old=this.runtime;this.setPause('activation',true);
-      let committed=false;
+      ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','A newer request replaced this candidate');const store=this.requireStore(),old=this.runtime;this.setPause('activation',true);
+      let committed=false,committing=false,id:string|null=null,expectedHead:string|null=null;
       try {
-        if(old){await old.freeze();await old.flushAll();}
-        ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale');
-        const durable=await store.read();validateRestore(this.program,snapshot,this.operations);
-        const id=`${this.instance}:a${gen}`;
-        const initialProgress=initialChanges.length?Object.freeze({id:`${id}:initial`,baseRevision:durable.profile.revision,through:initialChanges.at(-1)?.seq??0,changes:Object.freeze(initialChanges.map(c=>c.type==='set'?Object.freeze({...c,value:Object.freeze(c.value)}):Object.freeze(c)))}):undefined;
-        const activation=await store.activate(id,parseSnapshot(snapshot),durable.head?.id??null,durable.profile.revision,initialProgress);
-        committed=true;old?.stop();this.unsubscribe?.();this.runtime=null;this.lifecycle='committed-pending';this.publish();
-        // Read the durable head again after commit. A delayed receipt cannot restore authority.
-        const head=await store.read();ensure(head.head?.id===activation.id,'ACTIVATION_SUPERSEDED','Committed candidate is no longer current');
-        ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Committed candidate awaits a newer activation');
-        const candidate=new Core(this.program,head.profile,snapshot,mode,this.operations);
-        const epoch=++this.epoch;this.host.setEpoch(epoch);
-        const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,id,`${this.instance}:${epoch}`,this.options.budget??100);
-        this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());
-        await store.confirm(id);ensure((await store.read()).head?.id===id,'ACTIVATION_SUPERSEDED','Head changed during host takeover');
-        this.lifecycle='playing';this.error=null;await runtime.start();this.publish();
-      }catch(error){if(committed){this.runtime?.stop();this.runtime=null;this.lifecycle='committed-pending';this.fail(error);}else this.lifecycle=old?'playing':'ready';throw error;}
-      finally {if(!committed)old?.thaw();this.setPause('activation',false);}
-    });
-    this.activationTail=work;return work;
+        if(old){await old.freeze();await old.flushAll();}ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale');
+        const durable=await store.read(policy.profileId);expectedHead=durable.head?.id??null;let snapshot:Snapshot,changes:readonly ProgressChange[]=[],mode:'initial'|'restore'='restore';
+        if(policy.start){const candidate=await this.initialCandidate(durable.profile);snapshot=candidate.capture();changes=candidate.pending();mode='initial';}
+        else {ensure(baseline,'LOAD_BASELINE','Missing snapshot');snapshot=validateRestore(this.program,baseline,this.operations);if(policy.recipe){const prepared=prepareRestoreRecipe(this.program,durable.profile,snapshot,policy.recipe,{operations:this.operations});snapshot=prepared.snapshot;changes=prepared.changes;mode='initial';}}
+        ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale during preparation');id=`${this.instance}:a${gen}`;
+        const initial=changes.length?Object.freeze({id:`${id}:initial`,baseRevision:durable.profile.revision,through:changes.at(-1)?.seq??0,changes:Object.freeze(changes.map(c=>c.type==='set'?Object.freeze({...c,value:Object.freeze(c.value)}):Object.freeze(c)))}):undefined;
+        committing=true;const activation=await store.activate(id,snapshot,expectedHead,durable.profile.revision,initial,{profileId:policy.profileId,mode,owner:id,...(policy.onLoad?{onLoad:policy.onLoad}:{}),...(policy.provenance!==undefined?{provenance:policy.provenance}:{}),...(policy.slot?{slot:policy.slot}:{})});committed=true;old?.stop();this.unsubscribe?.();this.runtime=null;this.lifecycle='committed-pending';this.publish();await this.install(activation,id,gen);
+      }catch(error){
+        if(committing&&!committed){try{const current=await store.read(policy.profileId);if(current.head?.id===id||(current.head?.id??null)!==expectedHead)committed=true;}catch{old?.stop();this.stopRuntime();this.lifecycle='commit-unknown';this.fail(new GalboxError('ACTIVATION_COMMIT_UNKNOWN','Outcome unavailable; reconcile the durable head before continuing'));throw error;}}
+        if(committed){old?.stop();this.stopRuntime();this.lifecycle='committed-pending';this.fail(error);}else {this.lifecycle=old?'playing':'ready';old?.thaw();}throw error;
+      }finally{this.setPause('activation',false);}
+    });this.activationTail=work;return work;
   }
-  async resumeCommitted():Promise<void> {
-    const store=this.requireStore();const durable=await store.read();ensure(durable.head&&durable.head.status!=='superseded','ACTIVATION_EMPTY','No recoverable activation');
-    const gen=++this.generation;await this.activate(durable.head.snapshot,gen);
+  async resumeCommitted(expectedId?:string):Promise<void> {
+    const store=this.requireStore(),gen=++this.generation;
+    const work=this.activationTail.catch(()=>{}).then(async()=>{
+      const durable=await store.read();ensure(durable.head&&(!expectedId||durable.head.id===expectedId),'ACTIVATION_SUPERSEDED','Requested head is no longer current');ensure(durable.head.status==='committed-pending','ACTIVATION_NOT_PENDING','Use an explicit load for an already activated session');const claim=store.claim?.bind(store);ensure(claim,'STORAGE_CLAIM_UNSUPPORTED','Storage does not support recovery ownership');
+      const owner=`${this.instance}:retry${gen}`;const activation=await claim(durable.head.id,owner);this.stopRuntime();this.lifecycle='committed-pending';this.setPause('activation',true);
+      try{await this.install(activation,owner,gen);}catch(error){this.stopRuntime();this.lifecycle='committed-pending';this.fail(error);throw error;}finally{this.setPause('activation',false);}
+    });this.activationTail=work;return work;
   }
-  async save(slot='quick',expectedRevision?:number):Promise<SaveResult> {
-    const store=this.requireStore(),runtime=this.runtime;ensure(runtime,'PLAYER_NOT_STARTED','Start first');
-    const captured=runtime.core.capture(); // Permission applies to this immutable capture, before asynchronous I/O.
-    await runtime.flushAll();const previous=expectedRevision===undefined?await store.readSlot(slot):null;
-    const result=await store.save(slot,captured,expectedRevision??previous?.revision??0);return {slot,revision:result.revision,disposed:this.disposed};
+  async save(requestedSlot?:string,expectedRevision?:number):Promise<SaveResult> {
+    const store=this.requireStore(),runtime=this.runtime;ensure(runtime,'PLAYER_NOT_STARTED','Start first');const profileId=this.profileId,slot=requestedSlot??(profileId==='main'?'quick':`${profileId}:quick`),metadata:SlotMetadata={profileId,label:profileId==='main'?'快速存档':'快速存档（独立导入进度）',...(this.onLoad?{recipe:this.onLoad,onLoad:this.onLoad}:{}),...(this.provenance!==undefined?{provenance:this.provenance}:{})};const captured=runtime.core.capture();
+    const previous=expectedRevision===undefined?await store.readSlot(slot):null;await runtime.flushAll();const result=await store.save(slot,captured,expectedRevision??previous?.revision??0,metadata);if(!this.disposed){try{await this.refreshSlots();}catch(error){this.fail(error);}}return {slot,revision:result.revision,disposed:this.disposed};
+  }
+  async prepareImport(source:{sourceKey:string;schema:string;version:number},files:readonly OriginalSaveFile[]):Promise<PrepareResult> {return this.prepareImportAt(source,files,++this.importGeneration);}
+  async prepareImportFiles(source:{sourceKey:string;schema:string;version:number},files:readonly File[]):Promise<PrepareResult> {
+    const gen=++this.importGeneration;ensure(files.length<=16&&files.every(f=>f.size<=4_000_000)&&files.reduce((n,f)=>n+f.size,0)<=8_000_000,'SAVE_PACKAGE_SIZE','Too many or oversized files');const bytes=await Promise.all(files.map(async f=>({name:f.name,bytes:new Uint8Array(await f.arrayBuffer())})));return this.prepareImportAt(source,bytes,gen);
+  }
+  private async prepareImportAt(source:{sourceKey:string;schema:string;version:number},files:readonly OriginalSaveFile[],gen:number):Promise<PrepareResult> {
+    this.requireStore();ensure(gen===this.importGeneration&&!this.disposed,'IMPORT_PLAN_SUPERSEDED','A newer preparation replaced this request');const binding=this.options.bindings?.get(source.sourceKey,source.schema,source.version);ensure(binding,'SAVE_BINDING_UNSUPPORTED','Select a registered save source');this.pendingImport=null;this.lastImport=null;this.publish();const result=await binding.prepare(files,webFormatContext(),this.program,this.operations);ensure(gen===this.importGeneration&&!this.disposed,'IMPORT_PLAN_SUPERSEDED','A newer preparation replaced this request');if(result.status==='ready')this.pendingImport=result.plan;this.publish();return result;
+  }
+  async commitImport(plan:PreparedImport|null=this.pendingImport):Promise<ImportResult> {
+    const store=this.requireStore();ensure(plan,'IMPORT_PLAN','Prepare an import first');const write=store.import?.bind(store);ensure(write,'STORAGE_IMPORT_UNSUPPORTED','Storage does not support independent imports');const payload=materializeImport(plan,this.program,this.operations),report=plan.report();
+    let identity=this.importCommits.get(plan);if(!identity){identity={id:`${this.instance}:import${++this.importCounter}`,slot:`import-${crypto.randomUUID()}`,label:report.label};this.importCommits.set(plan,identity);}
+    const commit:StoreImport={id:identity.id,slot:identity.slot,snapshot:payload.snapshot,profile:payload.profile,metadata:{profileId:`import:${identity.id}`,label:`${identity.label} · ${identity.slot.slice(-8)}`,provenance:parseJsonValue(report),...(payload.recipe?{recipe:payload.recipe}:{}),...(payload.onLoad?{onLoad:payload.onLoad}:{})}};
+    let receipt;try{receipt=await write(commit);}catch(error){const failure=new GalboxError('IMPORT_COMMIT_UNKNOWN',`Import may have committed; retry this same plan. ${String(error)}`);this.fail(failure);throw failure;}
+    if(!this.disposed){this.error=null;if(this.pendingImport===plan)this.lastImport={slot:receipt.slot,profileId:receipt.profileId};try{await this.refreshSlots();}catch(error){this.fail(error);}}
+    return {id:receipt.id,slot:receipt.slot,profileId:receipt.profileId,revision:receipt.revision,committed:true,disposed:this.disposed};
   }
   async flush():Promise<void> {this.requireStore();await this.runtime?.flushAll();this.publish();}
   async discardAndLoad(slot='quick'):Promise<void> {
     // Explicit conflict resolution; only the caller can discard uncommitted working changes.
-    this.runtime?.stop();this.unsubscribe?.();this.runtime=null;await this.load(slot);
+    this.stopRuntime();await this.load(slot);
   }
   async input(action:'reveal'|'advance'|'step'|'choose',prompt:number,epoch:number,option?:string):Promise<void> {
     if(epoch!==this.epoch||this.disposed||this.pauses.size||!this.runtime||(this.lifecycle!=='playing'&&this.lifecycle!=='preparing'))return;
@@ -164,7 +202,7 @@ export class Player {
   setVolume(value:number):void {this.host.setVolume(value);}
   capture():DeepReadonly<Snapshot> {ensure(this.runtime,'PLAYER_NOT_STARTED','Start first');return this.runtime.core.capture();}
   dispose():void {
-    if(this.disposed)return;this.disposed=true;++this.generation;this.abort.abort();cancelAnimationFrame(this.frameId);
+    if(this.disposed)return;this.disposed=true;++this.generation;++this.importGeneration;this.abort.abort();cancelAnimationFrame(this.frameId);
     document.removeEventListener('visibilitychange',this.visibility);window.removeEventListener('blur',this.blur);window.removeEventListener('focus',this.focus);
     this.unsubscribe?.();this.runtime?.stop();this.host.dispose();this.text.dispose();this.lifecycle='disposed';this.publish();this.listeners.clear();
     // IDB transactions already started finish before db.close. Borrowed stores remain open.

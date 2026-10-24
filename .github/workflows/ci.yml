@@ -16,5 +16,6 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm check
       - run: pnpm test
+      - run: pnpm test:compatibility
       - run: pnpm test:browser
       - run: pnpm test:consumer

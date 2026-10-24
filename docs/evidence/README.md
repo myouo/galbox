@@ -1,11 +1,7 @@
 # 验收证据
 
-当前检查点：[2026-10-25 M0–M2](2026-10-25-m0-m2.md)。任务状态以 ../tasks.json 为准。
+当前完整检查点：[M3-04](m3-04/REPORT.md)。历史：[M0–M2](2026-10-25-m0-m2.md)、[M3-01](m3-01/REPORT.md)、[M3-02](m3-02/REPORT.md)、[M3-03](m3-03/REPORT.md)。任务状态以 ../tasks.json 为准。
 
-- 原始命令日志：install.log、check.log、unit.log、browser.log、consumer.log。
-- 机器结果：unit-results.json、browser-results.json、consumer-result.json、dev-result.json。
-- 代码依据：source-manifest.json；本地 SDK tarball 摘要在 consumer-result.json。
-- 画面：playable.png、development.png；它们不替代逻辑、媒体或存储断言。
-- 保留的失败复现：browser-failure-restart.log；修复及范围在报告中说明。
+每个阶段目录包含实际命令日志、机器结果、源码摘要与限制。当前 SDK tarball 的 SHA-256 在 m3-04/consumer-result.json；本地包位于 artifacts/galbox-sdk-0.1.0.tgz。
 
-更改相关代码后应重验或标明旧证据失效。M3–M6 和 N/F 未验证分支不可借本报告计为通过。目录不含商业作品素材、秘密或用户原档。
+截图不能替代语义/媒体/存储断言；更改相关代码后必须重验或标失效。M4–M6、真机/性能与 N/F 未验收分支不借用这些通过结论。目录不含商业作品素材、秘密或用户原档。

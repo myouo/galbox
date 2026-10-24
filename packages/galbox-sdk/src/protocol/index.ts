@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -66,3 +66,8 @@ export {codec} from './codecs.js';
 export type {ProtocolCodec,Decoded} from './codecs.js';
 
 export function parseRestoreRecipe(input:unknown):RestoreRecipe {const data=detached(input);ensure(validateRestoreRecipe(data),'SCHEMA_RECIPE',JSON.stringify(validateRestoreRecipe.errors));return data;}
+
+export function parseSlotMetadata(input:unknown):SlotMetadata {const data=detached(input);ensure(validateSlotMetadata(data),'SCHEMA_SLOT_METADATA',JSON.stringify(validateSlotMetadata.errors));return data;}
+export function parseStoreImport(input:unknown):StoreImport {const data=detached(input);ensure(validateStoreImport(data),'SCHEMA_STORE_IMPORT',JSON.stringify(validateStoreImport.errors));return data;}
+
+export function parseProgressBatch(input:unknown):ProgressBatchWire {const data=detached(input);ensure(validateProgressBatchWire(data),'SCHEMA_PROGRESS_BATCH',JSON.stringify(validateProgressBatchWire.errors));return data;}

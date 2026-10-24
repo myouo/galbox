@@ -1,17 +1,20 @@
 import { parseProfile, parseSnapshot } from '../protocol/index.js';
-import type { Snapshot } from '../protocol/index.js';
-import type { Store, ProgressBatch, Durable, SlotRecord, HostPort, Scheduler } from '../runtime/ports.js';
-import { databaseState, parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation } from '../runtime/durable.js';
+import type { Snapshot, SlotMetadata, StoreImport } from '../protocol/index.js';
+import type { Store, ProgressBatch, Durable, SlotRecord, HostPort, Scheduler, ActivationOptions } from '../runtime/ports.js';
+import { databaseState, parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation } from '../runtime/durable.js';
 export { Coordinator } from '../runtime/coordinator.js';
 export type { Store, ProgressBatch, ProgressReceipt, HostPort, Scheduler, Activation } from '../runtime/ports.js';
 export class MemoryStore implements Store {
   private state=databaseState();
-  async read():Promise<Durable> {const s=parseDatabase(this.state);return {profile:s.profile,head:s.head};}
-  async readSlot(slot:string):Promise<SlotRecord|null> {return parseDatabase(this.state).slots[slot]??null;}
-  async save(slot:string,snapshot:Snapshot,expected:number){const s=parseDatabase(this.state);const r=saveSlot(s,slot,snapshot,expected);this.state=s;return r;}
+  async read(profileId?:string):Promise<Durable> {const s=parseDatabase(this.state);return {profile:selectProfile(s,profileId),head:s.head};}
+  async readSlot(slot:string):Promise<SlotRecord|null> {const s=parseDatabase(this.state);return Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null;}
+  async listSlots(){const s=parseDatabase(this.state);return Object.entries(s.slots).map(([slot,r])=>({slot,revision:r.revision,metadata:r.metadata??{profileId:'main',label:slot}}));}
+  async import(commit:StoreImport){const s=parseDatabase(this.state);const r=commitImport(s,commit);this.state=s;return r;}
+  async save(slot:string,snapshot:Snapshot,expected:number,metadata?:SlotMetadata){const s=parseDatabase(this.state);const r=saveSlot(s,slot,snapshot,expected,metadata);this.state=s;return r;}
   async progress(batch:ProgressBatch,authority:string|null){const s=parseDatabase(this.state);const r=commitProgress(s,batch,authority);this.state=s;return r;}
-  async activate(id:string,snapshot:Snapshot,head:string|null,revision:number,initialProgress?:ProgressBatch){const s=parseDatabase(this.state);const r=commitActivation(s,id,snapshot,head,revision,initialProgress);this.state=s;return r;}
-  async confirm(id:string){const s=parseDatabase(this.state);const r=confirmActivation(s,id);this.state=s;return r;}
+  async activate(id:string,snapshot:Snapshot,head:string|null,revision:number,initialProgress?:ProgressBatch,options?:ActivationOptions){const s=parseDatabase(this.state);const r=commitActivation(s,id,snapshot,head,revision,initialProgress,options);this.state=s;return r;}
+  async claim(id:string,owner:string){const s=parseDatabase(this.state);const r=claimActivation(s,id,owner);this.state=s;return r;}
+  async confirm(id:string,owner?:string){const s=parseDatabase(this.state);const r=confirmActivation(s,id,owner);this.state=s;return r;}
   close():void {}
 }
 export class VirtualScheduler implements Scheduler {

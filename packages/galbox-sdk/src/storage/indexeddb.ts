@@ -1,7 +1,7 @@
 import { ensure } from '../protocol/index.js';
-import type { Snapshot } from '../protocol/index.js';
-import type { Store, ProgressBatch, Durable, SlotRecord } from '../runtime/ports.js';
-import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation } from '../runtime/durable.js';
+import type { Snapshot, SlotMetadata, StoreImport } from '../protocol/index.js';
+import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
+import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation } from '../runtime/durable.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
   const db=await new Promise<IDBDatabase>((resolve,reject)=>{
@@ -20,12 +20,15 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     });
   }
   return {
-    read:()=>transact<Durable>('readonly',s=>({profile:s.profile,head:s.head})),
-    readSlot:(slot:string)=>transact<SlotRecord|null>('readonly',s=>s.slots[slot]??null),
-    save:(slot:string,snapshot:Snapshot,revision:number)=>transact('readwrite',s=>saveSlot(s,slot,snapshot,revision)),
+    read:(profileId?:string)=>transact<Durable>('readonly',s=>({profile:selectProfile(s,profileId),head:s.head})),
+    readSlot:(slot:string)=>transact<SlotRecord|null>('readonly',s=>Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null),
+    listSlots:()=>transact('readonly',s=>Object.entries(s.slots).map(([slot,r])=>({slot,revision:r.revision,metadata:r.metadata??{profileId:'main',label:slot}}))),
+    import:(commit:StoreImport)=>transact('readwrite',s=>commitImport(s,commit)),
+    save:(slot:string,snapshot:Snapshot,revision:number,metadata?:SlotMetadata)=>transact('readwrite',s=>saveSlot(s,slot,snapshot,revision,metadata)),
     progress:(batch:ProgressBatch,authority:string|null)=>transact('readwrite',s=>commitProgress(s,batch,authority)),
-    activate:(id:string,snapshot:Snapshot,head:string|null,revision:number,initialProgress?:ProgressBatch)=>transact('readwrite',s=>commitActivation(s,id,snapshot,head,revision,initialProgress)),
-    confirm:(id:string)=>transact('readwrite',s=>confirmActivation(s,id)),
+    activate:(id:string,snapshot:Snapshot,head:string|null,revision:number,initialProgress?:ProgressBatch,options?:ActivationOptions)=>transact('readwrite',s=>commitActivation(s,id,snapshot,head,revision,initialProgress,options)),
+    claim:(id:string,owner:string)=>transact('readwrite',s=>claimActivation(s,id,owner)),
+    confirm:(id:string,owner?:string)=>transact('readwrite',s=>confirmActivation(s,id,owner)),
     close:()=>{if(!closed){closed=true;db.close();}}
   };
 }
