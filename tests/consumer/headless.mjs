@@ -15,3 +15,6 @@ const plugin=createCore(program1(),undefined,undefined,{operations:operations1})
 const upgrade=createCore(program2(),undefined,pluginSave,{operations:operations2});const call=upgrade.capture().invocations.find(v=>v.phase==='waiting');assert.ok(call?.wait);
 upgrade.accept(counter2.result(call.wait,call.id,{kind:'finish',amount:3}));upgrade.run(100);assert.equal(upgrade.view().run.globals.n.value,5);assert.equal(initialized(),1);
 console.log('Packed stateful operation restore and full invocation migration passed');
+
+const {consumerBinding}=await import('./compiled/binding.js');const {materializeImport}=await import('galbox-sdk/save-bridge');const {createHash}=await import('node:crypto');
+const prepared=await consumerBinding(p,save).prepare([{name:'original.json',bytes:new TextEncoder().encode(JSON.stringify({locator:'opening.1',flag:true}))}],{async digest(bytes){return new Uint8Array(createHash('sha256').update(bytes).digest());},decodeUtf8(bytes){return new TextDecoder('utf-8',{fatal:true}).decode(bytes);}},p);assert.equal(prepared.status,'ready');assert.equal(materializeImport(prepared.plan,p).profile.values.imported.value,true);console.log('Packed synthetic source binding and immutable import plan passed');

@@ -1,6 +1,6 @@
 # galbox-sdk
 
-强类型、可嵌入的视觉小说 Web SDK。已完成 M0–M2 与 M3-01：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
+强类型、可嵌入的视觉小说 Web SDK。已完成 M0–M2 与 M3-01/02：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
 
 《水仙》《海市蜃楼之馆》的真实资料仍缺，当前不声明商业作品兼容。完整任务状态见 [tasks.json](docs/tasks.json)，当前摘要见 [STATUS](docs/STATUS.md)，范围见 [能力表](docs/CAPABILITIES.md)。
 
@@ -55,3 +55,5 @@ player.dispose();
 内部快照接入当前持久 profile，不覆盖新的解锁。冲突不会自动合并非单调字段；`discardAndLoad` 是显式放弃当前未持久进度的入口。已提交存储操作不会因 dispose 被报告为无副作用取消。
 
 初始能力与限制见 [CAPABILITIES](docs/CAPABILITIES.md)，细节决策见 [ADR-0002](docs/decisions/0002-m0-m2-semantics.md)。有状态扩展与迁移用法见 [OPERATIONS](docs/OPERATIONS.md)。后续从 `CODEX_CONTINUE.md` 和任务表推进剩余 M3，不将本检查点称作最终两作支持版。
+
+合成来源工厂和不可变准备计划见 [SAVE_BRIDGE](docs/SAVE_BRIDGE.md)。`pnpm test:compatibility` 明确区分 synthetic 通过与真实 N/F 缺资料；当前尚未提供持久导入/加载 recipe。

@@ -1,6 +1,6 @@
 import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
-import { linkProgram } from '../program-tools/index.js';
+import { linkProgram } from '../program-tools/linker.js';
 import { emptyOperations, operationContext } from './operations.js';
 import type { OperationRegistry } from './operations.js';
 export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial';}

@@ -2,7 +2,7 @@ import { Core, validateRestore } from '../core/index.js';
 import type { CoreView, CoreEvent, ProgressChange } from '../core/index.js';
 import { parseProgram, parseSnapshot, ensure, readUnit, GalboxError } from '../protocol/index.js';
 import type { Program, Snapshot, DeepReadonly } from '../protocol/index.js';
-import { linkProgram } from '../program-tools/index.js';
+import { linkProgram } from '../program-tools/linker.js';
 import { Coordinator } from '../runtime/coordinator.js';
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';

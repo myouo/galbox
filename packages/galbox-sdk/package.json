@@ -37,7 +37,11 @@
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing/index.js"
     },
-    "./react/style.css": "./dist/react/style.css"
+    "./react/style.css": "./dist/react/style.css",
+    "./save-bridge": {
+      "types": "./dist/save-bridge/index.d.ts",
+      "import": "./dist/save-bridge/index.js"
+    }
   },
   "dependencies": {
     "pixi.js": "8.22.0"

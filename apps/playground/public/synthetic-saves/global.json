@@ -1,0 +1,10 @@
+{
+  "format": "fixture-save@1",
+  "edition": "lighthouse-synthetic-1",
+  "shoreUnlocked": true,
+  "towerUnlocked": false,
+  "readUnits": [
+    "opening.1@zh-1"
+  ],
+  "syntheticLoadCount": 4
+}

@@ -1,4 +1,4 @@
-# 当前能力：M0–M2 + M3-01
+# 当前能力：M0–M2 + M3-01/02
 
 此表描述实现范围；实际通过状态和命令证据见 tasks.json 与 evidence/。
 
@@ -24,3 +24,5 @@ OperationSpec 参数表由 schema 生成，可从 `galbox-sdk/protocol` 的 oper
 平台证据限定当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio 路径。没有人耳音质认证、移动真机、其他浏览器、性能预算或商业作品兼容声明。全部资源预加载与回执长期保留是此初始版的规模限制，M5 再按实际负载测量。
 
 M3-01 已实现受检 codec/有状态操作、signal wait、失败原子性和 SavedInvocation 迁移，见 OPERATIONS.md；跨内容 release 与原档迁移尚不支持。
+
+M3-02 提供来源绑定与 fixture-save@1 准备/报告，见 SAVE_BRIDGE.md；不等于持久导入、加载钩子或原作兼容已完成。
