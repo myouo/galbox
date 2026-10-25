@@ -3,6 +3,7 @@ import type { OperationRegistry } from '../core/operations.js';
 import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig,parseTextLayout } from '../protocol/index.js';
 import {validateTextLayout} from '../protocol/layout.js';
 import {richTextSignature,compileRichText} from '../protocol/text.js';
+import {isStageInstruction,stageExpressions} from '../protocol/stage.js';
 import {extendedValue} from '../protocol/values.js';
 import {validateExpressionTree,templateSignature,extendedExpression} from '../protocol/expressions.js';
 import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly, SourceLocation, PortObligation, BehaviorMapping } from '../protocol/index.js';
@@ -27,6 +28,7 @@ export function imagePut(at: string, id: string, asset: AssetRef<'image'>, posit
 }
 function programNeedsExtended(p:Program):boolean {
  return p.globals.some(s=>extendedValue(s.initial))||p.functions.some(f=>![...['void','i32','bool','string']].includes(f.returns)||[...f.params,...f.locals].some(s=>extendedValue(s.initial))||f.code.some(i=>{
+  if(isStageInstruction(i))return true;
   if(operands(i).some(o=>'literal'in o?extendedValue(o.literal):'expression'in o&&extendedExpression(o.expression)))return true;
   if(i.op==='profile.set')return extendedValue(i.value);if(i.op==='profile.expression')return extendedExpression(i.value);
   if(i.op==='text.template')return extendedExpression(i.speaker)||extendedExpression(i.content);
@@ -48,7 +50,7 @@ export class ProgramBuilder {
   capability(value:typeof capabilities[number]):this {ensure(capabilities.some(c=>c===value),'UNSUPPORTED_CAPABILITY',value);this.data.capabilities=[...new Set([...this.data.capabilities,value])];return this;}
   rngFromHost():this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seedSource:'host'});return this;}
   rng(seed:number):this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seed});return this;}
-  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='profile.expression'||i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(programNeedsExtended(this.data))this.data.capabilities=[...new Set([...this.data.capabilities,'values.extended'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
+  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='profile.expression'||i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(programNeedsExtended(this.data))this.data.capabilities=[...new Set([...this.data.capabilities,'values.extended'])];if(this.data.functions.some(f=>f.code.some(i=>isStageInstruction(i)||i.op==='stage.put'&&Object.keys(i.object).some(k=>!['id','asset','z','position'].includes(k)))))this.data.capabilities=[...new Set([...this.data.capabilities,'stage.effects','expressions','values.extended'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
   private readonly program: Program;
@@ -84,6 +86,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
       const i=f.code[index]; ensure(i,'INSTRUCTION','missing');
       try {
       if(!['control.jump','control.branch','control.return','control.end'].includes(i.op))ensure(f.code[index+1],'FALLTHROUGH',i.at);
+      if(isStageInstruction(i)){ensure(p.capabilities.includes('stage.effects')&&p.capabilities.includes('expressions'),'STAGE_CAPABILITY','Declare stage.effects and expressions');stageExpressions(i).forEach(e=>validateExpressionTree(e,id=>slots.find(s=>s.id===id)?.kind));if(i.op==='stage.image'||i.op==='stage.transition')ensure(p.assets.some(a=>a.id===i.asset&&a.kind==='image'),'ASSET_KIND',i.at);}
       switch(i.op) {
         case 'text.window.select':case 'text.window.clear':case 'text.window.visible':case 'text.window.theme':ensure(p.textLayout?.windows.some(w=>w.id===i.window),'TEXT_WINDOW',i.window);if(i.op==='text.window.theme')ensure(p.textLayout?.themes.some(t=>t.id===i.theme),'TEXT_THEME',i.theme);break;
         case 'text.page': readUnit(i);break;
@@ -105,7 +108,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
         case 'value.set': dest(i.dest,kind(i.value)); break;
         case 'i32.add.checked': dest(i.dest,'i32'); ensure(kind(i.left)==='i32'&&kind(i.right)==='i32','I32_OPERAND',i.at); break;
         case 'choice': dest(i.dest,'string'); ensure(i.options.length>0,'CHOICE_EMPTY',i.at); unique(i.options.map(o=>o.id),'CHOICE_DUPLICATE'); i.options.forEach(o=>target(o.target)); break;
-        case 'stage.put': ensure(p.assets.find(a=>a.id===i.object.asset)?.kind==='image','ASSET_KIND',i.at); break;
+        case 'stage.put': if(Object.keys(i.object).some(k=>!['id','asset','position','z'].includes(k)))ensure(p.capabilities.includes('stage.effects'),'STAGE_CAPABILITY','Extended object needs stage.effects');for(const layer of i.object.layers??[])ensure(p.assets.some(a=>a.id===layer.asset&&a.kind==='image'),'ASSET_KIND',i.at);ensure(p.assets.find(a=>a.id===i.object.asset)?.kind==='image','ASSET_KIND',i.at); break;
         case 'extension.invoke': {const op=operations.get(i.operation,i.version);op.validateArgs(i.args,i.argsSchema);op.manifest.jumpTargets.forEach(target);break;}
         case 'audio.play': ensure(p.assets.find(a=>a.id===i.asset)?.kind==='audio','ASSET_KIND',i.at); break;
       }

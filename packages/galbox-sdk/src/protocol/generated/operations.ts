@@ -434,6 +434,187 @@ export const operationSpecs = {
       "key",
       "value"
     ]
+  },
+  "stage.image": {
+    "opcode": "stage.image",
+    "parameters": [
+      "at",
+      "id",
+      "asset",
+      "pose",
+      "style"
+    ],
+    "required": [
+      "at",
+      "id",
+      "asset",
+      "pose"
+    ]
+  },
+  "stage.pose": {
+    "opcode": "stage.pose",
+    "parameters": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "id",
+      "to",
+      "relative"
+    ],
+    "required": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "id",
+      "to",
+      "relative"
+    ]
+  },
+  "stage.filter": {
+    "opcode": "stage.filter",
+    "parameters": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "target",
+      "to"
+    ],
+    "required": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "target",
+      "to"
+    ]
+  },
+  "stage.camera": {
+    "opcode": "stage.camera",
+    "parameters": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "to"
+    ],
+    "required": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "to"
+    ]
+  },
+  "stage.fade": {
+    "opcode": "stage.fade",
+    "parameters": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "color",
+      "alpha"
+    ],
+    "required": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "color",
+      "alpha"
+    ]
+  },
+  "stage.transition": {
+    "opcode": "stage.transition",
+    "parameters": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "id",
+      "asset"
+    ],
+    "required": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "id",
+      "asset"
+    ]
+  },
+  "stage.shake": {
+    "opcode": "stage.shake",
+    "parameters": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "target",
+      "amplitudeX",
+      "amplitudeY",
+      "periodMs"
+    ],
+    "required": [
+      "at",
+      "task",
+      "duration",
+      "policy",
+      "easing",
+      "target",
+      "amplitudeX",
+      "amplitudeY",
+      "periodMs"
+    ]
+  },
+  "stage.style": {
+    "opcode": "stage.style",
+    "parameters": [
+      "at",
+      "id",
+      "style"
+    ],
+    "required": [
+      "at",
+      "id",
+      "style"
+    ]
+  },
+  "task.cancel": {
+    "opcode": "task.cancel",
+    "parameters": [
+      "at",
+      "task"
+    ],
+    "required": [
+      "at",
+      "task"
+    ]
+  },
+  "task.finish": {
+    "opcode": "task.finish",
+    "parameters": [
+      "at",
+      "task"
+    ],
+    "required": [
+      "at",
+      "task"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke","profile.expression"] as const;

@@ -26,3 +26,7 @@
 ## G2-02 字体准备
 
 [CSS Font Loading Module Level 3](https://drafts.csswg.org/css-font-loading/) 的 FontFace 二进制构造、load 与 FontFaceSet 登记/删除是字体宿主实现依据（草案，不将其当设备兼容认证）。SDK 实际检查原始 TrueType，并在当前Chromium测试加载、失败、取消和双实例释放；未测设备不借用规范存在作支持结论。原创Latin字体由fontTools4.60.1生成，正常消费不依赖Python。
+
+## G3-01 图像舞台
+
+[Pixi Container官方指南](https://pixijs.com/8.x/guides/components/scene-objects/container) 与 [Filters/Blend Modes](https://pixijs.com/8.x/guides/components/filters) 用于图像层级/滤镜API依据；实际核对锁定8.22.0源码的Shader.destroy(false)、clipToViewport与GL混合系数。自有AlphaFilter图像组合/ColorMatrix/矩形mask仍通过本仓库真实WebGL像素验证，不把文档或API存在当作运行结果。DOM正文/UI不参与此图像合成。

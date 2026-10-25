@@ -1,0 +1,601 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-stage",
+  "title": "灯塔来信 · 光影回信",
+  "release": "stage-novel-1",
+  "entry": "main",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "expressions",
+    "values.extended",
+    "stage.effects"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "tower",
+      "path": "../assets/tower.svg",
+      "mime": "image/svg+xml",
+      "sha256": "45364cd01d4e1698b834b374fb5bbdd8bfb1928e1392922c0471bd50fc334f0e",
+      "kind": "image"
+    },
+    {
+      "id": "envelope",
+      "path": "../assets/envelope.svg",
+      "mime": "image/svg+xml",
+      "sha256": "cdadd9384b517a41cdd57b5fcf6065775ed109c14e9622ce272101fb63aa4f78",
+      "kind": "image"
+    },
+    {
+      "id": "lamp",
+      "path": "../assets/lamp.svg",
+      "mime": "image/svg+xml",
+      "sha256": "848b19ac94254585543a492795637e2e826b956e0f1ae16a19e63cfd9775c0b7",
+      "kind": "image"
+    },
+    {
+      "id": "bgm",
+      "path": "../assets/bgm.wav",
+      "mime": "audio/wav",
+      "sha256": "a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5",
+      "kind": "audio"
+    }
+  ],
+  "globals": [
+    {
+      "id": "distance",
+      "kind": "f64",
+      "initial": {
+        "kind": "f64",
+        "value": "4061800000000000"
+      }
+    },
+    {
+      "id": "route",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": ""
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "light:shore",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "light:shore",
+          "id": "background",
+          "asset": "shore",
+          "pose": {
+            "x": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            }
+          },
+          "op": "stage.image"
+        },
+        {
+          "at": "light:letter",
+          "id": "letter",
+          "asset": "envelope",
+          "pose": {
+            "x": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "4070e00000000000"
+            },
+            "y": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "4075400000000000"
+            },
+            "scaleX": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ff8000000000000"
+            },
+            "scaleY": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ff8000000000000"
+            },
+            "anchorX": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe0000000000000"
+            },
+            "anchorY": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe0000000000000"
+            }
+          },
+          "style": {
+            "z": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "4000000000000000"
+            },
+            "clip": {
+              "x": -90,
+              "y": -65,
+              "width": 180,
+              "height": 130
+            }
+          },
+          "op": "stage.image"
+        },
+        {
+          "at": "light:lamp",
+          "id": "glow",
+          "asset": "lamp",
+          "pose": {
+            "x": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            },
+            "y": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            },
+            "scaleX": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe3333333333333"
+            },
+            "scaleY": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe3333333333333"
+            },
+            "anchorX": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe0000000000000"
+            },
+            "anchorY": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe0000000000000"
+            },
+            "alpha": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fd999999999999a"
+            }
+          },
+          "style": {
+            "parent": "letter",
+            "z": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ff0000000000000"
+            },
+            "blend": "screen"
+          },
+          "op": "stage.image"
+        },
+        {
+          "at": "light:music",
+          "task": "music",
+          "asset": "bgm",
+          "channel": "bgm",
+          "gain": 0.2,
+          "loop": true,
+          "restore": "replay",
+          "op": "audio.play"
+        },
+        {
+          "at": "light:welcome",
+          "textId": "light.welcome",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "海风把信吹到了灯下。澪伸手去接，信封上的光却先一步向前走。",
+          "op": "text.page"
+        },
+        {
+          "at": "light:drift",
+          "task": "drift",
+          "id": "letter",
+          "to": {
+            "x": {
+              "kind": "f64",
+              "op": "slot",
+              "id": "distance"
+            },
+            "rotation": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "4028000000000000"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 2400
+          },
+          "relative": true,
+          "easing": "ease-in-out",
+          "policy": "reject",
+          "op": "stage.pose"
+        },
+        {
+          "at": "light:scale",
+          "task": "scale",
+          "id": "letter",
+          "to": {
+            "scaleX": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ffccccccccccccd"
+            },
+            "scaleY": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ffccccccccccccd"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 2400
+          },
+          "easing": "ease-out",
+          "policy": "reject",
+          "relative": false,
+          "op": "stage.pose"
+        },
+        {
+          "at": "light:mist",
+          "task": "mist",
+          "target": {
+            "kind": "object",
+            "id": "background"
+          },
+          "to": {
+            "grayscale": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3fe6666666666666"
+            },
+            "blur": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ffccccccccccccd"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1800
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.filter"
+        },
+        {
+          "at": "light:camera",
+          "task": "camera",
+          "to": {
+            "x": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "4084a00000000000"
+            },
+            "zoom": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ff147ae147ae148"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 2400
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.camera"
+        },
+        {
+          "at": "light:cross",
+          "task": "cross",
+          "id": "background",
+          "asset": "tower",
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 2200
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.transition"
+        },
+        {
+          "at": "light:shake",
+          "task": "shake",
+          "target": {
+            "kind": "camera"
+          },
+          "amplitudeX": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "4018000000000000"
+          },
+          "amplitudeY": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "4008000000000000"
+          },
+          "periodMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 120
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1600
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.shake"
+        },
+        {
+          "at": "light:dusk",
+          "task": "dusk",
+          "color": "#102030",
+          "alpha": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fd0000000000000"
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1000
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.fade"
+        },
+        {
+          "at": "light:change-distance",
+          "dest": "distance",
+          "value": {
+            "expression": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "40c3878000000000"
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "light:motion",
+          "textId": "light.motion",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "信纸轻轻转过身，灯塔从海雾里显现出来。光跟着海风摇了一下，又慢慢站稳。",
+          "op": "text.page"
+        },
+        {
+          "at": "light:join",
+          "group": "scene",
+          "members": [
+            "drift",
+            "scale",
+            "mist",
+            "camera",
+            "cross",
+            "shake",
+            "dusk"
+          ],
+          "op": "task.join"
+        },
+        {
+          "at": "light:clear",
+          "task": "clear",
+          "color": "#102030",
+          "alpha": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "0000000000000000"
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 700
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.fade"
+        },
+        {
+          "at": "light:quiet",
+          "textId": "light.quiet",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "雾散开时，路已经清楚了。我们可以把这封信送往海上，也可以把它留在灯下。",
+          "op": "text.page"
+        },
+        {
+          "at": "light:choice",
+          "dest": "route",
+          "options": [
+            {
+              "id": "send",
+              "text": "让回信乘风出发",
+              "target": "send:move"
+            },
+            {
+              "id": "keep",
+              "text": "把回信留给守灯人",
+              "target": "keep:move"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "send:move",
+          "task": "ending-move",
+          "id": "letter",
+          "to": {
+            "x": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "408f400000000000"
+            },
+            "y": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "4059000000000000"
+            },
+            "rotation": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "c034000000000000"
+            },
+            "alpha": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1200
+          },
+          "easing": "ease-in",
+          "policy": "reject",
+          "relative": false,
+          "op": "stage.pose"
+        },
+        {
+          "at": "send:join",
+          "target": "ending:filter",
+          "op": "control.jump"
+        },
+        {
+          "at": "keep:move",
+          "task": "ending-move",
+          "id": "letter",
+          "to": {
+            "x": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "408b300000000000"
+            },
+            "y": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "407b800000000000"
+            },
+            "rotation": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            },
+            "scaleX": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ff0000000000000"
+            },
+            "scaleY": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "3ff0000000000000"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1000
+          },
+          "easing": "ease-in-out",
+          "policy": "reject",
+          "relative": false,
+          "op": "stage.pose"
+        },
+        {
+          "at": "ending:filter",
+          "task": "ending-filter",
+          "target": {
+            "kind": "object",
+            "id": "background"
+          },
+          "to": {
+            "grayscale": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            },
+            "blur": {
+              "kind": "f64",
+              "op": "literal",
+              "value": "0000000000000000"
+            }
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1000
+          },
+          "policy": "reject",
+          "easing": "linear",
+          "op": "stage.filter"
+        },
+        {
+          "at": "ending:join",
+          "group": "ending",
+          "members": [
+            "ending-move",
+            "ending-filter"
+          ],
+          "op": "task.join"
+        },
+        {
+          "at": "light:ending",
+          "textId": "light.ending",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "回信已经到了该去的地方。灯塔亮着，我们的影子落在同一页夜色里。",
+          "op": "text.page"
+        },
+        {
+          "at": "light:unlock",
+          "key": "stageComplete",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "light:end",
+          "op": "control.end"
+        }
+      ]
+    }
+  ]
+}

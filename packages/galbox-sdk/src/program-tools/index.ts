@@ -14,3 +14,6 @@ export type {TypedExpression} from './expressions.js';
 export {richText,richPage} from './text.js';
 
 export {textTheme,textWindow,textLayout,textFont} from './layout.js';
+
+export {stageImage,stageTween,stageFilter,stageCamera,stageFade,stageTransition,stageShake,stageStyle} from './stage.js';
+export type {StageNumber,StagePoseInput,StageFilterInput,StageCameraInput,StageStyleInput,StageTiming} from './stage.js';

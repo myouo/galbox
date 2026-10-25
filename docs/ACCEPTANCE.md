@@ -86,3 +86,5 @@ G2-01：`rich-text-reveal` 经真实工厂/Schema/Core 处理求值后 runs、Ru
 G2-02：`textbox-layout-restore` 检查全部窗口身份/主题/显隐、布局/字体签名、当前正文来源和history/entry闭包；缺状态/源变化/伪造条目拒绝而保留原档。`nvl-history` 验证ADV替换、NVL确认后累积/容量满明确失败、清窗不删全局历史/已读、两路线/跨刷新与当前设置保留。`custom-text-renderer` 通过公共工厂包装默认DOM，验证字体就绪后创建、快照/Program隔离、逻辑画幅缩放、dispose/迟到取消及提交后失败由新renderer恢复。真实TrueType加载/失败/取消/双实例释放和含字体的独立消费者/CLI均需实际执行。
 
 G0-03：`additional-value-families` 必须通过真实构造/表达式工厂验证i64边界、f64位模式/NaN/±0/∞、显式转换/比较、null与缺键、有序异构集合与树/容量限制；赋值/扩展/候选失败不改变目标、profile、RNG或已发布效果，readonly输入取得所有权。`numeric-data-migration` 验证wrong-kind旧档保留、完整current/previous/profile/帧迁移和args/resume ABI变化必须完整invocation迁移；真实IndexedDB、浏览器刷新/最新profile、打包消费者都须实际执行。生成物原生ESM和深层坏节点/AST大小/诊断仍检查，不因短路错误聚合跳过语义分支。
+
+G3-01：`stage-effects-restore` 用真实工厂/Core保存解析后的pose/filter/camera/overlay/layers/shake与源签名；预算1/8/100、已完成组成员、相对参数变更后load不重算，恢复校验资产/父图/写锁/当前进度；真实WebGL像素检查含半透明转场/滤镜/mask/相机/旋转/遮罩/混合，IndexedDB坏进度保留当前head和原槽。`effect-replace-cancel` 确认冲突先拒绝、replace从当前值开始、cancel冻结且不同于completed、finish显式成功、删除父子取消活动任务、旧动画共用锁、all-success不接受取消/替换；静态源变更/缺scene/层数/资产上界实际拒绝。图像效果不借此计为DOM/UI效果。

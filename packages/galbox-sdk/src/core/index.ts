@@ -1,3 +1,5 @@
+import {isStageInstruction,initialScene,applyStageTask,taskObject,taskLocks,validateStageGraph} from '../protocol/stage.js';
+import {executeStage,removeStageObject,validateStageSnapshot} from './stage.js';
 import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
 import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
@@ -46,7 +48,7 @@ export class Core {
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(this.program.entry),rng=initialRng(this.program.rng,rngSeed);
-      const textLayout=initialTextLayout(this.program);this.s={...(textLayout?{textLayout}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
+      const textLayout=initialTextLayout(this.program);this.s={...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
@@ -110,13 +112,14 @@ export class Core {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
       this.s.logicalTime+=event.ms;
       if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich)tickRichText(this.s.text,event.ms,this.textPlan());else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
-      for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay')) {
+      for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
         if(t.kind==='animation') {
           const o=this.s.stage.find(o=>o.id===t.target);ensure(o&&t.from&&t.to,'TASK_TARGET',t.id);
           const ratio=t.elapsed/t.duration;
           o.position={x:t.from.x+(t.to.x-t.from.x)*ratio,y:t.from.y+(t.to.y-t.from.y)*ratio,alpha:t.from.alpha+(t.to.alpha-t.from.alpha)*ratio};
         }
+        if(t.kind==='stage')applyStageTask(this.s,t);
         if(t.elapsed===t.duration)t.status='completed';
       }
     } else if(event.type==='task') {
@@ -205,6 +208,7 @@ export class Core {
     }catch(error){this.s=before.s;this.profile=before.profile;this.changes=before.changes;this.effects=before.effects;this.progressSeq=before.seq;this.error=error instanceof GalboxError?error.code:'OPERATION_FAILURE';throw error;}
   }
   private execute(i:Instruction):void {
+    if(isStageInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Stage tasks are not recovery guesses');try{executeStage(this.program,this.s,i,e=>this.expression(e));}catch(error){if(error instanceof GalboxError)throw new GalboxError(error.code,error.reason,{...error.location,address:i.at});throw error;}this.top().pc=this.next();return;}
     const wait=(w:NonNullable<Snapshot['wait']>)=>{this.s.wait=w;this.s.status='waiting';};
     const task=(name:string,kind:Task['kind'],duration:number):Task=>({id:`task:${++this.s.counter}`,name,kind,status:'running',elapsed:0,duration,attempt:1,at:i.at});
     switch(i.op) {
@@ -244,13 +248,13 @@ export class Core {
       case 'text.window.theme': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.theme=i.theme;break;}
       case 'choice':wait({kind:'choice',at:i.at,prompt:++this.s.counter,options:i.options.map(o=>({...o})),dest:i.dest});return;
       case 'stage.put': {
-        ensure(!this.s.tasks.some(t=>t.kind==='animation'&&t.target===i.object.id&&t.status==='running'),'STAGE_BUSY',i.object.id);
-        this.s.stage=this.s.stage.filter(o=>o.id!==i.object.id);this.s.stage.push({...i.object,position:positions(i.object.position)});break;
+        ensure(!this.s.tasks.some(t=>taskObject(t)===i.object.id&&t.status==='running'),'STAGE_BUSY',i.object.id);
+        const owned=parseInstruction(i);ensure(owned.op==='stage.put','STAGE_OBJECT','Object copy failed');const stage=[...this.s.stage.filter(o=>o.id!==i.object.id),owned.object];validateStageGraph(stage);this.s.stage=stage;break;
       }
-      case 'stage.remove':this.s.tasks.filter(t=>t.kind==='animation'&&t.target===i.id&&t.status==='running').forEach(t=>{t.status='cancelled';});this.s.stage=this.s.stage.filter(o=>o.id!==i.id);break;
+      case 'stage.remove':removeStageObject(this.s,i.id);break;
       case 'stage.animate': {
         const target=this.s.stage.find(o=>o.id===i.id);ensure(target,'STAGE_OBJECT',i.id);
-        const previous=this.s.tasks.filter(t=>t.kind==='animation'&&t.target===i.id&&t.status==='running');
+        const locks=new Set(['x','y','alpha'].map(k=>`object:${i.id}:pose:${k}`)),previous=this.s.tasks.filter(t=>t.status==='running'&&taskLocks(t).some(k=>locks.has(k)));
         ensure(i.policy==='replace'||previous.length===0,'TASK_CONFLICT',i.at);previous.forEach(t=>{t.status='superseded';});
         this.s.tasks.push({...task(i.task,'animation',i.duration),target:i.id,from:positions(target.position),to:positions(i.to)});break;
       }
@@ -321,6 +325,7 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
+  validateStageSnapshot(p,s);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);

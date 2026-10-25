@@ -1,0 +1,5 @@
+$ pnpm build:sdk && vitest run
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+packages/galbox-sdk/src/web-host/host.ts(120,65): error TS2339: Property 'invalidate' does not exist on type 'never'.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Test failed. See above for more details.

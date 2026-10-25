@@ -1,9 +1,7 @@
 # 当前实施计划
 
-G0-03已完成有限支持验收。ADR0018→Schema/生成物→原生规范化/真实工厂→Core表达式/集合/能力/所有权→数值与invocation迁移反例→原创补给簿→单元/浏览器/独立消费/现有全部门槛。完整状态tasks.json，实际日志evidence/g0-03。
+G3-01已完成有限支持验收：ADR0019→Schema/工厂→Core一次解析/通道锁/快照→Pixi图像层级/滤镜/正确RGBA转场→原创光影回信→单元/实际浏览器像素/独立消费及既有门槛。完整状态tasks.json，日志evidence/g3-01。
 
-最终127单元/51浏览器/独立tarball/54 CLI/4 synthetic/性能/API与dev实际旧档/刷新保留精确数据均通过。已处理深AST错误聚合指数重复、生成CJS helper、泛型readonly容器和嵌套值浅复制，不放宽strict/Schema或skip断言。
+最终137单元/54浏览器/consumer/54 CLI/4 synthetic/性能/API与dev实际134ms保存/刷新/继续均通过。不能把新滤镜/转场作用域扩大到DOM正文/UI，或把有限128对象/256任务当长作品认证。Stage Task完成由Core活动时间，Host回调不能伪造。
 
-下一项G3-01：定义二维变换/转场/滤镜/并行任务的有限操作、冲突和恢复切点ADR，同步Schema/工厂/Core解析参数与任务状态/Pixi Host/失败边界，保存已解析参数，不按新变量重算旧演出。G0-03通过后满足它的既定依赖。
-
-当前dev已启动/?demo=data，实际保存/刷新/旧档profile保留已验证。N/F真实资料缺失继续独立blocked，不造假或停通用工作，不推送/发布/部署。
+通过后按任务表进入G3-02媒体能力：先定义播放/等待/恢复/失败策略，再沿正式Core/Host/资源/存储闭环，不能把音频startup ack当媒体结束或猜seek。当前dev已启动/?demo=stage并实际验证保存/刷新/旧参数；N/F资料阻塞独立保留，不停通用工作、不外部发布。

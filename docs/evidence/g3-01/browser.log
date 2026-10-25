@@ -1,0 +1,114 @@
+$ pnpm build && pnpm build:harness && playwright test
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 777 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-Bo143X8H.css                        6.66 kB │ gzip:   2.26 kB
+apps/playground/dist/assets/webworkerAll-BcijncqU.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-B7yxVaxI.js                         14.58 kB │ gzip:   4.66 kB
+apps/playground/dist/assets/browserAll-UKcORxGQ.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index--8rMTnz0.js                     1,989.31 kB │ gzip: 289.77 kB
+
+✓ built in 1.31s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 774 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-Dw48wpg6.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/defaultFilter.vert-DBKfXOpv.js            0.78 kB │ gzip:   0.35 kB
+tests/browser/harness/dist/disposal-probe.js                         3.25 kB │ gzip:   1.33 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-0kpVo1g2.js                         18.08 kB │ gzip:   5.30 kB
+tests/browser/harness/dist/browserAll-MwIeSq2i.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/lib-Dc6b971V.js                         317.59 kB │ gzip:  80.32 kB
+tests/browser/harness/dist/sdk.js                                4,678.84 kB │ gzip: 413.31 kB
+
+✓ built in 1.09s
+[WebServer] (node:2172631) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2172670) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2172801) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 54 tests using 1 worker
+
+(node:2172831) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/adapters.spec.ts:3:1 › resource identity/ownership/cancellation, invalid header refusal and decoder failure cleanup (1.2s)
+  ✓   2 tests/browser/adapters.spec.ts:24:1 › real IndexedDB isolates namespaces and rejects profile/slot/head conflicts (678ms)
+  ✓   3 tests/browser/adapters.spec.ts:36:1 › public Player saves partial animation group, resumes with new audio epoch, cleans instances (3.6s)
+  ✓   4 tests/browser/adapters.spec.ts:54:1 › load generations retain current profile and a delayed older preparation never takes over (930ms)
+  ✓   5 tests/browser/adapters.spec.ts:69:1 › save already inside storage commit reports success after dispose; resources stay released (949ms)
+  ✓   6 tests/browser/adapters.spec.ts:79:1 › blocked real audio startup retries the same task without repeating narrative updates (906ms)
+  ✓   7 tests/browser/adapters.spec.ts:90:1 › old input epoch cannot act on an identical restored prompt; pause reasons remain independent (934ms)
+  ✓   8 tests/browser/adapters.spec.ts:100:1 › postcommit failure retries the same activation; a new load supersedes it permanently (1.0s)
+  ✓   9 tests/browser/adapters.spec.ts:112:1 › missing Web Audio fails with an explicit unavailable diagnostic and no leftover canvas (709ms)
+  ✓  10 tests/browser/adapters.spec.ts:119:1 › initial Player activation plays a stop-on-restore one-shot; subsequent load stops it (1.0s)
+  ✓  11 tests/browser/backups.spec.ts:4:1 › default UI downloads a portable backup, restores an independent branch and loads it across refresh (3.4s)
+  ✓  12 tests/browser/backups.spec.ts:15:1 › real IndexedDB abort rolls back the entire restore; lost replies retry without activation or hook effects (1.0s)
+  ✓  13 tests/browser/backups.spec.ts:26:1 › another database consumes the backup; release migration is explicit and old slots remain exportable (923ms)
+  ✓  14 tests/browser/backups.spec.ts:34:1 › restore committed before dispose returns the durable result and leaves a borrowed database usable (946ms)
+  ✓  15 tests/browser/backups.spec.ts:41:1 › profile-only backups remain selectable after refresh and explicitly start a new story with restored read progress (2.3s)
+  ✓  16 tests/browser/data.spec.ts:6:1 › original supply chapter computes exact f64/i64/collections and preserves current profile across old-save refresh and both choices (4.5s)
+  ✓  17 tests/browser/data.spec.ts:12:1 › real IndexedDB numeric migration validates every current/previous cut and keeps the original branch intact (1.0s)
+  ✓  18 tests/browser/data.spec.ts:22:1 › a failed numeric candidate does not commit its profile/audio intentions or revoke the old active player (911ms)
+  ✓  19 tests/browser/disposal.spec.ts:4:1 › static text/profile updates skip Pixi drawing; epoch and animation changes still draw from owned stage values (1.9s)
+  ✓  20 tests/browser/disposal.spec.ts:15:1 › disposing one Player loses only its context and preserves shared Pixi pools and another live Player (1.2s)
+  ✓  21 tests/browser/disposal.spec.ts:21:1 › a cancelled Application.init that completes late destroys the newly allocated context exactly once (801ms)
+  ✓  22 tests/browser/expressions.spec.ts:6:1 › original logbook runs expressions and evaluated text, replays saved RNG cuts across refresh and completes both choices (4.1s)
+  ✓  23 tests/browser/expressions.spec.ts:13:1 › host seed is sampled once before durable activation and pending recovery or load never samples again (1.0s)
+  ✓  24 tests/browser/imports.spec.ts:3:1 › real UI imports into an independent profile, loads separately and preserves hooks after save/refresh (4.8s)
+  ✓  25 tests/browser/imports.spec.ts:17:1 › lost import/activation replies remain idempotent; pending retry does not reapply the hook (1.0s)
+  ✓  26 tests/browser/imports.spec.ts:27:1 › the final activation barrier hands off dirty profile before recomputing the load recipe (1.0s)
+  ✓  27 tests/browser/imports.spec.ts:35:1 › a late File read cannot clear or replace a newer prepared import (752ms)
+  ✓  28 tests/browser/layout.spec.ts:6:1 › original ADV/NVL chapter preserves multiple windows, themes, history and profile across refresh and plays both choices (4.9s)
+  ✓  29 tests/browser/layout.spec.ts:13:1 › public renderer is created after fonts, receives isolated data, scales logical layout and disposes exactly once (1.0s)
+  ✓  30 tests/browser/layout.spec.ts:20:1 › font failures and aborts clean prepared resources before activation; separate players retain their own loaded fonts (1.1s)
+  ✓  31 tests/browser/layout.spec.ts:29:1 › renderer creation cancellation releases its late result, and a committed render failure recovers through a fresh renderer (1.2s)
+  ✓  32 tests/browser/playback.spec.ts:4:1 › Auto waits for native voice completion, pauses in menus and rebuilds voice gates on restore (3.5s)
+  ✓  33 tests/browser/playback.spec.ts:22:1 › configured input is scoped per instance, ignores repeats/editors and discards held inputs after load or focus loss (1.5s)
+  ✓  34 tests/browser/playback.spec.ts:40:1 › default UI persists playback, mappings and display settings, imports/exports JSON and restores defaults (3.4s)
+  ✓  35 tests/browser/playback.spec.ts:54:1 › real IndexedDB v1 preferences migrate without losing revision and reset uses authored defaults (800ms)
+  ✓  36 tests/browser/player.spec.ts:17:1 › real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary profile (7.6s)
+  ✓  37 tests/browser/player.spec.ts:34:1 › menu pointer release cannot advance and repeated create/dispose releases canvas/audio (996ms)
+  ✓  38 tests/browser/player.spec.ts:39:1 › keyboard activation consumes one stage and a menu cancels a held key (724ms)
+  ✓  39 tests/browser/player.spec.ts:43:1 › a blocked real audio start exposes a working retry button without advancing the story (715ms)
+  ✓  40 tests/browser/preferences.spec.ts:3:1 › default settings persist across refresh and loading an older story slot does not restore older preferences (2.7s)
+  ✓  41 tests/browser/preferences.spec.ts:10:1 › live role gains multiply script gain once, future sources use current preferences and snapshot gains remain authored (1.1s)
+  ✓  42 tests/browser/preferences.spec.ts:17:1 › real IndexedDB settings isolate namespaces, reject stale writers, reconcile unknown replies and report committed disposal (853ms)
+  ✓  43 tests/browser/release.spec.ts:4:1 › published release rejects changed Program, binding registry, provider identity and physical resource facts before activation (784ms)
+  ✓  44 tests/browser/release.spec.ts:13:1 › predecode image budget and ignored acquire cancellation clean initialization and return each late lease once (743ms)
+  ✓  45 tests/browser/release.spec.ts:20:1 › real PNG and WAV decoding report owned memory; a failed audio start releases nodes and actual context loss pauses the session (924ms)
+  ✓  46 tests/browser/release.spec.ts:28:1 › HTTP streaming is bounded even when the server supplies no Content-Length (668ms)
+  ✓  47 tests/browser/release.spec.ts:32:1 › permanent audio failure retains a committed pending activation; a fresh Host resumes without repeating startup profile writes (1.1s)
+  ✓  48 tests/browser/stage.spec.ts:6:1 › original stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes (18.2s)
+  ✓  49 tests/browser/stage.spec.ts:13:1 › actual WebGL pixels implement premultiplied crossfade, filters, hierarchy masks, camera, affine rotation and overlay (7.2s)
+  ✓  50 tests/browser/stage.spec.ts:32:1 › real IndexedDB refuses corrupt active effect state without replacing the working head or deleting either slot (1.5s)
+  ✓  51 tests/browser/synthetic.spec.ts:3:1 › synthetic binary preparation uses real Web Crypto and rejects corrupt source bytes (680ms)
+  ✓  52 tests/browser/text.spec.ts:6:1 › original rich chapter renders Ruby/styles, persists a complete page across refresh and plays both routes including Auto (4.5s)
+  ✓  53 tests/browser/text.spec.ts:12:1 › real DOM keeps layout and Unicode units stable; IndexedDB restore recreates saved pause, fraction and effect phase (2.2s)
+  ✓  54 tests/browser/text.spec.ts:24:1 › rich DOM treats source markup as text and rejects changed-source loads without destroying the active run or old slot (1.0s)
+
+  54 passed (2.1m)

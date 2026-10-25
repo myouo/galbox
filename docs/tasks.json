@@ -13,7 +13,7 @@
     "G6",
     "G7"
   ],
-  "current_task": "G3-01",
+  "current_task": "G3-02",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1357,7 +1357,7 @@
         "docs/evidence/g0-03/source-manifest.json"
       ],
       "blocker": null,
-      "next_action": "本有限数据支持集完成，下一项G3-01完整二维舞台变换/转场/滤镜/并行演出，复用数据基础与已解析任务参数；其余G项未完成。"
+      "next_action": "本数据支持集和G3-01舞台有限集完成；当前G3-02媒体扩展，其余通用任务未完成。"
     },
     {
       "id": "G1-01",
@@ -1537,11 +1537,13 @@
         "G0-02",
         "G0-03"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "done",
+      "verification": "passed",
       "outputs": [
-        "scene/camera/transform/transition effects"
+        "有界二维pose/层级/clip/blend、相机/滤镜/转场/shake Schema与真实工厂",
+        "Core一次解析、属性锁/取消/替换/finish及完整任务恢复验证",
+        "Pixi透明RGBA组合/滤镜/缓存/清理、原创光影回信与像素/独立消费"
       ],
       "contracts": [
         "C01",
@@ -1555,9 +1557,20 @@
         "stage-effects-restore",
         "effect-replace-cancel"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g3-01/REPORT.md",
+        "docs/evidence/g3-01/check.log",
+        "docs/evidence/g3-01/unit.log",
+        "docs/evidence/g3-01/browser-results.json",
+        "docs/evidence/g3-01/consumer-result.json",
+        "docs/evidence/g3-01/result.json",
+        "docs/evidence/g3-01/performance.json",
+        "docs/evidence/g3-01/release-audit.json",
+        "docs/evidence/g3-01/dev-result.json",
+        "docs/evidence/g3-01/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先写有限二维变换/转场/滤镜/并行任务及冲突/恢复切点ADR；同步Schema/工厂/Core解析表达式/任务状态/Pixi Host/失败边界，保存已解析参数，不能按后来变量重算旧演出。"
+      "next_action": "本有限舞台支持集完成；下一项G3-02常用编码/长媒体/循环淡化压低和语音回放；其它效果与G3–G7继续保留。"
     },
     {
       "id": "G3-02",
@@ -1588,7 +1601,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定义常用音频编码/长媒体adapter、循环/淡化/压低/语音身份回放、等待/暂停/恢复与失败策略ADR；同步Schema/资源事实/Host/Player/UI/存档和独立消费，不把startup ack当自然结束或猜seek。"
     },
     {
       "id": "G3-03",

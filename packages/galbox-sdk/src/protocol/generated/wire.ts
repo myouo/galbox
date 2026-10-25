@@ -246,6 +246,92 @@ export type Instruction =
       at: string;
       key: string;
       value: Expression;
+    }
+  | {
+      op: 'stage.image';
+      at: string;
+      id: string;
+      asset: string;
+      pose: StagePoseExpressions;
+      style?: StageStyle;
+    }
+  | {
+      op: 'stage.pose';
+      at: string;
+      task: string;
+      duration: I32Expression;
+      policy: 'reject' | 'replace';
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      id: string;
+      to: StagePoseExpressions;
+      relative: boolean;
+    }
+  | {
+      op: 'stage.filter';
+      at: string;
+      task: string;
+      duration: I32Expression;
+      policy: 'reject' | 'replace';
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      target: StageTarget;
+      to: StageFiltersExpressions;
+    }
+  | {
+      op: 'stage.camera';
+      at: string;
+      task: string;
+      duration: I32Expression;
+      policy: 'reject' | 'replace';
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      to: StageCameraExpressions;
+    }
+  | {
+      op: 'stage.fade';
+      at: string;
+      task: string;
+      duration: I32Expression;
+      policy: 'reject' | 'replace';
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      color: string;
+      alpha: StageNumberExpression;
+    }
+  | {
+      op: 'stage.transition';
+      at: string;
+      task: string;
+      duration: I32Expression;
+      policy: 'reject' | 'replace';
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      id: string;
+      asset: string;
+    }
+  | {
+      op: 'stage.shake';
+      at: string;
+      task: string;
+      duration: I32Expression;
+      policy: 'reject' | 'replace';
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      target: StageTarget;
+      amplitudeX: StageNumberExpression;
+      amplitudeY: StageNumberExpression;
+      periodMs: I32Expression;
+    }
+  | {
+      op: 'stage.style';
+      at: string;
+      id: string;
+      style: StageStyle;
+    }
+  | {
+      op: 'task.cancel';
+      at: string;
+      task: string;
+    }
+  | {
+      op: 'task.finish';
+      at: string;
+      task: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -950,6 +1036,23 @@ export type TextEffect =
       periodMs: number;
     };
 /**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageNumberExpression".
+ */
+export type StageNumberExpression = I32Expression | F64Expression;
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageTarget".
+ */
+export type StageTarget =
+  | {
+      kind: 'object';
+      id: string;
+    }
+  | {
+      kind: 'camera';
+    };
+/**
  * @maxItems 10000
  *
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1018,6 +1121,107 @@ export type TextRun =
  * via the `definition` "TaskStatus".
  */
 export type TaskStatus = 'running' | 'blocked' | 'completed' | 'cancelled' | 'superseded' | 'failed';
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageTaskState".
+ */
+export type StageTaskState =
+  | {
+      type: 'pose';
+      signature: string;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      target: string;
+      /**
+       * @minItems 1
+       * @maxItems 12
+       */
+      fields: [
+        (
+          | 'x'
+          | 'y'
+          | 'alpha'
+          | 'scaleX'
+          | 'scaleY'
+          | 'rotation'
+          | 'skewX'
+          | 'skewY'
+          | 'pivotX'
+          | 'pivotY'
+          | 'anchorX'
+          | 'anchorY'
+        ),
+        ...(
+          | 'x'
+          | 'y'
+          | 'alpha'
+          | 'scaleX'
+          | 'scaleY'
+          | 'rotation'
+          | 'skewX'
+          | 'skewY'
+          | 'pivotX'
+          | 'pivotY'
+          | 'anchorX'
+          | 'anchorY'
+        )[]
+      ];
+      from: StagePose;
+      to: StagePose;
+    }
+  | {
+      type: 'filter';
+      signature: string;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      target: StageTarget;
+      /**
+       * @minItems 1
+       * @maxItems 3
+       */
+      fields: ['blur' | 'brightness' | 'grayscale', ...('blur' | 'brightness' | 'grayscale')[]];
+      from: StageFilters;
+      to: StageFilters;
+    }
+  | {
+      type: 'camera';
+      signature: string;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      /**
+       * @minItems 1
+       * @maxItems 4
+       */
+      fields: ['x' | 'y' | 'zoom' | 'rotation', ...('x' | 'y' | 'zoom' | 'rotation')[]];
+      from: StageCamera;
+      to: StageCamera;
+    }
+  | {
+      type: 'fade';
+      signature: string;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      from: number;
+      to: number;
+      color: string;
+    }
+  | {
+      type: 'transition';
+      signature: string;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      target: string;
+      /**
+       * @minItems 1
+       * @maxItems 4
+       */
+      from: [StageLayer, ...StageLayer[]];
+      to: string;
+    }
+  | {
+      type: 'shake';
+      signature: string;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      target: StageTarget;
+      amplitudeX: number;
+      amplitudeY: number;
+      periodMs: number;
+    };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Wait".
@@ -1311,6 +1515,18 @@ export interface StageObject {
   asset: string;
   position: Position;
   z: number;
+  transform?: StageTransform;
+  filters?: StageFilters;
+  parent?: string;
+  clip?: StageClip;
+  blend?: 'normal' | 'add' | 'multiply' | 'screen';
+  visible?: boolean;
+  /**
+   * @minItems 1
+   * @maxItems 4
+   */
+  layers?: [StageLayer, ...StageLayer[]];
+  shake?: StageOffset;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1320,6 +1536,56 @@ export interface Position {
   x: number;
   y: number;
   alpha: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageTransform".
+ */
+export interface StageTransform {
+  scaleX: number;
+  scaleY: number;
+  rotation: number;
+  skewX: number;
+  skewY: number;
+  pivotX: number;
+  pivotY: number;
+  anchorX: number;
+  anchorY: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageFilters".
+ */
+export interface StageFilters {
+  blur: number;
+  brightness: number;
+  grayscale: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageClip".
+ */
+export interface StageClip {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageLayer".
+ */
+export interface StageLayer {
+  asset: string;
+  weight: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageOffset".
+ */
+export interface StageOffset {
+  x: number;
+  y: number;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1340,6 +1606,54 @@ export interface TextStyle {
   underline?: boolean;
   scale?: number;
   effect?: TextEffect;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StagePoseExpressions".
+ */
+export interface StagePoseExpressions {
+  x?: StageNumberExpression;
+  y?: StageNumberExpression;
+  alpha?: StageNumberExpression;
+  scaleX?: StageNumberExpression;
+  scaleY?: StageNumberExpression;
+  rotation?: StageNumberExpression;
+  skewX?: StageNumberExpression;
+  skewY?: StageNumberExpression;
+  pivotX?: StageNumberExpression;
+  pivotY?: StageNumberExpression;
+  anchorX?: StageNumberExpression;
+  anchorY?: StageNumberExpression;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageStyle".
+ */
+export interface StageStyle {
+  parent?: string | null;
+  z?: StageNumberExpression;
+  blend?: 'normal' | 'add' | 'multiply' | 'screen';
+  clip?: StageClip | null;
+  visible?: boolean;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageFiltersExpressions".
+ */
+export interface StageFiltersExpressions {
+  blur?: StageNumberExpression;
+  brightness?: StageNumberExpression;
+  grayscale?: StageNumberExpression;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageCameraExpressions".
+ */
+export interface StageCameraExpressions {
+  x?: StageNumberExpression;
+  y?: StageNumberExpression;
+  zoom?: StageNumberExpression;
+  rotation?: StageNumberExpression;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1472,6 +1786,7 @@ export interface Snapshot {
   invocations?: SavedInvocation[];
   rng?: RngState;
   textLayout?: TextLayoutState;
+  scene?: StageScene;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1542,7 +1857,7 @@ export interface RichTextState {
 export interface Task {
   id: string;
   status: TaskStatus;
-  kind: 'animation' | 'delay' | 'audio';
+  kind: 'animation' | 'delay' | 'audio' | 'stage';
   elapsed: number;
   duration: number;
   attempt: number;
@@ -1556,6 +1871,35 @@ export interface Task {
   restore?: 'replay' | 'stop';
   name: string;
   at?: string;
+  stageTask?: StageTaskState;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StagePose".
+ */
+export interface StagePose {
+  x: number;
+  y: number;
+  alpha: number;
+  scaleX: number;
+  scaleY: number;
+  rotation: number;
+  skewX: number;
+  skewY: number;
+  pivotX: number;
+  pivotY: number;
+  anchorX: number;
+  anchorY: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageCamera".
+ */
+export interface StageCamera {
+  x: number;
+  y: number;
+  zoom: number;
+  rotation: number;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1639,6 +1983,20 @@ export interface TextLayoutState {
       entries: TextState[];
     }[]
   ];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StageScene".
+ */
+export interface StageScene {
+  version: 1;
+  camera: StageCamera;
+  filters: StageFilters;
+  overlay: {
+    color: string;
+    alpha: number;
+  };
+  shake?: StageOffset;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

@@ -1,4 +1,5 @@
-import { Application, Sprite, Texture, WebGLRenderer } from 'pixi.js';
+import {ImageStage} from './stage.js';
+import { Application, Texture, WebGLRenderer } from 'pixi.js';
 import { ensure, GalboxError,parseResourceFact,parseResourceBudget,parseAudioPreferences } from '../protocol/index.js';
 import type { Program, DeepReadonly, Snapshot,ResourceBudget,ResourceFact } from '../protocol/index.js';
 import {inspectResource,resourceUsage,defaultResourceBudget,canonicalReleaseJSON} from '../release/index.js';
@@ -11,10 +12,9 @@ export interface MediaDiagnostics {state:'available'|'needs-user-action'|'unavai
 export interface ResourceDiagnostics {graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
   private app:Application<WebGLRenderer>|null=null;
-  private renderedStage:Snapshot['stage']|null=null;
+  private stage:ImageStage|null=null;
   private textures=new Map<string,Texture>();
   private buffers=new Map<string,AudioBuffer>();
-  private sprites=new Map<string,Sprite>();
   private playing=new Map<string,Playing>();
   private context:AudioContext|null=null;
   private master:GainNode|null=null;
@@ -47,7 +47,7 @@ export class WebHost implements HostPort {
       if(this.disposed||signal.aborted){this.destroyApplication(app);throw new GalboxError('HOST_DISPOSED','Initialization cancelled');}
       ensure(app.renderer instanceof WebGLRenderer,'GRAPHICS_UNAVAILABLE','This Host requires the declared WebGL backend');
       this.canvas=app.canvas;this.canvas.addEventListener('webglcontextlost',this.lost);this.resources.graphics='available';this.mount.appendChild(app.canvas);app.canvas.setAttribute('aria-label',`${program.title}图像舞台`);app.canvas.style.width='100%';app.canvas.style.height='100%';
-      app.stage.sortableChildren=true;
+      app.stage.sortableChildren=true;this.stage=new ImageStage(app,this.textures);
       for(const asset of program.assets){
         const remaining=this.resources.limits.maxEncodedBytes-this.resources.encodedBytes;ensure(remaining>0,'RESOURCE_ENCODED_BUDGET',asset.id);const bytes=await verifiedBytes(provider,program,asset,signal,Math.min(this.resources.limits.maxAssetBytes,remaining));ensure(!this.disposed,'HOST_DISPOSED',asset.id);
         const fact=inspectResource(asset,bytes,b=>new TextDecoder('utf-8',{fatal:true}).decode(b)),usage=resourceUsage([...this.facts,fact],this.resources.limits,this.context.sampleRate);
@@ -84,18 +84,10 @@ export class WebHost implements HostPort {
       this.media.state=context.state==='running'?'available':'needs-user-action';
     });this.audioOperation=next;return next;
   }
-  setEpoch(epoch:number):void {this.stopAudio();this.epoch=epoch;this.renderedStage=null;}
+  setEpoch(epoch:number):void {this.stopAudio();this.epoch=epoch;this.stage?.invalidate();}
   render(run:DeepReadonly<Snapshot>):void {
     if(!this.app||this.disposed||this.resources.graphics!=='available')return;
-    const previous=this.renderedStage;
-    if(previous&&previous.length===run.stage.length&&run.stage.every((o,i)=>{const old=previous[i];return old&&old.id===o.id&&old.asset===o.asset&&old.z===o.z&&old.position.x===o.position.x&&old.position.y===o.position.y&&old.position.alpha===o.position.alpha;}))return;
-    for(const [id,sprite]of this.sprites)if(!run.stage.some(o=>o.id===id)){sprite.destroy();this.sprites.delete(id);}
-    for(const object of run.stage){
-      const texture=this.textures.get(object.asset);ensure(texture,'TEXTURE_MISSING',object.asset);
-      let sprite=this.sprites.get(object.id);if(!sprite){sprite=new Sprite(texture);this.app.stage.addChild(sprite);this.sprites.set(object.id,sprite);}
-      sprite.texture=texture;sprite.position.set(object.position.x,object.position.y);sprite.alpha=object.position.alpha;sprite.zIndex=object.z;
-    }
-    this.app.render();this.app.renderer.gl.flush();this.renderedStage=run.stage.map(o=>({...o,position:{...o.position}}));
+    this.stage?.render(run);
   }
   effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2],playbackEnded?:Parameters<HostPort['effect']>[3]):void {
     if(this.disposed||epoch!==this.epoch)return;
@@ -122,10 +114,10 @@ export class WebHost implements HostPort {
   private destroyApplication(app:Application<WebGLRenderer>|null):void {if(app?.renderer)app.destroy({removeView:true,releaseGlobalResources:false},{children:true});}
   dispose():void {
     for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();
-    if(this.disposed)return;this.disposed=true;this.stopAudio();for(const sprite of this.sprites.values())sprite.destroy();this.sprites.clear();
+    if(this.disposed)return;this.disposed=true;this.stopAudio();this.stage?.dispose();this.stage=null;
     this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
     for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();
-    this.destroyApplication(this.app);this.app=null;this.renderedStage=null;
+    this.destroyApplication(this.app);this.app=null;
     if(this.context&&this.context.state!=='closed')void this.context.close().catch(()=>{});this.context=null;this.master=null;this.media.active=0;
   }
 }

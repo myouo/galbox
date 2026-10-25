@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-MHv6e2 d489243
+HEAD is now at d489243 feat: add exact numeric and ordered collection values
+Preparing worktree (detached HEAD d489243)

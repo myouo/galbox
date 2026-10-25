@@ -106,3 +106,5 @@ G2-01 有限支持集见 ADR0016、TEXT.md：text.rich、字素/Ruby、safe styl
 G2-02 有限支持集见 ADR0017、TEXT_LAYOUT.md：最多8窗口/16主题、ADV/NVL/显式容量和清页、真实TrueType准备、renderer端口与完整快照闭包。系统字体为显式fallback；不把字号/行距布局当作竖排/禁则/自动分页或完整字形覆盖。
 
 G0-03有限值集和算子见ADR0018、DATA_VALUES.md：checked i64、位模式f64、null、有界有序list/dict、显式纯数据表达式/profile写入和完整内容/调用迁移验证。stored void/undefined、引用heap/循环、回绕和未列算子不借本项计为支持；G3复用其数据基础而不是重开语言实现。
+
+G3-01有限集见ADR0019、STAGE.md：二维pose/父图/矩形clip/基本混合、三类滤镜、相机、fade/crossfade/shake、通道冲突和解析任务闭包。Core时钟完成、Host重建，最多128对象/256保留任务/4图层/8层父图；其它效果、长媒体或长作品尺度不得借用此通过结论。

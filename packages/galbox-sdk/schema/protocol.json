@@ -237,6 +237,42 @@
           "type": "number",
           "minimum": -1000000,
           "maximum": 1000000
+        },
+        "transform": {
+          "$ref": "#/definitions/StageTransform"
+        },
+        "filters": {
+          "$ref": "#/definitions/StageFilters"
+        },
+        "parent": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "clip": {
+          "$ref": "#/definitions/StageClip"
+        },
+        "blend": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "add",
+            "multiply",
+            "screen"
+          ]
+        },
+        "visible": {
+          "type": "boolean"
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StageLayer"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "shake": {
+          "$ref": "#/definitions/StageOffset"
         }
       },
       "required": [
@@ -1235,6 +1271,444 @@
             "value"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.image"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "pose": {
+              "$ref": "#/definitions/StagePoseExpressions"
+            },
+            "style": {
+              "$ref": "#/definitions/StageStyle"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "id",
+            "asset",
+            "pose"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.pose"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "to": {
+              "$ref": "#/definitions/StagePoseExpressions"
+            },
+            "relative": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "duration",
+            "policy",
+            "easing",
+            "id",
+            "to",
+            "relative"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.filter"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "target": {
+              "$ref": "#/definitions/StageTarget"
+            },
+            "to": {
+              "$ref": "#/definitions/StageFiltersExpressions"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "duration",
+            "policy",
+            "easing",
+            "target",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.camera"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "to": {
+              "$ref": "#/definitions/StageCameraExpressions"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "duration",
+            "policy",
+            "easing",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.fade"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "color": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "alpha": {
+              "$ref": "#/definitions/StageNumberExpression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "duration",
+            "policy",
+            "easing",
+            "color",
+            "alpha"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.transition"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "duration",
+            "policy",
+            "easing",
+            "id",
+            "asset"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.shake"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "target": {
+              "$ref": "#/definitions/StageTarget"
+            },
+            "amplitudeX": {
+              "$ref": "#/definitions/StageNumberExpression"
+            },
+            "amplitudeY": {
+              "$ref": "#/definitions/StageNumberExpression"
+            },
+            "periodMs": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "duration",
+            "policy",
+            "easing",
+            "target",
+            "amplitudeX",
+            "amplitudeY",
+            "periodMs"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "stage.style"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "style": {
+              "$ref": "#/definitions/StageStyle"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "id",
+            "style"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "task.cancel"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "task.finish"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1576,7 +2050,8 @@
           "enum": [
             "animation",
             "delay",
-            "audio"
+            "audio",
+            "stage"
           ]
         },
         "elapsed": {
@@ -1638,6 +2113,9 @@
         "at": {
           "type": "string",
           "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "stageTask": {
+          "$ref": "#/definitions/StageTaskState"
         }
       },
       "required": [
@@ -1940,6 +2418,9 @@
         },
         "textLayout": {
           "$ref": "#/definitions/TextLayoutState"
+        },
+        "scene": {
+          "$ref": "#/definitions/StageScene"
         }
       },
       "required": [
@@ -7714,6 +8195,809 @@
           "additionalProperties": false
         }
       ]
+    },
+    "StagePose": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "scaleX": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "scaleY": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "rotation": {
+          "type": "number",
+          "minimum": -360000,
+          "maximum": 360000
+        },
+        "skewX": {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85
+        },
+        "skewY": {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85
+        },
+        "pivotX": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "pivotY": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "anchorX": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "anchorY": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "alpha",
+        "scaleX",
+        "scaleY",
+        "rotation",
+        "skewX",
+        "skewY",
+        "pivotX",
+        "pivotY",
+        "anchorX",
+        "anchorY"
+      ],
+      "additionalProperties": false
+    },
+    "StageTransform": {
+      "type": "object",
+      "properties": {
+        "scaleX": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "scaleY": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "rotation": {
+          "type": "number",
+          "minimum": -360000,
+          "maximum": 360000
+        },
+        "skewX": {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85
+        },
+        "skewY": {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85
+        },
+        "pivotX": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "pivotY": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "anchorX": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "anchorY": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "scaleX",
+        "scaleY",
+        "rotation",
+        "skewX",
+        "skewY",
+        "pivotX",
+        "pivotY",
+        "anchorX",
+        "anchorY"
+      ],
+      "additionalProperties": false
+    },
+    "StageFilters": {
+      "type": "object",
+      "properties": {
+        "blur": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 32
+        },
+        "brightness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "grayscale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "blur",
+        "brightness",
+        "grayscale"
+      ],
+      "additionalProperties": false
+    },
+    "StageCamera": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "zoom": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 100
+        },
+        "rotation": {
+          "type": "number",
+          "minimum": -360000,
+          "maximum": 360000
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "zoom",
+        "rotation"
+      ],
+      "additionalProperties": false
+    },
+    "StageOffset": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": -1024,
+          "maximum": 1024
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1024,
+          "maximum": 1024
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "StageClip": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "y": {
+          "type": "number",
+          "minimum": -1000000,
+          "maximum": 1000000
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16384
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "additionalProperties": false
+    },
+    "StageLayer": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "asset",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "StageScene": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "camera": {
+          "$ref": "#/definitions/StageCamera"
+        },
+        "filters": {
+          "$ref": "#/definitions/StageFilters"
+        },
+        "overlay": {
+          "type": "object",
+          "properties": {
+            "color": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "alpha": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "color",
+            "alpha"
+          ],
+          "additionalProperties": false
+        },
+        "shake": {
+          "$ref": "#/definitions/StageOffset"
+        }
+      },
+      "required": [
+        "version",
+        "camera",
+        "filters",
+        "overlay"
+      ],
+      "additionalProperties": false
+    },
+    "StageTarget": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "object"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "camera"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "StageNumberExpression": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/I32Expression"
+        },
+        {
+          "$ref": "#/definitions/F64Expression"
+        }
+      ]
+    },
+    "StagePoseExpressions": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "y": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "alpha": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "scaleX": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "scaleY": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "rotation": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "skewX": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "skewY": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "pivotX": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "pivotY": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "anchorX": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "anchorY": {
+          "$ref": "#/definitions/StageNumberExpression"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "StageFiltersExpressions": {
+      "type": "object",
+      "properties": {
+        "blur": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "brightness": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "grayscale": {
+          "$ref": "#/definitions/StageNumberExpression"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "StageCameraExpressions": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "y": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "zoom": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "rotation": {
+          "$ref": "#/definitions/StageNumberExpression"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "StageTaskState": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "pose"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "x",
+                  "y",
+                  "alpha",
+                  "scaleX",
+                  "scaleY",
+                  "rotation",
+                  "skewX",
+                  "skewY",
+                  "pivotX",
+                  "pivotY",
+                  "anchorX",
+                  "anchorY"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 12,
+              "uniqueItems": true
+            },
+            "from": {
+              "$ref": "#/definitions/StagePose"
+            },
+            "to": {
+              "$ref": "#/definitions/StagePose"
+            }
+          },
+          "required": [
+            "type",
+            "signature",
+            "easing",
+            "target",
+            "fields",
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "filter"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "target": {
+              "$ref": "#/definitions/StageTarget"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "blur",
+                  "brightness",
+                  "grayscale"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 3,
+              "uniqueItems": true
+            },
+            "from": {
+              "$ref": "#/definitions/StageFilters"
+            },
+            "to": {
+              "$ref": "#/definitions/StageFilters"
+            }
+          },
+          "required": [
+            "type",
+            "signature",
+            "easing",
+            "target",
+            "fields",
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "camera"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "x",
+                  "y",
+                  "zoom",
+                  "rotation"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 4,
+              "uniqueItems": true
+            },
+            "from": {
+              "$ref": "#/definitions/StageCamera"
+            },
+            "to": {
+              "$ref": "#/definitions/StageCamera"
+            }
+          },
+          "required": [
+            "type",
+            "signature",
+            "easing",
+            "fields",
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "fade"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "from": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "to": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "color": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            }
+          },
+          "required": [
+            "type",
+            "signature",
+            "easing",
+            "from",
+            "to",
+            "color"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "transition"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "from": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StageLayer"
+              },
+              "minItems": 1,
+              "maxItems": 4
+            },
+            "to": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "type",
+            "signature",
+            "easing",
+            "target",
+            "from",
+            "to"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "shake"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "target": {
+              "$ref": "#/definitions/StageTarget"
+            },
+            "amplitudeX": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1024
+            },
+            "amplitudeY": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1024
+            },
+            "periodMs": {
+              "type": "integer",
+              "minimum": 16,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "type",
+            "signature",
+            "easing",
+            "target",
+            "amplitudeX",
+            "amplitudeY",
+            "periodMs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "StageStyle": {
+      "type": "object",
+      "properties": {
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "z": {
+          "$ref": "#/definitions/StageNumberExpression"
+        },
+        "blend": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "add",
+            "multiply",
+            "screen"
+          ]
+        },
+        "clip": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StageClip"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "visible": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
     }
   },
   "type": "object",

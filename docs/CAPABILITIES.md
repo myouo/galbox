@@ -6,7 +6,7 @@
 | --- | --- |
 | Core / ABI | 同步 TS、稳定地址、参数/返回槽/显式帧、单剧情流、预算续跑 |
 | 值 | bool/string/checked i32/i64、位模式f64、null与有界有序list/dict；显式比较/转换，无隐式转换 |
-| 图像 / 正文 | 单 Pixi WebGL；绝对 x/y/alpha 线性动画；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
+| 图像 / 正文 | 单 Pixi WebGL；有界二维pose/层级/裁切/混合、相机/基础滤镜/fade/crossfade/shake与独立属性任务；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
 | 媒体 | Web Audio 短 WAV、真实获取/解码/启动/重试、音量；显式 replay/stop，不提供采样点精确续接 |
 | 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载；TrueType目录/真实字体准备与独有FontFace释放 |
@@ -20,7 +20,7 @@
 | 默认 UI | React 菜单/选择/历史、导入报告/显式载入、跨刷新槽位选择；暂停原因与输入 epoch 隔离 |
 | 打包嵌入 | protocol/core/port-kit/player/react/testing/save-bridge/diagnostics/backups/CSS 显式入口；独立 tarball 消费 |
 | 便携备份/内容迁移 | 有界完整持久闭包；原子新分支恢复、上一修订、幂等回执；显式完整 release 迁移，缺映射保留旧档并拒绝 |
-| 未实现 | timed-choice、视频/热点、relative 动画、stored void/undefined/引用heap、原档导出、跨系列迁移、自动旧 release 获取 |
+| 未实现 | timed-choice、视频/热点、stored void/undefined/引用heap、原档导出、跨系列迁移、自动旧 release 获取 |
 
 OperationSpec 与 recipe opcode 从 schema 生成。类型工厂由真实运行时校验支撑，readonly 不代替所有权。扩展为受信任同步 TS，不被称作同 realm 安全沙箱。
 
@@ -49,3 +49,5 @@ G2-01 由公开 richText/richPage 工厂和同源 Schema 提供 text.rich，字�
 G2-02 的textLayout/主题/字体工厂、Core窗口指令、NVL确认条目闭包与隔离renderer端口见 [TEXT_LAYOUT](TEXT_LAYOUT.md)。必要字体加载先于激活，当前仅TrueType与显式system fallback，不把加载当作字形覆盖/所有排版认证。完整通用任务仍按tasks.json推进。
 
 G0-03 的checked i64、位模式f64、null/有序集合与数据表达式已落地，包含profile.expression、原生入口规范化、嵌套所有权和完整迁移负例，见 [DATA_VALUES](DATA_VALUES.md)。i32旧语义保留，新Program类型不匹配的旧槽位明确拒绝；G3演出和后续系统继续。
+
+G3-01舞台有限集见 [STAGE](STAGE.md)：一次解析表达式/相对参数、按属性冲突、取消/替换/finish、闭包恢复和真正Pixi/WebGL像素验证。图像效果不包含DOM正文/UI，空容器/非矩形mask/任意shader及未列效果仍不计支持；资源/任务规模及其它平台未认证。
