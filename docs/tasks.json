@@ -6,7 +6,7 @@
   "current_scope": [
     "M5"
   ],
-  "current_task": "M5-03",
+  "current_task": "M5-04",
   "engine_status": "m5_in_progress",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -839,12 +839,13 @@
         "M5-02",
         "M4-03"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
-        "platform/performance evidence",
-        "capability report"
+        "scripts/performance.mjs",
+        "docs/PLATFORMS.md",
+        "docs/evidence/m5-03/performance.json"
       ],
       "contracts": [
         "C10",
@@ -856,9 +857,12 @@
         "platform-matrix",
         "performance-measurement"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/m5-03/REPORT.md",
+        "docs/evidence/m5-03/performance.json"
+      ],
       "blocker": null,
-      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+      "next_action": "测量完成；进入 M5-04 的 API/版本与本地候选检查，保留渲染/释放长尾及未测平台限制。"
     },
     {
       "id": "M5-04",

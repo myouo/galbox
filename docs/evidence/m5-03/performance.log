@@ -1,0 +1,116 @@
+$ pnpm build && pnpm build:harness && node scripts/performance.mjs
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 756 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-BXPKcxwa.css                        5.61 kB │ gzip:   1.96 kB
+apps/playground/dist/assets/webworkerAll-lCPckeuk.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-BCdovYqg.js                         15.18 kB │ gzip:   4.76 kB
+apps/playground/dist/assets/browserAll-Bcc_AIV9.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-Dyp64L3n.js                     1,124.89 kB │ gzip: 206.87 kB
+
+✓ built in 704ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 747 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-PstVo28z.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-B9w21qG_.js                         18.67 kB │ gzip:   5.40 kB
+tests/browser/harness/dist/init-CCIsTtXE.js                         31.99 kB │ gzip:   9.65 kB
+tests/browser/harness/dist/browserAll-BcquLmIe.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/sdk.js                                1,932.38 kB │ gzip: 208.93 kB
+
+✓ built in 487ms
+{
+  "result": "passed",
+  "core": [
+    {
+      "case": "lighthouse-start",
+      "budget": 1,
+      "p95Ms": 0.007682000000045264
+    },
+    {
+      "case": "lighthouse-start",
+      "budget": 8,
+      "p95Ms": 0.01389700000004268
+    },
+    {
+      "case": "lighthouse-start",
+      "budget": 100,
+      "p95Ms": 0.009007999999994354
+    },
+    {
+      "case": "checked-i32-1000",
+      "budget": 1,
+      "p95Ms": 0.018645999999989726
+    },
+    {
+      "case": "checked-i32-1000",
+      "budget": 8,
+      "p95Ms": 0.12409499999967011
+    },
+    {
+      "case": "checked-i32-1000",
+      "budget": 100,
+      "p95Ms": 1.3689619999995557
+    }
+  ],
+  "apiP95Ms": 2.399999976158142,
+  "paintP95Ms": 135.30000007152557,
+  "initialization": {
+    "samples": 3,
+    "medianMs": 120.89999997615814,
+    "p95Ms": 138.19999992847443,
+    "p99Ms": 138.19999992847443,
+    "maxMs": 138.19999992847443
+  },
+  "resources": {
+    "graphics": "available",
+    "assets": 9,
+    "encodedBytes": 120009,
+    "textureBytesEstimated": 7767200,
+    "decodedAudioBytes": 510720,
+    "limits": {
+      "maxAssetBytes": 16777216,
+      "maxEncodedBytes": 33554432,
+      "maxTextureBytes": 134217728,
+      "maxAudioBytes": 33554432,
+      "maxImageSide": 4096,
+      "maxAudioMs": 30000
+    }
+  },
+  "float32": {
+    "state": "available",
+    "starts": 1,
+    "fact": {
+      "id": "bgm",
+      "bytes": 1004,
+      "kind": "audio",
+      "channels": 1,
+      "sampleRate": 48000,
+      "frames": 240
+    }
+  }
+}

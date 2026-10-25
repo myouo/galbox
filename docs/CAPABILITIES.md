@@ -24,7 +24,7 @@
 
 OperationSpec 与 recipe opcode 从 schema 生成。类型工厂由真实运行时校验支撑，readonly 不代替所有权。扩展为受信任同步 TS，不被称作同 realm 安全沙箱。
 
-平台证据仅限当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio。没有移动真机、其他浏览器、人耳音质或性能预算认证。体积提示、整包预加载和长期回执留存的规模问题保留给 M5。
+平台证据仅限当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio。没有移动真机、其他浏览器或人耳音质认证；当前参考环境的性能基线见 PLATFORMS.md。体积提示、整包预加载和长期回执留存的规模问题保留给 M5。
 
 fixture-save@1 与消费者格式均为原创 synthetic，不提供 NScripter/KAG 或《水仙》《海市蜃楼之馆》的兼容声明。N/F 所需最小输入见 INPUTS_REQUIRED.md。
 
@@ -33,3 +33,5 @@ M4 提供实际 CLI/标准项目、SourceMap 与必要行为覆盖发布门槛�
 备份格式、事务边界、迁移工厂与失败行为见 [BACKUPS](BACKUPS.md)。M5 其余任务仍未完成；当前验证范围见各次证据。
 
 M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。只声明已执行平台证据；VRAM 仅 RGBA 估算，不冒充设备测量。
+
+实际平台与性能范围见 [PLATFORMS](PLATFORMS.md)：Core/API 目标通过，软件渲染/释放有长尾，不承诺 60 FPS 或视觉延迟。

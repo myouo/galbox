@@ -21,7 +21,8 @@
     "build:harness": "vite build --config tests/browser/harness/vite.config.ts",
     "test:compatibility": "pnpm build:sdk && node scripts/compatibility.mjs",
     "build:cli": "pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs",
-    "test:cli": "node scripts/test-cli.mjs --full"
+    "test:cli": "node scripts/test-cli.mjs --full",
+    "test:performance": "pnpm build && pnpm build:harness && node scripts/performance.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
