@@ -1,4 +1,4 @@
-# 当前能力：M0–M4 与 M5-01
+# 当前能力：M0–M4 与 M5-01/02
 
 具体通过状态由 tasks.json 与 evidence/ 给出；后续任务不因本表列出目标而计为完成。
 
@@ -9,7 +9,7 @@
 | 图像 / 正文 | 单 Pixi WebGL；绝对 x/y/alpha 线性动画；DOM ADV、码点揭示、显完/advance、历史 |
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
 | 媒体 | Web Audio 短 WAV、真实获取/解码/启动/重试、音量；显式 replay/stop，不提供采样点精确续接 |
-| 资源 | release/catalog/kind/mime/字节 SHA-256 核验、私有 bytes、租约归还；整包预加载 |
+| 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载 |
 | 工作 / 持久进度 | 同步工作 profile、冻结提交批次、幂等回执、修订冲突、普通已读/解锁自动提交 |
 | 有状态操作 | 真实 codec/操作工厂、冻结表、每调用 State、signal wait、隔离和失败原子性、禁止重入 |
 | 操作迁移 | args/resume ABI 相同时的 state 迁移；否则完整 SavedInvocation 迁移并重验；缺迁移拒绝 |
@@ -31,3 +31,5 @@ fixture-save@1 与消费者格式均为原创 synthetic，不提供 NScripter/KA
 M4 提供实际 CLI/标准项目、SourceMap 与必要行为覆盖发布门槛、只读 saves analyze/verify，以及独立 tarball 扩展/完整调用迁移/合成 binding 的开发者工作流。Node/Vite 仅在 CLI；Core 不依赖它们。覆盖清单和标准候选校验不是原作忠实性认证。
 
 备份格式、事务边界、迁移工厂与失败行为见 [BACKUPS](BACKUPS.md)。M5 其余任务仍未完成；当前验证范围见各次证据。
+
+M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。只声明已执行平台证据；VRAM 仅 RGBA 估算，不冒充设备测量。

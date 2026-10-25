@@ -59,6 +59,14 @@
         "additionalProperties": false
       },
       "maxItems": 256
+    },
+    "series": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_.-]{1,80}$"
+    },
+    "resourcePolicy": {
+      "type": "string",
+      "pattern": "^[^\\x00]{1,512}$"
     }
   },
   "required": [

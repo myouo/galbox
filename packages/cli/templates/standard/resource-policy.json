@@ -1,0 +1,8 @@
+{
+  "maxAssetBytes": 16777216,
+  "maxEncodedBytes": 33554432,
+  "maxTextureBytes": 134217728,
+  "maxAudioBytes": 33554432,
+  "maxImageSide": 4096,
+  "maxAudioMs": 30000
+}

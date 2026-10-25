@@ -1,8 +1,8 @@
 import { test,expect } from '@playwright/test';
 import type * as Harness from './harness/sdk.js';
-test('browser resource identity, digest, owned bytes, cancellation lease and actual decode failure',async({page})=>{
+test('resource identity/ownership/cancellation, invalid header refusal and decoder failure cleanup',async({page})=>{
  await page.goto('/');
- const results=await page.evaluate(async()=>{
+ await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();const results=await page.evaluate(async()=>{
   const url='http://127.0.0.1:4174/sdk.js';const sdk:typeof Harness=await import(url);const p=sdk.parseProgram(await(await fetch('/program.json')).json()),asset=p.assets[0];if(!asset)throw new Error('asset');
   const original=new Uint8Array(await(await fetch('/'+asset.path)).arrayBuffer());let released=0;
   const provider:sdkTypeProvider={async acquire(){return {release:p.release,id:asset.id,kind:asset.kind,mime:asset.mime,bytes:original,releaseLease(){released++;original.fill(0);}};}};
@@ -16,9 +16,10 @@ test('browser resource identity, digest, owned bytes, cancellation lease and act
   const bad=sdk.parseProgram(p),audio=bad.assets.find(a=>a.kind==='audio');if(!audio)throw new Error('audio');const invalid=new Uint8Array([1,2,3,4]);audio.sha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',invalid)),x=>x.toString(16).padStart(2,'0')).join('');
   const http=sdk.createHttpProvider(p,location.href);const broken={async acquire(r:Parameters<sdkTypeProvider['acquire']>[0],s:AbortSignal){if(r.asset.id===audio.id)return {release:p.release,id:audio.id,kind:audio.kind,mime:audio.mime,bytes:invalid,releaseLease(){}};return http.acquire(r,s);}};
   const mount=document.createElement('div');document.body.append(mount);let decode='';try {await sdk.createPlayer({program:bad,provider:broken,mount,saveCompatibilitySeries:'decode-test',database:'adapters'});}catch(e){decode=String(e);}
-  return {released,owned:bytes[0]!==original[0],identity,digest,cancel,decode,canvases:mount.querySelectorAll('canvas').length};
+  const decoder=AudioContext.prototype.decodeAudioData;let device='';AudioContext.prototype.decodeAudioData=()=>Promise.reject(new DOMException('Injected decoder failure','NotSupportedError'));try{await sdk.createPlayer({program:p,provider:http,mount,saveCompatibilitySeries:'decoder-fault',database:'adapters'});}catch(e){device=String(e);}finally{AudioContext.prototype.decodeAudioData=decoder;}
+  return {device,released,owned:bytes[0]!==original[0],identity,digest,cancel,decode,canvases:mount.querySelectorAll('canvas').length};
  });
- expect(results).toMatchObject({released:4,owned:true,canvases:0});expect(results.identity).toContain('ASSET_IDENTITY');expect(results.digest).toContain('ASSET_DIGEST');expect(results.cancel).toContain('ASSET_CANCELLED');expect(results.decode).toContain('AUDIO_FORMAT');
+ expect(results).toMatchObject({released:4,owned:true,canvases:0});expect(results.identity).toContain('ASSET_IDENTITY');expect(results.digest).toContain('ASSET_DIGEST');expect(results.cancel).toContain('ASSET_CANCELLED');expect(results.decode).toContain('RESOURCE_WAV');expect(results.device).toContain('AUDIO_FORMAT');
 });
 test('real IndexedDB isolates namespaces and rejects profile/slot/head conflicts',async({page})=>{
  await page.goto('/');const result=await page.evaluate(async()=>{

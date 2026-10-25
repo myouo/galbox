@@ -1,4 +1,4 @@
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt } from './wire.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest } from './wire.js';
 export declare const validateProgram: { (data: unknown): data is Program; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateSnapshot: { (data: unknown): data is Snapshot; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateProfile: { (data: unknown): data is Profile; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
@@ -19,3 +19,6 @@ export declare const validateBehaviorMapping: { (data: unknown): data is Behavio
 export declare const validatePortableBackup: { (data: unknown): data is PortableBackup; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateStoreBackupRestore: { (data: unknown): data is StoreBackupRestore; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateBackupRestoreReceipt: { (data: unknown): data is BackupRestoreReceipt; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateResourceBudget: { (data: unknown): data is ResourceBudget; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateResourceFact: { (data: unknown): data is ResourceFact; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateReleaseManifest: { (data: unknown): data is ReleaseManifest; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };

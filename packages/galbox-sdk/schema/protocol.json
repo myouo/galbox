@@ -2503,6 +2503,207 @@
         "slots"
       ],
       "additionalProperties": false
+    },
+    "ResourceBudget": {
+      "type": "object",
+      "properties": {
+        "maxAssetBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 67108864
+        },
+        "maxEncodedBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 134217728
+        },
+        "maxTextureBytes": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 268435456
+        },
+        "maxAudioBytes": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 134217728
+        },
+        "maxImageSide": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "maxAudioMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        }
+      },
+      "required": [
+        "maxAssetBytes",
+        "maxEncodedBytes",
+        "maxTextureBytes",
+        "maxAudioBytes",
+        "maxImageSide",
+        "maxAudioMs"
+      ],
+      "additionalProperties": false
+    },
+    "ResourceFact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "image"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 67108864
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "bytes",
+            "width",
+            "height"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "audio"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 67108864
+            },
+            "channels": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2
+            },
+            "sampleRate": {
+              "type": "integer",
+              "minimum": 8000,
+              "maximum": 96000
+            },
+            "frames": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 11520000
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "bytes",
+            "channels",
+            "sampleRate",
+            "frames"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ReleaseManifest": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "const": "galbox-release"
+        },
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "sdk": {
+          "type": "string",
+          "const": "0.1.0"
+        },
+        "protocol": {
+          "type": "integer",
+          "const": 1
+        },
+        "semantics": {
+          "type": "string",
+          "const": "galbox-core@1"
+        },
+        "gameId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "release": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "series": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.-]{1,80}$"
+        },
+        "programSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "registrySha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "assetsSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResourceFact"
+          },
+          "maxItems": 256
+        },
+        "limits": {
+          "$ref": "#/definitions/ResourceBudget"
+        }
+      },
+      "required": [
+        "format",
+        "version",
+        "sdk",
+        "protocol",
+        "semantics",
+        "gameId",
+        "release",
+        "series",
+        "programSha256",
+        "registrySha256",
+        "assetsSha256",
+        "resources",
+        "limits"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

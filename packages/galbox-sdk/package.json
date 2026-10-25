@@ -49,6 +49,10 @@
     "./backups": {
       "types": "./dist/backups/index.d.ts",
       "import": "./dist/backups/index.js"
+    },
+    "./release": {
+      "types": "./dist/release/index.d.ts",
+      "import": "./dist/release/index.js"
     }
   },
   "dependencies": {

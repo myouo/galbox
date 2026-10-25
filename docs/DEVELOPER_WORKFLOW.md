@@ -32,3 +32,5 @@
 - 缺迁移：拒绝并保留旧档；缺来源/profile：明确 needs-input/参数失败，不造默认进度。
 
 当前验证标准状态与声明覆盖；便携备份和显式跨 release 迁移另见 [BACKUPS](BACKUPS.md)。原作忠实性、其他平台和性能预算仍由后续任务承接。
+
+M5-02 后 source、port 或资源策略改变须先 assets build 再进行 saves 验证；否则先得到 RELEASE_MISMATCH。完整发布绑定、预算和设备失败说明见 [RELEASES](RELEASES.md)。

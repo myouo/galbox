@@ -1,13 +1,15 @@
 # galbox-sdk 当前状态
 
-2026-10-25。M0–M4 与 M5-01 完成；M5 其余任务未完成。当前分支 feat/portable-backups，基线 8980849，本轮本地提交见 git log；没有推送/公开发布。完整任务状态以 tasks.json 为准，当前下一项 M5-02。
+2026-10-25。M0–M4 与 M5-01/02 完成，完整状态以 tasks.json 为准。分支 feat/release-resource-budgets，M5-02 基线 308c1ae；本地提交见 git log，没有推送/发布。当前下一项 M5-03。
 
-M5-01 新增正式 galbox-sdk/backups、Player 备份/准备/提交、显式完整内容迁移、IndexedDB 单事务导出和原子独立分支恢复。保留全部持久 profile、当前/上一槽位、recipe/onLoad/provenance 和原始修订；不转移 activation 权限，不覆盖 main/旧槽位。未保存的剧情位置、资源字节和原档附件不在备份中；总量有界。没有槽位的普通进度也可在默认菜单跨刷新选择，明确从头开始；公开 start(profileId)，无参数仍用 main。用法见 BACKUPS.md，支持集见 ADR 0008。
+新增公开 galbox-sdk/release、生成的发布/预算 Schema、Program/目录/冻结注册表身份绑定、实际资源事实与预算。CLI assets build 产出 Program 旁路 .release.json，标准模板与《灯塔来信》实际消费；修改 source/port/资源/策略后须重建。旧调用者在同一 Host 路径生成 derived 清单。用法见 RELEASES.md、ADR 0009；备份/迁移仍见 BACKUPS.md。
 
-最终回归：frozen 安装、check、63 单元、24 Chromium 用例（0 skip/flaky）、独立 SDK tarball 严格类型/原生 ESM/浏览器播放保存备份/完整 invocation 迁移、40 条独立 CLI 命令及两个开发浏览器工作流、4 个 synthetic 兼容测试均通过。证据在 evidence/m5-01/REPORT.md、顶层日志/JSON/截图和 source-manifest.json。旧阶段证据只对应各自基线；before-profile-entry 与失败日志为历史记录。已修复 Ajv standalone 的 CJS helper 导致原生 ESM 打包消费失败，补了回归，未添加运行时 Ajv。
+Host 有界读取 HTTP、解码前检查图片/WAV、按设备采样率限 PCM、核对实际解码，并归还取消后的迟到租约。普通可重试启动失败清节点；明确媒体 unavailable 不冒充待点击。接管在宿主启动后确认，失败保留 pending；新 Host 恢复不重复已提交 profile 累计。实际 GPU context loss 暂停并允许保存逻辑切点，重建为显式操作。
 
-本地包 artifacts/galbox-sdk-0.1.0.tgz 和 galbox-cli-0.1.0.tgz 已实际独立安装验证；SDK consumer 与 CLI 测得 SDK 包 SHA 相同，具体摘要在报告。运行 pnpm install --frozen-lockfile；本机用 export TMPDIR=/dev/shm 避开 /tmp 配额。pnpm dev → http://127.0.0.1:4173/，本轮服务已启动，实际点击阅读/备份菜单、Pixi canvas/Web Audio/0 pageerror 另有 dev-result.json。test:browser 前应停止该开发服务以释放严格端口。
+最终回归：frozen 安装/check、69 单元、29 Chromium、独立 tarball 严格类型/原生 ESM/发布与播放保存备份迁移、50 CLI 命令及两个开发工作流、4 synthetic 兼容测试均通过。证据在 evidence/m5-02/REPORT.md、日志/JSON/截图/source-manifest.json。SDK consumer 与 CLI 安装 SDK 包 SHA 相同；本地两 tarball 在 artifacts/。本轮 pnpm fixture 已生成真实 Program/资源/发布清单；旧证据只对应其基线。
 
-下一项 M5-02：读取 C10/C11、T12/T13/T16/T22/T25/T28，先写不可变发布闭包、有限能力与资源预算 ADR，再实现发布绑定/预算拒绝及设备失败、取消迟到验证。保持现有 TS Core/Host/Pixi/DOM/React/IndexedDB 路线；按素材证据增加必要媒体能力。当前仍整包预加载、主 chunk >500 kB、回执长期留存，尚无预算或性能测量认证。
+运行 export TMPDIR=/dev/shm（本机 /tmp 配额限制），pnpm install --frozen-lockfile，pnpm dev → http://127.0.0.1:4173/。当前为测试已停止旧 dev 服务。pnpm test:browser 需要 4173/4174 空闲。
 
-M5-03 平台/性能矩阵与 M5-04 SDK alpha 候选未完成。N-01/F-01/M6 仍缺明确 edition、可用 Program/资源、原档附件和原作加载后继续参照；合成通过不算真实兼容。其他浏览器、移动真机、人耳音质、跨系列迁移和自动旧 release 获取未验证/未实现，详情见能力表。
+下一项 M5-03：只声明实际测过的平台，测 Core 批次/输入响应/初始化与解码/PCM 与纹理预算，区分实测与估算。当前仅 Linux + Chromium + 软件 WebGL 的功能证据，无性能测量或其他浏览器/移动真机认证。仍整包预加载、主 chunk >500 kB、回执长期留存，不宣称总浏览器物理内存上限。
+
+M5-04 SDK alpha/API/本地发布候选未完成；N-01/F-01/M6 仍缺明确发行版、Program/资源、原档附件与原作继续参照。float32 WAV 当前为受控接入，真实媒体证据为 PCM16/PNG/SVG；没有长媒体流/精确 seek、视频/热点/timed-choice、GPU 自动恢复或真实商业作品兼容结论。

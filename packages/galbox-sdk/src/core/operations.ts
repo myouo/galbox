@@ -111,6 +111,8 @@ export class OperationRegistry {
     for(const migration of migrations){ensure(trustedMigrations.has(migration),'MIGRATION_FACTORY','Use defineInvocationMigration');const key=`${migration.from.id}@${migration.from.version}->${migration.to.version}`;ensure(!migrationKeys.has(key),'MIGRATION_DUPLICATE',key);migrationKeys.add(key);ensure(entries.get(`${migration.to.id}@${migration.to.version}`)===migration.to,'MIGRATION_TARGET',key);}
     this.entries=entries;this.migrations=Object.freeze([...migrations]);Object.freeze(this);
   }
+  describe():JsonValue {return [...this.entries.values()].map(op=>({id:op.id,version:op.version,args:{...op.argsSchema},state:{...op.stateSchema},resume:{...op.resumeSchema},manifest:{...op.manifest,resumeKinds:[...op.manifest.resumeKinds],jumpTargets:[...op.manifest.jumpTargets]}}));}
+  migrationIdentity():JsonValue {return this.migrations.map(m=>({from:{id:m.from.id,version:m.from.version,args:{...m.from.argsSchema},state:{...m.from.stateSchema},resume:{...m.from.resumeSchema}},to:{id:m.to.id,version:m.to.version}}));}
   get(id:string,version:number):RuntimeOperation {const value=this.entries.get(`${id}@${version}`);ensure(value,'UNSUPPORTED_OPERATION',`${id}@${version}`);return value;}
   restore(saved:SavedInvocation,target:Extract<Instruction,{op:'extension.invoke'}>):SavedInvocation {
     ensure(saved.operation===target.operation,'RESTORE_INVOCATION','Operation changed');const op=this.get(target.operation,target.version);

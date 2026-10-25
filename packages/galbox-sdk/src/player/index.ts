@@ -1,6 +1,6 @@
 import { Core, validateRestore } from '../core/index.js';
 import type { CoreView, CoreEvent, ProgressChange } from '../core/index.js';
-import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError } from '../protocol/index.js';
+import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError,parseResourceBudget,parseReleaseManifest } from '../protocol/index.js';
 import type { Program, Snapshot, DeepReadonly, Profile, RestoreRecipe, SlotMetadata, StoreImport, JsonValue } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { Coordinator } from '../runtime/coordinator.js';
@@ -14,7 +14,10 @@ import type { MediaDiagnostics } from '../web-host/host.js';
 import {prepareRestoreRecipe} from '../runtime/recipe.js';
 import {materializeImport} from '../save-bridge/index.js';
 import type {SaveBindingRegistry,PreparedImport,PrepareResult,ConversionReport,OriginalSaveFile} from '../save-bridge/index.js';
-import {webFormatContext} from '../web-host/format.js';
+import {createReleaseManifest,verifyReleaseManifest,releaseFingerprint,defaultResourceBudget,canonicalReleaseJSON} from '../release/index.js';
+import type {ResourceBudget,ReleaseManifest} from '../release/index.js';
+import type {ResourceDiagnostics} from '../web-host/host.js';
+import {webFormatContext,webReleaseDigest} from '../web-host/format.js';
 import { TextController } from '../web-host/text.js';
 import {prepareBackupRestore,materializeBackupRestore,storageNamespace} from '../backups/index.js';
 import type {PreparedBackupRestore,ContentMigration,PortableBackup,BackupRestoreReceipt} from '../backups/index.js';
@@ -22,8 +25,10 @@ import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;}
+export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;}
+export interface ReleaseView {readonly origin:'manifest'|'derived';readonly sha256:string;readonly manifest:DeepReadonly<ReleaseManifest>;}
 export interface PlayerView {
+  readonly release:ReleaseView|null;readonly resources:DeepReadonly<ResourceDiagnostics>;
   readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'commit-unknown'|'disposed';readonly core:CoreView|null;readonly error:string|null;
   readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profiles:readonly {profileId:string;revision:number}[];readonly profileId:string;readonly slots:readonly {slot:string;revision:number;profileId:string;label:string}[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
 }
@@ -34,6 +39,10 @@ export interface BackupRestoreResult {readonly id:string;readonly profiles:Backu
 export class Player {
   private readonly backupCommits=new WeakMap<PreparedBackupRestore,string>();
   private runtime:Coordinator|null=null;
+  private release:ReleaseView|null=null;
+  private readonly requestedRelease:ReleaseManifest|null;
+  private readonly resourceBudget:ResourceBudget;
+  private abortRequested=():void=>this.dispose();
   private profileId='main';
   private profiles:{profileId:string;revision:number}[]=[];
   private onLoad:RestoreRecipe|undefined;
@@ -71,15 +80,18 @@ export class Player {
   private readonly instance=crypto.randomUUID();
   private constructor(private readonly options:PlayerOptions){
     this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
-    this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);
-    this.host=new WebHost(options.mount);this.text=new TextController(options.mount);
-    this.cached={title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);this.requestedRelease=options.release===undefined?null:parseReleaseManifest(options.release);this.resourceBudget=parseResourceBudget(options.resourceBudget??this.requestedRelease?.limits??defaultResourceBudget);ensure(!this.requestedRelease||canonicalReleaseJSON(this.resourceBudget)===canonicalReleaseJSON(this.requestedRelease.limits),'RELEASE_BUDGET','Player budget differs from manifest');
+    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);});this.text=new TextController(options.mount);
+    this.cached={release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
   static async create(options:PlayerOptions):Promise<Player> {
-    const player=new Player(Object.freeze({...options}));
+    ensure(!options.signal?.aborted,'PLAYER_CANCELLED','Creation cancelled');const player=new Player(Object.freeze({...options}));player.options.signal?.addEventListener('abort',player.abortRequested,{once:true});
     try {
-      player.store=player.options.store??await openStore(player.namespace,player.options.database);player.ownsStore=!player.options.store;
-      await player.host.init(player.program,player.options.provider,player.abort.signal);
+      const digest=webReleaseDigest(),releaseOptions={program:player.program,series:player.options.saveCompatibilitySeries,operations:player.operations,...(player.options.bindings?{bindings:player.options.bindings}:{})};
+      if(player.requestedRelease)await verifyReleaseManifest(player.requestedRelease,releaseOptions,digest);ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');
+      player.store=player.options.store??await openStore(player.namespace,player.options.database);player.ownsStore=!player.options.store;if(player.disposed){if(player.ownsStore)player.store.close();throw new GalboxError('PLAYER_CANCELLED','Creation cancelled');}
+      await player.host.init(player.program,player.options.provider,player.abort.signal,player.resourceBudget,player.requestedRelease?.resources);
+      const manifest=player.requestedRelease??await createReleaseManifest({...releaseOptions,resources:player.host.resourceFacts(),limits:player.resourceBudget},digest);const sha256=await releaseFingerprint(manifest,digest);ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');player.release={origin:player.requestedRelease?'manifest':'derived',sha256,manifest};
       document.addEventListener('visibilitychange',player.visibility);window.addEventListener('blur',player.blur);window.addEventListener('focus',player.focus);
       await player.refreshSlots();const durable=await player.store.read();if(durable.head?.status==='committed-pending')player.lifecycle='committed-pending';player.frameId=requestAnimationFrame(player.frame);player.publish();return player;
     }catch(error){player.dispose();throw error;}
@@ -89,7 +101,7 @@ export class Player {
   private publish():void {
     const core=this.runtime?.view()??null;
     if(core){this.host.render(core.run);this.text.render(core.run);}
-    this.cached={title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.cached={release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
     for(const listener of [...this.listeners]){try{listener();}catch(error){this.error=error instanceof Error?error.message:String(error);}}
   }
   private frame=(now:number):void=>{
@@ -134,12 +146,13 @@ export class Player {
     ensure(head.head?.id===activation.id&&(head.head.owner??head.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Candidate no longer owns the durable head');
     const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations),epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text.render(candidate.view().run);
     const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100);this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
+    await runtime.start();this.host.assertReady();ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Takeover was superseded');
     await store.confirm(activation.id,owner);const confirmed=await store.read(this.profileId);ensure(confirmed.head?.id===activation.id&&(confirmed.head.owner??confirmed.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Head changed during takeover');
-    this.lifecycle='playing';this.error=null;await runtime.start();this.publish();
+    this.lifecycle='playing';this.error=null;this.publish();
   }
   private async activate(baseline:Snapshot|null,gen:number,policy:LoadPolicy):Promise<void> {
     const work=this.activationTail.catch(()=>{}).then(async()=>{
-      ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','A newer request replaced this candidate');const store=this.requireStore(),old=this.runtime;this.setPause('activation',true);
+      ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','A newer request replaced this candidate');const store=this.requireStore(),old=this.runtime;this.host.assertReady();this.setPause('activation',true);
       let committed=false,committing=false,id:string|null=null,expectedHead:string|null=null;
       try {
         if(old){await old.freeze();await old.flushAll();}ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale');
@@ -148,7 +161,7 @@ export class Player {
         else {ensure(baseline,'LOAD_BASELINE','Missing snapshot');snapshot=validateRestore(this.program,baseline,this.operations);if(policy.recipe){const prepared=prepareRestoreRecipe(this.program,durable.profile,snapshot,policy.recipe,{operations:this.operations});snapshot=prepared.snapshot;changes=prepared.changes;mode='initial';}}
         ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale during preparation');id=`${this.instance}:a${gen}`;
         const initial=changes.length?Object.freeze({id:`${id}:initial`,baseRevision:durable.profile.revision,through:changes.at(-1)?.seq??0,changes:Object.freeze(changes.map(c=>c.type==='set'?Object.freeze({...c,value:Object.freeze(c.value)}):Object.freeze(c)))}):undefined;
-        committing=true;const activation=await store.activate(id,snapshot,expectedHead,durable.profile.revision,initial,{profileId:policy.profileId,mode,owner:id,...(policy.onLoad?{onLoad:policy.onLoad}:{}),...(policy.provenance!==undefined?{provenance:policy.provenance}:{}),...(policy.slot?{slot:policy.slot}:{})});committed=true;old?.stop();this.unsubscribe?.();this.runtime=null;this.lifecycle='committed-pending';this.publish();await this.install(activation,id,gen);
+        this.host.assertReady();committing=true;const activation=await store.activate(id,snapshot,expectedHead,durable.profile.revision,initial,{profileId:policy.profileId,mode,owner:id,...(policy.onLoad?{onLoad:policy.onLoad}:{}),...(policy.provenance!==undefined?{provenance:policy.provenance}:{}),...(policy.slot?{slot:policy.slot}:{})});committed=true;old?.stop();this.unsubscribe?.();this.runtime=null;this.lifecycle='committed-pending';this.publish();await this.install(activation,id,gen);
       }catch(error){
         if(committing&&!committed){try{const current=await store.read(policy.profileId);if(current.head?.id===id||(current.head?.id??null)!==expectedHead)committed=true;}catch{old?.stop();this.stopRuntime();this.lifecycle='commit-unknown';this.fail(new GalboxError('ACTIVATION_COMMIT_UNKNOWN','Outcome unavailable; reconcile the durable head before continuing'));throw error;}}
         if(committed){old?.stop();this.stopRuntime();this.lifecycle='committed-pending';this.fail(error);}else {this.lifecycle=old?'playing':'ready';old?.thaw();}throw error;
@@ -220,7 +233,7 @@ export class Player {
   setVolume(value:number):void {this.host.setVolume(value);}
   capture():DeepReadonly<Snapshot> {ensure(this.runtime,'PLAYER_NOT_STARTED','Start first');return this.runtime.core.capture();}
   dispose():void {
-    if(this.disposed)return;this.disposed=true;++this.generation;++this.importGeneration;this.abort.abort();cancelAnimationFrame(this.frameId);
+    if(this.disposed)return;this.disposed=true;++this.generation;++this.importGeneration;this.options.signal?.removeEventListener('abort',this.abortRequested);this.abort.abort();cancelAnimationFrame(this.frameId);
     document.removeEventListener('visibilitychange',this.visibility);window.removeEventListener('blur',this.blur);window.removeEventListener('focus',this.focus);
     this.unsubscribe?.();this.runtime?.stop();this.host.dispose();this.text.dispose();this.lifecycle='disposed';this.publish();this.listeners.clear();
     // IDB transactions already started finish before db.close. Borrowed stores remain open.

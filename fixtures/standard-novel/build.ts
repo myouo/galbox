@@ -1,4 +1,7 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import {createReleaseManifest,inspectResource} from 'galbox-sdk/release';
+import {createSaveBindingRegistry} from 'galbox-sdk/port-kit';
+import {createFixtureBinding} from '../synthetic-saves/binding.js';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { ProgramBuilder, instruction as op, literal, slot, imagePut } from '../../packages/galbox-sdk/src/program-tools/index.js';
 import { i32, string } from '../../packages/galbox-sdk/src/protocol/index.js';
@@ -51,3 +54,6 @@ b.function({id:'prepareSignal',layout:1,entry:'helper:prepare-signal',params:[{i
 b.function({id:'incrementChecked',layout:1,entry:'helper:increment',params:[{id:'base',kind:'i32',initial:i32(0)}],locals:[{id:'result',kind:'i32',initial:i32(0)}],returns:'i32',code:[op('i32.add.checked',{at:'helper:increment',dest:'result',left:slot('base'),right:literal(i32(1))}),op('control.return',{at:'helper:incremented',value:slot('result')})]});
 const program=b.build();await writeFile(`${root}/program.json`,JSON.stringify(program,null,2)+'\n');await writeFile('fixtures/standard-novel/program.json',JSON.stringify(program,null,2)+'\n');
 console.log(`Generated ${program.assets.length} original assets and ${program.functions.length} functions`);
+
+const resources=await Promise.all(program.assets.map(async a=>inspectResource(a,new Uint8Array(await readFile(`${root}/${a.path}`)),b=>new TextDecoder('utf-8',{fatal:true}).decode(b))));
+const release=await createReleaseManifest({program,series:'1',resources,bindings:createSaveBindingRegistry([createFixtureBinding(program)])},{async sha256(text){return createHash('sha256').update(text,'utf8').digest('hex');}});for(const file of [`${root}/program.json.release.json`,'fixtures/standard-novel/program.json.release.json'])await writeFile(file,JSON.stringify(release,null,2)+'\n');

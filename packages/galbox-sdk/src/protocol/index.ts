@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -14,6 +14,7 @@ export class GalboxError extends Error {
 export function ensure(condition: unknown, code: string, message: string): asserts condition {
   if (!condition) throw new GalboxError(code, message);
 }
+export function canonicalWireJSON(input:unknown):string {return JSON.stringify(detached(input),(_key:string,v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,Reflect.get(v,k)])):v);}
 function detached(input: unknown): unknown {
   let nodes=0;const ancestors=new Set<object>();
   function visit(value:unknown,depth:number):void {
@@ -80,3 +81,9 @@ export function parseBehaviorMapping(input:unknown):BehaviorMapping {const data=
 export function parsePortableBackup(input:unknown):PortableBackup {const data=detached(input);ensure(validatePortableBackup(data),'SCHEMA_BACKUP',JSON.stringify(validatePortableBackup.errors));return data;}
 export function parseStoreBackupRestore(input:unknown):StoreBackupRestore {const data=detached(input);ensure(validateStoreBackupRestore(data),'SCHEMA_BACKUP_RESTORE',JSON.stringify(validateStoreBackupRestore.errors));return data;}
 export function parseBackupRestoreReceipt(input:unknown):BackupRestoreReceipt {const data=detached(input);ensure(validateBackupRestoreReceipt(data),'SCHEMA_BACKUP_RECEIPT',JSON.stringify(validateBackupRestoreReceipt.errors));return data;}
+
+export function parseResourceBudget(input:unknown):ResourceBudget {const data=detached(input);ensure(validateResourceBudget(data),'RESOURCE_BUDGET_SCHEMA',JSON.stringify(validateResourceBudget.errors));return data;}
+
+export function parseResourceFact(input:unknown):ResourceFact {const data=detached(input);ensure(validateResourceFact(data),'RESOURCE_FACT_SCHEMA',JSON.stringify(validateResourceFact.errors));return data;}
+
+export function parseReleaseManifest(input:unknown):ReleaseManifest {const data=detached(input);ensure(validateReleaseManifest(data),'RELEASE_SCHEMA',JSON.stringify(validateReleaseManifest.errors));return data;}

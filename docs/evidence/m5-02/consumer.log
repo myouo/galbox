@@ -1,0 +1,183 @@
+$ node scripts/consumer.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+Isolated consumer: /dev/shm/galbox-consumer-YwVcQm
+package: galbox-sdk@0.1.0
+Tarball Contents
+dist/backups/index.d.ts
+dist/backups/index.d.ts.map
+dist/backups/index.js
+dist/backups/index.js.map
+dist/core/index.d.ts
+dist/core/index.d.ts.map
+dist/core/index.js
+dist/core/index.js.map
+dist/core/operations.d.ts
+dist/core/operations.d.ts.map
+dist/core/operations.js
+dist/core/operations.js.map
+dist/diagnostics/index.d.ts
+dist/diagnostics/index.d.ts.map
+dist/diagnostics/index.js
+dist/diagnostics/index.js.map
+dist/player/index.d.ts
+dist/player/index.d.ts.map
+dist/player/index.js
+dist/player/index.js.map
+dist/program-tools/index.d.ts
+dist/program-tools/index.d.ts.map
+dist/program-tools/index.js
+dist/program-tools/index.js.map
+dist/program-tools/linker.d.ts
+dist/program-tools/linker.d.ts.map
+dist/program-tools/linker.js
+dist/program-tools/linker.js.map
+dist/program-tools/registration.d.ts
+dist/program-tools/registration.d.ts.map
+dist/program-tools/registration.js
+dist/program-tools/registration.js.map
+dist/protocol/codecs.d.ts
+dist/protocol/codecs.d.ts.map
+dist/protocol/codecs.js
+dist/protocol/codecs.js.map
+dist/protocol/generated/operations.d.ts
+dist/protocol/generated/operations.d.ts.map
+dist/protocol/generated/operations.js
+dist/protocol/generated/operations.js.map
+dist/protocol/generated/validators.d.ts
+dist/protocol/generated/validators.d.ts.map
+dist/protocol/generated/validators.js
+dist/protocol/generated/validators.js.map
+dist/protocol/generated/wire.d.ts
+dist/protocol/generated/wire.d.ts.map
+dist/protocol/generated/wire.js
+dist/protocol/generated/wire.js.map
+dist/protocol/index.d.ts
+dist/protocol/index.d.ts.map
+dist/protocol/index.js
+dist/protocol/index.js.map
+dist/react/backup.d.ts
+dist/react/backup.d.ts.map
+dist/react/backup.js
+dist/react/backup.js.map
+dist/react/import.d.ts
+dist/react/import.d.ts.map
+dist/react/import.js
+dist/react/import.js.map
+dist/react/index.d.ts
+dist/react/index.d.ts.map
+dist/react/index.js
+dist/react/index.js.map
+dist/react/style.css
+dist/release/index.d.ts
+dist/release/index.d.ts.map
+dist/release/index.js
+dist/release/index.js.map
+dist/release/inspect.d.ts
+dist/release/inspect.d.ts.map
+dist/release/inspect.js
+dist/release/inspect.js.map
+dist/runtime/backup.d.ts
+dist/runtime/backup.d.ts.map
+dist/runtime/backup.js
+dist/runtime/backup.js.map
+dist/runtime/coordinator.d.ts
+dist/runtime/coordinator.d.ts.map
+dist/runtime/coordinator.js
+dist/runtime/coordinator.js.map
+dist/runtime/durable.d.ts
+dist/runtime/durable.d.ts.map
+dist/runtime/durable.js
+dist/runtime/durable.js.map
+dist/runtime/ports.d.ts
+dist/runtime/ports.d.ts.map
+dist/runtime/ports.js
+dist/runtime/ports.js.map
+dist/runtime/recipe.d.ts
+dist/runtime/recipe.d.ts.map
+dist/runtime/recipe.js
+dist/runtime/recipe.js.map
+dist/save-bridge/index.d.ts
+dist/save-bridge/index.d.ts.map
+dist/save-bridge/index.js
+dist/save-bridge/index.js.map
+dist/storage/indexeddb.d.ts
+dist/storage/indexeddb.d.ts.map
+dist/storage/indexeddb.js
+dist/storage/indexeddb.js.map
+dist/testing/index.d.ts
+dist/testing/index.d.ts.map
+dist/testing/index.js
+dist/testing/index.js.map
+dist/web-host/assets.d.ts
+dist/web-host/assets.d.ts.map
+dist/web-host/assets.js
+dist/web-host/assets.js.map
+dist/web-host/format.d.ts
+dist/web-host/format.d.ts.map
+dist/web-host/format.js
+dist/web-host/format.js.map
+dist/web-host/host.d.ts
+dist/web-host/host.d.ts.map
+dist/web-host/host.js
+dist/web-host/host.js.map
+dist/web-host/text.d.ts
+dist/web-host/text.d.ts.map
+dist/web-host/text.js
+dist/web-host/text.js.map
+package.json
+README.md
+schema/protocol.json
+Tarball Details
+/dev/shm/galbox-consumer-YwVcQm/galbox-sdk.tgz
+[WARN] The store at /home/myo/.local/share/pnpm/store/v11 is not used because packages cannot be hard linked from it into this project. Using the store at /dev/shm/.pnpm-store/v11 instead. Set storeDir to choose the store.
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +35
++++++++++++++++++++++++++++++++++++
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /dev/shm/.pnpm-store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 60, reused 35, downloaded 0, added 35, done
+
+dependencies:
++ galbox-sdk 0.1.0
++ react 19.3.1
++ react-dom 19.3.1
+
+devDependencies:
++ @types/react 19.2.7 (19.3.0 is available)
++ @types/react-dom 19.2.3 (19.3.0 is available)
++ typescript 5.9.3 (7.0.2 is available)
++ vite 8.3.5
+
+Done in 1s using pnpm v11.28.5
+Independent Node headless imports and restore passed
+Packed stateful operation restore and full invocation migration passed
+Packed synthetic source binding and immutable import plan passed
+Packed bounded candidate recipe passed without consuming the source baseline
+Packed portable backup / independent restore / explicit release migration passed
+Packed backup restores a fully migrated suspended invocation without reinitialization
+Packed release factory binds actual resources and rejects mixed Program identity
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 750 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     0.80 kB │ gzip:   0.39 kB
+dist/assets/index-BuY0lUAS.css                      5.52 kB │ gzip:   1.91 kB
+dist/assets/webworkerAll-1hivgMlk.js                0.05 kB │ gzip:   0.06 kB
+dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js    0.34 kB │ gzip:   0.27 kB
+dist/assets/canvasUtils-NtBMPAwi.js                 6.01 kB │ gzip:   2.05 kB
+dist/assets/getTexelRangeRects-BCNTv58m.js         11.31 kB │ gzip:   2.97 kB
+dist/assets/init-BCdovYqg.js                       15.18 kB │ gzip:   4.76 kB
+dist/assets/browserAll-D_VLnUft.js                 43.48 kB │ gzip:  11.28 kB
+dist/assets/RenderTargetSystem-B5CBYAMS.js         78.07 kB │ gzip:  22.11 kB
+dist/assets/CanvasPool-B3ruGZ_X.js                112.98 kB │ gzip:  34.44 kB
+dist/assets/index-Ca9IRXHZ.js                     955.53 kB │ gzip: 140.33 kB
+
+✓ built in 458ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+Packed SDK playback / save / restore / portable backup passed

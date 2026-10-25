@@ -323,6 +323,26 @@ export type ProgressChangeWire =
       key: string;
       value: Value;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ResourceFact".
+ */
+export type ResourceFact =
+  | {
+      kind: 'image';
+      id: string;
+      bytes: number;
+      width: number;
+      height: number;
+    }
+  | {
+      kind: 'audio';
+      id: string;
+      bytes: number;
+      channels: number;
+      sampleRate: number;
+      frames: number;
+    };
 
 export interface Wire {
   program: Program;
@@ -792,4 +812,38 @@ export interface BackupRestoreReceipt {
     slot: string;
     restoredSlot: string;
   }[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ResourceBudget".
+ */
+export interface ResourceBudget {
+  maxAssetBytes: number;
+  maxEncodedBytes: number;
+  maxTextureBytes: number;
+  maxAudioBytes: number;
+  maxImageSide: number;
+  maxAudioMs: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ReleaseManifest".
+ */
+export interface ReleaseManifest {
+  format: 'galbox-release';
+  version: 1;
+  sdk: '0.1.0';
+  protocol: 1;
+  semantics: 'galbox-core@1';
+  gameId: string;
+  release: string;
+  series: string;
+  programSha256: string;
+  registrySha256: string;
+  assetsSha256: string;
+  /**
+   * @maxItems 256
+   */
+  resources: ResourceFact[];
+  limits: ResourceBudget;
 }

@@ -43,3 +43,5 @@ galbox saves verify slot.bin global.json --source fixture-save@1/lighthouse --sc
 ```
 
 原档命令只使用 port.mjs 登记的明确来源，没有绑定或存在歧义时返回 needs-input/退出 2；不做通用归档识别。internal verify 要求明确提供当前 profile，不用默认值伪造恢复依据。verify 只核验标准候选，保留真人/媒体 continuation，不写存储，也不声称已由原作加载继续验证。无迁移/文本修订改变明确失败，输入档案保留。
+
+发布清单与资源预算见 [RELEASES](RELEASES.md)。assets build 同时生成 Program 旁路 .release.json；改 source/port/resource-policy 后重新构建，validate/build/dev/saves 都检查绑定。标准模板默认 series=1，resourcePolicy=resource-policy.json，可在受控硬上限内调整。静态文件的混代会被拒绝，重复 assets build 可重建，部署不承诺跨文件事务。

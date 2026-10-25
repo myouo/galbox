@@ -15,4 +15,6 @@ export interface ProjectConfig {
     path: string;
     mime: "image/svg+xml" | "image/png" | "audio/wav";
   }[];
+  series?: string;
+  resourcePolicy?: string;
 }

@@ -1,5 +1,5 @@
-import {ensure,GalboxError,parseProfile,parseSnapshot,parseProgram,parseRestoreRecipe} from '../protocol/index.js';
-import type {DeepReadonly,Program,Snapshot,Profile,SchemaRef,RestoreRecipe} from '../protocol/index.js';
+import {ensure,GalboxError,parseProfile,parseSnapshot,parseProgram,parseRestoreRecipe,parseJsonValue} from '../protocol/index.js';
+import type {DeepReadonly,Program,Snapshot,Profile,SchemaRef,RestoreRecipe,JsonValue} from '../protocol/index.js';
 import {assertCodec,freezeJson,schemaEqual} from '../protocol/codecs.js';
 import type {ProtocolCodec} from '../protocol/codecs.js';
 import {linkProgram} from '../program-tools/linker.js';
@@ -27,6 +27,7 @@ export interface PreparedImport {readonly [planBrand]:true;report():ConversionRe
 export type PrepareResult={readonly status:'ready';readonly plan:PreparedImport}|Failure;
 const sources=new WeakSet<object>(),codecs=new WeakSet<object>(),mappings=new WeakSet<object>(),bindings=new WeakSet<object>();
 const decodedSources=new WeakMap<object,object>();
+const bindingMetadata=new WeakMap<object,JsonValue>();
 const plans=new WeakMap<PreparedImport,{payload:ImportPayload;signature:string;report:ConversionReport;operations:OperationRegistry}>();
 export function defineSaveSource<const Key extends string,const Schema extends string,S>(key:Key,schema:ProtocolCodec<S,Schema>):SaveSource<Key,Schema,S> {
   assertCodec(schema);ensure(/^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$/.test(key),'SAVE_SOURCE_KEY',key);const source=Object.freeze({key,schema,validate:(state:S)=>schema.parse(state)});sources.add(source);return source;
@@ -71,7 +72,7 @@ export function bindOriginalSave<Key extends string,Schema extends string,Versio
       const report:ConversionReport={status:'ready',grade:mapped.grade,sourceKey:codec.source.key,sourceSchema:{...codec.source.schema.identity},codecVersion:codec.version,mapping:mapping.id,mappingVersion:mapping.version,label:mapping.label,target:{...mapping.target},files:fingerprints,warnings:[...mapped.warnings]};
       const plan:PreparedImport=Object.freeze({[planBrand]:true as const,report(){return reportCopy(report);}});plans.set(plan,{payload,signature:canonicalProgram(program),report,operations});return {status:'ready',plan};
     }catch(error){return {status:'unsupported',code:error instanceof GalboxError?error.code:'SAVE_PREPARE_FAILED',message:error instanceof Error?error.message:String(error)};}
-  }};bindings.add(binding);return Object.freeze(binding);
+  }};bindingMetadata.set(binding,parseJsonValue({source:codec.source.key,schema:{...codec.source.schema.identity},codecVersion:codec.version,mapping:mapping.id,mappingVersion:mapping.version,target:{...mapping.target}}));bindings.add(binding);return Object.freeze(binding);
 }
 export function materializeImport(plan:PreparedImport,program:unknown,operations:OperationRegistry=emptyOperations):ImportPayload {
   const data=plans.get(plan);ensure(data,'IMPORT_PLAN','Expected a prepared import handle');const target=linkProgram(program,operations).copy();ensure(data.operations===operations&&canonicalProgram(target)===data.signature,'IMPORT_PLAN_STALE','Target changed after preparation');return {snapshot:validateRestore(target,data.payload.snapshot,operations),profile:parseProfile(data.payload.profile),...(data.payload.recipe?{recipe:parseRestoreRecipe(data.payload.recipe)}:{}),...(data.payload.onLoad?{onLoad:parseRestoreRecipe(data.payload.onLoad)}:{})};
@@ -79,6 +80,7 @@ export function materializeImport(plan:PreparedImport,program:unknown,operations
 export class SaveBindingRegistry {
   private readonly entries:ReadonlyMap<string,CompatibilityBinding>;
   constructor(input:readonly CompatibilityBinding[]){const entries=new Map<string,CompatibilityBinding>();for(const binding of input){ensure(bindings.has(binding),'SAVE_BINDING_FACTORY','Use bindOriginalSave');const key=`${binding.sourceKey}/${binding.schema}@${binding.codecVersion}`;ensure(!entries.has(key),'SAVE_BINDING_DUPLICATE',key);entries.set(key,binding);}this.entries=entries;Object.freeze(this);}
+  describe():JsonValue {return [...this.entries.values()].map(b=>{const data=bindingMetadata.get(b);ensure(data,'SAVE_BINDING_IDENTITY','Missing factory metadata');return parseJsonValue(data);});}
   list():{sourceKey:string;schema:string;version:number;label:string}[]{return [...this.entries.values()].map(b=>({sourceKey:b.sourceKey,schema:b.schema,version:b.codecVersion,label:b.label}));}
   get(sourceKey:string,schema:string,version:number):CompatibilityBinding {const value=this.entries.get(`${sourceKey}/${schema}@${version}`);ensure(value,'SAVE_BINDING_UNSUPPORTED','Unknown source/schema/codec');return value;}
 }
