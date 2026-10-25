@@ -1,17 +1,17 @@
 # galbox-sdk 当前状态
 
-2026-10-25。M0–M5 通用 SDK 门槛完成，当前为 galbox-sdk/@galbox/cli 0.1.0 本地 alpha 候选。完整事实以 tasks.json 为准；分支 feat/release-resource-budgets，M5-02=1f93068、M5-03=b88c257，最终候选本地提交见 git log。未执行真实 publish、Git push、部署或远程 CI。
+2026-10-25。M0–M5 通用 SDK alpha 门槛完成，H1-01 后续绘制/销毁加固也完成。分支 fix/player-disposal-latency，基线 090d6ee，本轮本地提交见 git log；没有真实 publish、push、部署或远程 CI。任务表唯一状态来源为 tasks.json，下一项 N-01/F-01 仍缺真实输入。
 
-本轮新增正式 release 工厂、生成 Schema/validator、Program/目录/操作与 binding 注册表/源资源事实绑定，CLI/模板/灯塔样例实际生成消费 .release.json。预算内预加载、有界 HTTP、解码前后校验、取消/迟到租约/音频节点清理、实际 GPU context loss 暂停与持久 pending/新 Host 恢复已验证。ReadUnit 当前身份保留 @，旧 wire 可读/备份；组合 profile 超限整体拒绝，保留旧记录。细则在 RELEASES.md、ADR 0009/0010/0011；备份与迁移见 BACKUPS.md。
+H1-01 真实探针复现了活动销毁 1616 ms（约 1604 ms 在 GPU loseContext），以及 destroy(true) 对外部 Pixi 全局池的越权清理。正式 Host 只在完整 stage 值变化时绘制、及时 flush，保存值副本并在 epoch 切换后重绘；仍推进正文/逻辑/进度。显式 scoped destroy 保留共享全局池、同步释放本实例 context；app.init 在取消后才完成时也清理局部 renderer。公开 API、Snapshot/Program/存档协议未变，ADR 0012 说明边界。
 
-最终代码重验：frozen 安装/check、72 单元、29 Chromium（0 skip/flaky）、严格类型/原生 ESM 的独立 tarball 与播放保存备份迁移、50 条独立 CLI 命令/两个开发工作流、4 synthetic、性能、API/type/版本/pack/publish dry-run 均通过。最终证据 evidence/m5-04/REPORT.md、日志/JSON/截图/source-manifest.json；M5-02/03 为各自历史基线，before-* 和首轮失败日志不是最终通过证据。
+最终回归：frozen 安装/check、72 单元、32 Chromium（0 skip/flaky）、独立 tarball 严格类型/原生 ESM/播放保存备份迁移、50 CLI 命令/两个工作流、4 synthetic、性能与 pack/publish dry-run 全部通过。相对 090d6ee 公开声明变化为 0。新增三个浏览器场景验证静态不重复绘制/动画与读档正确绘制、多 Player 与全局池隔离、迟到 renderer 的实际 context 销毁。最终证据 evidence/h1-01/REPORT.md、各日志/JSON/CPU profiles/source-manifest.json；前期 alpha 证据只对应各自基线。
 
-本地包 artifacts/galbox-sdk-0.1.0.tgz SHA=f93bdb6f83cb72e4e00e5286f0efe3cc9f43433702047be0778c1155b777a6a1；CLI tgz SHA=f54b07401339a13be6c28d1e1993f47565a51acc368c1c785fa7e183244d7bf1。最终 SDK consumer/CLI/audit 测得摘要一致。API 相对 308c1ae 新增 release 入口、8 条按入口计的声明变化、无导出删除；不是稳定 API/零破坏承诺，迁移注意事项在 ALPHA.md。
+未包装生产三次活动实例各执行完整两路线各两次并保存/恢复，销毁 111.6/230/119 ms，全部满足本轮保持不变的 500 ms 参考目标；首次未 flush 的 541.9 ms 失败仍保留。228 次 API 响应 P95 2.8 ms，两次 rAF 代理 P95 50.7 ms；Core 最重批次 P95 1.359 ms。对比旧 alpha 活动销毁 1673.6 ms，但样本组成不同，不声明通用 P95 或任意 GPU <50 ms。三次拥有资源均归零，RGBA 仍为估算，V8 heap 含共享缓存/JIT，未证明无泄漏或测真实 VRAM。
 
-最新实测：Core 最重批次 P95 1.341 ms、76 次语义 API P95 2.5 ms；两次 rAF 代理 P95 128.8 ms、dispose max 1673.6 ms（原始基线曾到 1805.3 ms），仍有软件渲染/释放长尾，不承诺视觉延迟或 60 FPS。PCM=510720 B、RGBA 估算=7767200 B，三次拥有资源归零；整页 V8 heap 含模块/JIT/其他 Player，未证明无泄漏，未测真实 VRAM。Linux/Chromium156/SwiftShader 为已测参考环境，PNG/SVG/PCM16 与 tiny mono float32 实际可用，其他平台/声道组合未认证，见 PLATFORMS.md。
+当前本地 SDK 0.1.0 包 artifacts/galbox-sdk-0.1.0.tgz SHA=91d9756128bf808595dfd29bac55c16aefd6c1311da1164a36706945c1792457；CLI 0.1.0 包 SHA=f54b07401339a13be6c28d1e1993f47565a51acc368c1c785fa7e183244d7bf1。consumer/CLI/release audit 摘要相同，ALPHA.md 已更新，旧包证据保留历史而不冒充最新。
 
-运行 export TMPDIR=/dev/shm（本机 /tmp 配额限制），pnpm install --frozen-lockfile，pnpm dev → http://127.0.0.1:4173/。本轮已启动并真实点击阅读/备份菜单，HTTP 200、1 canvas、真实 Web Audio、manifest 绑定、0 pageerror 见 dev-result.json。browser 前停止 dev 释放 4173/4174。test:release 需要完整 Git 历史；test:performance 是本地参考基线，不推导其他设备。
+运行 export TMPDIR=/dev/shm（本机 /tmp 配额限制），pnpm install --frozen-lockfile，pnpm dev → http://127.0.0.1:4173/。本轮已重新启动服务并实际点击阅读/显完/备份菜单，HTTP200、1 canvas、真实音频、manifest 绑定、0 pageerror 见 dev-result.json。test:browser 前停止 dev 释放 4173/4174。复跑性能可用 GALBOX_PERF_ACTIVE_CYCLES=3 GALBOX_PERF_DISPOSE_LIMIT_MS=500 pnpm test:performance；profile:disposal 是当前版本的受控探针，不替代未包装生产验收。
 
-下一项为 N-01/F-01，仍因缺明确 edition/语言/补丁、可用 Program/资源/文件指纹、真实原档与全局附件、原作加载后继续参照而 blocked。收到资料先按 INPUTS_REQUIRED.md 核验，再做真实导入→继续→网页再保存切片；M6-01 尚未完成。没有无依赖且未完成的通用 SDK 任务，不编造原档或兼容结论。
+N/F 项目内仍没有 ports、原档或已准备输入，包括忽略目录的核查也只找到 INPUTS_REQUIRED.md。收到资料后按该文档锁定 edition/语言/补丁、Program/资源指纹、槽位/global 附件与原作加载后继续参照，推进真实导入→继续→网页再保存切片。N-01/F-01 blocked，N/F 后续及 M6 未完成，不编造商业作品兼容。
 
-已知 alpha 限制：有限整包预加载/主 chunk >500 kB/长期回执与大作品尺度未认证；没有长媒体流/精确 seek、视频/热点/timed-choice、GPU 自动重建、跨系列迁移或同 realm 沙箱；Windows/macOS、其他浏览器、移动真机/物理 GPU/headed 窗口、人耳音质未验证。synthetic 只证明 SDK 流程，不算两部真实作品兼容。
+范围继续为 Linux/Chromium156/SwiftShader 的自动化参考环境；其他浏览器/移动真机/物理 GPU/headed 窗口、人耳音质、大作品尺度与长期回执未认证。有限预加载/主 chunk >500 kB、长媒体流/精确 seek/视频/热点/timed-choice/GPU 自动重建等既有限制保留，见 PLATFORMS.md/ALPHA.md。

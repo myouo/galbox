@@ -1,4 +1,4 @@
-import { Application, Sprite, Texture } from 'pixi.js';
+import { Application, Sprite, Texture, WebGLRenderer } from 'pixi.js';
 import { ensure, GalboxError,parseResourceFact,parseResourceBudget } from '../protocol/index.js';
 import type { Program, DeepReadonly, Snapshot,ResourceBudget,ResourceFact } from '../protocol/index.js';
 import {inspectResource,resourceUsage,defaultResourceBudget,canonicalReleaseJSON} from '../release/index.js';
@@ -10,7 +10,8 @@ interface Playing {source:AudioBufferSourceNode;gain:GainNode;}
 export interface MediaDiagnostics {state:'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;}
 export interface ResourceDiagnostics {graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
-  private app:Application|null=null;
+  private app:Application<WebGLRenderer>|null=null;
+  private renderedStage:Snapshot['stage']|null=null;
   private textures=new Map<string,Texture>();
   private buffers=new Map<string,AudioBuffer>();
   private sprites=new Map<string,Sprite>();
@@ -37,9 +38,10 @@ export class WebHost implements HostPort {
       if(typeof AudioContext==='undefined'){this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Web Audio is unavailable on this device');}
       try{this.context=new AudioContext();}catch{this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Audio context creation failed');}this.master=this.context.createGain();this.master.gain.value=this.volume;this.master.connect(this.context.destination);
       this.media.state=this.context.state==='running'?'available':'needs-user-action';
-      const app=new Application();this.app=app;
-      try{await app.init({width:1280,height:720,preference:'webgl',background:'#122c44',antialias:true,autoStart:false});}catch{this.resources.graphics='unavailable';throw new GalboxError('GRAPHICS_UNAVAILABLE','WebGL initialization failed');}
-      ensure(!this.disposed&&!signal.aborted,'HOST_DISPOSED','Initialization cancelled');
+      const app=new Application<WebGLRenderer>();this.app=app;
+      try{await app.init({width:1280,height:720,preference:'webgl',background:'#122c44',antialias:true,autoStart:false});}catch{if(this.disposed)this.destroyApplication(app);this.resources.graphics='unavailable';throw new GalboxError('GRAPHICS_UNAVAILABLE','WebGL initialization failed');}
+      if(this.disposed||signal.aborted){this.destroyApplication(app);throw new GalboxError('HOST_DISPOSED','Initialization cancelled');}
+      ensure(app.renderer instanceof WebGLRenderer,'GRAPHICS_UNAVAILABLE','This Host requires the declared WebGL backend');
       this.canvas=app.canvas;this.canvas.addEventListener('webglcontextlost',this.lost);this.resources.graphics='available';this.mount.appendChild(app.canvas);app.canvas.setAttribute('aria-label',`${program.title}图像舞台`);app.canvas.style.width='100%';app.canvas.style.height='100%';
       app.stage.sortableChildren=true;
       for(const asset of program.assets){
@@ -75,16 +77,18 @@ export class WebHost implements HostPort {
       this.media.state=context.state==='running'?'available':'needs-user-action';
     });this.audioOperation=next;return next;
   }
-  setEpoch(epoch:number):void {this.stopAudio();this.epoch=epoch;}
+  setEpoch(epoch:number):void {this.stopAudio();this.epoch=epoch;this.renderedStage=null;}
   render(run:DeepReadonly<Snapshot>):void {
     if(!this.app||this.disposed||this.resources.graphics!=='available')return;
+    const previous=this.renderedStage;
+    if(previous&&previous.length===run.stage.length&&run.stage.every((o,i)=>{const old=previous[i];return old&&old.id===o.id&&old.asset===o.asset&&old.z===o.z&&old.position.x===o.position.x&&old.position.y===o.position.y&&old.position.alpha===o.position.alpha;}))return;
     for(const [id,sprite]of this.sprites)if(!run.stage.some(o=>o.id===id)){sprite.destroy();this.sprites.delete(id);}
     for(const object of run.stage){
       const texture=this.textures.get(object.asset);ensure(texture,'TEXTURE_MISSING',object.asset);
       let sprite=this.sprites.get(object.id);if(!sprite){sprite=new Sprite(texture);this.app.stage.addChild(sprite);this.sprites.set(object.id,sprite);}
       sprite.texture=texture;sprite.position.set(object.position.x,object.position.y);sprite.alpha=object.position.alpha;sprite.zIndex=object.z;
     }
-    this.app.render();
+    this.app.render();this.app.renderer.gl.flush();this.renderedStage=run.stage.map(o=>({...o,position:{...o.position}}));
   }
   effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2]):void {
     if(this.disposed||epoch!==this.epoch)return;
@@ -108,11 +112,12 @@ export class WebHost implements HostPort {
   async pause(value:boolean):Promise<void> {this.paused=value;await this.reconcileAudio();}
   private stopChannel(channel:string):void {const p=this.playing.get(channel);if(p){this.playing.delete(channel);p.source.onended=null;try{p.source.stop();}catch{}p.source.disconnect();p.gain.disconnect();this.media.active=this.playing.size;}}
   private stopAudio():void {for(const channel of [...this.playing.keys()])this.stopChannel(channel);}
+  private destroyApplication(app:Application<WebGLRenderer>|null):void {if(app?.renderer)app.destroy({removeView:true,releaseGlobalResources:false},{children:true});}
   dispose():void {
     if(this.disposed)return;this.disposed=true;this.stopAudio();for(const sprite of this.sprites.values())sprite.destroy();this.sprites.clear();
     this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
     for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();
-    if(this.app?.renderer){this.app.destroy(true,{children:true});}this.app=null;
+    this.destroyApplication(this.app);this.app=null;this.renderedStage=null;
     if(this.context&&this.context.state!=='closed')void this.context.close().catch(()=>{});this.context=null;this.master=null;this.media.active=0;
   }
 }

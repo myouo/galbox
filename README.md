@@ -74,3 +74,5 @@ CLI 的 dev 服务最后一次验证的发布数据；修改 story/resources 后
 本地 alpha 范围、包摘要和 API 差异见 [ALPHA](docs/ALPHA.md)，实际平台和性能长尾见 [PLATFORMS](docs/PLATFORMS.md)。未执行真实 npm 发布、Git 推送或部署。
 
 `pnpm test:performance` 记录当前参考环境的实际原始样本；`pnpm test:release` 真实编译 API 基线并重新 pack/publish dry-run，需要完整 Git 历史，不执行实际发布。
+
+H1-01 绘制/销毁加固见 [证据](docs/evidence/h1-01/REPORT.md)：不重复绘制静态舞台，保留共享 Pixi 全局池，取消后的迟到 renderer 也清理；本机三次完整活动销毁为 111.6/230/119 ms，API/存档格式不变。

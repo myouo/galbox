@@ -1,0 +1,472 @@
+{
+  "result": "measured",
+  "note": "Test-only controlled variants and CPU profiler overhead; final acceptance uses unprofiled production SDK",
+  "reports": [
+    {
+      "mode": "baseline",
+      "disposal": [
+        480.1999999284744,
+        5.5,
+        67.80000007152557
+      ],
+      "owned": [
+        {
+          "assets": 0,
+          "pcm": 0,
+          "texture": 0,
+          "canvases": 0
+        },
+        {
+          "assets": 0,
+          "pcm": 0,
+          "texture": 0,
+          "canvases": 0
+        },
+        {
+          "assets": 0,
+          "pcm": 0,
+          "texture": 0,
+          "canvases": 0
+        }
+      ],
+      "foreignPoolClears": 0,
+      "globalClears": 0,
+      "renders": {
+        "requested": 265,
+        "submitted": 265
+      },
+      "events": [
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 1.2999999523162842
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteBuffer",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteBuffer",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.useProgram",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.loseContext",
+          "ms": 473.60000002384186
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Application.destroy",
+          "ms": 477.09999990463257
+        },
+        {
+          "phase": 1,
+          "name": "AudioContext.close",
+          "ms": 0.30000007152557373
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0.09999990463256836
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "WebGL.useProgram",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "WebGL.loseContext",
+          "ms": 4.5
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Application.destroy",
+          "ms": 5
+        },
+        {
+          "phase": 2,
+          "name": "AudioContext.close",
+          "ms": 0.20000004768371582
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "WebGL.useProgram",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "WebGL.loseContext",
+          "ms": 65.80000007152557
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Application.destroy",
+          "ms": 66.5
+        },
+        {
+          "phase": 3,
+          "name": "AudioContext.close",
+          "ms": 0.8999999761581421
+        }
+      ],
+      "pageErrors": [],
+      "browser": "156.0.8078.4"
+    },
+    {
+      "mode": "flush-after-render",
+      "disposal": [
+        104.69999992847443,
+        2.799999952316284,
+        28.600000023841858
+      ],
+      "owned": [
+        {
+          "assets": 0,
+          "pcm": 0,
+          "texture": 0,
+          "canvases": 0
+        },
+        {
+          "assets": 0,
+          "pcm": 0,
+          "texture": 0,
+          "canvases": 0
+        },
+        {
+          "assets": 0,
+          "pcm": 0,
+          "texture": 0,
+          "canvases": 0
+        }
+      ],
+      "foreignPoolClears": 0,
+      "globalClears": 0,
+      "renders": {
+        "requested": 266,
+        "submitted": 266
+      },
+      "events": [
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.3999999761581421
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteBuffer",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteBuffer",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.useProgram",
+          "ms": 0
+        },
+        {
+          "phase": 1,
+          "name": "WebGL.loseContext",
+          "ms": 100.5
+        },
+        {
+          "phase": 1,
+          "name": "Texture.destroy",
+          "ms": 0.09999990463256836
+        },
+        {
+          "phase": 1,
+          "name": "Application.destroy",
+          "ms": 102.79999995231628
+        },
+        {
+          "phase": 1,
+          "name": "AudioContext.close",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "WebGL.deleteTexture",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "WebGL.useProgram",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "WebGL.loseContext",
+          "ms": 1.899999976158142
+        },
+        {
+          "phase": 2,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 2,
+          "name": "Application.destroy",
+          "ms": 2.3000000715255737
+        },
+        {
+          "phase": 2,
+          "name": "AudioContext.close",
+          "ms": 0.09999990463256836
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0.09999990463256836
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "WebGL.deleteTexture",
+          "ms": 0.10000002384185791
+        },
+        {
+          "phase": 3,
+          "name": "WebGL.useProgram",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "WebGL.loseContext",
+          "ms": 27.5
+        },
+        {
+          "phase": 3,
+          "name": "Texture.destroy",
+          "ms": 0
+        },
+        {
+          "phase": 3,
+          "name": "Application.destroy",
+          "ms": 27.90000009536743
+        },
+        {
+          "phase": 3,
+          "name": "AudioContext.close",
+          "ms": 0.19999992847442627
+        }
+      ],
+      "pageErrors": [],
+      "browser": "156.0.8078.4"
+    }
+  ]
+}

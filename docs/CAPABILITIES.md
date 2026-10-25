@@ -37,3 +37,5 @@ M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。�
 实际平台与性能范围见 [PLATFORMS](PLATFORMS.md)：Core/API 目标通过，软件渲染/释放有长尾，不承诺 60 FPS 或视觉延迟。
 
 本地 0.1.0 alpha 候选与未完成的 N/F/M6 门槛见 [ALPHA](ALPHA.md)，不声明稳定 API 或真实两作支持。
+
+H1-01 加固保持协议/API：静态舞台不重复提交，正文/进度仍推进；新 epoch/动画仍绘制，实例销毁保留共享 Pixi 池并释放本实例 context，取消后的迟到 renderer 也清理。最新证据见 [H1-01](evidence/h1-01/REPORT.md)。

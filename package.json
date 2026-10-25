@@ -23,7 +23,8 @@
     "build:cli": "pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs",
     "test:cli": "node scripts/test-cli.mjs --full",
     "test:performance": "pnpm build && pnpm build:harness && node scripts/performance.mjs",
-    "test:release": "pnpm build:cli && node scripts/release-audit.mjs"
+    "test:release": "pnpm build:cli && node scripts/release-audit.mjs",
+    "profile:disposal": "pnpm build && pnpm build:harness && node scripts/profile-disposal.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
