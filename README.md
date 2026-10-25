@@ -82,3 +82,5 @@ H1-01 绘制/销毁加固见 [证据](docs/evidence/h1-01/REPORT.md)：不重复
 G0-02 原创通用验证章节：[灯塔来信·值班簿](http://127.0.0.1:4173/?demo=expressions)，使用正式表达式/插值/RNG 与存档恢复；API 与支持边界见 [EXPRESSIONS](docs/EXPRESSIONS.md)。当前仍只启用 bool/i32/string，G0-03 浮点/集合和其它通用 G 项继续建设。
 
 G1-02 通用播放系统：默认工具栏可开启自动阅读或按住已读快进；菜单可以配置等待、未读策略、实例按键、字号和背景透明度，导入导出 JSON 或恢复作品默认。Auto 等待真实 voice 结束并在选项处停止；读档从手动开始，玩家偏好独立保留。规则与公开 API 见 [PLAYBACK](docs/PLAYBACK.md)、[SETTINGS](docs/SETTINGS.md)。富文本/Ruby/NVL、图文存档、流程图/鉴赏和剧本 UI 仍按后续 G 任务建设。
+
+G2-01 原创章节：[灯塔来信·信纸上的光](http://127.0.0.1:4173/?demo=text)。使用正式 `richText`/`richPage` 工厂表达 Ruby、样式、换行、速度/停顿和文字效果，Core/DOM/Auto/存档共用正文状态；API、恢复规则与有限支持范围见 [TEXT](docs/TEXT.md)。NVL/多文本框和声明式主题布局仍由 G2-02 接续。

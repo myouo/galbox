@@ -80,3 +80,5 @@ G0–G7 新增通用功能的支持集和层次见 COMMON_VN.md。除任务各�
 对源码范围改变后的旧结果，补跑受影响验证或标失效。一次变更只跑有必要的检查；阶段交付运行对应整套门槛。不存在为了简单 getter 堆测试的要求，也不为了显得严格无限自审。
 
 G1-02 追加验收：`auto-voice-wait` 使用真实媒体自然结束，启动回执/旧 epoch/旧 attempt/loop/停止回调不能提前推进；暂停不补墙钟，load/replay 重建门控并从 manual 开始。`skip-safety` 在预算 1/8/100 保持一次 tick 一个普通输入，未读需显式许可，到选项的同一稳定结果即停止，不跳 delay/group/operation。`input-bindings` 用双实例/编辑控件/重复按下/跨 load 松键/失焦清理验证范围和身份；设置 v1 迁移保留旧值与 revision，v2 跨刷新保留，坏 JSON/未知键/冲突不改修订，显示辅助不改剧情，默认菜单导入导出/恢复默认实际可用且不横向溢出。
+
+G2-01：`rich-text-reveal` 经真实工厂/Schema/Core 处理求值后 runs、Ruby、换行、样式，按固定版本字素揭示，拒绝跨 run 拆簇及无界/未知样式；reading 不计已读，显完与翻页分开，段内 pause/fade 共享 Auto 完成判定。`text-effect-save-restore` 覆盖速度/字符余量/剩余停顿/显现时刻，预算1/8/100与分割 tick/恢复一致；DOM 预建布局不重排、暂停冻结、新 DOM 从真实 IndexedDB 恢复相位，坏来源/标记缺失/非法 continuation 拒绝且保留旧档。旧 codepoint 档不改解释，公开打包消费者实际运行新工厂/渲染/切点恢复。NVL/多窗口不借本项计作通过。

@@ -1,0 +1,370 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-typecase",
+  "title": "灯塔来信 · 信纸上的光",
+  "release": "typecase-1",
+  "entry": "main",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "expressions",
+    "text.rich"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "bgm",
+      "path": "../assets/bgm.wav",
+      "mime": "audio/wav",
+      "sha256": "a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5",
+      "kind": "audio"
+    }
+  ],
+  "globals": [
+    {
+      "id": "name",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": "旅人"
+      }
+    },
+    {
+      "id": "route",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": ""
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "paper:stage",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "paper:stage",
+          "object": {
+            "id": "background",
+            "asset": "shore",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "paper:music",
+          "task": "music",
+          "asset": "bgm",
+          "channel": "bgm",
+          "gain": 0.2,
+          "loop": true,
+          "restore": "replay",
+          "op": "audio.play"
+        },
+        {
+          "at": "paper:welcome",
+          "textId": "paper.welcome",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "澪"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "信纸上的光"
+              },
+              "style": {
+                "bold": true,
+                "color": "#FFD580",
+                "scale": 1.25
+              }
+            },
+            {
+              "kind": "break"
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "concat",
+                "parts": [
+                  {
+                    "kind": "string",
+                    "op": "literal",
+                    "value": ""
+                  },
+                  {
+                    "kind": "string",
+                    "op": "slot",
+                    "id": "name"
+                  },
+                  {
+                    "kind": "string",
+                    "op": "literal",
+                    "value": "，你看，"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "ruby",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "灯塔"
+              },
+              "reading": {
+                "kind": "string",
+                "op": "literal",
+                "value": "とうだい"
+              },
+              "style": {
+                "color": "#B8E1E8"
+              }
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "把海风也写进了信里。"
+              }
+            },
+            {
+              "kind": "break"
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "信末画着一家人👨‍👩‍👧‍👦，还有一颗星。"
+              },
+              "style": {
+                "underline": true
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "paper:light",
+          "textId": "paper.light",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "澪"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "「先别急着翻页。」"
+              },
+              "style": {
+                "italic": true
+              }
+            },
+            {
+              "kind": "pause",
+              "duration": 650
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "光从字里慢慢浮起来。"
+              },
+              "style": {
+                "effect": {
+                  "kind": "fade",
+                  "duration": 240
+                }
+              }
+            },
+            {
+              "kind": "break"
+            },
+            {
+              "kind": "speed",
+              "intervalMs": 60
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "海面在信纸上轻轻起伏。"
+              },
+              "style": {
+                "color": "#B8E1E8",
+                "effect": {
+                  "kind": "wave",
+                  "amplitude": 2,
+                  "periodMs": 1000
+                }
+              }
+            },
+            {
+              "kind": "speed",
+              "intervalMs": 32
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "灯忽然跳了一下。"
+              },
+              "style": {
+                "effect": {
+                  "kind": "shake",
+                  "amplitude": 1,
+                  "periodMs": 180
+                }
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "paper:choice",
+          "dest": "route",
+          "options": [
+            {
+              "id": "send",
+              "text": "寄出回信",
+              "target": "paper:ending"
+            },
+            {
+              "id": "keep",
+              "text": "把信留在灯下",
+              "target": "paper:ending"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "paper:ending",
+          "textId": "paper.ending",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "灯塔来信"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "if",
+                "condition": {
+                  "kind": "bool",
+                  "op": "eq",
+                  "operandKind": "string",
+                  "left": {
+                    "kind": "string",
+                    "op": "slot",
+                    "id": "route"
+                  },
+                  "right": {
+                    "kind": "string",
+                    "op": "literal",
+                    "value": "send"
+                  }
+                },
+                "yes": {
+                  "kind": "string",
+                  "op": "literal",
+                  "value": "我把回信折好，交给下一班靠岸的船。"
+                },
+                "no": {
+                  "kind": "string",
+                  "op": "literal",
+                  "value": "我把信压在值班簿里，等下一位守灯的人。"
+                }
+              }
+            },
+            {
+              "kind": "break"
+            },
+            {
+              "kind": "ruby",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "明日"
+              },
+              "reading": {
+                "kind": "string",
+                "op": "literal",
+                "value": "あした"
+              },
+              "style": {
+                "bold": true,
+                "color": "#FFD580"
+              }
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "的光，会找到它该去的地方。"
+              },
+              "style": {
+                "effect": {
+                  "kind": "fade",
+                  "duration": 300
+                }
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "paper:unlock",
+          "key": "paperComplete",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "paper:end",
+          "op": "control.end"
+        }
+      ]
+    }
+  ]
+}

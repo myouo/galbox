@@ -1,0 +1,38 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-typecase",
+  "release": "typecase-1",
+  "series": "1",
+  "programSha256": "07a1591f37756e41ddb7758630cdccd7e5dc0f128aaf5bfc8b3f1924d3680376",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "dd62eef2a4c118df36bdf044d8779e3eccc7d18f98ed04d6cf884edd1596622b",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "bgm",
+      "bytes": 88244,
+      "kind": "audio",
+      "channels": 1,
+      "sampleRate": 22050,
+      "frames": 44100
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

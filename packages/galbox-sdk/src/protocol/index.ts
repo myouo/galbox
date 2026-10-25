@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest, validateAudioPreferences, validateTextPreferences, validatePlayerPreferences, validatePreferencesRecord, validatePreferencesPatch, validateExpression, validateRngConfig, validateRngState, validatePreferencesValue, validateStoredPreferencesRecord, validatePlaybackPreferences, validateInputPreferences, validateDisplayPreferences, validateAudioPlaybackEvent } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch, Expression, RngConfig, RngState, PreferencesValue, StoredPreferencesRecord, PlaybackPreferences, InputPreferences, DisplayPreferences, AudioPlaybackEvent } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest, validateAudioPreferences, validateTextPreferences, validatePlayerPreferences, validatePreferencesRecord, validatePreferencesPatch, validateExpression, validateRngConfig, validateRngState, validatePreferencesValue, validateStoredPreferencesRecord, validatePlaybackPreferences, validateInputPreferences, validateDisplayPreferences, validateAudioPlaybackEvent, validateTextStyle, validateRichTextSourceRun, validateTextState } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch, Expression, RngConfig, RngState, PreferencesValue, StoredPreferencesRecord, PlaybackPreferences, InputPreferences, DisplayPreferences, AudioPlaybackEvent, TextStyle, RichTextSourceRun, TextState } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -54,7 +54,7 @@ export function string(value: string): Extract<Value, {kind: 'string'}> { const 
 export function bool(value: boolean): Extract<Value, {kind: 'bool'}> { ensure(typeof value==='boolean','BOOL_TYPE','Expected boolean');return {kind:'bool',value}; }
 export function emptyProfile(): Profile { return {revision:0,values:{},read:[]}; }
 export function readUnit(text: {textId: string; revision: string}): string {ensure(text&&typeof text.textId==='string'&&typeof text.revision==='string'&&[text.textId,text.revision].every(id=>/^[a-zA-Z][a-zA-Z0-9_.:/-]{0,127}$/.test(id)),'TEXT_IDENTITY','TextId/revision reserve @ as the ReadUnit separator');return `${text.textId}@${text.revision}`;}
-export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations','expressions','rng.lcg32'] as const;
+export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations','expressions','rng.lcg32','text.rich'] as const;
 
 export function parseJsonValue(input:unknown):JsonValue {
   const data=detached(input);ensure(validateJsonValue(data),'SCHEMA_JSON','Invalid normalized JSON');return data;
@@ -115,3 +115,11 @@ export function parseInputPreferences(input:unknown):InputPreferences {const dat
 export function parseDisplayPreferences(input:unknown):DisplayPreferences {const data=detached(input);ensure(validateDisplayPreferences(data),'SCHEMA_PLAYBACK',JSON.stringify(validateDisplayPreferences.errors));return data;}
 
 export function parseAudioPlaybackEvent(input:unknown):AudioPlaybackEvent {const data=detached(input);ensure(validateAudioPlaybackEvent(data),'SCHEMA_PLAYBACK',JSON.stringify(validateAudioPlaybackEvent.errors));return data;}
+
+export function parseTextStyle(input:unknown):TextStyle {const data=detached(input);ensure(validateTextStyle(data),'SCHEMA_TEXT',JSON.stringify(validateTextStyle.errors));return data;}
+
+export function parseRichTextSourceRun(input:unknown):RichTextSourceRun {const data=detached(input);ensure(validateRichTextSourceRun(data),'SCHEMA_TEXT',JSON.stringify(validateRichTextSourceRun.errors));return data;}
+
+export function parseTextState(input:unknown):TextState {const data=detached(input);ensure(validateTextState(data),'SCHEMA_TEXT',JSON.stringify(validateTextState.errors));return data;}
+
+export {isTextComplete,textUnitCount} from './text.js';

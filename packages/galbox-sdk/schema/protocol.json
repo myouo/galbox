@@ -1044,6 +1044,47 @@
             "seed"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "text.rich"
+            },
+            "textId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "speaker": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "runs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RichTextSourceRun"
+              },
+              "minItems": 1,
+              "maxItems": 128
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "textId",
+            "revision",
+            "speaker",
+            "runs"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1318,6 +1359,9 @@
             "at"
           ],
           "additionalProperties": false
+        },
+        "rich": {
+          "$ref": "#/definitions/RichTextState"
         }
       },
       "required": [
@@ -4776,6 +4820,392 @@
         "task",
         "attempt",
         "state"
+      ],
+      "additionalProperties": false
+    },
+    "TextEffect": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "fade"
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "kind",
+            "duration"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "wave"
+            },
+            "amplitude": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "periodMs": {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "kind",
+            "amplitude",
+            "periodMs"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "shake"
+            },
+            "amplitude": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "periodMs": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "kind",
+            "amplitude",
+            "periodMs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "TextStyle": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "underline": {
+          "type": "boolean"
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 0.75,
+          "maximum": 1.5
+        },
+        "effect": {
+          "$ref": "#/definitions/TextEffect"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "RichTextSourceRun": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "text"
+            },
+            "content": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "style": {
+              "$ref": "#/definitions/TextStyle"
+            }
+          },
+          "required": [
+            "kind",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "ruby"
+            },
+            "content": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "reading": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "style": {
+              "$ref": "#/definitions/TextStyle"
+            }
+          },
+          "required": [
+            "kind",
+            "content",
+            "reading"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "break"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "pause"
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            }
+          },
+          "required": [
+            "kind",
+            "duration"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "speed"
+            },
+            "intervalMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 200
+            }
+          },
+          "required": [
+            "kind",
+            "intervalMs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "TextRun": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "text"
+            },
+            "content": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,4096}$"
+            },
+            "style": {
+              "$ref": "#/definitions/TextStyle"
+            }
+          },
+          "required": [
+            "kind",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "ruby"
+            },
+            "content": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,4096}$"
+            },
+            "reading": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,4096}$"
+            },
+            "style": {
+              "$ref": "#/definitions/TextStyle"
+            }
+          },
+          "required": [
+            "kind",
+            "content",
+            "reading"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "break"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "pause"
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            }
+          },
+          "required": [
+            "kind",
+            "duration"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "speed"
+            },
+            "intervalMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 200
+            }
+          },
+          "required": [
+            "kind",
+            "intervalMs"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "RichTextState": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "segmentation": {
+          "type": "string",
+          "const": "uax29-17.0.0@1"
+        },
+        "at": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,65536}$"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextRun"
+          },
+          "minItems": 1,
+          "maxItems": 128
+        },
+        "cursor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "elapsedMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "remainderMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "pauseRemainingMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60000
+        },
+        "baseIntervalMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "revealedAt": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "version",
+        "segmentation",
+        "at",
+        "signature",
+        "runs",
+        "cursor",
+        "elapsedMs",
+        "remainderMs",
+        "pauseRemainingMs",
+        "baseIntervalMs",
+        "revealedAt"
       ],
       "additionalProperties": false
     }

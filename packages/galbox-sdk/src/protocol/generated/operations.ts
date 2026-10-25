@@ -356,6 +356,23 @@ export const operationSpecs = {
       "at",
       "seed"
     ]
+  },
+  "text.rich": {
+    "opcode": "text.rich",
+    "parameters": [
+      "at",
+      "textId",
+      "revision",
+      "speaker",
+      "runs"
+    ],
+    "required": [
+      "at",
+      "textId",
+      "revision",
+      "speaker",
+      "runs"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke"] as const;

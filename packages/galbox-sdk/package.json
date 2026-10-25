@@ -60,7 +60,8 @@
     }
   },
   "dependencies": {
-    "pixi.js": "8.22.0"
+    "pixi.js": "8.22.0",
+    "unicode-segmenter": "0.17.3"
   },
   "peerDependencies": {
     "react": ">=19",

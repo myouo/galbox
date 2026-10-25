@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-NGXC88 108566e
+HEAD is now at 108566e feat: add playback modes scoped input and display preferences
+Preparing worktree (detached HEAD 108566e)

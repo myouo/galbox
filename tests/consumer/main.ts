@@ -3,7 +3,7 @@ import {prepareBackupRestore,materializeBackupRestore} from 'galbox-sdk/backups'
 import {consumerBinding} from './binding.js';
 import {counter1,operations1,program1,initialized} from './extension.js';
 import { createPlayer,createHttpProvider } from 'galbox-sdk/player';
-import {expr as E,assignExpression,templatePage,randomI32} from 'galbox-sdk/port-kit';
+import {expr as E,assignExpression,templatePage,randomI32,richPage,richText} from 'galbox-sdk/port-kit';
 import { instruction,variable,set,createSaveBindingRegistry } from 'galbox-sdk/port-kit';
 import { i32,bool,parseProgram,parseSnapshot } from 'galbox-sdk/protocol';
 import { DefaultUI } from 'galbox-sdk/react';
@@ -11,6 +11,9 @@ import {normalizePreferences} from 'galbox-sdk/settings';
 void DefaultUI;
 instruction('control.end',{at:'end'});set('ok',variable('n','i32'),i32(1));
 if(false){
+richPage('rich','rich.page','v1','澪',[richText.ruby('海','うみ'),richText.text(E.text('光'))]);
+// @ts-expect-error Published rich factory rejects non-string expressions.
+richText.ruby(E.integer(1),'うみ');
 // @ts-expect-error published arithmetic factory rejects bool operands
 E.binary('add',E.flag(true),E.integer(1));
 assignExpression('good',variable('n','i32'),E.integer(1));
@@ -39,5 +42,7 @@ button?.addEventListener('click',()=>{void(async()=>{
  await plugin.save('plugin');await plugin.resumeOperation(counter1.result(call.wait,call.id,{kind:'continue',value:3}),plugin.getSnapshot().epoch);if(plugin.getSnapshot().core?.run.globals.n?.value!==5)throw new Error('Plugin result');
  await plugin.load('plugin');await plugin.resumeOperation(counter1.result(call.wait,call.id,{kind:'continue',value:99}),plugin.getSnapshot().epoch);if(plugin.getSnapshot().core?.run.globals.n?.value!==2)throw new Error('Stale plugin attempt');const resumed=plugin.getSnapshot().core?.run.invocations?.find(v=>v.phase==='waiting');if(!resumed?.wait)throw new Error('Restored plugin wait');await plugin.resumeOperation(counter1.result(resumed.wait,resumed.id,{kind:'continue',value:3}),plugin.getSnapshot().epoch);if(plugin.getSnapshot().core?.run.globals.n?.value!==5||initialized()!==1)throw new Error('Plugin restore initialized twice');plugin.dispose();
  const binding=consumerBinding(parseProgram(program),importSnapshot),imports=await createPlayer({program,provider:createHttpProvider(program,location.href),mount,saveCompatibilitySeries:'import-consumer',bindings:createSaveBindingRegistry([binding])});await imports.start();const prepared=await imports.prepareImport({sourceKey:binding.sourceKey,schema:binding.schema,version:binding.codecVersion},[{name:'original.json',bytes:new TextEncoder().encode(JSON.stringify({locator:'opening.1',flag:true}))}]);if(prepared.status!=='ready')throw new Error(prepared.message);const receipt=await imports.commitImport(prepared.plan);if(imports.getSnapshot().profileId!=='main')throw new Error('Import activated automatically');await imports.load(receipt.slot);if(imports.getSnapshot().core?.profile.values.loads?.value!==5)throw new Error('Import load hook');const importedSave=await imports.save('import-progress');await imports.load(importedSave.slot);if(imports.getSnapshot().core?.profile.values.loads?.value!==6)throw new Error('Saved import hook lost or duplicated');imports.dispose();
+
+ const richProgram:unknown=await(await fetch('./text/program.json')).json(),rich=await createPlayer({program:richProgram,provider:createHttpProvider(richProgram,new URL('./text/',location.href).href),mount,saveCompatibilitySeries:'rich-consumer'});await rich.updatePreferences({text:{intervalMs:0}});await rich.start();if(rich.capture().text?.rich?.segmentation!=='uax29-17.0.0@1'||mount.querySelector('ruby rt')?.textContent!=='とうだい')throw new Error('Packed rich rendering failed');await rich.save('rich');const richWait=rich.getSnapshot().core?.run.wait;if(richWait?.kind!=='text')throw new Error('rich prompt');await rich.input('advance',richWait.prompt,rich.getSnapshot().epoch);await rich.save('pause');await rich.load('pause');if(rich.capture().text?.textId!=='paper.light'||!rich.capture().text?.rich?.pauseRemainingMs||rich.getSnapshot().playback.mode!=='manual')throw new Error('Packed pause restore failed');await rich.load('rich');if(rich.capture().text?.textId!=='paper.welcome'||!mount.querySelector('ruby'))throw new Error('Packed rich load failed');rich.dispose();
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore / portable backup passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});

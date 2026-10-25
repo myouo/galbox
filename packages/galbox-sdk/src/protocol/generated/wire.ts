@@ -201,6 +201,18 @@ export type Instruction =
       at: string;
       op: 'rng.seed';
       seed: number;
+    }
+  | {
+      at: string;
+      op: 'text.rich';
+      textId: string;
+      revision: string;
+      speaker: StringExpression;
+      /**
+       * @minItems 1
+       * @maxItems 128
+       */
+      runs: [RichTextSourceRun, ...RichTextSourceRun[]];
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -407,6 +419,52 @@ export type JsonValue =
       [k: string]: JsonValue;
     };
 /**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RichTextSourceRun".
+ */
+export type RichTextSourceRun =
+  | {
+      kind: 'text';
+      content: StringExpression;
+      style?: TextStyle;
+    }
+  | {
+      kind: 'ruby';
+      content: StringExpression;
+      reading: StringExpression;
+      style?: TextStyle;
+    }
+  | {
+      kind: 'break';
+    }
+  | {
+      kind: 'pause';
+      duration: number;
+    }
+  | {
+      kind: 'speed';
+      intervalMs: number;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextEffect".
+ */
+export type TextEffect =
+  | {
+      kind: 'fade';
+      duration: number;
+    }
+  | {
+      kind: 'wave';
+      amplitude: number;
+      periodMs: number;
+    }
+  | {
+      kind: 'shake';
+      amplitude: number;
+      periodMs: number;
+    };
+/**
  * @maxItems 10000
  *
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -428,6 +486,33 @@ export type RngConfig =
   | {
       algorithm: 'lcg32@1';
       seedSource: 'host';
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextRun".
+ */
+export type TextRun =
+  | {
+      kind: 'text';
+      content: string;
+      style?: TextStyle;
+    }
+  | {
+      kind: 'ruby';
+      content: string;
+      reading: string;
+      style?: TextStyle;
+    }
+  | {
+      kind: 'break';
+    }
+  | {
+      kind: 'pause';
+      duration: number;
+    }
+  | {
+      kind: 'speed';
+      intervalMs: number;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -689,6 +774,18 @@ export interface SchemaRef {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextStyle".
+ */
+export interface TextStyle {
+  color?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  scale?: number;
+  effect?: TextEffect;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "SourceLocation".
  */
 export interface SourceLocation {
@@ -795,6 +892,31 @@ export interface TextState {
     signature: string;
     at: string;
   };
+  rich?: RichTextState;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RichTextState".
+ */
+export interface RichTextState {
+  version: 1;
+  segmentation: 'uax29-17.0.0@1';
+  at: string;
+  signature: string;
+  /**
+   * @minItems 1
+   * @maxItems 128
+   */
+  runs: [TextRun, ...TextRun[]];
+  cursor: number;
+  elapsedMs: number;
+  remainderMs: number;
+  pauseRemainingMs: number;
+  baseIntervalMs: number;
+  /**
+   * @maxItems 4096
+   */
+  revealedAt: (number | null)[];
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

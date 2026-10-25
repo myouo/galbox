@@ -18,3 +18,7 @@
 | [Using PLANS.md for multi-hour problem solving](https://developers.openai.com/cookbook/articles/codex_exec_plans) | 参考可接续执行计划和更新进度的思路；该旧文章已标 archived，不采用其中旧模型/API或运行时长承诺 |
 
 本包没有修改 Codex 全局设置、模型、审批策略或沙箱。它也没有启动后台自动任务。持续推进来自当前 Codex 会话的实际能力，换会话靠仓库状态文件接续。
+
+## G2-01 字素实现
+
+[unicode-segmenter 官方仓库](https://github.com/cometkim/unicode-segmenter) 的 grapheme 入口提供 Unicode17/UAX29 字素分割。实际安装并固定 0.17.3，版本/完整性由 SDK package.json 与 pnpm-lock.yaml 记录；查验本地 grapheme/core/data 模块为环境中立算法，仅 protocol/text.ts 获准导入。SDK 的字素跨 run、ZWJ/组合符、揭示/恢复与浏览器布局仍用本仓库实际测试验证，不把上游测试声明当作本 SDK 已通过的证据。
