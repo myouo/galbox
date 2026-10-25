@@ -95,6 +95,18 @@
             "slot"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "$ref": "#/definitions/Expression"
+            }
+          },
+          "required": [
+            "expression"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -941,6 +953,97 @@
             "delta"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "text.template"
+            },
+            "textId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "speaker": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "content": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "textId",
+            "revision",
+            "speaker",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "random.i32"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "min": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "max": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "dest",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "rng.seed"
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "seed"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1069,6 +1172,9 @@
             "$ref": "#/definitions/BehaviorMapping"
           },
           "maxItems": 10000
+        },
+        "rng": {
+          "$ref": "#/definitions/RngConfig"
         }
       },
       "required": [
@@ -1194,6 +1300,24 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 2147483647
+        },
+        "template": {
+          "type": "object",
+          "properties": {
+            "signature": {
+              "type": "string",
+              "pattern": "^[^\\x00]{1,65536}$"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "signature",
+            "at"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1590,6 +1714,9 @@
             "$ref": "#/definitions/SavedInvocation"
           },
           "maxItems": 256
+        },
+        "rng": {
+          "$ref": "#/definitions/RngState"
         }
       },
       "required": [
@@ -2838,6 +2965,820 @@
       "required": [],
       "additionalProperties": false,
       "minProperties": 1
+    },
+    "I32Expression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "no": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "add",
+                "sub",
+                "mul",
+                "div",
+                "mod",
+                "min",
+                "max"
+              ]
+            },
+            "left": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "right": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "neg",
+                "abs"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "length"
+            },
+            "text": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "text"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "BoolExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "no": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "and",
+                "or"
+              ]
+            },
+            "left": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "not"
+            },
+            "value": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "contains",
+                "startsWith",
+                "endsWith"
+              ]
+            },
+            "text": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "search": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "text",
+            "search"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "read"
+            },
+            "textId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "textId",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "le",
+                "gt",
+                "ge"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "left": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "right": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "left": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "le",
+                "gt",
+                "ge"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "string"
+            },
+            "left": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "StringExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[^\\x00]{0,4096}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "string",
+              "pattern": "^[^\\x00]{0,4096}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "no": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "concat"
+            },
+            "parts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StringExpression"
+              },
+              "minItems": 1,
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "parts"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "slice"
+            },
+            "text": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "start": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "end": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "text",
+            "start",
+            "end"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "format"
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "value": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "format"
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "value": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Expression": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/I32Expression"
+        },
+        {
+          "$ref": "#/definitions/BoolExpression"
+        },
+        {
+          "$ref": "#/definitions/StringExpression"
+        }
+      ]
+    },
+    "RngConfig": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "const": "lcg32@1"
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "required": [
+            "algorithm",
+            "seed"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "const": "lcg32@1"
+            },
+            "seedSource": {
+              "type": "string",
+              "const": "host"
+            }
+          },
+          "required": [
+            "algorithm",
+            "seedSource"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "RngState": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "lcg32@1"
+        },
+        "state": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "draws": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "required": [
+        "algorithm",
+        "state",
+        "draws"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

@@ -181,6 +181,26 @@ export type Instruction =
       op: 'profile.i32.add.checked';
       key: string;
       delta: number;
+    }
+  | {
+      at: string;
+      op: 'text.template';
+      textId: string;
+      revision: string;
+      speaker: StringExpression;
+      content: StringExpression;
+    }
+  | {
+      at: string;
+      op: 'random.i32';
+      dest: string;
+      min: I32Expression;
+      max: I32Expression;
+    }
+  | {
+      at: string;
+      op: 'rng.seed';
+      seed: number;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -192,6 +212,186 @@ export type Operand =
     }
   | {
       slot: string;
+    }
+  | {
+      expression: Expression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Expression".
+ */
+export type Expression = I32Expression | BoolExpression | StringExpression;
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "I32Expression".
+ */
+export type I32Expression =
+  | {
+      kind: 'i32';
+      op: 'literal';
+      value: number;
+    }
+  | {
+      kind: 'i32';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'i32';
+      op: 'profile';
+      key: string;
+      fallback: number;
+    }
+  | {
+      kind: 'i32';
+      op: 'if';
+      condition: BoolExpression;
+      yes: I32Expression;
+      no: I32Expression;
+    }
+  | {
+      kind: 'i32';
+      op: 'add' | 'sub' | 'mul' | 'div' | 'mod' | 'min' | 'max';
+      left: I32Expression;
+      right: I32Expression;
+    }
+  | {
+      kind: 'i32';
+      op: 'neg' | 'abs';
+      value: I32Expression;
+    }
+  | {
+      kind: 'i32';
+      op: 'length';
+      text: StringExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "BoolExpression".
+ */
+export type BoolExpression =
+  | {
+      kind: 'bool';
+      op: 'literal';
+      value: boolean;
+    }
+  | {
+      kind: 'bool';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'bool';
+      op: 'profile';
+      key: string;
+      fallback: boolean;
+    }
+  | {
+      kind: 'bool';
+      op: 'if';
+      condition: BoolExpression;
+      yes: BoolExpression;
+      no: BoolExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'and' | 'or';
+      left: BoolExpression;
+      right: BoolExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'not';
+      value: BoolExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'contains' | 'startsWith' | 'endsWith';
+      text: StringExpression;
+      search: StringExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'read';
+      textId: string;
+      revision: string;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne' | 'lt' | 'le' | 'gt' | 'ge';
+      operandKind: 'i32';
+      left: I32Expression;
+      right: I32Expression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne';
+      operandKind: 'bool';
+      left: BoolExpression;
+      right: BoolExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne' | 'lt' | 'le' | 'gt' | 'ge';
+      operandKind: 'string';
+      left: StringExpression;
+      right: StringExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StringExpression".
+ */
+export type StringExpression =
+  | {
+      kind: 'string';
+      op: 'literal';
+      value: string;
+    }
+  | {
+      kind: 'string';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'string';
+      op: 'profile';
+      key: string;
+      fallback: string;
+    }
+  | {
+      kind: 'string';
+      op: 'if';
+      condition: BoolExpression;
+      yes: StringExpression;
+      no: StringExpression;
+    }
+  | {
+      kind: 'string';
+      op: 'concat';
+      /**
+       * @minItems 1
+       * @maxItems 64
+       */
+      parts: [StringExpression, ...StringExpression[]];
+    }
+  | {
+      kind: 'string';
+      op: 'slice';
+      text: StringExpression;
+      start: I32Expression;
+      end: I32Expression;
+    }
+  | {
+      kind: 'string';
+      op: 'format';
+      operandKind: 'i32';
+      value: I32Expression;
+    }
+  | {
+      kind: 'string';
+      op: 'format';
+      operandKind: 'bool';
+      value: BoolExpression;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -216,6 +416,19 @@ export type SourceMap = {
   at: string;
   source: SourceLocation;
 }[];
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RngConfig".
+ */
+export type RngConfig =
+  | {
+      algorithm: 'lcg32@1';
+      seed: number;
+    }
+  | {
+      algorithm: 'lcg32@1';
+      seedSource: 'host';
+    };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "TaskStatus".
@@ -384,6 +597,7 @@ export interface Program {
    * @maxItems 10000
    */
   behaviorMappings?: BehaviorMapping[];
+  rng?: RngConfig;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -537,6 +751,7 @@ export interface Snapshot {
    * @maxItems 256
    */
   invocations?: SavedInvocation[];
+  rng?: RngState;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -566,6 +781,10 @@ export interface TextState {
   content: string;
   revealed: number;
   prompt: number;
+  template?: {
+    signature: string;
+    at: string;
+  };
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -629,6 +848,15 @@ export interface OperationWait {
   schema: SchemaRef;
   request: string;
   attempt: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RngState".
+ */
+export interface RngState {
+  algorithm: 'lcg32@1';
+  state: number;
+  draws: number;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

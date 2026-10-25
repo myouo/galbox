@@ -1,0 +1,33 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173/?demo=expressions",
+  "status": 200,
+  "browser": "156.0.8078.4",
+  "release": {
+    "origin": "manifest",
+    "sha256": "556d2e375d753b947e753e32bc266083df7a15828d9e3f955609630bffa25bc7"
+  },
+  "rng": {
+    "algorithm": "lcg32@1",
+    "state": 87628868,
+    "draws": 1
+  },
+  "roll": {
+    "kind": "i32",
+    "value": 69
+  },
+  "score": {
+    "kind": "i32",
+    "value": 143
+  },
+  "canvas": 1,
+  "media": {
+    "state": "available",
+    "starts": 1,
+    "ended": 0,
+    "blocked": 0,
+    "decoded": 1,
+    "active": 1
+  },
+  "pageErrors": []
+}

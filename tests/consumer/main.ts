@@ -3,12 +3,18 @@ import {prepareBackupRestore,materializeBackupRestore} from 'galbox-sdk/backups'
 import {consumerBinding} from './binding.js';
 import {counter1,operations1,program1,initialized} from './extension.js';
 import { createPlayer,createHttpProvider } from 'galbox-sdk/player';
+import {expr as E,assignExpression,templatePage,randomI32} from 'galbox-sdk/port-kit';
 import { instruction,variable,set,createSaveBindingRegistry } from 'galbox-sdk/port-kit';
 import { i32,bool,parseProgram,parseSnapshot } from 'galbox-sdk/protocol';
 import { DefaultUI } from 'galbox-sdk/react';
 void DefaultUI;
 instruction('control.end',{at:'end'});set('ok',variable('n','i32'),i32(1));
 if(false){
+// @ts-expect-error published arithmetic factory rejects bool operands
+E.binary('add',E.flag(true),E.integer(1));
+assignExpression('good',variable('n','i32'),E.integer(1));
+templatePage('text','consumer.text','v1',E.text('author'),E.template`Value ${E.integer(2)}`);
+randomI32('random',variable('n','i32'),E.integer(1),E.integer(2));
 // @ts-expect-error published factory rejects the wrong opcode argument
 instruction('control.end',{at:'wrong',target:'invalid'});
 // @ts-expect-error published factory retains variable/value association

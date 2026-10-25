@@ -1,0 +1,4 @@
+$ tsx fixtures/standard-novel/build.ts && tsx fixtures/synthetic-saves/build.ts && tsx fixtures/expression-novel/build.ts
+Generated 9 original assets and 3 functions
+Generated synthetic fixture-save@1: slot.bin + global.json
+Built original logbook chapter using public expression/RNG factories

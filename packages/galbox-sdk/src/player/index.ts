@@ -138,7 +138,7 @@ export class Player {
     if(this.disposed)return;const records=await this.requireStore().listSlots?.();const profiles=await this.requireStore().listProfiles?.();if(profiles)this.profiles=profiles.map(p=>({...p}));if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot}));this.publish();
   }
   private async initialCandidate(profile:Profile):Promise<Core> {
-    const candidate=new Core(this.program,profile,undefined,'initial',this.operations);candidate.accept({type:'text.preferences',value:this.preferences.value.text});let operations=0;
+    const candidate=new Core(this.program,profile,undefined,'initial',this.operations,this.program.rng&&'seedSource'in this.program.rng?crypto.getRandomValues(new Uint32Array(1))[0]:undefined);candidate.accept({type:'text.preferences',value:this.preferences.value.text});let operations=0;
     for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:profile.revision});continue;}if(result==='stable')return candidate;await new Promise<void>(resolve=>queueMicrotask(resolve));}
   }
   async start(profileId='main'):Promise<void> {

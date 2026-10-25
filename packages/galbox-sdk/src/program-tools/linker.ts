@@ -1,6 +1,7 @@
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
-import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit } from '../protocol/index.js';
+import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig } from '../protocol/index.js';
+import {validateExpressionTree,templateSignature} from '../protocol/expressions.js';
 import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly, SourceLocation, PortObligation, BehaviorMapping } from '../protocol/index.js';
 
 export type AssetRef<K extends Asset['kind']> = { readonly id: string; readonly kind: K };
@@ -8,6 +9,7 @@ export type Variable<K extends ValueKind> = {readonly id: string; readonly kind:
 export function variable<K extends ValueKind>(id: string, kind: K): Variable<K> { return {id,kind}; }
 export function literal(value: Value): Operand { return {literal:parseValue(value)}; }
 export function slot(id: string): Operand { return {slot:id}; }
+function operands(i:Instruction):Operand[]{switch(i.op){case 'control.branch':case 'i32.add.checked':return [i.left,i.right];case 'control.call':return i.args;case 'control.return':return i.value?[i.value]:[];case 'value.set':return [i.value];default:return [];}}
 export function instruction<K extends Instruction['op']>(op: K, args: Omit<Extract<Instruction,{op: NoInfer<K>}>, 'op'>): Extract<Instruction,{op: K}> {
   const value = parseInstruction({...args,op});
   // A discriminant predicate retains the exact schema branch without exposing unchecked data.
@@ -31,7 +33,9 @@ export class ProgramBuilder {
   source(at:string,source:SourceLocation):this {const entries=parseSourceMap([{at,source}]);this.data.sourceMap=[...(this.data.sourceMap??[]),...entries];return this;}
   obligation(value:PortObligation):this {this.data.obligations=[...(this.data.obligations??[]),parsePortObligation(value)];return this;}
   mapping(value:BehaviorMapping):this {this.data.behaviorMappings=[...(this.data.behaviorMappings??[]),parseBehaviorMapping(value)];return this;}
-  build(operations:OperationRegistry=emptyOperations): Program { return linkProgram(this.data,operations).copy(); }
+  rngFromHost():this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seedSource:'host'});return this;}
+  rng(seed:number):this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seed});return this;}
+  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.template'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
   private readonly program: Program;
@@ -42,6 +46,7 @@ export class LinkedProgram {
 export function linkProgram(input: unknown,operations:OperationRegistry=emptyOperations): LinkedProgram { return new LinkedProgram(input,operations); }
 export function valueKind(operand: Operand, slots: readonly Slot[]): ValueKind {
   if ('literal' in operand) return operand.literal.kind;
+  if ('expression'in operand)return validateExpressionTree(operand.expression,id=>slots.find(s=>s.id===id)?.kind);
   const s=slots.find(s=>s.id === operand.slot); ensure(s,'SLOT',operand.slot); return s.kind;
 }
 export function validateLinks(p: Program,operations:OperationRegistry=emptyOperations): void {
@@ -49,12 +54,13 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
   unique(p.functions.map(f=>f.id),'FUNCTION_DUPLICATE'); unique(p.assets.map(a=>a.id),'ASSET_DUPLICATE');
   unique(p.functions.flatMap(f=>f.code.map(i=>i.at)),'ADDRESS_DUPLICATE');
   ensure(p.capabilities.every(c=>capabilities.some(s=>s===c)),'UNSUPPORTED_CAPABILITY',p.capabilities.join(','));
+  if(p.rng)ensure(p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng.lcg32');
   const main=p.functions.find(f=>f.id === p.entry); ensure(main && !main.params.length && main.returns==='void','ENTRY','Entry must take no parameters and return void');
   for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&a.mime==='audio/wav'),'ASSET_KIND',a.id);
   for(const f of p.functions) {
     const slots=[...p.globals,...f.params,...f.locals]; unique(slots.map(s=>s.id),'SLOT_DUPLICATE');
     for(const s of slots)ensure(s.kind===s.initial.kind,'VALUE_KIND',s.id);
-    const kind=(o:Operand)=>valueKind(o,slots);
+    const kind=(o:Operand)=>{if('expression'in o)ensure(p.capabilities.includes('expressions'),'EXPRESSION_CAPABILITY','Declare expressions');return valueKind(o,slots);};
     const target=(at:string)=>ensure(f.code.some(i=>i.at===at),'ADDRESS_SCOPE',`${f.id} -> ${at}`);
     const dest=(id:string,k:ValueKind)=>ensure(slots.find(s=>s.id===id)?.kind===k,'SLOT_KIND',id);
     target(f.entry); ensure(f.code.length>0,'FUNCTION_EMPTY',f.id);
@@ -64,6 +70,9 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
       if(!['control.jump','control.branch','control.return','control.end'].includes(i.op))ensure(f.code[index+1],'FALLTHROUGH',i.at);
       switch(i.op) {
         case 'text.page': readUnit(i);break;
+        case 'text.template': ensure(p.capabilities.includes('expressions'),'EXPRESSION_CAPABILITY','Declare expressions');readUnit(i);validateExpressionTree(i.speaker,id=>slots.find(s=>s.id===id)?.kind);validateExpressionTree(i.content,id=>slots.find(s=>s.id===id)?.kind);templateSignature(i.speaker,i.content);break;
+        case 'random.i32': ensure(p.rng&&p.capabilities.includes('rng.lcg32')&&p.capabilities.includes('expressions'),'RNG_CAPABILITY','Declare rng and expressions');dest(i.dest,'i32');validateExpressionTree(i.min,id=>slots.find(s=>s.id===id)?.kind);validateExpressionTree(i.max,id=>slots.find(s=>s.id===id)?.kind);break;
+        case 'rng.seed': ensure(p.rng&&p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng');break;
         case 'control.jump': target(i.target); break;
         case 'control.branch': ensure(kind(i.left)===kind(i.right),'COMPARE_KIND',i.at); ensure(i.cmp==='eq'||kind(i.left)!=='bool','COMPARE_KIND',i.at); target(i.yes); target(i.no); break;
         case 'control.call': {

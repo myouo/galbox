@@ -78,3 +78,5 @@ CLI 的 dev 服务最后一次验证的发布数据；修改 story/resources 后
 H1-01 绘制/销毁加固见 [证据](docs/evidence/h1-01/REPORT.md)：不重复绘制静态舞台，保留共享 Pixi 全局池，取消后的迟到 renderer 也清理；本机三次完整活动销毁为 111.6/230/119 ms，API/存档格式不变。
 
 完整通用功能目标与 Core/Host/系统/UI/作品实例的边界见 [COMMON_VN](docs/COMMON_VN.md)。流程图、图文存档、富文本/文本框和剧本 UI 等仍在任务表中，实例可自写不等于 SDK 已支持；N/F 资料阻塞不阻塞这些通用能力。
+
+G0-02 原创通用验证章节：[灯塔来信·值班簿](http://127.0.0.1:4173/?demo=expressions)，使用正式表达式/插值/RNG 与存档恢复；API 与支持边界见 [EXPRESSIONS](docs/EXPRESSIONS.md)。当前仍只启用 bool/i32/string，G0-03 浮点/集合和其它通用 G 项继续建设。

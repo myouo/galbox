@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest, validateAudioPreferences, validateTextPreferences, validatePlayerPreferences, validatePreferencesRecord, validatePreferencesPatch } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest, validateAudioPreferences, validateTextPreferences, validatePlayerPreferences, validatePreferencesRecord, validatePreferencesPatch, validateExpression, validateRngConfig, validateRngState } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch, Expression, RngConfig, RngState } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -54,7 +54,7 @@ export function string(value: string): Extract<Value, {kind: 'string'}> { const 
 export function bool(value: boolean): Extract<Value, {kind: 'bool'}> { ensure(typeof value==='boolean','BOOL_TYPE','Expected boolean');return {kind:'bool',value}; }
 export function emptyProfile(): Profile { return {revision:0,values:{},read:[]}; }
 export function readUnit(text: {textId: string; revision: string}): string {ensure(text&&typeof text.textId==='string'&&typeof text.revision==='string'&&[text.textId,text.revision].every(id=>/^[a-zA-Z][a-zA-Z0-9_.:/-]{0,127}$/.test(id)),'TEXT_IDENTITY','TextId/revision reserve @ as the ReadUnit separator');return `${text.textId}@${text.revision}`;}
-export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations'] as const;
+export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations','expressions','rng.lcg32'] as const;
 
 export function parseJsonValue(input:unknown):JsonValue {
   const data=detached(input);ensure(validateJsonValue(data),'SCHEMA_JSON','Invalid normalized JSON');return data;
@@ -97,3 +97,9 @@ export function parsePlayerPreferences(input:unknown):PlayerPreferences {const d
 export function parsePreferencesRecord(input:unknown):PreferencesRecord {const data=detached(input);ensure(validatePreferencesRecord(data),'SCHEMA_PREFERENCES',JSON.stringify(validatePreferencesRecord.errors));return data;}
 
 export function parsePreferencesPatch(input:unknown):PreferencesPatch {const data=detached(input);ensure(validatePreferencesPatch(data),'SCHEMA_PREFERENCES',JSON.stringify(validatePreferencesPatch.errors));return data;}
+
+export function parseExpression(input:unknown):Expression {const data=detached(input);ensure(validateExpression(data),'SCHEMA_EXPRESSION',JSON.stringify(validateExpression.errors));return data;}
+
+export function parseRngConfig(input:unknown):RngConfig {const data=detached(input);ensure(validateRngConfig(data),'SCHEMA_RNGCONFIG',JSON.stringify(validateRngConfig.errors));return data;}
+
+export function parseRngState(input:unknown):RngState {const data=detached(input);ensure(validateRngState(data),'SCHEMA_RNGSTATE',JSON.stringify(validateRngState.errors));return data;}

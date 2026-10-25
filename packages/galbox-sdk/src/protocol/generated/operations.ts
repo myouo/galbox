@@ -313,6 +313,49 @@ export const operationSpecs = {
       "key",
       "delta"
     ]
+  },
+  "text.template": {
+    "opcode": "text.template",
+    "parameters": [
+      "at",
+      "textId",
+      "revision",
+      "speaker",
+      "content"
+    ],
+    "required": [
+      "at",
+      "textId",
+      "revision",
+      "speaker",
+      "content"
+    ]
+  },
+  "random.i32": {
+    "opcode": "random.i32",
+    "parameters": [
+      "at",
+      "dest",
+      "min",
+      "max"
+    ],
+    "required": [
+      "at",
+      "dest",
+      "min",
+      "max"
+    ]
+  },
+  "rng.seed": {
+    "opcode": "rng.seed",
+    "parameters": [
+      "at",
+      "seed"
+    ],
+    "required": [
+      "at",
+      "seed"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke"] as const;

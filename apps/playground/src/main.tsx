@@ -8,14 +8,16 @@ import type { Player } from 'galbox-sdk/player';
 import { DefaultUI } from 'galbox-sdk/react';
 import 'galbox-sdk/react/style.css';
 import './style.css';
+const demonstrations={standard:{program:'./program.json',synthetic:true},expressions:{program:'./expressions/program.json',synthetic:false}};
+const demo=new URLSearchParams(location.search).get('demo')==='expressions'?demonstrations.expressions:demonstrations.standard;
 function App(){
  const mount=useRef<HTMLDivElement>(null),[player,setPlayer]=useState<Player|null>(null),[error,setError]=useState('');
  useEffect(()=>{let active=true,instance:Player|undefined;void(async()=>{
-  try{const response=await fetch('./program.json');if(!response.ok)throw new Error('PROGRAM_HTTP');const program:unknown=await response.json();const releaseResponse=await fetch('./program.json.release.json');if(!releaseResponse.ok)throw new Error('RELEASE_HTTP');const release=parseReleaseManifest(await releaseResponse.json());if(!mount.current||!active)return;
-   instance=await createPlayer({program,provider:createHttpProvider(program,new URL('./',location.href).href),mount:mount.current,saveCompatibilitySeries:release.series,release,bindings:createSaveBindingRegistry([createFixtureBinding(program)])});
+  try{const response=await fetch(demo.program);if(!response.ok)throw new Error('PROGRAM_HTTP');const program:unknown=await response.json();const releaseResponse=await fetch(demo.program+'.release.json');if(!releaseResponse.ok)throw new Error('RELEASE_HTTP');const release=parseReleaseManifest(await releaseResponse.json());if(!mount.current||!active)return;
+   instance=await createPlayer({program,provider:createHttpProvider(program,new URL('./',new URL(demo.program,location.href)).href),mount:mount.current,saveCompatibilitySeries:release.series,release,bindings:createSaveBindingRegistry(demo.synthetic?[createFixtureBinding(program)]:[])});
    if(!active){instance.dispose();return;}setPlayer(instance);
   }catch(e){if(active)setError(e instanceof Error?e.message:String(e));}
  })();return()=>{active=false;instance?.dispose();};},[]);
- return <main className="galbox-player"><div className="stage" ref={mount}/>{player?<DefaultUI player={player}/>:<div className="loading" role="status">{error||'正在点亮灯塔…'}</div>}<footer>galbox-sdk · 原创验证作品 · ADV / Pixi / Web Audio / IndexedDB</footer></main>;
+ return <main className="galbox-player"><div className="stage" ref={mount}/>{player?<DefaultUI player={player}/>:<div className="loading" role="status">{error||'正在点亮灯塔…'}</div>}<footer>galbox-sdk · 原创验证作品 · <a href="?demo=standard">灯塔来信</a> · <a href="?demo=expressions">值班簿：表达式与随机</a></footer></main>;
 }
 const root=document.getElementById('root');if(root)createRoot(root).render(<App/>);

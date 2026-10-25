@@ -1,9 +1,11 @@
 import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
+import {evaluateExpression,templateSignature} from '../protocol/expressions.js';
+import {sampleI32,initialRng} from './rng.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { emptyOperations, operationContext } from './operations.js';
 import type { OperationRegistry } from './operations.js';
-export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';}
+export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';readonly rngSeed?:number;}
 export type CoreEvent =
  | OperationResume
  | {type:'text.preferences';value:import('../protocol/index.js').TextPreferences}
@@ -33,13 +35,13 @@ export class Core {
   private revoked=false;
   private recovering=false;
   private reducing=false;
-  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations) {
+  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number) {
     ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
     this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);
-    if(snapshot!==undefined) { this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
+    if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
-      const entry=this.fn(this.program.entry);
-      this.s={version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[]};
+      const entry=this.fn(this.program.entry),rng=initialRng(this.program.rng,rngSeed);
+      this.s={version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
   }
   private fn(id:string):ProgramFunction { const f=this.program.functions.find(f=>f.id===id); ensure(f,'FUNCTION',id); return f; }
@@ -50,7 +52,8 @@ export class Core {
   private top():Frame { const f=this.s.frames.at(-1);ensure(f,'STACK','Empty stack');return f; }
   private op():Instruction { const f=this.top(); const op=this.fn(f.functionId).code.find(i=>i.at===f.pc);ensure(op,'PC',f.pc);return op; }
   private next():string {const f=this.top();const code=this.fn(f.functionId).code; const op=code[code.findIndex(i=>i.at===f.pc)+1];ensure(op,'FALLTHROUGH',f.pc);return op.at;}
-  private get(o:Operand):Value { if('literal'in o)return parseValue(o.literal); const v=this.top().locals[o.slot]??this.s.globals[o.slot];ensure(v,'SLOT',o.slot);return parseValue(v); }
+  private expression(e:import('../protocol/index.js').Expression):Value {return evaluateExpression(e,{slot:id=>Object.hasOwn(this.top().locals,id)?this.top().locals[id]:Object.hasOwn(this.s.globals,id)?this.s.globals[id]:undefined,profile:key=>Object.hasOwn(this.profile.values,key)?this.profile.values[key]:undefined,read:unit=>this.profile.read.includes(unit)});}
+  private get(o:Operand):Value { if('expression'in o)return this.expression(o.expression);if('literal'in o)return parseValue(o.literal); const v=this.top().locals[o.slot]??this.s.globals[o.slot];ensure(v,'SLOT',o.slot);return parseValue(v); }
   private put(id:string,v:Value):void {
     const map=Object.hasOwn(this.top().locals,id)?this.top().locals:this.s.globals;
     ensure(map[id]?.kind===v.kind,'SLOT_KIND',id);map[id]=parseValue(v);
@@ -216,6 +219,9 @@ export class Core {
       case 'value.set':this.put(i.dest,this.get(i.value));break;
       case 'i32.add.checked': {const a=this.get(i.left),b=this.get(i.right);ensure(a.kind==='i32'&&b.kind==='i32','I32_OPERAND',i.at);this.put(i.dest,i32(a.value+b.value));break;}
       case 'text.page': {const prompt=++this.s.counter;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt};wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.template': {const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(speaker.value.length>0&&content.value.length>0,'TEMPLATE_EMPTY','Text and speaker must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);this.s.counter=prompt;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.textInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}};wait({kind:'text',at:i.at,prompt});return;}
+      case 'random.i32': {ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');const min=this.expression(i.min),max=this.expression(i.max);ensure(min.kind==='i32'&&max.kind==='i32','EXPRESSION_KIND','Random bounds require i32');const result=sampleI32(this.s.rng,min.value,max.value);this.put(i.dest,result.value);this.s.rng=result.rng;break;}
+      case 'rng.seed': ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');this.s.rng={algorithm:'lcg32@1',state:i.seed,draws:0};break;
       case 'text.clear':this.s.text=null;break;
       case 'choice':wait({kind:'choice',at:i.at,prompt:++this.s.counter,options:i.options.map(o=>({...o})),dest:i.dest});return;
       case 'stage.put': {
@@ -262,7 +268,9 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
     if(saved.phase==='waiting')ensure(operations.get(saved.operation,saved.version).manifest.restore==='continue','OPERATION_RESTORE_UNSUPPORTED',saved.id);
   }
   ensure(new Set(s.invocations.map(v=>v.id)).size===s.invocations.length,'RESTORE_INVOCATION_ID','Duplicate invocation');
+  ensure(!!p.rng===!!s.rng&&(!s.rng||s.rng.algorithm===p.rng?.algorithm),'RESTORE_RNG','RNG state missing or unavailable; explicit migration required');
   ensure(s.release===p.release,'RELEASE_MISMATCH','Snapshot release unavailable; migration required');
+  if(s.text?.template){const text=s.text,origin=text.template,source=p.functions.flatMap(f=>f.code).find(i=>i.at===origin?.at);ensure(source?.op==='text.template'&&text.textId===source.textId&&text.revision===source.revision&&text.revealed<=length(text.content)&&origin?.signature===templateSignature(source.speaker,source.content),'RESTORE_TEMPLATE','Displayed template changed; explicit migration required');}
   ensure(s.status==='waiting'||s.status==='ended','RESTORE_PHASE','Only semantic waits and end are restorable');
   ensure(s.frames.length>0&&s.frames[0]?.functionId===p.entry&&!s.frames[0].returnTo,'RESTORE_FRAME','Invalid entry frame');
   const checkSlots=(actual:Record<string,Value>,expected:readonly {id:string;kind:string}[])=>{
@@ -284,8 +292,8 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
   if(s.status==='ended')ensure(op.op==='control.end'&&!w,'RESTORE_PHASE','End mismatch');
   else {
     ensure(w&&w.at===op.at,'RESTORE_WAIT','PC/wait mismatch');
-    ensure((w.kind==='text'&&op.op==='text.page')||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke'),'RESTORE_PHASE','Unsupported phase');
-    if(w.kind==='text')ensure(op.op==='text.page'&&s.text&&s.text.prompt===w.prompt&&s.text.textId===op.textId&&s.text.revision===op.revision&&s.text.content===op.content&&s.text.speaker===op.speaker&&s.text.revealed<=length(s.text.content),'RESTORE_TEXT','Text identity/content mismatch');
+    ensure((w.kind==='text'&&(op.op==='text.page'||op.op==='text.template'))||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke'),'RESTORE_PHASE','Unsupported phase');
+    if(w.kind==='text'){ensure((op.op==='text.page'||op.op==='text.template')&&s.text&&s.text.prompt===w.prompt&&s.text.textId===op.textId&&s.text.revision===op.revision&&s.text.revealed<=length(s.text.content),'RESTORE_TEXT','Text identity mismatch');if(op.op==='text.page')ensure(!s.text.template&&s.text.content===op.content&&s.text.speaker===op.speaker,'RESTORE_TEXT','Text content mismatch');else ensure(s.text.template?.signature===templateSignature(op.speaker,op.content),'RESTORE_TEMPLATE','Template changed; explicit migration required');}
     if(w.kind==='choice')ensure(op.op==='choice'&&w.dest===op.dest&&JSON.stringify(w.options)===JSON.stringify(op.options),'RESTORE_CHOICE','Choice mismatch');
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
@@ -312,4 +320,4 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
   for(const o of s.stage)ensure(p.assets.find(a=>a.id===o.asset)?.kind==='image','RESTORE_ASSET',o.asset);
   return s;
 }
-export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations);}
+export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations,options.rngSeed);}

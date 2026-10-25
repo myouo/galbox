@@ -6,7 +6,7 @@ const schema=JSON.parse(await readFile('packages/galbox-sdk/schema/protocol.json
 const ajv=new Ajv({allErrors:true,strict:true,code:{source:true,esm:true},inlineRefs:true});
 ajv.addSchema(schema);
 const exports={};
-for(const key of ['Program','Snapshot','Profile','Instruction','Value','JsonValue','OperationOutcome','SavedInvocation','OperationResume','OperationWait','RestoreRecipe','SlotMetadata','StoreImport','ProgressBatchWire','SourceMap','PortObligation','BehaviorMapping','PortableBackup','StoreBackupRestore','BackupRestoreReceipt','ResourceBudget','ResourceFact','ReleaseManifest','AudioPreferences','TextPreferences','PlayerPreferences','PreferencesRecord','PreferencesPatch']) {
+for(const key of ['Program','Snapshot','Profile','Instruction','Value','JsonValue','OperationOutcome','SavedInvocation','OperationResume','OperationWait','RestoreRecipe','SlotMetadata','StoreImport','ProgressBatchWire','SourceMap','PortObligation','BehaviorMapping','PortableBackup','StoreBackupRestore','BackupRestoreReceipt','ResourceBudget','ResourceFact','ReleaseManifest','AudioPreferences','TextPreferences','PlayerPreferences','PreferencesRecord','PreferencesPatch','Expression','RngConfig','RngState']) {
  const id=`https://galbox.local/${key}`;
  ajv.addSchema({$id:id,$ref:`${schema.$id}#/definitions/${key}`});
  exports[`validate${key}`]=id;
@@ -16,7 +16,7 @@ const output={
  'operations.ts':`/* Generated from schema/protocol.json. */\nexport const operationSpecs = ${JSON.stringify(operationSpecs,null,2)} as const;\nexport const recoveryOpcodes = ${JSON.stringify(schema.definitions.RecipeOpcode.enum)} as const;\n`,
  'wire.ts':await compile(schema,'Wire',{bannerComment:'/* Generated from schema/protocol.json. Do not edit. */',additionalProperties:false,unreachableDefinitions:true,style:{singleQuote:true},maxItems:0}),
  'validators.js':standalone.default(ajv,exports)+'\n',
- 'validators.d.ts':`import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch } from './wire.js';\n${Object.keys(exports).map(name=>`export declare const ${name}: { (data: unknown): data is ${name.slice(8)}; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };`).join('\n')}\n`
+ 'validators.d.ts':`import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch, Expression, RngConfig, RngState } from './wire.js';\n${Object.keys(exports).map(name=>`export declare const ${name}: { (data: unknown): data is ${name.slice(8)}; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };`).join('\n')}\n`
 };
 let drift=false;
 for(const [name,body] of Object.entries(output)) {

@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-QyJlWm 24d8874
+HEAD is now at 24d8874 feat: define common VN systems and persist player preferences
+Preparing worktree (detached HEAD 24d8874)

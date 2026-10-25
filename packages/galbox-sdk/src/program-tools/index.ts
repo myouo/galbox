@@ -8,3 +8,6 @@ export {defineRestoreRecipe,prepareRestoreRecipe} from '../runtime/recipe.js';
 export type {RecoveryInstruction,PreparedRecovery} from '../runtime/recipe.js';
 export {createPortRegistration,readPortRegistration} from './registration.js';
 export type {PortRegistration} from './registration.js';
+
+export {expr,expressionWire,expressionOperand,assignExpression,branchExpression,templatePage,randomI32} from './expressions.js';
+export type {TypedExpression} from './expressions.js';
