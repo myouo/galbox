@@ -84,3 +84,5 @@ G1-02 追加验收：`auto-voice-wait` 使用真实媒体自然结束，启动�
 G2-01：`rich-text-reveal` 经真实工厂/Schema/Core 处理求值后 runs、Ruby、换行、样式，按固定版本字素揭示，拒绝跨 run 拆簇及无界/未知样式；reading 不计已读，显完与翻页分开，段内 pause/fade 共享 Auto 完成判定。`text-effect-save-restore` 覆盖速度/字符余量/剩余停顿/显现时刻，预算1/8/100与分割 tick/恢复一致；DOM 预建布局不重排、暂停冻结、新 DOM 从真实 IndexedDB 恢复相位，坏来源/标记缺失/非法 continuation 拒绝且保留旧档。旧 codepoint 档不改解释，公开打包消费者实际运行新工厂/渲染/切点恢复。NVL/多窗口不借本项计作通过。
 
 G2-02：`textbox-layout-restore` 检查全部窗口身份/主题/显隐、布局/字体签名、当前正文来源和history/entry闭包；缺状态/源变化/伪造条目拒绝而保留原档。`nvl-history` 验证ADV替换、NVL确认后累积/容量满明确失败、清窗不删全局历史/已读、两路线/跨刷新与当前设置保留。`custom-text-renderer` 通过公共工厂包装默认DOM，验证字体就绪后创建、快照/Program隔离、逻辑画幅缩放、dispose/迟到取消及提交后失败由新renderer恢复。真实TrueType加载/失败/取消/双实例释放和含字体的独立消费者/CLI均需实际执行。
+
+G0-03：`additional-value-families` 必须通过真实构造/表达式工厂验证i64边界、f64位模式/NaN/±0/∞、显式转换/比较、null与缺键、有序异构集合与树/容量限制；赋值/扩展/候选失败不改变目标、profile、RNG或已发布效果，readonly输入取得所有权。`numeric-data-migration` 验证wrong-kind旧档保留、完整current/previous/profile/帧迁移和args/resume ABI变化必须完整invocation迁移；真实IndexedDB、浏览器刷新/最新profile、打包消费者都须实际执行。生成物原生ESM和深层坏节点/AST大小/诊断仍检查，不因短路错误聚合跳过语义分支。

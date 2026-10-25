@@ -3,7 +3,7 @@ import { compile } from 'json-schema-to-typescript';
 import Ajv from 'ajv';
 import standalone from 'ajv/dist/standalone/index.js';
 const schema=JSON.parse(await readFile('packages/galbox-sdk/schema/protocol.json','utf8'));
-const ajv=new Ajv({allErrors:true,strict:true,code:{source:true,esm:true},inlineRefs:true});
+const ajv=new Ajv({allErrors:false,strict:true,code:{source:true,esm:true},inlineRefs:true});
 ajv.addSchema(schema);
 const exports={};
 for(const key of ['Program','Snapshot','Profile','Instruction','Value','JsonValue','OperationOutcome','SavedInvocation','OperationResume','OperationWait','RestoreRecipe','SlotMetadata','StoreImport','ProgressBatchWire','SourceMap','PortObligation','BehaviorMapping','PortableBackup','StoreBackupRestore','BackupRestoreReceipt','ResourceBudget','ResourceFact','ReleaseManifest','AudioPreferences','TextPreferences','PlayerPreferences','PreferencesRecord','PreferencesPatch','Expression','RngConfig','RngState','PreferencesValue','StoredPreferencesRecord','PlaybackPreferences','InputPreferences','DisplayPreferences','AudioPlaybackEvent','TextStyle','RichTextSourceRun','TextState','TextTheme','TextWindow','TextLayout','TextFont']) {

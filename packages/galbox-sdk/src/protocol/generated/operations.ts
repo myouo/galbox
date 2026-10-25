@@ -421,6 +421,19 @@ export const operationSpecs = {
       "window",
       "theme"
     ]
+  },
+  "profile.expression": {
+    "opcode": "profile.expression",
+    "parameters": [
+      "at",
+      "key",
+      "value"
+    ],
+    "required": [
+      "at",
+      "key",
+      "value"
+    ]
   }
 } as const;
-export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke"] as const;
+export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke","profile.expression"] as const;

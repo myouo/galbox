@@ -1,5 +1,5 @@
-import {ensure,parseExpression,parseValue,i32,bool,string} from '../protocol/index.js';
-import type {Expression,Value,ValueKind,Operand,Instruction} from '../protocol/index.js';
+import {ensure,parseExpression,parseValue,i32,bool,string,i64,f64,nullValue} from '../protocol/index.js';
+import type {Expression,Value,ValueKind,Operand,Instruction,DeepReadonly} from '../protocol/index.js';
 import {validateExpressionTree} from '../protocol/expressions.js';
 import type {Variable} from './linker.js';
 import {instruction,literal} from './linker.js';
@@ -10,19 +10,43 @@ const expressions=new WeakMap<object,Expression>();
 function freeze(value:unknown):void {if(value&&typeof value==='object'){Object.freeze(value);for(const child of Object.values(value))freeze(child);}}
 function make<K extends ValueKind>(kind:K,input:unknown):TypedExpression<K> {const wire=parseExpression(input);ensure(wire.kind===kind,'EXPRESSION_KIND','Factory kind mismatch');validateExpressionTree(wire);freeze(wire);const result=Object.freeze({[expressionBrand]:kind,kind});expressions.set(result,wire);return result;}
 export function expressionWire<K extends ValueKind>(input:TypedExpression<K>):OfKind<K> {const wire=expressions.get(input);ensure(wire,'EXPRESSION_FACTORY','Use the public expression factories');const copy=parseExpression(wire);function matches(v:Expression):v is OfKind<K>{return v.kind===input.kind;}ensure(matches(copy),'EXPRESSION_KIND','Factory kind mismatch');return copy;}
-function value<const V extends Value>(input:V):TypedExpression<V['kind']> {const v=parseValue(input);return make(input.kind,{kind:v.kind,op:'literal',value:v.value});}
+function value<const V extends DeepReadonly<Value>>(input:V):TypedExpression<V['kind']> {const v=parseValue(input);return make(input.kind,{kind:v.kind,op:'literal',value:v.value});}
 function variable<K extends ValueKind>(target:Variable<K>):TypedExpression<K> {return make(target.kind,{kind:target.kind,op:'slot',id:target.id});}
 function profile<K extends ValueKind>(kind:K,key:string,fallback:Extract<Value,{kind:NoInfer<K>}>):TypedExpression<K> {ensure(fallback.kind===kind,'EXPRESSION_KIND','Profile fallback kind mismatch');return make(kind,{kind,op:'profile',key,fallback:parseValue(fallback).value});}
 function choose<K extends ValueKind>(condition:TypedExpression<'bool'>,yes:TypedExpression<K>,no:TypedExpression<NoInfer<K>>):TypedExpression<K> {ensure(yes.kind===no.kind,'EXPRESSION_KIND','Conditional branches must have the same kind');return make(yes.kind,{kind:yes.kind,op:'if',condition:expressionWire(condition),yes:expressionWire(yes),no:expressionWire(no)});}
 function binary(op:'add'|'sub'|'mul'|'div'|'mod'|'min'|'max',left:TypedExpression<'i32'>,right:TypedExpression<'i32'>):TypedExpression<'i32'> {return make('i32',{kind:'i32',op,left:expressionWire(left),right:expressionWire(right)});}
 function unary(op:'neg'|'abs',input:TypedExpression<'i32'>):TypedExpression<'i32'> {return make('i32',{kind:'i32',op,value:expressionWire(input)});}
 function equal<K extends ValueKind>(left:TypedExpression<K>,right:TypedExpression<NoInfer<K>>,not=false):TypedExpression<'bool'> {ensure(left.kind===right.kind,'EXPRESSION_KIND','Equality operands must have the same kind');return make('bool',{kind:'bool',op:not?'ne':'eq',operandKind:left.kind,left:expressionWire(left),right:expressionWire(right)});}
-function compare<K extends 'i32'|'string'>(left:TypedExpression<K>,op:'lt'|'le'|'gt'|'ge',right:TypedExpression<NoInfer<K>>):TypedExpression<'bool'> {ensure(left.kind===right.kind,'EXPRESSION_KIND','Comparison operands must have the same kind');return make('bool',{kind:'bool',op,operandKind:left.kind,left:expressionWire(left),right:expressionWire(right)});}
+function compare<K extends 'i32'|'i64'|'f64'|'string'>(left:TypedExpression<K>,op:'lt'|'le'|'gt'|'ge',right:TypedExpression<NoInfer<K>>):TypedExpression<'bool'> {ensure(left.kind===right.kind,'EXPRESSION_KIND','Comparison operands must have the same kind');return make('bool',{kind:'bool',op,operandKind:left.kind,left:expressionWire(left),right:expressionWire(right)});}
 function logic(op:'and'|'or',left:TypedExpression<'bool'>,right:TypedExpression<'bool'>):TypedExpression<'bool'> {return make('bool',{kind:'bool',op,left:expressionWire(left),right:expressionWire(right)});}
 function concat(...parts:readonly TypedExpression<'string'>[]):TypedExpression<'string'> {return make('string',{kind:'string',op:'concat',parts:parts.map(expressionWire)});}
-function format(input:TypedExpression<'i32'>|TypedExpression<'bool'>):TypedExpression<'string'> {return make('string',{kind:'string',op:'format',operandKind:input.kind,value:expressionWire(input)});}
-function template(strings:TemplateStringsArray,...values:readonly TypedExpression<ValueKind>[]):TypedExpression<'string'> {ensure(strings.length===values.length+1,'EXPRESSION_TEMPLATE','Template arity');const parts:TypedExpression<'string'>[]=[];strings.forEach((text,index)=>{parts.push(value(string(text)));const e=values[index];if(e)parts.push(e.kind==='string'?make('string',expressionWire(e)):make('string',{kind:'string',op:'format',operandKind:e.kind,value:expressionWire(e)}));});return concat(...parts);}
-export const expr=Object.freeze({value,variable,profile,choose,binary,unary,equal,compare,logic,concat,format,template,
+function format(input:TypedExpression<'i32'|'bool'|'i64'|'f64'|'null'>):TypedExpression<'string'> {return make('string',{kind:'string',op:'format',operandKind:input.kind,value:expressionWire(input)});}
+function template(strings:TemplateStringsArray,...values:readonly TypedExpression<'i32'|'i64'|'f64'|'bool'|'string'|'null'>[]):TypedExpression<'string'> {ensure(strings.length===values.length+1,'EXPRESSION_TEMPLATE','Template arity');const parts:TypedExpression<'string'>[]=[];strings.forEach((text,index)=>{parts.push(value(string(text)));const e=values[index];if(e)parts.push(e.kind==='string'?make('string',expressionWire(e)):make('string',{kind:'string',op:'format',operandKind:e.kind,value:expressionWire(e)}));});return concat(...parts);}
+const dataExpressions={
+ wide:(n:bigint|string)=>value(i64(n)),real:(n:number)=>value(f64(n)),nil:()=>value(nullValue()),
+ i64Binary:(op:'add'|'sub'|'mul'|'div'|'mod'|'min'|'max',left:TypedExpression<'i64'>,right:TypedExpression<'i64'>)=>make('i64',{kind:'i64',op,left:expressionWire(left),right:expressionWire(right)}),
+ f64Binary:(op:'add'|'sub'|'mul'|'div'|'mod'|'min'|'max',left:TypedExpression<'f64'>,right:TypedExpression<'f64'>)=>make('f64',{kind:'f64',op,left:expressionWire(left),right:expressionWire(right)}),
+ i64Unary:(op:'neg'|'abs',value:TypedExpression<'i64'>)=>make('i64',{kind:'i64',op,value:expressionWire(value)}),
+ f64Unary:(op:'neg'|'abs'|'floor'|'ceil'|'trunc',value:TypedExpression<'f64'>)=>make('f64',{kind:'f64',op,value:expressionWire(value)}),
+ toF64:(input:TypedExpression<'i32'|'i64'>)=>make('f64',{kind:'f64',op:'convert',sourceKind:input.kind,value:expressionWire(input)}),
+ toI64:(input:TypedExpression<'i32'|'f64'>)=>make('i64',{kind:'i64',op:'convert',sourceKind:input.kind,value:expressionWire(input)}),
+ toI32:(input:TypedExpression<'i64'|'f64'>)=>make('i32',{kind:'i32',op:'convert',sourceKind:input.kind,value:expressionWire(input)}),
+ list:(...items:readonly TypedExpression<ValueKind>[])=>make('list',{kind:'list',op:'list',items:items.map(expressionWire)}),
+ dict:(entries:readonly {key:string;value:TypedExpression<ValueKind>}[])=>make('dict',{kind:'dict',op:'dict',entries:entries.map(e=>({key:e.key,value:expressionWire(e.value)}))}),
+ listAt:<K extends ValueKind>(kind:K,list:TypedExpression<'list'>,index:TypedExpression<'i32'>):TypedExpression<K>=>make(kind,{kind,op:'list.at',list:expressionWire(list),index:expressionWire(index)}),
+ dictGet:<K extends ValueKind>(kind:K,dictionary:TypedExpression<'dict'>,key:TypedExpression<'string'>):TypedExpression<K>=>make(kind,{kind,op:'dict.get',dictionary:expressionWire(dictionary),key:expressionWire(key)}),
+ dictHas:(dictionary:TypedExpression<'dict'>,key:TypedExpression<'string'>)=>make('bool',{kind:'bool',op:'dict.has',dictionary:expressionWire(dictionary),key:expressionWire(key)}),
+ listSet:(list:TypedExpression<'list'>,index:TypedExpression<'i32'>,item:TypedExpression<ValueKind>)=>make('list',{kind:'list',op:'list.set',list:expressionWire(list),index:expressionWire(index),item:expressionWire(item)}),
+ listPush:(list:TypedExpression<'list'>,item:TypedExpression<ValueKind>)=>make('list',{kind:'list',op:'list.push',list:expressionWire(list),item:expressionWire(item)}),
+ listSlice:(list:TypedExpression<'list'>,start:TypedExpression<'i32'>,end:TypedExpression<'i32'>)=>make('list',{kind:'list',op:'list.slice',list:expressionWire(list),start:expressionWire(start),end:expressionWire(end)}),
+ listConcat:(left:TypedExpression<'list'>,right:TypedExpression<'list'>)=>make('list',{kind:'list',op:'list.concat',left:expressionWire(left),right:expressionWire(right)}),
+ listLength:(list:TypedExpression<'list'>)=>make('i32',{kind:'i32',op:'list.length',list:expressionWire(list)}),
+ dictSet:(dictionary:TypedExpression<'dict'>,key:TypedExpression<'string'>,item:TypedExpression<ValueKind>)=>make('dict',{kind:'dict',op:'dict.set',dictionary:expressionWire(dictionary),key:expressionWire(key),item:expressionWire(item)}),
+ dictRemove:(dictionary:TypedExpression<'dict'>,key:TypedExpression<'string'>)=>make('dict',{kind:'dict',op:'dict.remove',dictionary:expressionWire(dictionary),key:expressionWire(key)}),
+ dictKeys:(dictionary:TypedExpression<'dict'>)=>make('list',{kind:'list',op:'dict.keys',dictionary:expressionWire(dictionary)}),
+ dictSize:(dictionary:TypedExpression<'dict'>)=>make('i32',{kind:'i32',op:'dict.size',dictionary:expressionWire(dictionary)})
+};
+export const expr=Object.freeze({...dataExpressions,value,variable,profile,choose,binary,unary,equal,compare,logic,concat,format,template,
  integer:(n:number)=>value(i32(n)),flag:(v:boolean)=>value(bool(v)),text:(s:string)=>value(string(s)),
  not:(v:TypedExpression<'bool'>)=>make('bool',{kind:'bool',op:'not',value:expressionWire(v)}),
  length:(v:TypedExpression<'string'>)=>make('i32',{kind:'i32',op:'length',text:expressionWire(v)}),
@@ -35,3 +59,5 @@ export function assignExpression<K extends ValueKind>(at:string,dest:Variable<K>
 export function branchExpression(at:string,condition:TypedExpression<'bool'>,yes:string,no:string):Extract<Instruction,{op:'control.branch'}> {ensure(condition.kind==='bool','EXPRESSION_KIND','Expected a boolean condition');return instruction('control.branch',{at,left:expressionOperand(condition),cmp:'eq',right:literal(bool(true)),yes,no});}
 export function templatePage(at:string,textId:string,revision:string,speaker:TypedExpression<'string'>,content:TypedExpression<'string'>):Extract<Instruction,{op:'text.template'}> {return instruction('text.template',{at,textId,revision,speaker:expressionWire(speaker),content:expressionWire(content)});}
 export function randomI32(at:string,dest:Variable<'i32'>,min:TypedExpression<'i32'>,max:TypedExpression<'i32'>):Extract<Instruction,{op:'random.i32'}> {ensure(dest.kind==='i32','EXPRESSION_KIND',dest.id);return instruction('random.i32',{at,dest:dest.id,min:expressionWire(min),max:expressionWire(max)});}
+
+export function assignProfile(at:string,key:string,input:TypedExpression<ValueKind>):Extract<Instruction,{op:'profile.expression'}> {return instruction('profile.expression',{at,key,value:expressionWire(input)});}

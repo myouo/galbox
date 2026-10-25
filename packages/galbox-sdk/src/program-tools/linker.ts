@@ -3,13 +3,14 @@ import type { OperationRegistry } from '../core/operations.js';
 import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig,parseTextLayout } from '../protocol/index.js';
 import {validateTextLayout} from '../protocol/layout.js';
 import {richTextSignature,compileRichText} from '../protocol/text.js';
-import {validateExpressionTree,templateSignature} from '../protocol/expressions.js';
+import {extendedValue} from '../protocol/values.js';
+import {validateExpressionTree,templateSignature,extendedExpression} from '../protocol/expressions.js';
 import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly, SourceLocation, PortObligation, BehaviorMapping } from '../protocol/index.js';
 
 export type AssetRef<K extends Asset['kind']> = { readonly id: string; readonly kind: K };
 export type Variable<K extends ValueKind> = {readonly id: string; readonly kind: K};
 export function variable<K extends ValueKind>(id: string, kind: K): Variable<K> { return {id,kind}; }
-export function literal(value: Value): Operand { return {literal:parseValue(value)}; }
+export function literal(value: DeepReadonly<Value>): Operand { return {literal:parseValue(value)}; }
 export function slot(id: string): Operand { return {slot:id}; }
 function operands(i:Instruction):Operand[]{switch(i.op){case 'control.branch':case 'i32.add.checked':return [i.left,i.right];case 'control.call':return i.args;case 'control.return':return i.value?[i.value]:[];case 'value.set':return [i.value];default:return [];}}
 export function instruction<K extends Instruction['op']>(op: K, args: Omit<Extract<Instruction,{op: NoInfer<K>}>, 'op'>): Extract<Instruction,{op: K}> {
@@ -18,11 +19,19 @@ export function instruction<K extends Instruction['op']>(op: K, args: Omit<Extra
   function isKind(i: Instruction): i is Extract<Instruction,{op: K}> { return i.op === op; }
   ensure(isKind(value),'OPCODE','Factory opcode mismatch'); return value;
 }
-export function set<K extends ValueKind>(at: string, dest: Variable<K>, value: Extract<Value,{kind:NoInfer<K>}>): Extract<Instruction,{op:'value.set'}> {
+export function set<K extends ValueKind>(at: string, dest: Variable<K>, value: Extract<DeepReadonly<Value>,{kind:NoInfer<K>}>): Extract<Instruction,{op:'value.set'}> {
   ensure(dest.kind === value.kind,'VALUE_KIND',dest.id); return instruction('value.set',{at,dest:dest.id,value:literal(value)});
 }
 export function imagePut(at: string, id: string, asset: AssetRef<'image'>, position: Position, z=0): Extract<Instruction,{op:'stage.put'}> {
   ensure(asset.kind === 'image','ASSET_KIND',asset.id); return instruction('stage.put',{at,object:{id,asset:asset.id,position,z}});
+}
+function programNeedsExtended(p:Program):boolean {
+ return p.globals.some(s=>extendedValue(s.initial))||p.functions.some(f=>![...['void','i32','bool','string']].includes(f.returns)||[...f.params,...f.locals].some(s=>extendedValue(s.initial))||f.code.some(i=>{
+  if(operands(i).some(o=>'literal'in o?extendedValue(o.literal):'expression'in o&&extendedExpression(o.expression)))return true;
+  if(i.op==='profile.set')return extendedValue(i.value);if(i.op==='profile.expression')return extendedExpression(i.value);
+  if(i.op==='text.template')return extendedExpression(i.speaker)||extendedExpression(i.content);
+  if(i.op==='text.rich')return extendedExpression(i.speaker)||i.runs.some(r=>(r.kind==='text'||r.kind==='ruby')&&(extendedExpression(r.content)||r.kind==='ruby'&&extendedExpression(r.reading)));return false;
+ }));
 }
 export class ProgramBuilder {
   private readonly data: Program;
@@ -36,9 +45,10 @@ export class ProgramBuilder {
   obligation(value:PortObligation):this {this.data.obligations=[...(this.data.obligations??[]),parsePortObligation(value)];return this;}
   mapping(value:BehaviorMapping):this {this.data.behaviorMappings=[...(this.data.behaviorMappings??[]),parseBehaviorMapping(value)];return this;}
   textLayout(input:import('../protocol/index.js').TextLayout):this {this.data.textLayout=parseTextLayout(input);return this;}
+  capability(value:typeof capabilities[number]):this {ensure(capabilities.some(c=>c===value),'UNSUPPORTED_CAPABILITY',value);this.data.capabilities=[...new Set([...this.data.capabilities,value])];return this;}
   rngFromHost():this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seedSource:'host'});return this;}
   rng(seed:number):this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seed});return this;}
-  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
+  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='profile.expression'||i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(programNeedsExtended(this.data))this.data.capabilities=[...new Set([...this.data.capabilities,'values.extended'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
   private readonly program: Program;
@@ -57,6 +67,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
   unique(p.functions.map(f=>f.id),'FUNCTION_DUPLICATE'); unique(p.assets.map(a=>a.id),'ASSET_DUPLICATE');
   unique(p.functions.flatMap(f=>f.code.map(i=>i.at)),'ADDRESS_DUPLICATE');
   ensure(p.capabilities.every(c=>capabilities.some(s=>s===c)),'UNSUPPORTED_CAPABILITY',p.capabilities.join(','));
+  ensure(!programNeedsExtended(p)||p.capabilities.includes('values.extended'),'VALUE_CAPABILITY','Declare values.extended');
   if(p.rng)ensure(p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng.lcg32');
   const richIds=new Set(p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich').map(i=>readUnit(i)));for(const op of p.functions.flatMap(f=>f.code))if(op.op==='text.page'||op.op==='text.template')ensure(!richIds.has(readUnit(op)),'TEXT_FORMAT_IDENTITY','Rich and legacy text cannot share textId/revision');
   validateTextLayout(p);
@@ -78,10 +89,11 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
         case 'text.page': readUnit(i);break;
         case 'text.template': ensure(p.capabilities.includes('expressions'),'EXPRESSION_CAPABILITY','Declare expressions');readUnit(i);validateExpressionTree(i.speaker,id=>slots.find(s=>s.id===id)?.kind);validateExpressionTree(i.content,id=>slots.find(s=>s.id===id)?.kind);templateSignature(i.speaker,i.content);break;
         case 'text.rich': {ensure(p.capabilities.includes('text.rich')&&p.capabilities.includes('expressions'),'TEXT_CAPABILITY','Declare text.rich and expressions');readUnit(i);validateExpressionTree(i.speaker,id=>slots.find(s=>s.id===id)?.kind);for(const run of i.runs){if(run.kind==='text'||run.kind==='ruby'){validateExpressionTree(run.content,id=>slots.find(s=>s.id===id)?.kind);if(run.kind==='ruby')validateExpressionTree(run.reading,id=>slots.find(s=>s.id===id)?.kind);}}richTextSignature(i);if(i.runs.every(r=>(r.kind!=='text'&&r.kind!=='ruby')||r.content.op==='literal'&&(r.kind!=='ruby'||r.reading.op==='literal'))){compileRichText(i.runs.map(r=>{if(r.kind==='text')return {...r,content:r.content.op==='literal'?r.content.value:''};if(r.kind==='ruby')return {...r,content:r.content.op==='literal'?r.content.value:'',reading:r.reading.op==='literal'?r.reading.value:''};return r;}));}break;}
+        case 'profile.expression':ensure(p.capabilities.includes('expressions'),'EXPRESSION_CAPABILITY','Declare expressions');validateExpressionTree(i.value,id=>slots.find(s=>s.id===id)?.kind);break;
         case 'random.i32': ensure(p.rng&&p.capabilities.includes('rng.lcg32')&&p.capabilities.includes('expressions'),'RNG_CAPABILITY','Declare rng and expressions');dest(i.dest,'i32');validateExpressionTree(i.min,id=>slots.find(s=>s.id===id)?.kind);validateExpressionTree(i.max,id=>slots.find(s=>s.id===id)?.kind);break;
         case 'rng.seed': ensure(p.rng&&p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng');break;
         case 'control.jump': target(i.target); break;
-        case 'control.branch': ensure(kind(i.left)===kind(i.right),'COMPARE_KIND',i.at); ensure(i.cmp==='eq'||kind(i.left)!=='bool','COMPARE_KIND',i.at); target(i.yes); target(i.no); break;
+        case 'control.branch': ensure(kind(i.left)===kind(i.right),'COMPARE_KIND',i.at); ensure(i.cmp==='eq'||['i32','i64','f64','string'].includes(kind(i.left)),'COMPARE_KIND',i.at); target(i.yes); target(i.no); break;
         case 'control.call': {
           const callee=p.functions.find(f=>f.id===i.function); ensure(callee,'FUNCTION',i.function);
           ensure(i.args.length===callee.params.length,'CALL_ARITY',i.at);

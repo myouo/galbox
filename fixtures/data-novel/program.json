@@ -1,0 +1,644 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-supplies",
+  "title": "灯塔来信 · 补给簿",
+  "release": "supplies-1",
+  "entry": "main",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "expressions",
+    "values.extended"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "bgm",
+      "path": "../assets/bgm.wav",
+      "mime": "audio/wav",
+      "sha256": "a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5",
+      "kind": "audio"
+    }
+  ],
+  "globals": [
+    {
+      "id": "balance",
+      "kind": "f64",
+      "initial": {
+        "kind": "f64",
+        "value": "4029000000000000"
+      }
+    },
+    {
+      "id": "shipment",
+      "kind": "i64",
+      "initial": {
+        "kind": "i64",
+        "value": "9007199254740993"
+      }
+    },
+    {
+      "id": "items",
+      "kind": "list",
+      "initial": {
+        "kind": "list",
+        "value": [
+          {
+            "kind": "string",
+            "value": "灯油"
+          },
+          {
+            "kind": "string",
+            "value": "信纸"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ledger",
+      "kind": "dict",
+      "initial": {
+        "kind": "dict",
+        "value": [
+          {
+            "key": "灯油",
+            "value": {
+              "kind": "i32",
+              "value": 2
+            }
+          },
+          {
+            "key": "信纸",
+            "value": {
+              "kind": "null",
+              "value": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "route",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": ""
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "supplies:stage",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "supplies:stage",
+          "object": {
+            "id": "background",
+            "asset": "shore",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "supplies:music",
+          "task": "music",
+          "asset": "bgm",
+          "channel": "bgm",
+          "gain": 0.2,
+          "loop": true,
+          "restore": "replay",
+          "op": "audio.play"
+        },
+        {
+          "at": "supplies:before",
+          "textId": "supplies.before",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "补给簿"
+          },
+          "content": {
+            "kind": "string",
+            "op": "concat",
+            "parts": [
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "余额："
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "f64",
+                "value": {
+                  "kind": "f64",
+                  "op": "slot",
+                  "id": "balance"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。货号："
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "i64",
+                "value": {
+                  "kind": "i64",
+                  "op": "slot",
+                  "id": "shipment"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。\n柜里有"
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "i32",
+                "value": {
+                  "kind": "i32",
+                  "op": "list.length",
+                  "list": {
+                    "kind": "list",
+                    "op": "slot",
+                    "id": "items"
+                  }
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "种物资："
+              },
+              {
+                "kind": "string",
+                "op": "list.at",
+                "list": {
+                  "kind": "list",
+                  "op": "slot",
+                  "id": "items"
+                },
+                "index": {
+                  "kind": "i32",
+                  "op": "literal",
+                  "value": 0
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "和"
+              },
+              {
+                "kind": "string",
+                "op": "list.at",
+                "list": {
+                  "kind": "list",
+                  "op": "slot",
+                  "id": "items"
+                },
+                "index": {
+                  "kind": "i32",
+                  "op": "literal",
+                  "value": 1
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。\n信纸栏："
+              },
+              {
+                "kind": "string",
+                "op": "if",
+                "condition": {
+                  "kind": "bool",
+                  "op": "eq",
+                  "operandKind": "null",
+                  "left": {
+                    "kind": "null",
+                    "op": "dict.get",
+                    "dictionary": {
+                      "kind": "dict",
+                      "op": "slot",
+                      "id": "ledger"
+                    },
+                    "key": {
+                      "kind": "string",
+                      "op": "literal",
+                      "value": "信纸"
+                    }
+                  },
+                  "right": {
+                    "kind": "null",
+                    "op": "literal",
+                    "value": null
+                  }
+                },
+                "yes": {
+                  "kind": "string",
+                  "op": "literal",
+                  "value": "待登记"
+                },
+                "no": {
+                  "kind": "string",
+                  "op": "literal",
+                  "value": "已有记录"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。澪说，今天要多准备几份回信。"
+              }
+            ]
+          },
+          "op": "text.template"
+        },
+        {
+          "at": "supplies:pay",
+          "dest": "balance",
+          "value": {
+            "expression": {
+              "kind": "f64",
+              "op": "sub",
+              "left": {
+                "kind": "f64",
+                "op": "slot",
+                "id": "balance"
+              },
+              "right": {
+                "kind": "f64",
+                "op": "mul",
+                "left": {
+                  "kind": "f64",
+                  "op": "literal",
+                  "value": "3fe8000000000000"
+                },
+                "right": {
+                  "kind": "f64",
+                  "op": "literal",
+                  "value": "4008000000000000"
+                }
+              }
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "supplies:ship",
+          "dest": "shipment",
+          "value": {
+            "expression": {
+              "kind": "i64",
+              "op": "add",
+              "left": {
+                "kind": "i64",
+                "op": "slot",
+                "id": "shipment"
+              },
+              "right": {
+                "kind": "i64",
+                "op": "literal",
+                "value": "1"
+              }
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "supplies:items",
+          "dest": "items",
+          "value": {
+            "expression": {
+              "kind": "list",
+              "op": "list.push",
+              "list": {
+                "kind": "list",
+                "op": "slot",
+                "id": "items"
+              },
+              "item": {
+                "kind": "string",
+                "op": "literal",
+                "value": "回信"
+              }
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "supplies:paper",
+          "dest": "ledger",
+          "value": {
+            "expression": {
+              "kind": "dict",
+              "op": "dict.set",
+              "dictionary": {
+                "kind": "dict",
+                "op": "slot",
+                "id": "ledger"
+              },
+              "key": {
+                "kind": "string",
+                "op": "literal",
+                "value": "信纸"
+              },
+              "item": {
+                "kind": "i32",
+                "op": "literal",
+                "value": 3
+              }
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "supplies:ledger",
+          "dest": "ledger",
+          "value": {
+            "expression": {
+              "kind": "dict",
+              "op": "dict.set",
+              "dictionary": {
+                "kind": "dict",
+                "op": "slot",
+                "id": "ledger"
+              },
+              "key": {
+                "kind": "string",
+                "op": "literal",
+                "value": "余额"
+              },
+              "item": {
+                "kind": "f64",
+                "op": "slot",
+                "id": "balance"
+              }
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "supplies:persist",
+          "key": "supplyLog",
+          "value": {
+            "kind": "dict",
+            "op": "slot",
+            "id": "ledger"
+          },
+          "op": "profile.expression"
+        },
+        {
+          "at": "supplies:after",
+          "textId": "supplies.after",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "澪"
+          },
+          "content": {
+            "kind": "string",
+            "op": "concat",
+            "parts": [
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "三份信纸共花了2.25，余额还有"
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "f64",
+                "value": {
+                  "kind": "f64",
+                  "op": "slot",
+                  "id": "balance"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。\n新货号是"
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "i64",
+                "value": {
+                  "kind": "i64",
+                  "op": "slot",
+                  "id": "shipment"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。柜里已有"
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "i32",
+                "value": {
+                  "kind": "i32",
+                  "op": "list.length",
+                  "list": {
+                    "kind": "list",
+                    "op": "slot",
+                    "id": "items"
+                  }
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "种物资，信纸登记了"
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "i32",
+                "value": {
+                  "kind": "i32",
+                  "op": "dict.get",
+                  "dictionary": {
+                    "kind": "dict",
+                    "op": "slot",
+                    "id": "ledger"
+                  },
+                  "key": {
+                    "kind": "string",
+                    "op": "literal",
+                    "value": "信纸"
+                  }
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "份。\n「最后一份，要寄给谁呢？」"
+              }
+            ]
+          },
+          "op": "text.template"
+        },
+        {
+          "at": "supplies:choice",
+          "dest": "route",
+          "options": [
+            {
+              "id": "send",
+              "text": "给海上的人寄去回信",
+              "target": "supplies:pack"
+            },
+            {
+              "id": "keep",
+              "text": "为下一位守灯人留一份",
+              "target": "supplies:pack"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "supplies:pack",
+          "dest": "items",
+          "value": {
+            "expression": {
+              "kind": "list",
+              "op": "list.push",
+              "list": {
+                "kind": "list",
+                "op": "slot",
+                "id": "items"
+              },
+              "item": {
+                "kind": "string",
+                "op": "if",
+                "condition": {
+                  "kind": "bool",
+                  "op": "eq",
+                  "operandKind": "string",
+                  "left": {
+                    "kind": "string",
+                    "op": "slot",
+                    "id": "route"
+                  },
+                  "right": {
+                    "kind": "string",
+                    "op": "literal",
+                    "value": "send"
+                  }
+                },
+                "yes": {
+                  "kind": "string",
+                  "op": "literal",
+                  "value": "寄出的包裹"
+                },
+                "no": {
+                  "kind": "string",
+                  "op": "literal",
+                  "value": "留灯的备用物资"
+                }
+              }
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "supplies:ending",
+          "textId": "supplies.ending",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "灯塔来信"
+          },
+          "content": {
+            "kind": "string",
+            "op": "concat",
+            "parts": [
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": ""
+              },
+              {
+                "kind": "string",
+                "op": "list.at",
+                "list": {
+                  "kind": "list",
+                  "op": "slot",
+                  "id": "items"
+                },
+                "index": {
+                  "kind": "i32",
+                  "op": "sub",
+                  "left": {
+                    "kind": "i32",
+                    "op": "list.length",
+                    "list": {
+                      "kind": "list",
+                      "op": "slot",
+                      "id": "items"
+                    }
+                  },
+                  "right": {
+                    "kind": "i32",
+                    "op": "literal",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "，已经安放妥当。\n账目留在补给簿上，海风会替我们记住回信的方向。"
+              }
+            ]
+          },
+          "op": "text.template"
+        },
+        {
+          "at": "supplies:unlock",
+          "key": "suppliesComplete",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "supplies:end",
+          "op": "control.end"
+        }
+      ]
+    }
+  ]
+}

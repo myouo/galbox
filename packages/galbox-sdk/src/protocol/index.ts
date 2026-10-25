@@ -1,3 +1,5 @@
+import {normalizeNativeValue} from './values.js';
+import {normalizeExpression,normalizeInstruction,normalizeProgram,normalizeSnapshot,normalizeProfile,normalizeRecipe,normalizeMetadata,normalizeBackup} from './normalize.js';
 import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest, validateAudioPreferences, validateTextPreferences, validatePlayerPreferences, validatePreferencesRecord, validatePreferencesPatch, validateExpression, validateRngConfig, validateRngState, validatePreferencesValue, validateStoredPreferencesRecord, validatePlaybackPreferences, validateInputPreferences, validateDisplayPreferences, validateAudioPlaybackEvent, validateTextStyle, validateRichTextSourceRun, validateTextState, validateTextTheme, validateTextWindow, validateTextLayout, validateTextFont } from './generated/validators.js';
 import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch, Expression, RngConfig, RngState, PreferencesValue, StoredPreferencesRecord, PlaybackPreferences, InputPreferences, DisplayPreferences, AudioPlaybackEvent, TextStyle, RichTextSourceRun, TextState, TextTheme, TextWindow, TextLayout, TextFont } from './generated/wire.js';
 export type * from './generated/wire.js';
@@ -33,19 +35,19 @@ function detached(input: unknown): unknown {
   catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('INPUT_JSON','Expected plain acyclic JSON');}
 }
 export function parseProgram(input: unknown): Program {
-  const data = detached(input);if(!validateProgram(data)){const path=validateProgram.errors?.find(e=>/\/functions\/\d+\/code\/\d+/.test(e.instancePath))?.instancePath??validateProgram.errors?.[0]?.instancePath??'';const address=rawInstructionAddress(data,path);throw new GalboxError('SCHEMA_PROGRAM',JSON.stringify(validateProgram.errors),{path,...(address?{address}:{})});}return data;
+  const data = detached(input);if(!validateProgram(data)){const path=validateProgram.errors?.find(e=>/\/functions\/\d+\/code\/\d+/.test(e.instancePath))?.instancePath??validateProgram.errors?.[0]?.instancePath??'';const address=rawInstructionAddress(data,path);throw new GalboxError('SCHEMA_PROGRAM',JSON.stringify(validateProgram.errors),{path,...(address?{address}:{})});}return normalizeProgram(data);
 }
 export function parseSnapshot(input: unknown): Snapshot {
-  const data = detached(input); ensure(validateSnapshot(data), 'SCHEMA_SNAPSHOT', JSON.stringify(validateSnapshot.errors)); return data;
+  const data = detached(input); ensure(validateSnapshot(data), 'SCHEMA_SNAPSHOT', JSON.stringify(validateSnapshot.errors)); return normalizeSnapshot(data);
 }
 export function parseProfile(input: unknown): Profile {
-  const data = detached(input); ensure(validateProfile(data), 'SCHEMA_PROFILE', JSON.stringify(validateProfile.errors)); return data;
+  const data = detached(input); ensure(validateProfile(data), 'SCHEMA_PROFILE', JSON.stringify(validateProfile.errors)); return normalizeProfile(data);
 }
 export function parseInstruction(input: unknown): Instruction {
-  const data = detached(input); ensure(validateInstruction(data), 'SCHEMA_INSTRUCTION', JSON.stringify(validateInstruction.errors)); return data;
+  const data = detached(input); ensure(validateInstruction(data), 'SCHEMA_INSTRUCTION', JSON.stringify(validateInstruction.errors)); return normalizeInstruction(data);
 }
 export function parseValue(input: unknown): Value {
-  const data = detached(input); ensure(validateValue(data), 'SCHEMA_VALUE', JSON.stringify(validateValue.errors)); return data;
+  const data = detached(input); ensure(validateValue(data), 'SCHEMA_VALUE', JSON.stringify(validateValue.errors)); return normalizeNativeValue(data);
 }
 export function i32(value: number): Extract<Value, {kind: 'i32'}> {
   ensure(Number.isInteger(value) && value >= -2147483648 && value <= 2147483647, 'I32_RANGE', `${value}`); return {kind: 'i32', value};
@@ -54,32 +56,32 @@ export function string(value: string): Extract<Value, {kind: 'string'}> { const 
 export function bool(value: boolean): Extract<Value, {kind: 'bool'}> { ensure(typeof value==='boolean','BOOL_TYPE','Expected boolean');return {kind:'bool',value}; }
 export function emptyProfile(): Profile { return {revision:0,values:{},read:[]}; }
 export function readUnit(text: {textId: string; revision: string}): string {ensure(text&&typeof text.textId==='string'&&typeof text.revision==='string'&&[text.textId,text.revision].every(id=>/^[a-zA-Z][a-zA-Z0-9_.:/-]{0,127}$/.test(id)),'TEXT_IDENTITY','TextId/revision reserve @ as the ReadUnit separator');return `${text.textId}@${text.revision}`;}
-export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations','expressions','rng.lcg32','text.rich','text.windows'] as const;
+export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations','expressions','rng.lcg32','text.rich','text.windows','values.extended'] as const;
 
 export function parseJsonValue(input:unknown):JsonValue {
   const data=detached(input);ensure(validateJsonValue(data),'SCHEMA_JSON','Invalid normalized JSON');return data;
 }
-export function parseOperationOutcome(input:unknown):OperationOutcome {const data=detached(input);ensure(validateOperationOutcome(data),'OPERATION_OUTPUT',JSON.stringify(validateOperationOutcome.errors));return data;}
+export function parseOperationOutcome(input:unknown):OperationOutcome {const data=detached(input);ensure(validateOperationOutcome(data),'OPERATION_OUTPUT',JSON.stringify(validateOperationOutcome.errors));data.actions.forEach(a=>normalizeNativeValue(a.value));return data;}
 export function parseSavedInvocation(input:unknown):SavedInvocation {const data=detached(input);ensure(validateSavedInvocation(data),'SAVED_INVOCATION',JSON.stringify(validateSavedInvocation.errors));return data;}
 export function parseOperationResume(input:unknown):OperationResume {const data=detached(input);ensure(validateOperationResume(data),'OPERATION_RESUME',JSON.stringify(validateOperationResume.errors));return data;}
 export function parseOperationWait(input:unknown):OperationWait {const data=detached(input);ensure(validateOperationWait(data),'OPERATION_WAIT',JSON.stringify(validateOperationWait.errors));return data;}
 export {codec} from './codecs.js';
 export type {ProtocolCodec,Decoded} from './codecs.js';
 
-export function parseRestoreRecipe(input:unknown):RestoreRecipe {const data=detached(input);ensure(validateRestoreRecipe(data),'SCHEMA_RECIPE',JSON.stringify(validateRestoreRecipe.errors));return data;}
+export function parseRestoreRecipe(input:unknown):RestoreRecipe {const data=detached(input);ensure(validateRestoreRecipe(data),'SCHEMA_RECIPE',JSON.stringify(validateRestoreRecipe.errors));return normalizeRecipe(data);}
 
-export function parseSlotMetadata(input:unknown):SlotMetadata {const data=detached(input);ensure(validateSlotMetadata(data),'SCHEMA_SLOT_METADATA',JSON.stringify(validateSlotMetadata.errors));return data;}
-export function parseStoreImport(input:unknown):StoreImport {const data=detached(input);ensure(validateStoreImport(data),'SCHEMA_STORE_IMPORT',JSON.stringify(validateStoreImport.errors));return data;}
+export function parseSlotMetadata(input:unknown):SlotMetadata {const data=detached(input);ensure(validateSlotMetadata(data),'SCHEMA_SLOT_METADATA',JSON.stringify(validateSlotMetadata.errors));return normalizeMetadata(data);}
+export function parseStoreImport(input:unknown):StoreImport {const data=detached(input);ensure(validateStoreImport(data),'SCHEMA_STORE_IMPORT',JSON.stringify(validateStoreImport.errors));normalizeSnapshot(data.snapshot);normalizeProfile(data.profile);normalizeMetadata(data.metadata);return data;}
 
-export function parseProgressBatch(input:unknown):ProgressBatchWire {const data=detached(input);ensure(validateProgressBatchWire(data),'SCHEMA_PROGRESS_BATCH',JSON.stringify(validateProgressBatchWire.errors));return data;}
+export function parseProgressBatch(input:unknown):ProgressBatchWire {const data=detached(input);ensure(validateProgressBatchWire(data),'SCHEMA_PROGRESS_BATCH',JSON.stringify(validateProgressBatchWire.errors));data.changes.forEach(c=>{if(c.type==='set')normalizeNativeValue(c.value);});return data;}
 
 function rawInstructionAddress(data:unknown,path:string):string|undefined {const match=path.match(/\/functions\/(\d+)\/code\/(\d+)/);if(!match||data===null||typeof data!=='object'||!('functions'in data)||!Array.isArray(data.functions))return;const f:unknown=data.functions[Number(match[1])];if(f===null||typeof f!=='object'||!('code'in f)||!Array.isArray(f.code))return;const i:unknown=f.code[Number(match[2])];return i!==null&&typeof i==='object'&&'at'in i&&typeof i.at==='string'?i.at:undefined;}
 export function parseSourceMap(input:unknown):SourceMap {const data=detached(input);ensure(validateSourceMap(data),'SCHEMA_SOURCE_MAP',JSON.stringify(validateSourceMap.errors));return data;}
 export function parsePortObligation(input:unknown):PortObligation {const data=detached(input);ensure(validatePortObligation(data),'SCHEMA_OBLIGATION',JSON.stringify(validatePortObligation.errors));return data;}
 export function parseBehaviorMapping(input:unknown):BehaviorMapping {const data=detached(input);ensure(validateBehaviorMapping(data),'SCHEMA_MAPPING',JSON.stringify(validateBehaviorMapping.errors));return data;}
 
-export function parsePortableBackup(input:unknown):PortableBackup {const data=detached(input);ensure(validatePortableBackup(data),'SCHEMA_BACKUP',JSON.stringify(validatePortableBackup.errors));return data;}
-export function parseStoreBackupRestore(input:unknown):StoreBackupRestore {const data=detached(input);ensure(validateStoreBackupRestore(data),'SCHEMA_BACKUP_RESTORE',JSON.stringify(validateStoreBackupRestore.errors));return data;}
+export function parsePortableBackup(input:unknown):PortableBackup {const data=detached(input);ensure(validatePortableBackup(data),'SCHEMA_BACKUP',JSON.stringify(validatePortableBackup.errors));return normalizeBackup(data);}
+export function parseStoreBackupRestore(input:unknown):StoreBackupRestore {const data=detached(input);ensure(validateStoreBackupRestore(data),'SCHEMA_BACKUP_RESTORE',JSON.stringify(validateStoreBackupRestore.errors));normalizeBackup(data.backup);return data;}
 export function parseBackupRestoreReceipt(input:unknown):BackupRestoreReceipt {const data=detached(input);ensure(validateBackupRestoreReceipt(data),'SCHEMA_BACKUP_RECEIPT',JSON.stringify(validateBackupRestoreReceipt.errors));return data;}
 
 export function parseResourceBudget(input:unknown):ResourceBudget {const data=detached(input);ensure(validateResourceBudget(data),'RESOURCE_BUDGET_SCHEMA',JSON.stringify(validateResourceBudget.errors));return data;}
@@ -98,7 +100,7 @@ export function parsePreferencesRecord(input:unknown):PreferencesRecord {const d
 
 export function parsePreferencesPatch(input:unknown):PreferencesPatch {const data=detached(input);ensure(validatePreferencesPatch(data),'SCHEMA_PREFERENCES',JSON.stringify(validatePreferencesPatch.errors));return data;}
 
-export function parseExpression(input:unknown):Expression {const data=detached(input);ensure(validateExpression(data),'SCHEMA_EXPRESSION',JSON.stringify(validateExpression.errors));return data;}
+export function parseExpression(input:unknown):Expression {const data=detached(input);ensure(validateExpression(data),'SCHEMA_EXPRESSION',JSON.stringify(validateExpression.errors));return normalizeExpression(data);}
 
 export function parseRngConfig(input:unknown):RngConfig {const data=detached(input);ensure(validateRngConfig(data),'SCHEMA_RNGCONFIG',JSON.stringify(validateRngConfig.errors));return data;}
 
@@ -131,3 +133,5 @@ export function parseTextWindow(input:unknown):TextWindow {const data=detached(i
 export function parseTextLayout(input:unknown):TextLayout {const data=detached(input);ensure(validateTextLayout(data),'SCHEMA_TEXT_LAYOUT',JSON.stringify(validateTextLayout.errors));return data;}
 
 export function parseTextFont(input:unknown):TextFont {const data=detached(input);ensure(validateTextFont(data),'SCHEMA_TEXT_LAYOUT',JSON.stringify(validateTextFont.errors));return data;}
+
+export {i64,f64,f64Bits,f64Number,nullValue,list,dict} from './values.js';

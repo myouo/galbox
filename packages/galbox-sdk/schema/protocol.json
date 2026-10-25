@@ -58,6 +58,21 @@
             "value"
           ],
           "additionalProperties": false
+        },
+        {
+          "$ref": "#/definitions/I64Value"
+        },
+        {
+          "$ref": "#/definitions/F64Value"
+        },
+        {
+          "$ref": "#/definitions/NullValue"
+        },
+        {
+          "$ref": "#/definitions/ListValue"
+        },
+        {
+          "$ref": "#/definitions/DictValue"
         }
       ]
     },
@@ -66,7 +81,12 @@
       "enum": [
         "i32",
         "bool",
-        "string"
+        "string",
+        "i64",
+        "f64",
+        "null",
+        "list",
+        "dict"
       ]
     },
     "Operand": {
@@ -1188,6 +1208,33 @@
             "theme"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "profile.expression"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/Expression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "key",
+            "value"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1222,7 +1269,12 @@
             "void",
             "i32",
             "string",
-            "bool"
+            "bool",
+            "i64",
+            "f64",
+            "null",
+            "list",
+            "dict"
           ]
         },
         "entry": {
@@ -2295,7 +2347,8 @@
         "audio.gain",
         "profile.set",
         "profile.i32.add.checked",
-        "extension.invoke"
+        "extension.invoke",
+        "profile.expression"
       ]
     },
     "RestoreRecipe": {
@@ -3816,6 +3869,156 @@
             "text"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "convert"
+            },
+            "sourceKind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "value": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "sourceKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "convert"
+            },
+            "sourceKind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "value": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "sourceKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.length"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.size"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -4141,6 +4344,262 @@
             "right"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "le",
+                "gt",
+                "ge"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "left": {
+              "$ref": "#/definitions/I64Expression"
+            },
+            "right": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne",
+                "lt",
+                "le",
+                "gt",
+                "ge"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "left": {
+              "$ref": "#/definitions/F64Expression"
+            },
+            "right": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "null"
+            },
+            "left": {
+              "$ref": "#/definitions/NullExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/NullExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "list"
+            },
+            "left": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/ListExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "eq",
+                "ne"
+              ]
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "left": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/DictExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "bool"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.has"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -4360,6 +4819,139 @@
             "value"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "format"
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "value": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "format"
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "value": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "format"
+            },
+            "operandKind": {
+              "type": "string",
+              "const": "null"
+            },
+            "value": {
+              "$ref": "#/definitions/NullExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "operandKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "string"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -4373,6 +4965,21 @@
         },
         {
           "$ref": "#/definitions/StringExpression"
+        },
+        {
+          "$ref": "#/definitions/I64Expression"
+        },
+        {
+          "$ref": "#/definitions/F64Expression"
+        },
+        {
+          "$ref": "#/definitions/NullExpression"
+        },
+        {
+          "$ref": "#/definitions/ListExpression"
+        },
+        {
+          "$ref": "#/definitions/DictExpression"
         }
       ]
     },
@@ -5675,6 +6282,1438 @@
         "windows"
       ],
       "additionalProperties": false
+    },
+    "I64Value": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "i64"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^(0|-?[1-9][0-9]{0,18})$"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "F64Value": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "f64"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{16}$"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "NullValue": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "null"
+        },
+        "value": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "ListValue": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "list"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Value"
+          },
+          "maxItems": 256
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "DictValue": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "dict"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[^\\x00]{1,128}$"
+              },
+              "value": {
+                "$ref": "#/definitions/Value"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 64
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "I64Expression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^(0|-?[1-9][0-9]{0,18})$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "string",
+              "pattern": "^(0|-?[1-9][0-9]{0,18})$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/I64Expression"
+            },
+            "no": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "add",
+                "sub",
+                "mul",
+                "div",
+                "mod",
+                "min",
+                "max"
+              ]
+            },
+            "left": {
+              "$ref": "#/definitions/I64Expression"
+            },
+            "right": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "neg",
+                "abs"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "convert"
+            },
+            "sourceKind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "value": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "sourceKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "convert"
+            },
+            "sourceKind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "value": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "sourceKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "F64Expression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{16}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{16}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/F64Expression"
+            },
+            "no": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "add",
+                "sub",
+                "mul",
+                "div",
+                "mod",
+                "min",
+                "max"
+              ]
+            },
+            "left": {
+              "$ref": "#/definitions/F64Expression"
+            },
+            "right": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "enum": [
+                "neg",
+                "abs",
+                "floor",
+                "ceil",
+                "trunc"
+              ]
+            },
+            "value": {
+              "$ref": "#/definitions/F64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "convert"
+            },
+            "sourceKind": {
+              "type": "string",
+              "const": "i32"
+            },
+            "value": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "sourceKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "convert"
+            },
+            "sourceKind": {
+              "type": "string",
+              "const": "i64"
+            },
+            "value": {
+              "$ref": "#/definitions/I64Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "sourceKind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "f64"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "NullExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "null"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "null"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "null"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "null"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/NullExpression"
+            },
+            "no": {
+              "$ref": "#/definitions/NullExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "null"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "null"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ListExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Value"
+              },
+              "maxItems": 256
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Value"
+              },
+              "maxItems": 256
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "no": {
+              "$ref": "#/definitions/ListExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "list"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Expression"
+              },
+              "maxItems": 256
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "items"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.set"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "item": {
+              "$ref": "#/definitions/Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index",
+            "item"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.push"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "item": {
+              "$ref": "#/definitions/Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "item"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.slice"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "start": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "end": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "start",
+            "end"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.concat"
+            },
+            "left": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "right": {
+              "$ref": "#/definitions/ListExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "left",
+            "right"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "list"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.keys"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DictExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "literal"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[^\\x00]{1,128}$"
+                  },
+                  "value": {
+                    "$ref": "#/definitions/Value"
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "slot"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "profile"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[^\\x00]{1,128}$"
+                  },
+                  "value": {
+                    "$ref": "#/definitions/Value"
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "key",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "if"
+            },
+            "condition": {
+              "$ref": "#/definitions/BoolExpression"
+            },
+            "yes": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "no": {
+              "$ref": "#/definitions/DictExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "condition",
+            "yes",
+            "no"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "list.at"
+            },
+            "list": {
+              "$ref": "#/definitions/ListExpression"
+            },
+            "index": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "list",
+            "index"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.get"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict"
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^[^\\x00]{1,128}$"
+                  },
+                  "value": {
+                    "$ref": "#/definitions/Expression"
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "entries"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.set"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            },
+            "item": {
+              "$ref": "#/definitions/Expression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key",
+            "item"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "dict"
+            },
+            "op": {
+              "type": "string",
+              "const": "dict.remove"
+            },
+            "dictionary": {
+              "$ref": "#/definitions/DictExpression"
+            },
+            "key": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "kind",
+            "op",
+            "dictionary",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "type": "object",

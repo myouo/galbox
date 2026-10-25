@@ -31,3 +31,5 @@ RNG 精确定义为 lcg32@1，下一字为 `(imul(state,1664525)+1013904223)>>>0
 Snapshot.rng 是可选 wire 扩展：没有启用 RNG 的旧 Program/快照照常读取；新 Program 已声明 RNG 却缺完整旧状态时 RESTORE_RNG，原槽位保留，须显式迁移。recipe 本阶段拒绝 random.i32/rng.seed/text.template，不猜恢复随机或人类结果；现有纯赋值表达式仍可用于候选重建并遵守回滚。
 
 原创浏览器章节：`pnpm dev` 后打开 `http://127.0.0.1:4173/?demo=expressions`。Program/清单来自 fixtures/expression-novel 的公开 SDK Builder，复用《灯塔来信》原创素材；固定 seed=12345 的首个值班号为 69，读档前后保持。主样例仍在默认 URL，React 仅选择 Program 数据与订阅 Player。
+
+G0-03 已增加i64/f64/null/list/dict、规范化和有界数据算子，详见 [DATA_VALUES](DATA_VALUES.md)。本页基础运算保留原语义；新族需要values.extended，不以JS隐式转换猜类型。stored void/undefined、引用heap和未启用算子仍拒绝。

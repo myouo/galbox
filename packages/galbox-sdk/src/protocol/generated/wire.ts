@@ -4,7 +4,7 @@
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "ValueKind".
  */
-export type ValueKind = 'i32' | 'bool' | 'string';
+export type ValueKind = 'i32' | 'bool' | 'string' | 'i64' | 'f64' | 'null' | 'list' | 'dict';
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Value".
@@ -21,7 +21,12 @@ export type Value =
   | {
       kind: 'string';
       value: string;
-    };
+    }
+  | I64Value
+  | F64Value
+  | NullValue
+  | ListValue
+  | DictValue;
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Instruction".
@@ -235,6 +240,12 @@ export type Instruction =
       op: 'text.window.theme';
       window: string;
       theme: string;
+    }
+  | {
+      op: 'profile.expression';
+      at: string;
+      key: string;
+      value: Expression;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -254,7 +265,15 @@ export type Operand =
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Expression".
  */
-export type Expression = I32Expression | BoolExpression | StringExpression;
+export type Expression =
+  | I32Expression
+  | BoolExpression
+  | StringExpression
+  | I64Expression
+  | F64Expression
+  | NullExpression
+  | ListExpression
+  | DictExpression;
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "I32Expression".
@@ -298,6 +317,40 @@ export type I32Expression =
       kind: 'i32';
       op: 'length';
       text: StringExpression;
+    }
+  | {
+      kind: 'i32';
+      op: 'convert';
+      sourceKind: 'i64';
+      value: I64Expression;
+    }
+  | {
+      kind: 'i32';
+      op: 'convert';
+      sourceKind: 'f64';
+      value: F64Expression;
+    }
+  | {
+      kind: 'i32';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'i32';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    }
+  | {
+      kind: 'i32';
+      op: 'list.length';
+      list: ListExpression;
+    }
+  | {
+      kind: 'i32';
+      op: 'dict.size';
+      dictionary: DictExpression;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -370,6 +423,59 @@ export type BoolExpression =
       operandKind: 'string';
       left: StringExpression;
       right: StringExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne' | 'lt' | 'le' | 'gt' | 'ge';
+      operandKind: 'i64';
+      left: I64Expression;
+      right: I64Expression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne' | 'lt' | 'le' | 'gt' | 'ge';
+      operandKind: 'f64';
+      left: F64Expression;
+      right: F64Expression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne';
+      operandKind: 'null';
+      left: NullExpression;
+      right: NullExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne';
+      operandKind: 'list';
+      left: ListExpression;
+      right: ListExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'eq' | 'ne';
+      operandKind: 'dict';
+      left: DictExpression;
+      right: DictExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'bool';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    }
+  | {
+      kind: 'bool';
+      op: 'dict.has';
+      dictionary: DictExpression;
+      key: StringExpression;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -426,6 +532,363 @@ export type StringExpression =
       op: 'format';
       operandKind: 'bool';
       value: BoolExpression;
+    }
+  | {
+      kind: 'string';
+      op: 'format';
+      operandKind: 'i64';
+      value: I64Expression;
+    }
+  | {
+      kind: 'string';
+      op: 'format';
+      operandKind: 'f64';
+      value: F64Expression;
+    }
+  | {
+      kind: 'string';
+      op: 'format';
+      operandKind: 'null';
+      value: NullExpression;
+    }
+  | {
+      kind: 'string';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'string';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "I64Expression".
+ */
+export type I64Expression =
+  | {
+      kind: 'i64';
+      op: 'literal';
+      value: string;
+    }
+  | {
+      kind: 'i64';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'i64';
+      op: 'profile';
+      key: string;
+      fallback: string;
+    }
+  | {
+      kind: 'i64';
+      op: 'if';
+      condition: BoolExpression;
+      yes: I64Expression;
+      no: I64Expression;
+    }
+  | {
+      kind: 'i64';
+      op: 'add' | 'sub' | 'mul' | 'div' | 'mod' | 'min' | 'max';
+      left: I64Expression;
+      right: I64Expression;
+    }
+  | {
+      kind: 'i64';
+      op: 'neg' | 'abs';
+      value: I64Expression;
+    }
+  | {
+      kind: 'i64';
+      op: 'convert';
+      sourceKind: 'i32';
+      value: I32Expression;
+    }
+  | {
+      kind: 'i64';
+      op: 'convert';
+      sourceKind: 'f64';
+      value: F64Expression;
+    }
+  | {
+      kind: 'i64';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'i64';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "F64Expression".
+ */
+export type F64Expression =
+  | {
+      kind: 'f64';
+      op: 'literal';
+      value: string;
+    }
+  | {
+      kind: 'f64';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'f64';
+      op: 'profile';
+      key: string;
+      fallback: string;
+    }
+  | {
+      kind: 'f64';
+      op: 'if';
+      condition: BoolExpression;
+      yes: F64Expression;
+      no: F64Expression;
+    }
+  | {
+      kind: 'f64';
+      op: 'add' | 'sub' | 'mul' | 'div' | 'mod' | 'min' | 'max';
+      left: F64Expression;
+      right: F64Expression;
+    }
+  | {
+      kind: 'f64';
+      op: 'neg' | 'abs' | 'floor' | 'ceil' | 'trunc';
+      value: F64Expression;
+    }
+  | {
+      kind: 'f64';
+      op: 'convert';
+      sourceKind: 'i32';
+      value: I32Expression;
+    }
+  | {
+      kind: 'f64';
+      op: 'convert';
+      sourceKind: 'i64';
+      value: I64Expression;
+    }
+  | {
+      kind: 'f64';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'f64';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ListExpression".
+ */
+export type ListExpression =
+  | {
+      kind: 'list';
+      op: 'literal';
+      /**
+       * @maxItems 256
+       */
+      value: Value[];
+    }
+  | {
+      kind: 'list';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'list';
+      op: 'profile';
+      key: string;
+      /**
+       * @maxItems 256
+       */
+      fallback: Value[];
+    }
+  | {
+      kind: 'list';
+      op: 'if';
+      condition: BoolExpression;
+      yes: ListExpression;
+      no: ListExpression;
+    }
+  | {
+      kind: 'list';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'list';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    }
+  | {
+      kind: 'list';
+      op: 'list';
+      /**
+       * @maxItems 256
+       */
+      items: Expression[];
+    }
+  | {
+      kind: 'list';
+      op: 'list.set';
+      list: ListExpression;
+      index: I32Expression;
+      item: Expression;
+    }
+  | {
+      kind: 'list';
+      op: 'list.push';
+      list: ListExpression;
+      item: Expression;
+    }
+  | {
+      kind: 'list';
+      op: 'list.slice';
+      list: ListExpression;
+      start: I32Expression;
+      end: I32Expression;
+    }
+  | {
+      kind: 'list';
+      op: 'list.concat';
+      left: ListExpression;
+      right: ListExpression;
+    }
+  | {
+      kind: 'list';
+      op: 'dict.keys';
+      dictionary: DictExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "DictExpression".
+ */
+export type DictExpression =
+  | {
+      kind: 'dict';
+      op: 'literal';
+      /**
+       * @maxItems 64
+       */
+      value: {
+        key: string;
+        value: Value;
+      }[];
+    }
+  | {
+      kind: 'dict';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'dict';
+      op: 'profile';
+      key: string;
+      /**
+       * @maxItems 64
+       */
+      fallback: {
+        key: string;
+        value: Value;
+      }[];
+    }
+  | {
+      kind: 'dict';
+      op: 'if';
+      condition: BoolExpression;
+      yes: DictExpression;
+      no: DictExpression;
+    }
+  | {
+      kind: 'dict';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'dict';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
+    }
+  | {
+      kind: 'dict';
+      op: 'dict';
+      /**
+       * @maxItems 64
+       */
+      entries: {
+        key: string;
+        value: Expression;
+      }[];
+    }
+  | {
+      kind: 'dict';
+      op: 'dict.set';
+      dictionary: DictExpression;
+      key: StringExpression;
+      item: Expression;
+    }
+  | {
+      kind: 'dict';
+      op: 'dict.remove';
+      dictionary: DictExpression;
+      key: StringExpression;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "NullExpression".
+ */
+export type NullExpression =
+  | {
+      kind: 'null';
+      op: 'literal';
+      value: null;
+    }
+  | {
+      kind: 'null';
+      op: 'slot';
+      id: string;
+    }
+  | {
+      kind: 'null';
+      op: 'profile';
+      key: string;
+      fallback: null;
+    }
+  | {
+      kind: 'null';
+      op: 'if';
+      condition: BoolExpression;
+      yes: NullExpression;
+      no: NullExpression;
+    }
+  | {
+      kind: 'null';
+      op: 'list.at';
+      list: ListExpression;
+      index: I32Expression;
+    }
+  | {
+      kind: 'null';
+      op: 'dict.get';
+      dictionary: DictExpression;
+      key: StringExpression;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -640,7 +1103,8 @@ export type RecipeOpcode =
   | 'audio.gain'
   | 'profile.set'
   | 'profile.i32.add.checked'
-  | 'extension.invoke';
+  | 'extension.invoke'
+  | 'profile.expression';
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "ProgressChangeWire".
@@ -760,6 +1224,55 @@ export interface Slot {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "I64Value".
+ */
+export interface I64Value {
+  kind: 'i64';
+  value: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "F64Value".
+ */
+export interface F64Value {
+  kind: 'f64';
+  value: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "NullValue".
+ */
+export interface NullValue {
+  kind: 'null';
+  value: null;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ListValue".
+ */
+export interface ListValue {
+  kind: 'list';
+  /**
+   * @maxItems 256
+   */
+  value: Value[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "DictValue".
+ */
+export interface DictValue {
+  kind: 'dict';
+  /**
+   * @maxItems 64
+   */
+  value: {
+    key: string;
+    value: Value;
+  }[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Function".
  */
 export interface Function {
@@ -773,7 +1286,7 @@ export interface Function {
    * @maxItems 128
    */
   locals: Slot[];
-  returns: 'void' | 'i32' | 'string' | 'bool';
+  returns: 'void' | 'i32' | 'string' | 'bool' | 'i64' | 'f64' | 'null' | 'list' | 'dict';
   entry: string;
   /**
    * @maxItems 10000

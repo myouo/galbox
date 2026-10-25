@@ -1,5 +1,6 @@
 import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
+import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
 import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
 import {compileRichText,richTextSignature,textSegmentation,tickRichText,revealRichText,isTextComplete,validateRichText} from '../protocol/text.js';
 import type {TextPlan} from '../protocol/text.js';
@@ -64,7 +65,7 @@ export class Core {
     const map=Object.hasOwn(this.top().locals,id)?this.top().locals:this.s.globals;
     ensure(map[id]?.kind===v.kind,'SLOT_KIND',id);map[id]=parseValue(v);
   }
-  private setProfile(key:string,value:Value):void {this.profile.values[key]=parseValue(value);this.changes.push({seq:++this.progressSeq,type:'set',key,value:parseValue(value)});}
+  private setProfile(key:string,value:Value):void {ensure(!extendedValue(value)||this.program.capabilities.includes('values.extended'),'VALUE_CAPABILITY','Declare values.extended');this.profile.values[key]=parseValue(value);this.changes.push({seq:++this.progressSeq,type:'set',key,value:parseValue(value)});}
   private read():void { const text=this.s.text;ensure(text,'TEXT','No page');const unit=readUnit(text);if(!this.profile.read.includes(unit)){this.profile.read.push(unit);this.changes.push({seq:++this.progressSeq,type:'read',unit});} }
   view():CoreView {ensure(!this.reducing,'CORE_REENTRANT','Use the reducer context');return {run:parseSnapshot(this.s),profile:parseProfile(this.profile),dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()};}
   pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:{...c});}
@@ -210,7 +211,7 @@ export class Core {
       case 'control.jump':this.top().pc=i.target;return;
       case 'control.branch': {
         const a=this.get(i.left),b=this.get(i.right);ensure(a.kind===b.kind,'COMPARE_KIND',i.at);
-        const matches=i.cmp==='eq'?a.value===b.value:a.value<b.value;this.top().pc=matches?i.yes:i.no;return;
+        const matches=i.cmp==='eq'?equalValues(a,b):orderValues(a,b)===-1;this.top().pc=matches?i.yes:i.no;return;
       }
       case 'control.call': {
         ensure(this.s.frames.length<64,'STACK_LIMIT',i.at);const args=i.args.map(a=>this.get(a));const frame=this.frame(this.fn(i.function),args);
@@ -267,6 +268,7 @@ export class Core {
       case 'audio.gain':this.s.tasks.filter(t=>t.kind==='audio'&&t.channel===i.channel).forEach(t=>{t.gain=i.gain;});this.effects.push({type:'audio-gain',channel:i.channel,gain:i.gain});break;
       case 'profile.i32.add.checked': {const previous=this.profile.values[i.key];ensure(previous?.kind==='i32','PROFILE_KIND',i.key);this.setProfile(i.key,i32(previous.value+i.delta));break;}
       case 'profile.set':this.setProfile(i.key,i.value);break;
+      case 'profile.expression':this.setProfile(i.key,this.expression(i.value));break;
       case 'profile.flush':wait({kind:'flush',at:i.at});return;
       case 'checkpoint':wait({kind:'flush',at:i.at});return;
       case 'save.policy':this.s.saveAllowed=i.allow;break;

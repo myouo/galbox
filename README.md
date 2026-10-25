@@ -86,3 +86,5 @@ G1-02 通用播放系统：默认工具栏可开启自动阅读或按住已读�
 G2-01 原创章节：[灯塔来信·信纸上的光](http://127.0.0.1:4173/?demo=text)。使用正式 `richText`/`richPage` 工厂表达 Ruby、样式、换行、速度/停顿和文字效果，Core/DOM/Auto/存档共用正文状态；API、恢复规则与有限支持范围见 [TEXT](docs/TEXT.md)。NVL/多文本框和声明式主题布局仍由 G2-02 接续。
 
 G2-02 原创章节：[灯塔来信·双页值班簿](http://127.0.0.1:4173/?demo=layout)。正式 SDK 提供 ADV/NVL、多窗口、主题切换与清页、TrueType准备和可包装的正文 renderer 端口；窗口/历史/保存恢复及有限支持规则见 [TEXT_LAYOUT](docs/TEXT_LAYOUT.md)。完整通用能力继续按任务表推进。
+
+G0-03 原创章节：[灯塔来信·补给簿](http://127.0.0.1:4173/?demo=data)。正式SDK计算并保存位模式f64、精确i64、有序列表/字典与普通profile；构造/算子、失败边界及完整迁移规则见 [DATA_VALUES](docs/DATA_VALUES.md)。完整舞台/媒体和其它通用G系统仍在后续任务中。
