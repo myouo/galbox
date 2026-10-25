@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt, validateResourceBudget, validateResourceFact, validateReleaseManifest, validateAudioPreferences, validateTextPreferences, validatePlayerPreferences, validatePreferencesRecord, validatePreferencesPatch } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -87,3 +87,13 @@ export function parseResourceBudget(input:unknown):ResourceBudget {const data=de
 export function parseResourceFact(input:unknown):ResourceFact {const data=detached(input);ensure(validateResourceFact(data),'RESOURCE_FACT_SCHEMA',JSON.stringify(validateResourceFact.errors));return data;}
 
 export function parseReleaseManifest(input:unknown):ReleaseManifest {const data=detached(input);ensure(validateReleaseManifest(data),'RELEASE_SCHEMA',JSON.stringify(validateReleaseManifest.errors));return data;}
+
+export function parseAudioPreferences(input:unknown):AudioPreferences {const data=detached(input);ensure(validateAudioPreferences(data),'SCHEMA_PREFERENCES',JSON.stringify(validateAudioPreferences.errors));return data;}
+
+export function parseTextPreferences(input:unknown):TextPreferences {const data=detached(input);ensure(validateTextPreferences(data),'SCHEMA_PREFERENCES',JSON.stringify(validateTextPreferences.errors));return data;}
+
+export function parsePlayerPreferences(input:unknown):PlayerPreferences {const data=detached(input);ensure(validatePlayerPreferences(data),'SCHEMA_PREFERENCES',JSON.stringify(validatePlayerPreferences.errors));return data;}
+
+export function parsePreferencesRecord(input:unknown):PreferencesRecord {const data=detached(input);ensure(validatePreferencesRecord(data),'SCHEMA_PREFERENCES',JSON.stringify(validatePreferencesRecord.errors));return data;}
+
+export function parsePreferencesPatch(input:unknown):PreferencesPatch {const data=detached(input);ensure(validatePreferencesPatch(data),'SCHEMA_PREFERENCES',JSON.stringify(validatePreferencesPatch.errors));return data;}

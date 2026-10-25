@@ -1,6 +1,6 @@
 # galbox-sdk
 
-强类型、可嵌入的视觉小说 Web SDK。M0–M5 通用门槛已完成，当前为 0.1.0 本地 alpha 候选：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
+强类型、可嵌入的视觉小说 Web SDK。已有 M0–M5 有限 alpha 底座；完整常用 GalGame 功能正在按 G0–G7 建设：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
 
 《水仙》《海市蜃楼之馆》的真实资料仍缺，当前不声明商业作品兼容。完整任务状态见 [tasks.json](docs/tasks.json)，当前摘要见 [STATUS](docs/STATUS.md)，范围见 [能力表](docs/CAPABILITIES.md)。
 
@@ -76,3 +76,5 @@ CLI 的 dev 服务最后一次验证的发布数据；修改 story/resources 后
 `pnpm test:performance` 记录当前参考环境的实际原始样本；`pnpm test:release` 真实编译 API 基线并重新 pack/publish dry-run，需要完整 Git 历史，不执行实际发布。
 
 H1-01 绘制/销毁加固见 [证据](docs/evidence/h1-01/REPORT.md)：不重复绘制静态舞台，保留共享 Pixi 全局池，取消后的迟到 renderer 也清理；本机三次完整活动销毁为 111.6/230/119 ms，API/存档格式不变。
+
+完整通用功能目标与 Core/Host/系统/UI/作品实例的边界见 [COMMON_VN](docs/COMMON_VN.md)。流程图、图文存档、富文本/文本框和剧本 UI 等仍在任务表中，实例可自写不等于 SDK 已支持；N/F 资料阻塞不阻塞这些通用能力。

@@ -1,12 +1,12 @@
 import { Application, Sprite, Texture, WebGLRenderer } from 'pixi.js';
-import { ensure, GalboxError,parseResourceFact,parseResourceBudget } from '../protocol/index.js';
+import { ensure, GalboxError,parseResourceFact,parseResourceBudget,parseAudioPreferences } from '../protocol/index.js';
 import type { Program, DeepReadonly, Snapshot,ResourceBudget,ResourceFact } from '../protocol/index.js';
 import {inspectResource,resourceUsage,defaultResourceBudget,canonicalReleaseJSON} from '../release/index.js';
 import type { HostPort } from '../runtime/ports.js';
 import type { Effect } from '../core/index.js';
 import { verifiedBytes } from './assets.js';
 import type { AssetProvider } from './assets.js';
-interface Playing {source:AudioBufferSourceNode;gain:GainNode;}
+interface Playing {source:AudioBufferSourceNode;gain:GainNode;scriptGain:number;role:'bgm'|'voice'|'sfx';}
 export interface MediaDiagnostics {state:'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;}
 export interface ResourceDiagnostics {graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
@@ -21,6 +21,7 @@ export class WebHost implements HostPort {
   private disposed=false;
   private epoch=0;
   private volume=.6;
+  private roleVolumes={bgm:1,voice:1,sfx:1};
   private paused=false;
   private audioUnavailable=false;
   private audioOperation:Promise<void>=Promise.resolve();
@@ -30,6 +31,7 @@ export class WebHost implements HostPort {
   readonly media:MediaDiagnostics={state:'unverified',starts:0,ended:0,blocked:0,decoded:0,active:0};
   constructor(private readonly mount:HTMLElement,private readonly fault?:(error:Error)=>void) {}
   resourceFacts():ResourceFact[]{return this.facts.map(parseResourceFact);}
+  applyAudioPreferences(input:unknown):void {const audio=parseAudioPreferences(input);this.volume=audio.master;this.roleVolumes={bgm:audio.bgm,voice:audio.voice,sfx:audio.sfx};if(this.master)this.master.gain.value=this.volume;for(const p of this.playing.values())p.gain.gain.value=p.scriptGain*this.roleVolumes[p.role];}
   assertReady():void {ensure(!this.disposed&&this.resources.graphics==='available','GRAPHICS_UNAVAILABLE','Recreate the player to prepare the graphics device');ensure(!this.audioUnavailable&&this.context&&this.context.state!=='closed','AUDIO_UNAVAILABLE','Audio device closed');}
   private lost=(event:Event):void=>{event.preventDefault();this.resources.graphics='unavailable';this.stopAudio();this.fault?.(new GalboxError('WEBGL_CONTEXT_LOST','图像设备连接已丢失，请重新打开播放器后读档。'));};
   async init(program:Program,provider:AssetProvider,signal:AbortSignal,policy:unknown=defaultResourceBudget,expected?:readonly ResourceFact[]):Promise<void> {
@@ -93,7 +95,7 @@ export class WebHost implements HostPort {
   effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2]):void {
     if(this.disposed||epoch!==this.epoch)return;
     if(effect.type==='audio-stop'){this.stopChannel(effect.channel);return;}
-    if(effect.type==='audio-gain'){const playing=this.playing.get(effect.channel);if(playing)playing.gain.gain.value=effect.gain;return;}
+    if(effect.type==='audio-gain'){const playing=this.playing.get(effect.channel);if(playing){playing.scriptGain=effect.gain;playing.gain.gain.value=effect.gain*this.roleVolumes[playing.role];}return;}
     const task=effect.task,context=this.context,master=this.master;
     if(!context||!master||!task.asset||!task.channel){report(task.id,task.attempt,'failed');return;}
     if(this.audioUnavailable||context.state==='closed'){this.media.state='unavailable';report(task.id,task.attempt,'failed');this.fault?.(new GalboxError('AUDIO_UNAVAILABLE','Audio device closed'));return;}
@@ -102,8 +104,8 @@ export class WebHost implements HostPort {
     this.stopChannel(task.channel);
     let source:AudioBufferSourceNode|undefined,gain:GainNode|undefined;
     try {
-      source=context.createBufferSource();gain=context.createGain();source.buffer=buffer;source.loop=task.loop??false;gain.gain.value=task.gain??1;source.connect(gain);gain.connect(master);
-      const playing={source,gain},channel=task.channel;this.playing.set(channel,playing);
+      source=context.createBufferSource();gain=context.createGain();source.buffer=buffer;source.loop=task.loop??false;gain.gain.value=(task.gain??1)*this.roleVolumes[task.channel];source.connect(gain);gain.connect(master);
+      const playing={source,gain,scriptGain:task.gain??1,role:task.channel},channel=task.channel;this.playing.set(channel,playing);
       source.onended=()=>{if(this.playing.get(channel)===playing){this.playing.delete(channel);this.media.ended++;this.media.active=this.playing.size;}playing.source.disconnect();playing.gain.disconnect();};
       source.start();this.media.starts++;this.media.active=this.playing.size;this.media.state='available';report(task.id,task.attempt,'completed');
     }catch(error){const unavailable=error instanceof DOMException&&error.name==='NotSupportedError';if(task.channel)this.playing.delete(task.channel);if(source){source.onended=null;try{source.stop();}catch{}source.disconnect();}gain?.disconnect();this.media.active=this.playing.size;if(unavailable){this.audioUnavailable=true;this.media.state='unavailable';report(task.id,task.attempt,'failed');this.fault?.(new GalboxError('AUDIO_UNAVAILABLE','Audio source unavailable on this device'));}else{this.media.blocked++;this.media.state='needs-user-action';report(task.id,task.attempt,'blocked');}}

@@ -1,4 +1,4 @@
-import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction } from '../protocol/index.js';
+import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { emptyOperations, operationContext } from './operations.js';
@@ -6,6 +6,7 @@ import type { OperationRegistry } from './operations.js';
 export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';}
 export type CoreEvent =
  | OperationResume
+ | {type:'text.preferences';value:import('../protocol/index.js').TextPreferences}
  | {type:'reveal' | 'advance' | 'step'; prompt:number; inputId:string}
  | {type:'choose'; prompt:number; inputId:string; option:string}
  | {type:'tick'; ms:number}
@@ -27,6 +28,7 @@ export class Core {
   private effects:Effect[]=[];
   private consumed=new Set<string>();
   private textRemainder=0;
+  private textInterval=32;
   private error:string|null=null;
   private revoked=false;
   private recovering=false;
@@ -79,6 +81,7 @@ export class Core {
   accept(event:CoreEvent):void {
     ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');
     if(this.revoked||this.s.status==='failed')return;
+    if(event.type==='text.preferences'){const value=parseTextPreferences(event.value);this.textInterval=value.intervalMs;this.textRemainder=0;return;}
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
       if(this.consumed.has(event.inputId)||!this.s.wait||!('prompt'in this.s.wait)||event.prompt!==this.s.wait.prompt)return;
@@ -96,7 +99,7 @@ export class Core {
     if(event.type==='tick') {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
       this.s.logicalTime+=event.ms;
-      if(this.s.wait?.kind==='text'&&this.s.text){this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/32);this.textRemainder%=32;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}
+      if(this.s.wait?.kind==='text'&&this.s.text){if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
         if(t.kind==='animation') {
@@ -212,7 +215,7 @@ export class Core {
       case 'extension.invoke':this.invokeOperation(i);return;
       case 'value.set':this.put(i.dest,this.get(i.value));break;
       case 'i32.add.checked': {const a=this.get(i.left),b=this.get(i.right);ensure(a.kind==='i32'&&b.kind==='i32','I32_OPERAND',i.at);this.put(i.dest,i32(a.value+b.value));break;}
-      case 'text.page': {const prompt=++this.s.counter;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:0,prompt};wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.page': {const prompt=++this.s.counter;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt};wait({kind:'text',at:i.at,prompt});return;}
       case 'text.clear':this.s.text=null;break;
       case 'choice':wait({kind:'choice',at:i.at,prompt:++this.s.counter,options:i.options.map(o=>({...o})),dest:i.dest});return;
       case 'stage.put': {

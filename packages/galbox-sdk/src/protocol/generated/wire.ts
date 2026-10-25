@@ -847,3 +847,52 @@ export interface ReleaseManifest {
   resources: ResourceFact[];
   limits: ResourceBudget;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "AudioPreferences".
+ */
+export interface AudioPreferences {
+  master: number;
+  bgm: number;
+  voice: number;
+  sfx: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextPreferences".
+ */
+export interface TextPreferences {
+  intervalMs: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "PlayerPreferences".
+ */
+export interface PlayerPreferences {
+  version: 1;
+  audio: AudioPreferences;
+  text: TextPreferences;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "PreferencesRecord".
+ */
+export interface PreferencesRecord {
+  revision: number;
+  value: PlayerPreferences;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "PreferencesPatch".
+ */
+export interface PreferencesPatch {
+  audio?: {
+    master?: number;
+    bgm?: number;
+    voice?: number;
+    sfx?: number;
+  };
+  text?: {
+    intervalMs?: number;
+  };
+}

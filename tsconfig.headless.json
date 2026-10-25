@@ -15,6 +15,7 @@
     "packages/galbox-sdk/src/save-bridge/**/*",
     "packages/galbox-sdk/src/diagnostics/**/*",
     "packages/galbox-sdk/src/backups/**/*",
-    "packages/galbox-sdk/src/release/**/*"
+    "packages/galbox-sdk/src/release/**/*",
+    "packages/galbox-sdk/src/settings/**/*"
   ]
 }

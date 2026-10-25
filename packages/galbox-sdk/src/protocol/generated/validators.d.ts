@@ -1,4 +1,4 @@
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest } from './wire.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, ResourceBudget, ResourceFact, ReleaseManifest, AudioPreferences, TextPreferences, PlayerPreferences, PreferencesRecord, PreferencesPatch } from './wire.js';
 export declare const validateProgram: { (data: unknown): data is Program; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateSnapshot: { (data: unknown): data is Snapshot; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateProfile: { (data: unknown): data is Profile; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
@@ -22,3 +22,8 @@ export declare const validateBackupRestoreReceipt: { (data: unknown): data is Ba
 export declare const validateResourceBudget: { (data: unknown): data is ResourceBudget; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateResourceFact: { (data: unknown): data is ResourceFact; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateReleaseManifest: { (data: unknown): data is ReleaseManifest; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateAudioPreferences: { (data: unknown): data is AudioPreferences; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateTextPreferences: { (data: unknown): data is TextPreferences; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validatePlayerPreferences: { (data: unknown): data is PlayerPreferences; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validatePreferencesRecord: { (data: unknown): data is PreferencesRecord; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validatePreferencesPatch: { (data: unknown): data is PreferencesPatch; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };

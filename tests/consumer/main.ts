@@ -18,7 +18,7 @@ const button=document.getElementById('run');
 button?.addEventListener('click',()=>{void(async()=>{
  const mount=document.getElementById('stage');if(!mount)throw new Error('mount');const program:unknown=await(await fetch('./program.json')).json();const release:unknown=await(await fetch('./consumer.release.json')).json();
  const player=await createPlayer({program,provider:createHttpProvider(program,location.href),mount,saveCompatibilitySeries:'consumer',release});
- if(player.getSnapshot().release?.origin!=='manifest'||player.getSnapshot().resources.decodedAudioBytes<=0)throw new Error('Missing verified release/resource report');await player.start();const before=player.getSnapshot().core?.run.wait;if(before?.kind!=='text')throw new Error('Initial wait');
+ if(player.getSnapshot().release?.origin!=='manifest'||player.getSnapshot().resources.decodedAudioBytes<=0)throw new Error('Missing verified release/resource report');await player.updatePreferences({audio:{master:.4,bgm:.7},text:{intervalMs:32}});if(player.getSnapshot().preferences.value.audio.master!==.4)throw new Error('Preferences not applied');await player.start();const before=player.getSnapshot().core?.run.wait;if(before?.kind!=='text')throw new Error('Initial wait');
  await player.input('reveal',before.prompt,player.getSnapshot().epoch);await player.save('consumer');await player.input('advance',before.prompt,player.getSnapshot().epoch);
  const advanced=player.getSnapshot().core?.run.text?.textId;if(advanced==='opening.1')throw new Error('Did not advance');await player.load('consumer');
  if(player.getSnapshot().core?.run.text?.textId!=='opening.1')throw new Error('Did not restore');

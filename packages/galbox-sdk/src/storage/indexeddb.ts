@@ -1,7 +1,7 @@
-import { ensure, parseStoreBackupRestore } from '../protocol/index.js';
-import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore } from '../protocol/index.js';
+import { ensure, parseStoreBackupRestore, parsePlayerPreferences } from '../protocol/index.js';
+import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
-import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation } from '../runtime/durable.js';
+import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences } from '../runtime/durable.js';
 import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
@@ -21,6 +21,8 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     });
   }
   return {
+    readPreferences:()=>transact('readonly',s=>s.preferences),
+    writePreferences:(input:PlayerPreferences,revision:number)=>{const value=parsePlayerPreferences(input);return transact('readwrite',s=>commitPreferences(s,value,revision));},
     backup:(gameId:string,series:string,release:string)=>{ensure(namespace===storageNamespace(gameId,series),'BACKUP_NAMESPACE','Backup identity must match storage');return transact('readonly',s=>captureBackup(s,gameId,series,release));},
     restoreBackup:(input:StoreBackupRestore)=>{const commit=parseStoreBackupRestore(input);ensure(namespace===storageNamespace(commit.backup.gameId,commit.backup.series),'BACKUP_NAMESPACE','Restore identity must match storage');return transact('readwrite',s=>commitBackupRestore(s,commit));},
     read:(profileId?:string)=>transact<Durable>('readonly',s=>({profile:selectProfile(s,profileId),head:s.head})),

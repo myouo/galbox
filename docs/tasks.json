@@ -4,12 +4,17 @@
   "kit_version": "1.0",
   "design_baseline": "docs/reference/GalBox-SDK-v0.6-Implementation-Design.md",
   "current_scope": [
-    "N",
-    "F",
-    "M6"
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7"
   ],
-  "current_task": "N-01",
-  "engine_status": "sdk_alpha_local_complete",
+  "current_task": "G0-02",
+  "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
@@ -44,7 +49,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -83,7 +89,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -119,7 +126,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -157,7 +165,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -192,7 +201,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -227,7 +237,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -266,7 +277,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -307,7 +319,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -346,7 +359,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -385,7 +399,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -425,7 +440,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -467,7 +483,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -515,7 +532,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -551,7 +569,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -588,7 +607,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接续 M3-02；扩展调用、迁移与完整回归已通过。"
@@ -624,7 +644,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "继续 M3-03 有界候选 recipe；本项只产生准备计划，不宣称已导入或已激活。"
@@ -660,7 +681,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接 M3-04 独立 profile/导入事务/激活恰好一次；本项只完成候选恢复执行。"
@@ -698,7 +720,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "M3 gate complete; next M4-01 provides a real CLI/template workflow."
@@ -731,7 +754,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接 M4-02 的 SourceMap/必要行为阻断与 saves analyze/verify。"
@@ -765,7 +789,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接 M4-03：完整独立开发者扩展/迁移/binding、类型与浏览器验证。"
@@ -800,7 +825,8 @@
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "M4 gate complete; next M5-01 portable backup, content migrations and failure preservation."
@@ -834,7 +860,8 @@
       "evidence": [
         "docs/evidence/m5-01/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "门槛完成；下一项 M5-02：发布绑定、有限能力与资源预算。"
@@ -873,7 +900,8 @@
       "evidence": [
         "docs/evidence/m5-02/REPORT.md",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "完成；进入 M5-03 的实际平台/性能测量。"
@@ -909,7 +937,8 @@
         "docs/evidence/m5-03/REPORT.md",
         "docs/evidence/m5-03/performance.json",
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "测量完成；进入 M5-04 的 API/版本与本地候选检查，保留渲染/释放长尾及未测平台限制。"
@@ -943,7 +972,8 @@
       "evidence": [
         "docs/evidence/m5-04/REPORT.md",
         "docs/evidence/m5-04/release-audit.json",
-        "docs/evidence/h1-01/REPORT.md"
+        "docs/evidence/h1-01/REPORT.md",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本地 alpha 门槛完成；下一步接收并核验 N-01/F-01 真实资料，M6 未完成，不用 synthetic 替代。"
@@ -1135,7 +1165,8 @@
         "M2-06",
         "M5-04",
         "N-03",
-        "F-03"
+        "F-03",
+        "G7-01"
       ],
       "status": "todo",
       "implementation": "not_started",
@@ -1186,10 +1217,511 @@
       "evidence": [
         "docs/evidence/h1-01/REPORT.md",
         "docs/evidence/h1-01/performance.json",
-        "docs/evidence/h1-01/release-audit.json"
+        "docs/evidence/h1-01/release-audit.json",
+        "docs/evidence/g1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "加固完成；保留同步 GPU 释放和平台范围限制，下一项 N-01/F-01 等待真实资料。"
+    },
+    {
+      "id": "G0-01",
+      "milestone": "G0",
+      "title": "定义完整常用 GalGame 能力与分层验收",
+      "depends_on": [
+        "M5-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "docs/COMMON_VN.md",
+        "docs/decisions/0013-common-vn-systems.md"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "common-vn-matrix",
+        "layer-ownership"
+      ],
+      "evidence": [
+        "docs/evidence/g0-01/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "边界已落实；开始 G1-01 持久设置/音量/文字速度，其他 G 能力不得提前标支持。"
+    },
+    {
+      "id": "G0-02",
+      "milestone": "G0",
+      "title": "通用值表达式、字符串插值与确定性 RNG",
+      "depends_on": [
+        "G0-01",
+        "M3-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "typed expressions/RNG schema and restoration"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "expression-types",
+        "rng-save-restore"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G1-01",
+      "milestone": "G1",
+      "title": "持久玩家设置、分轨音量与文字速度",
+      "depends_on": [
+        "G0-01",
+        "M2-03",
+        "M2-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "packages/galbox-sdk/src/settings",
+        "independent preferences CAS persistence",
+        "Core text preference event and Host role mixer",
+        "default React settings controls",
+        "docs/SETTINGS.md"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "preferences-refresh",
+        "settings-isolation",
+        "audio-role-mix",
+        "text-rate-restore"
+      ],
+      "evidence": [
+        "docs/evidence/g1-01/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "本支持集完成；G0-02 表达式/RNG 以及 G1-02 自动/输入/显示辅助继续，不能称通用功能已齐备。"
+    },
+    {
+      "id": "G1-02",
+      "milestone": "G1",
+      "title": "自动阅读、快进策略与可配置输入/显示辅助",
+      "depends_on": [
+        "G1-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "auto/skip/input/display systems"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "auto-voice-wait",
+        "skip-safety",
+        "input-bindings"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "在持久设置机制上实现自动阅读、快进策略、输入/显示辅助、恢复默认与明确设置备份策略，逐项提供真实行为。"
+    },
+    {
+      "id": "G2-01",
+      "milestone": "G2",
+      "title": "结构化正文、富文本/Ruby 与文字效果",
+      "depends_on": [
+        "G0-01",
+        "G0-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "typed text runs and effects"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "rich-text-reveal",
+        "text-effect-save-restore"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G2-02",
+      "milestone": "G2",
+      "title": "ADV/NVL、多文本框与声明式主题/布局",
+      "depends_on": [
+        "G2-01",
+        "G1-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "text layouts/themes and renderer ports"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "textbox-layout-restore",
+        "nvl-history",
+        "custom-text-renderer"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G3-01",
+      "milestone": "G3",
+      "title": "完整二维舞台变换、转场、滤镜与并行演出",
+      "depends_on": [
+        "G0-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "scene/camera/transform/transition effects"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "stage-effects-restore",
+        "effect-replace-cancel"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G3-02",
+      "milestone": "G3",
+      "title": "常用编码与长媒体、循环/淡化/压低/语音回放",
+      "depends_on": [
+        "G1-01",
+        "G0-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "streaming/media adapters and voice identity"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "media-loop-restore",
+        "voice-replay",
+        "media-unavailable"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G3-03",
+      "milestone": "G3",
+      "title": "视频、热点与限时交互",
+      "depends_on": [
+        "G3-01",
+        "G3-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "video and typed interaction tasks"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "video-save-policy",
+        "hotspot-input",
+        "deadline-activation"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G4-01",
+      "milestone": "G4",
+      "title": "完整存读档系统、合成缩略图与自动/快速槽位",
+      "depends_on": [
+        "G0-01",
+        "G2-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "save capture/thumbnail/metadata/library UI"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "same-cut-thumbnail",
+        "atomic-slot-image",
+        "slot-management"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G4-02",
+      "milestone": "G4",
+      "title": "历史语音回放与受控回溯",
+      "depends_on": [
+        "G3-02",
+        "G4-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "backlog/replay/rollback systems"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "backlog-voice",
+        "rollback-progress-authority"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G5-01",
+      "milestone": "G5",
+      "title": "剧情流程图、章节/节点解锁与合法重入",
+      "depends_on": [
+        "G0-02",
+        "G4-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "story graph state/checkpoints/default UI"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "node-visit-unlock",
+        "graph-safe-restore"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G5-02",
+      "milestone": "G5",
+      "title": "CG/音乐/场景鉴赏、成就与全局解锁",
+      "depends_on": [
+        "G3-02",
+        "G4-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "extras/gallery systems and declarations"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "gallery-unlock-persistence",
+        "replay-isolation"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G6-01",
+      "milestone": "G6",
+      "title": "剧本驱动 UI 控件与事件/状态恢复",
+      "depends_on": [
+        "G2-02",
+        "G3-03"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "typed screen/control declarations and input"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "script-ui-state",
+        "ui-event-generation",
+        "ui-restore"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G6-02",
+      "milestone": "G6",
+      "title": "完整默认游戏界面与作品皮肤/移动布局",
+      "depends_on": [
+        "G1-02",
+        "G4-02",
+        "G5-01",
+        "G5-02",
+        "G6-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "title/menu/settings/save/load/history/extras UI"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "default-game-ui",
+        "theme-only-instance",
+        "touch-keyboard"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "id": "G7-01",
+      "milestone": "G7",
+      "title": "完整通用 GalGame 原创验收作品与独立消费",
+      "depends_on": [
+        "G6-02",
+        "G3-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "common-vn original fixtures and consumer evidence"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "common-feature-gate",
+        "browser-matrix",
+        "packed-full-vn"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
     }
   ]
 }

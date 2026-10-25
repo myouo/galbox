@@ -1,6 +1,6 @@
 import { Core, validateRestore } from '../core/index.js';
 import type { CoreView, CoreEvent, ProgressChange } from '../core/index.js';
-import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError,parseResourceBudget,parseReleaseManifest } from '../protocol/index.js';
+import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError,parseResourceBudget,parseReleaseManifest, parsePlayerPreferences, parsePreferencesRecord, parsePreferencesPatch } from '../protocol/index.js';
 import type { Program, Snapshot, DeepReadonly, Profile, RestoreRecipe, SlotMetadata, StoreImport, JsonValue } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { Coordinator } from '../runtime/coordinator.js';
@@ -16,6 +16,8 @@ import {materializeImport} from '../save-bridge/index.js';
 import type {SaveBindingRegistry,PreparedImport,PrepareResult,ConversionReport,OriginalSaveFile} from '../save-bridge/index.js';
 import {createReleaseManifest,verifyReleaseManifest,releaseFingerprint,defaultResourceBudget,canonicalReleaseJSON} from '../release/index.js';
 import type {ResourceBudget,ReleaseManifest} from '../release/index.js';
+import {defaultPreferences,mergePreferences} from '../settings/index.js';
+import type {PreferencesRecord} from '../settings/index.js';
 import type {ResourceDiagnostics} from '../web-host/host.js';
 import {webFormatContext,webReleaseDigest} from '../web-host/format.js';
 import { TextController } from '../web-host/text.js';
@@ -25,9 +27,11 @@ import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;}
+export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;preferencesDefaults?:unknown;}
 export interface ReleaseView {readonly origin:'manifest'|'derived';readonly sha256:string;readonly manifest:DeepReadonly<ReleaseManifest>;}
+export interface PreferencesResult {readonly record:DeepReadonly<PreferencesRecord>;readonly committed:true;readonly disposed:boolean;}
 export interface PlayerView {
+  readonly preferences:DeepReadonly<PreferencesRecord>;readonly preferencesSupported:boolean;
   readonly release:ReleaseView|null;readonly resources:DeepReadonly<ResourceDiagnostics>;
   readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'commit-unknown'|'disposed';readonly core:CoreView|null;readonly error:string|null;
   readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profiles:readonly {profileId:string;revision:number}[];readonly profileId:string;readonly slots:readonly {slot:string;revision:number;profileId:string;label:string}[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
@@ -39,6 +43,10 @@ export interface BackupRestoreResult {readonly id:string;readonly profiles:Backu
 export class Player {
   private readonly backupCommits=new WeakMap<PreparedBackupRestore,string>();
   private runtime:Coordinator|null=null;
+  private preferences:PreferencesRecord;
+  private readonly preferencesDefaults:import('../protocol/index.js').PlayerPreferences;
+  private preferencesSupported=false;
+  private preferencesTail:Promise<void>=Promise.resolve();
   private release:ReleaseView|null=null;
   private readonly requestedRelease:ReleaseManifest|null;
   private readonly resourceBudget:ResourceBudget;
@@ -81,8 +89,9 @@ export class Player {
   private constructor(private readonly options:PlayerOptions){
     this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
     this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);this.requestedRelease=options.release===undefined?null:parseReleaseManifest(options.release);this.resourceBudget=parseResourceBudget(options.resourceBudget??this.requestedRelease?.limits??defaultResourceBudget);ensure(!this.requestedRelease||canonicalReleaseJSON(this.resourceBudget)===canonicalReleaseJSON(this.requestedRelease.limits),'RELEASE_BUDGET','Player budget differs from manifest');
-    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);});this.text=new TextController(options.mount);
-    this.cached={release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.preferencesDefaults=parsePlayerPreferences(options.preferencesDefaults??defaultPreferences());this.preferences={revision:0,value:parsePlayerPreferences(this.preferencesDefaults)};
+    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);});this.text=new TextController(options.mount);this.host.applyAudioPreferences(this.preferences.value.audio);
+    this.cached={preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
   static async create(options:PlayerOptions):Promise<Player> {
     ensure(!options.signal?.aborted,'PLAYER_CANCELLED','Creation cancelled');const player=new Player(Object.freeze({...options}));player.options.signal?.addEventListener('abort',player.abortRequested,{once:true});
@@ -90,6 +99,7 @@ export class Player {
       const digest=webReleaseDigest(),releaseOptions={program:player.program,series:player.options.saveCompatibilitySeries,operations:player.operations,...(player.options.bindings?{bindings:player.options.bindings}:{})};
       if(player.requestedRelease)await verifyReleaseManifest(player.requestedRelease,releaseOptions,digest);ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');
       player.store=player.options.store??await openStore(player.namespace,player.options.database);player.ownsStore=!player.options.store;if(player.disposed){if(player.ownsStore)player.store.close();throw new GalboxError('PLAYER_CANCELLED','Creation cancelled');}
+      player.preferencesSupported=!!player.store.readPreferences&&!!player.store.writePreferences;if(player.preferencesSupported){const stored=await player.store.readPreferences?.();if(stored)player.preferences=parsePreferencesRecord(stored);}ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');player.host.applyAudioPreferences(player.preferences.value.audio);
       await player.host.init(player.program,player.options.provider,player.abort.signal,player.resourceBudget,player.requestedRelease?.resources);
       const manifest=player.requestedRelease??await createReleaseManifest({...releaseOptions,resources:player.host.resourceFacts(),limits:player.resourceBudget},digest);const sha256=await releaseFingerprint(manifest,digest);ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');player.release={origin:player.requestedRelease?'manifest':'derived',sha256,manifest};
       document.addEventListener('visibilitychange',player.visibility);window.addEventListener('blur',player.blur);window.addEventListener('focus',player.focus);
@@ -101,7 +111,7 @@ export class Player {
   private publish():void {
     const core=this.runtime?.view()??null;
     if(core){this.host.render(core.run);this.text.render(core.run);}
-    this.cached={release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.cached={preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
     for(const listener of [...this.listeners]){try{listener();}catch(error){this.error=error instanceof Error?error.message:String(error);}}
   }
   private frame=(now:number):void=>{
@@ -128,7 +138,7 @@ export class Player {
     if(this.disposed)return;const records=await this.requireStore().listSlots?.();const profiles=await this.requireStore().listProfiles?.();if(profiles)this.profiles=profiles.map(p=>({...p}));if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot}));this.publish();
   }
   private async initialCandidate(profile:Profile):Promise<Core> {
-    const candidate=new Core(this.program,profile,undefined,'initial',this.operations);let operations=0;
+    const candidate=new Core(this.program,profile,undefined,'initial',this.operations);candidate.accept({type:'text.preferences',value:this.preferences.value.text});let operations=0;
     for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:profile.revision});continue;}if(result==='stable')return candidate;await new Promise<void>(resolve=>queueMicrotask(resolve));}
   }
   async start(profileId='main'):Promise<void> {
@@ -144,7 +154,7 @@ export class Player {
   private async install(activation:Activation,owner:string,gen:number):Promise<void> {
     const store=this.requireStore(),head=await store.read(activation.profileId??'main');
     ensure(head.head?.id===activation.id&&(head.head.owner??head.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Candidate no longer owns the durable head');
-    const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations),epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text.render(candidate.view().run);
+    const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations);candidate.accept({type:'text.preferences',value:this.preferences.value.text});const epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text.render(candidate.view().run);
     const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100);this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
     await runtime.start();this.host.assertReady();ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Takeover was superseded');
     await store.confirm(activation.id,owner);const confirmed=await store.read(this.profileId);ensure(confirmed.head?.id===activation.id&&(confirmed.head.owner??confirmed.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Head changed during takeover');
@@ -231,6 +241,15 @@ export class Player {
   setPaused(value:boolean):void {this.setPause('user',value);}
   setFast(value:boolean):void {this.fast=value&&!this.pauses.size;this.publish();}
   setVolume(value:number):void {this.host.setVolume(value);}
+  private async applyPreferences(record:PreferencesRecord):Promise<void> {this.preferences=parsePreferencesRecord(record);if(this.disposed)return;this.host.applyAudioPreferences(record.value.audio);await this.runtime?.dispatch({type:'text.preferences',value:record.value.text});this.publish();}
+  async updatePreferences(input:unknown):Promise<PreferencesResult> {
+    const patch=parsePreferencesPatch(input),store=this.requireStore(),write=store.writePreferences?.bind(store);ensure(this.preferencesSupported&&write,'PREFERENCES_UNSUPPORTED','Storage has no preferences port');
+    const work=this.preferencesTail.catch(()=>{}).then(async()=>{ensure(!this.disposed,'PLAYER_DISPOSED','Player unavailable');const value=mergePreferences(this.preferences.value,patch);let record:PreferencesRecord;try{record=await write(value,this.preferences.revision);}catch(error){if(error instanceof GalboxError&&error.code==='PREFERENCES_CONFLICT')throw error;throw new GalboxError('PREFERENCES_COMMIT_UNKNOWN',`Reload preferences to reconcile the durable result. ${String(error)}`);}await this.applyPreferences(record);return {record:parsePreferencesRecord(record),committed:true as const,disposed:this.disposed};});this.preferencesTail=work.then(()=>{},()=>{});return work;
+  }
+  async reloadPreferences():Promise<void> {
+    const store=this.requireStore(),read=store.readPreferences?.bind(store);ensure(this.preferencesSupported&&read,'PREFERENCES_UNSUPPORTED','Storage has no preferences port');const work=this.preferencesTail.catch(()=>{}).then(async()=>{ensure(!this.disposed,'PLAYER_DISPOSED','Player unavailable');const stored=await read();await this.applyPreferences(stored??{revision:0,value:parsePlayerPreferences(this.preferencesDefaults)});});this.preferencesTail=work.catch(()=>{});return work;
+  }
+
   capture():DeepReadonly<Snapshot> {ensure(this.runtime,'PLAYER_NOT_STARTED','Start first');return this.runtime.core.capture();}
   dispose():void {
     if(this.disposed)return;this.disposed=true;++this.generation;++this.importGeneration;this.options.signal?.removeEventListener('abort',this.abortRequested);this.abort.abort();cancelAnimationFrame(this.frameId);

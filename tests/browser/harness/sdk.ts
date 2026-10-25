@@ -12,3 +12,5 @@ export {createFixtureBinding} from '../../../fixtures/synthetic-saves/binding.js
 export * from 'galbox-sdk/backups';
 
 export * from 'galbox-sdk/release';
+
+export * from 'galbox-sdk/settings';

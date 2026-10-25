@@ -1,4 +1,4 @@
-# 当前能力：M0–M5 本地 alpha
+# 当前能力：有限 alpha 与通用功能扩建
 
 具体通过状态由 tasks.json 与 evidence/ 给出；后续任务不因本表列出目标而计为完成。
 
@@ -30,7 +30,7 @@ fixture-save@1 与消费者格式均为原创 synthetic，不提供 NScripter/KA
 
 M4 提供实际 CLI/标准项目、SourceMap 与必要行为覆盖发布门槛、只读 saves analyze/verify，以及独立 tarball 扩展/完整调用迁移/合成 binding 的开发者工作流。Node/Vite 仅在 CLI；Core 不依赖它们。覆盖清单和标准候选校验不是原作忠实性认证。
 
-备份格式、事务边界、迁移工厂与失败行为见 [BACKUPS](BACKUPS.md)。M5 其余任务仍未完成；当前验证范围见各次证据。
+备份格式、事务边界、迁移工厂与失败行为见 [BACKUPS](BACKUPS.md)。M0–M5 的历史有限集已经验收；G0–G7 完整通用集尚未完成，当前验证范围见各次证据。
 
 M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。只声明已执行平台证据；VRAM 仅 RGBA 估算，不冒充设备测量。
 
@@ -39,3 +39,5 @@ M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。�
 本地 0.1.0 alpha 候选与未完成的 N/F/M6 门槛见 [ALPHA](ALPHA.md)，不声明稳定 API 或真实两作支持。
 
 H1-01 加固保持协议/API：静态舞台不重复提交，正文/进度仍推进；新 epoch/动画仍绘制，实例销毁保留共享 Pixi 池并释放本实例 context，取消后的迟到 renderer 也清理。最新证据见 [H1-01](evidence/h1-01/REPORT.md)。
+
+用户要求的完整常用能力与实例职责见 [COMMON_VN](COMMON_VN.md)。G1-01 已落地的设置数据/系统提供主、BGM、voice、sfx 音量和文字间隔，独立于剧情 profile 持久化，默认 UI 可用，见 [SETTINGS](SETTINGS.md)。自动阅读/输入、富文本/NVL/多文本框、图文存档、流程图、鉴赏和剧本 UI 等 G 项尚未完成。

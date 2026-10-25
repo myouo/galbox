@@ -53,6 +53,10 @@
     "./release": {
       "types": "./dist/release/index.d.ts",
       "import": "./dist/release/index.js"
+    },
+    "./settings": {
+      "types": "./dist/settings/index.d.ts",
+      "import": "./dist/settings/index.js"
     }
   },
   "dependencies": {
