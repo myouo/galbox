@@ -1,6 +1,6 @@
 # galbox-sdk 实施架构
 
-状态：M0–M4 已按此架构建设；具体通过状态见 tasks.json 与 evidence/。本文把 [v0.6](reference/GalBox-SDK-v0.6-Implementation-Design.md) 收束为可开发的模块。长期语义约束见 [CONTRACTS](CONTRACTS.md)，阶段范围见 [MILESTONES](MILESTONES.md)。
+状态：M0–M4 和 M5-01 按此架构建设；具体通过状态见 tasks.json 与 evidence/。本文把 [v0.6](reference/GalBox-SDK-v0.6-Implementation-Design.md) 收束为可开发的模块。长期语义约束见 [CONTRACTS](CONTRACTS.md)，阶段范围见 [MILESTONES](MILESTONES.md)。
 
 ## 1. 技术选择
 
@@ -44,6 +44,9 @@ SDK 主包目标名 `galbox-sdk`，公开 npm 名称尚未核验。内部模块�
 | galbox-sdk/player | createPlayer、语义动作、保存/加载、生命周期与订阅 | M2 |
 | galbox-sdk/react | 默认 UI 组件及 Player 绑定 | M2 |
 | galbox-sdk/testing | 虚拟时间/Host、trace 与行为断言工具 | M1 |
+| galbox-sdk/save-bridge | 已登记来源、codec、mapping 与不透明导入计划 | M3 |
+| galbox-sdk/diagnostics | Program/快照追踪、SourceMap 与行为覆盖诊断 | M4 |
+| galbox-sdk/backups | 有界持久备份、完整内容迁移与隔离恢复计划 | M5-01 |
 
 根入口只导出常用 Player API；headless 用户使用 core/protocol 子路径。exports 精确列出，禁止 `./* → ./src/*` 暴露私有实现。某子入口尚未实现时不导出抛 NotImplemented 的伪产品接口。React 等可选 UI 依赖不能被 core 的运行包或类型声明间接引入。
 
@@ -114,6 +117,10 @@ profile action 与 RunState 在同一 transition 更新工作视图。coordinato
 ### 5.6 原版导入（M3 起）
 
 文件由环境 adapter 转为带角色/摘要的标准包。codec 解释已知格式，mapping 绑定发行版与加载语义，prepare 生成不可随意修改的计划。必要 recipe 在候选 Core 中有界执行，真人交互留待激活后。commitImport 创建槽位/独立 profile 分支，load 再单独激活。导入成功与接管成功分别报告。
+
+### 5.7 便携备份（M5-01）
+
+单次只读事务读取全部持久 profile 与当前/上一槽位闭包。备份不携带 activation/owner/回执。准备验证全部引用、生产 Core 和有界 recipe；跨 release 须显式完整迁移。原子恢复仅添加新的 profile/槽位并保存幂等回执，保留原数据和当前 head。有槽位时 load；只有普通进度时明确 start(profileId) 从头开始。默认 UI 在刷新后仍能列出独立进度。详见 [BACKUPS](BACKUPS.md)。
 
 ## 6. 初始能力与扩展点
 

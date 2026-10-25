@@ -13,6 +13,7 @@
     "packages/galbox-sdk/src/program-tools/**/*",
     "packages/galbox-sdk/src/testing/**/*",
     "packages/galbox-sdk/src/save-bridge/**/*",
-    "packages/galbox-sdk/src/diagnostics/**/*"
+    "packages/galbox-sdk/src/diagnostics/**/*",
+    "packages/galbox-sdk/src/backups/**/*"
   ]
 }

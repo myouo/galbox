@@ -16,6 +16,8 @@ import {materializeImport} from '../save-bridge/index.js';
 import type {SaveBindingRegistry,PreparedImport,PrepareResult,ConversionReport,OriginalSaveFile} from '../save-bridge/index.js';
 import {webFormatContext} from '../web-host/format.js';
 import { TextController } from '../web-host/text.js';
+import {prepareBackupRestore,materializeBackupRestore,storageNamespace} from '../backups/index.js';
+import type {PreparedBackupRestore,ContentMigration,PortableBackup,BackupRestoreReceipt} from '../backups/index.js';
 import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
@@ -23,14 +25,17 @@ export type { Store } from '../runtime/ports.js';
 export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;}
 export interface PlayerView {
   readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'commit-unknown'|'disposed';readonly core:CoreView|null;readonly error:string|null;
-  readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profileId:string;readonly slots:readonly {slot:string;revision:number;profileId:string;label:string}[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
+  readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profiles:readonly {profileId:string;revision:number}[];readonly profileId:string;readonly slots:readonly {slot:string;revision:number;profileId:string;label:string}[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
 }
 export interface ImportResult {readonly id:string;readonly slot:string;readonly profileId:string;readonly revision:number;readonly committed:true;readonly disposed:boolean;}
 interface LoadPolicy {profileId:string;recipe?:RestoreRecipe;onLoad?:RestoreRecipe;provenance?:JsonValue;slot?:string;start?:boolean;}
 export interface SaveResult {readonly slot:string;readonly revision:number;readonly disposed:boolean;}
+export interface BackupRestoreResult {readonly id:string;readonly profiles:BackupRestoreReceipt['profiles'];readonly slots:BackupRestoreReceipt['slots'];readonly committed:true;readonly disposed:boolean;}
 export class Player {
+  private readonly backupCommits=new WeakMap<PreparedBackupRestore,string>();
   private runtime:Coordinator|null=null;
   private profileId='main';
+  private profiles:{profileId:string;revision:number}[]=[];
   private onLoad:RestoreRecipe|undefined;
   private provenance:JsonValue|undefined;
   private slots:{slot:string;revision:number;profileId:string;label:string}[]=[];
@@ -65,10 +70,10 @@ export class Player {
   readonly namespace:string;
   private readonly instance=crypto.randomUUID();
   private constructor(private readonly options:PlayerOptions){
-    this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();ensure(/^[a-zA-Z0-9_.-]{1,80}$/.test(options.saveCompatibilitySeries),'NAMESPACE','Invalid compatibility series');
-    this.namespace=JSON.stringify([this.program.gameId,options.saveCompatibilitySeries]);
+    this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
+    this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);
     this.host=new WebHost(options.mount);this.text=new TextController(options.mount);
-    this.cached={title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.cached={title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
   static async create(options:PlayerOptions):Promise<Player> {
     const player=new Player(Object.freeze({...options}));
@@ -84,7 +89,7 @@ export class Player {
   private publish():void {
     const core=this.runtime?.view()??null;
     if(core){this.host.render(core.run);this.text.render(core.run);}
-    this.cached={title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.cached={title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
     for(const listener of [...this.listeners]){try{listener();}catch(error){this.error=error instanceof Error?error.message:String(error);}}
   }
   private frame=(now:number):void=>{
@@ -108,15 +113,15 @@ export class Player {
   private requireStore():Store {ensure(this.store&&!this.disposed,'PLAYER_DISPOSED','Player unavailable');return this.store;}
   private stopRuntime():void {const runtime=this.runtime;this.runtime=null;this.unsubscribe?.();this.unsubscribe=null;runtime?.stop();}
   private async refreshSlots():Promise<void> {
-    if(this.disposed)return;const records=await this.requireStore().listSlots?.();if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot}));this.publish();
+    if(this.disposed)return;const records=await this.requireStore().listSlots?.();const profiles=await this.requireStore().listProfiles?.();if(profiles)this.profiles=profiles.map(p=>({...p}));if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot}));this.publish();
   }
   private async initialCandidate(profile:Profile):Promise<Core> {
     const candidate=new Core(this.program,profile,undefined,'initial',this.operations);let operations=0;
     for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:profile.revision});continue;}if(result==='stable')return candidate;await new Promise<void>(resolve=>queueMicrotask(resolve));}
   }
-  async start():Promise<void> {
+  async start(profileId='main'):Promise<void> {
     this.requireStore();const gen=++this.generation;this.lifecycle='preparing';this.publish();await this.host.unlock();
-    try {await this.activate(null,gen,{profileId:'main',start:true});}catch(error){this.precommitFailure(gen,error);throw error;}
+    try {await this.activate(null,gen,{profileId,start:true});}catch(error){this.precommitFailure(gen,error);throw error;}
   }
   async load(slot='quick'):Promise<void> {
     const store=this.requireStore(),gen=++this.generation;this.lifecycle='preparing';this.publish();
@@ -176,6 +181,19 @@ export class Player {
     let receipt;try{receipt=await write(commit);}catch(error){const failure=new GalboxError('IMPORT_COMMIT_UNKNOWN',`Import may have committed; retry this same plan. ${String(error)}`);this.fail(failure);throw failure;}
     if(!this.disposed){this.error=null;if(this.pendingImport===plan)this.lastImport={slot:receipt.slot,profileId:receipt.profileId};try{await this.refreshSlots();}catch(error){this.fail(error);}}
     return {id:receipt.id,slot:receipt.slot,profileId:receipt.profileId,revision:receipt.revision,committed:true,disposed:this.disposed};
+  }
+  async exportBackup():Promise<PortableBackup> {
+    const store=this.requireStore(),read=store.backup?.bind(store);ensure(read,'STORAGE_BACKUP_UNSUPPORTED','Storage does not support atomic backups');await this.runtime?.flushAll();return read(this.program.gameId,this.options.saveCompatibilitySeries,this.program.release);
+  }
+  prepareBackupRestore(input:unknown,migration?:ContentMigration):PreparedBackupRestore {
+    this.requireStore();return prepareBackupRestore(input,{program:this.program,series:this.options.saveCompatibilitySeries,operations:this.operations,...(migration?{migration}:{})});
+  }
+  async commitBackupRestore(plan:PreparedBackupRestore):Promise<BackupRestoreResult> {
+    const store=this.requireStore(),write=store.restoreBackup?.bind(store);ensure(write,'STORAGE_BACKUP_UNSUPPORTED','Storage does not support atomic backup restoration');const backup=materializeBackupRestore(plan,{program:this.program,series:this.options.saveCompatibilitySeries,operations:this.operations});
+    let id=this.backupCommits.get(plan);if(!id){id=`${this.instance}:backup${++this.importCounter}`;this.backupCommits.set(plan,id);}
+    let receipt:BackupRestoreReceipt;try{receipt=await write({id,backup});}catch(error){const failure=new GalboxError('BACKUP_COMMIT_UNKNOWN',`Restore may have committed; retry this same plan. ${String(error)}`);this.fail(failure);throw failure;}
+    if(!this.disposed){this.error=null;try{await this.refreshSlots();}catch(error){this.fail(error);}}
+    return {id:receipt.id,profiles:receipt.profiles,slots:receipt.slots,committed:true,disposed:this.disposed};
   }
   async flush():Promise<void> {this.requireStore();await this.runtime?.flushAll();this.publish();}
   async discardAndLoad(slot='quick'):Promise<void> {

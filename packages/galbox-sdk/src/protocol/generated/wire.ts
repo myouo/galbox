@@ -724,3 +724,72 @@ export interface ProgressBatchWire {
    */
   changes: ProgressChangeWire[];
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "BackupProfile".
+ */
+export interface BackupProfile {
+  id: string;
+  profile: Profile;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "BackupSlot".
+ */
+export interface BackupSlot {
+  slot: string;
+  revision: number;
+  snapshot: Snapshot;
+  previous: Snapshot | null;
+  metadata: SlotMetadata;
+  previousMetadata?: SlotMetadata;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "PortableBackup".
+ */
+export interface PortableBackup {
+  format: 'galbox-backup';
+  version: 1;
+  gameId: string;
+  series: string;
+  /**
+   * @maxItems 64
+   */
+  profiles: BackupProfile[];
+  /**
+   * @maxItems 128
+   */
+  slots: BackupSlot[];
+  release: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StoreBackupRestore".
+ */
+export interface StoreBackupRestore {
+  id: string;
+  backup: PortableBackup;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "BackupRestoreReceipt".
+ */
+export interface BackupRestoreReceipt {
+  id: string;
+  signature: string;
+  /**
+   * @maxItems 64
+   */
+  profiles: {
+    id: string;
+    restoredId: string;
+  }[];
+  /**
+   * @maxItems 128
+   */
+  slots: {
+    slot: string;
+    restoredSlot: string;
+  }[];
+}

@@ -1,0 +1,971 @@
+{
+  "config": {
+    "argv": [
+      "/home/myo/.nvm/versions/node/v24.15.0/bin/node",
+      "/home/myo/Desktop/galbox-sdk/node_modules/@playwright/test/cli.js",
+      "test"
+    ],
+    "configFile": "/home/myo/Desktop/galbox-sdk/playwright.config.ts",
+    "rootDir": "/home/myo/Desktop/galbox-sdk/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/myo/Desktop/galbox-sdk/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/myo/Desktop/galbox-sdk/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/myo/Desktop/galbox-sdk/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/myo/Desktop/galbox-sdk/tests/browser",
+        "snapshotDir": "/home/myo/Desktop/galbox-sdk/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4173",
+          "headless": true,
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "launchOptions": {
+            "args": [
+              "--use-gl=angle",
+              "--use-angle=swiftshader",
+              "--enable-unsafe-swiftshader"
+            ]
+          },
+          "trace": "retain-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/evidence/m5-01/browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "adapters.spec.ts",
+      "file": "adapters.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "browser resource identity, digest, owned bytes, cancellation lease and actual decode failure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 870,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:06.541Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-a86fc9b5b8f2ff854894",
+          "file": "adapters.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "real IndexedDB isolates namespaces and rejects profile/slot/head conflicts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 397,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:07.707Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-09c6b6f79aa9fbce0e84",
+          "file": "adapters.spec.ts",
+          "line": 23,
+          "column": 1
+        },
+        {
+          "title": "public Player saves partial animation group, resumes with new audio epoch, cleans instances",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4092,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:08.115Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-53230b7ee55288fe6120",
+          "file": "adapters.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "load generations retain current profile and a delayed older preparation never takes over",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1327,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:12.218Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-ff36a9b8836f77820f0c",
+          "file": "adapters.spec.ts",
+          "line": 52,
+          "column": 1
+        },
+        {
+          "title": "save already inside storage commit reports success after dispose; resources stay released",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 730,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:13.557Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-654d754eb7f7437de36c",
+          "file": "adapters.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "blocked real audio startup retries the same task without repeating narrative updates",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 860,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:14.300Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-2e87c527f801cde35ec2",
+          "file": "adapters.spec.ts",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "title": "old input epoch cannot act on an identical restored prompt; pause reasons remain independent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1563,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:15.171Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-d95a4ab3bdb29869d90a",
+          "file": "adapters.spec.ts",
+          "line": 88,
+          "column": 1
+        },
+        {
+          "title": "postcommit failure retries the same activation; a new load supersedes it permanently",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1198,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:16.746Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-ab6cf028ad10bcd4c1ec",
+          "file": "adapters.spec.ts",
+          "line": 98,
+          "column": 1
+        },
+        {
+          "title": "missing Web Audio fails with an explicit unavailable diagnostic and no leftover canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 539,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:17.957Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-b1af9107788de5a7b87d",
+          "file": "adapters.spec.ts",
+          "line": 110,
+          "column": 1
+        },
+        {
+          "title": "initial Player activation plays a stop-on-restore one-shot; subsequent load stops it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1135,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:18.512Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "433e798626df4f2cb4a0-d92f11851aa7d72060d0",
+          "file": "adapters.spec.ts",
+          "line": 117,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "backups.spec.ts",
+      "file": "backups.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "default UI downloads a portable backup, restores an independent branch and loads it across refresh",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 681,
+                  "error": {
+                    "message": "SyntaxError: Unexpected end of JSON input",
+                    "stack": "SyntaxError: Unexpected end of JSON input\n    at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:6:34\n    at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:6:2",
+                    "location": {
+                      "file": "/home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts",
+                      "column": 34,
+                      "line": 6
+                    },
+                    "snippet": "  4 | test('default UI downloads a portable backup, restores an independent branch and loads it across refresh',async({page})=>{\n  5 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).click();await page.getByTestId('advance').click();await page.getByTestId('advance').click();\n> 6 |  await expect.poll(async()=>JSON.parse(await page.getByTestId('diagnostics').innerText()).profile.read.length).toBe(1);const text=await page.getByTestId('story-text').innerText();\n    |                                  ^\n  7 |  await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByRole('button',{name:'快速保存',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存到浏览器');\n  8 |  const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'下载备份',exact:true}).click();const download=await downloading,path=await download.path();if(!path)throw new Error('No backup file');const bytes=await readFile(path),backup=JSON.parse(bytes.toString('utf8'));\n  9 |  expect(backup.format).toBe('galbox-backup');expect(backup.slots).toHaveLength(1);expect(backup.profiles[0].profile.read).toEqual(['opening.1@zh-1']);expect(backup.head).toBeUndefined();expect(backup.receipts).toBeUndefined();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts",
+                        "column": 34,
+                        "line": 6
+                      },
+                      "message": "SyntaxError: Unexpected end of JSON input\n\n  4 | test('default UI downloads a portable backup, restores an independent branch and loads it across refresh',async({page})=>{\n  5 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).click();await page.getByTestId('advance').click();await page.getByTestId('advance').click();\n> 6 |  await expect.poll(async()=>JSON.parse(await page.getByTestId('diagnostics').innerText()).profile.read.length).toBe(1);const text=await page.getByTestId('story-text').innerText();\n    |                                  ^\n  7 |  await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByRole('button',{name:'快速保存',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存到浏览器');\n  8 |  const downloading=page.waitForEvent('download');await page.getByRole('button',{name:'下载备份',exact:true}).click();const download=await downloading,path=await download.path();if(!path)throw new Error('No backup file');const bytes=await readFile(path),backup=JSON.parse(bytes.toString('utf8'));\n  9 |  expect(backup.format).toBe('galbox-backup');expect(backup.slots).toHaveLength(1);expect(backup.profiles[0].profile.read).toEqual(['opening.1@zh-1']);expect(backup.head).toBeUndefined();expect(backup.receipts).toBeUndefined();\n    at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:6:34\n    at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:6:2"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:19.670Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/myo/Desktop/galbox-sdk/test-results/backups-default-UI-downloa-4061e-and-loads-it-across-refresh/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/myo/Desktop/galbox-sdk/test-results/backups-default-UI-downloa-4061e-and-loads-it-across-refresh/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts",
+                    "column": 34,
+                    "line": 6
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9b428ab083cef40f6d91-2a7975453d405cb6fc09",
+          "file": "backups.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "real IndexedDB abort rolls back the entire restore; lost replies retry without activation or hook effects",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1229,
+                  "error": {
+                    "message": "Error: page.evaluate: GalboxError: PROFILE_KIND: loads\n    at V (http://127.0.0.1:4174/sdk.js:27609:16)\n    at ai.execute (http://127.0.0.1:4174/sdk.js:28693:5)\n    at ai.applyRecipe (http://127.0.0.1:4174/sdk.js:28430:10)\n    at Yd (http://127.0.0.1:4174/sdk.js:37329:4)\n    at Ef (http://127.0.0.1:4174/sdk.js:37589:78)\n    at Df (http://127.0.0.1:4174/sdk.js:37602:174)\n    at e.prepareBackupRestore (http://127.0.0.1:4174/sdk.js:38019:31)\n    at eval (eval at evaluate (:370:30), <anonymous>:69:21)\n    at async <anonymous>:396:30",
+                    "stack": "Error: page.evaluate: GalboxError: PROFILE_KIND: loads\n    at V (http://127.0.0.1:4174/sdk.js:27609:16)\n    at ai.execute (http://127.0.0.1:4174/sdk.js:28693:5)\n    at ai.applyRecipe (http://127.0.0.1:4174/sdk.js:28430:10)\n    at Yd (http://127.0.0.1:4174/sdk.js:37329:4)\n    at Ef (http://127.0.0.1:4174/sdk.js:37589:78)\n    at Df (http://127.0.0.1:4174/sdk.js:37602:174)\n    at e.prepareBackupRestore (http://127.0.0.1:4174/sdk.js:38019:31)\n    at eval (eval at evaluate (:370:30), <anonymous>:69:21)\n    at async <anonymous>:396:30\n    at V (http://127.0.0.1:4174/sdk.js:27609:16)\n    at ai.execute (http://127.0.0.1:4174/sdk.js:28693:5)\n    at ai.applyRecipe (http://127.0.0.1:4174/sdk.js:28430:10)\n    at Yd (http://127.0.0.1:4174/sdk.js:37329:4)\n    at Ef (http://127.0.0.1:4174/sdk.js:37589:78)\n    at Df (http://127.0.0.1:4174/sdk.js:37602:174)\n    at e.prepareBackupRestore (http://127.0.0.1:4174/sdk.js:38019:31)\n    at eval (eval at evaluate (:370:30), <anonymous>:69:21)\n    at async <anonymous>:396:30\n    at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:16:102",
+                    "location": {
+                      "file": "http://127.0.0.1:4174/sdk.js",
+                      "column": 16,
+                      "line": 27609
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:4174/sdk.js",
+                        "column": 16,
+                        "line": 27609
+                      },
+                      "message": "Error: page.evaluate: GalboxError: PROFILE_KIND: loads\n    at V (http://127.0.0.1:4174/sdk.js:27609:16)\n    at ai.execute (http://127.0.0.1:4174/sdk.js:28693:5)\n    at ai.applyRecipe (http://127.0.0.1:4174/sdk.js:28430:10)\n    at Yd (http://127.0.0.1:4174/sdk.js:37329:4)\n    at Ef (http://127.0.0.1:4174/sdk.js:37589:78)\n    at Df (http://127.0.0.1:4174/sdk.js:37602:174)\n    at e.prepareBackupRestore (http://127.0.0.1:4174/sdk.js:38019:31)\n    at eval (eval at evaluate (:370:30), <anonymous>:69:21)\n    at async <anonymous>:396:30\n    at V (http://127.0.0.1:4174/sdk.js:27609:16)\n    at ai.execute (http://127.0.0.1:4174/sdk.js:28693:5)\n    at ai.applyRecipe (http://127.0.0.1:4174/sdk.js:28430:10)\n    at Yd (http://127.0.0.1:4174/sdk.js:37329:4)\n    at Ef (http://127.0.0.1:4174/sdk.js:37589:78)\n    at Df (http://127.0.0.1:4174/sdk.js:37602:174)\n    at e.prepareBackupRestore (http://127.0.0.1:4174/sdk.js:38019:31)\n    at eval (eval at evaluate (:370:30), <anonymous>:69:21)\n    at async <anonymous>:396:30\n    at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:16:102"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:21.688Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/myo/Desktop/galbox-sdk/test-results/backups-real-IndexedDB-abo-ea85c--activation-or-hook-effects/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/myo/Desktop/galbox-sdk/test-results/backups-real-IndexedDB-abo-ea85c--activation-or-hook-effects/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:4174/sdk.js",
+                    "column": 16,
+                    "line": 27609
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9b428ab083cef40f6d91-488c10b0bee8838552ec",
+          "file": "backups.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "another database consumes the backup; release migration is explicit and old slots remain exportable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1394,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:23.860Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9b428ab083cef40f6d91-597a2bf1f8231587ca86",
+          "file": "backups.spec.ts",
+          "line": 25,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "imports.spec.ts",
+      "file": "imports.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real UI imports into an independent profile, loads separately and preserves hooks after save/refresh",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7250,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:25.345Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c9d84957164db689fbd2-616947b8407f2d3fecaf",
+          "file": "imports.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "lost import/activation replies remain idempotent; pending retry does not reapply the hook",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1587,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:32.614Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c9d84957164db689fbd2-edeaeae6ddd1becf33a6",
+          "file": "imports.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "the final activation barrier hands off dirty profile before recomputing the load recipe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1320,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:34.218Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c9d84957164db689fbd2-3c545d26a5ec02be131e",
+          "file": "imports.spec.ts",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "title": "a late File read cannot clear or replace a newer prepared import",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 573,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:35.551Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c9d84957164db689fbd2-dd4d27482dd0acd7e85c",
+          "file": "imports.spec.ts",
+          "line": 35,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "player.spec.ts",
+      "file": "player.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary profile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14792,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:36.148Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f0d17164d8f62ffcd92a-1c8ee86a749bf9dcb9ce",
+          "file": "player.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "menu pointer release cannot advance and repeated create/dispose releases canvas/audio",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4702,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:50.965Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f0d17164d8f62ffcd92a-e1f3efb18b054e7222fe",
+          "file": "player.spec.ts",
+          "line": 34,
+          "column": 1
+        },
+        {
+          "title": "keyboard activation consumes one stage and a menu cancels a held key",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2875,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:55.707Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f0d17164d8f62ffcd92a-00540acc2d60d5feb5cf",
+          "file": "player.spec.ts",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "a blocked real audio start exposes a working retry button without advancing the story",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1336,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:01:58.616Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f0d17164d8f62ffcd92a-29f0b093a5e9d1b18c9e",
+          "file": "player.spec.ts",
+          "line": 43,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "synthetic.spec.ts",
+      "file": "synthetic.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "synthetic binary preparation uses real Web Crypto and rejects corrupt source bytes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2229,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-25T05:02:00.040Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "db4b16c31b0089702aee-9481adcbf5a0ca75b68f",
+          "file": "synthetic.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-25T05:00:58.963Z",
+    "duration": 63633.698,
+    "expected": 20,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

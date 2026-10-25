@@ -38,7 +38,8 @@ test('public Player saves partial animation group, resumes with new audio epoch,
   const url='http://127.0.0.1:4174/sdk.js';const sdk:typeof Harness=await import(url);const p=await(await fetch('/program.json')).json();const mount=document.createElement('div');mount.id='partial-stage';mount.style.cssText='width:640px;height:360px;position:relative';document.body.append(mount);
   const player=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,location.href),mount,saveCompatibilitySeries:'partial',database:'partial'});window.partialPlayer=player;await player.start();
  });
- await page.clock.pauseAt((await page.evaluate(()=>Date.now()))+100);
+ // Use the installed clock's fixed future point; a second RPC can outlive a 100 ms margin.
+ await page.clock.pauseAt(new Date(time.getTime()+60000));
  await page.evaluate(async()=>{const player=window.partialPlayer;if(!player)throw new Error('player');
   for(let j=0;j<3;j++){const w=player.getSnapshot().core?.run.wait;if(w?.kind!=='text')throw new Error('text');await player.input('reveal',w.prompt,player.getSnapshot().epoch);await player.input('advance',w.prompt,player.getSnapshot().epoch);}
  });

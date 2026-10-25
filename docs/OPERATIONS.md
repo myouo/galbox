@@ -34,7 +34,7 @@ const instruction=operation.invocation('main:counter',{delta:1});
 
 `codec` 工厂支持有限 i32 整数、string/bool/literal、精确 object、有限 array/tuple/union；不接受自造 codec 对象。JSON 输入限制为 4 MB、100000 个节点、64 层，拒绝循环、非有限数和 accessor。schema ID 与完整规范 signature 一起核验；signature 不是加密摘要。DeepReadonly 保留品牌和元组，运行时隔离另行执行。
 
-`migrateState` 只适用于 args/resume 身份和 schema signature 均相同的变化。args 或 wait ABI 改变时使用 `defineInvocationMigration(old,new,convert)`，转换 args/state/phase/wait 后重新链接；缺迁移明确拒绝并保留旧档。迁移不能改 invocation/address/帧归属，不能复用旧宿主 attempt。跨 content release 的迁移属于后续 M5。
+`migrateState` 只适用于 args/resume 身份和 schema signature 均相同的变化。args 或 wait ABI 改变时使用 `defineInvocationMigration(old,new,convert)`，转换 args/state/phase/wait 后重新链接；缺迁移明确拒绝并保留旧档。迁移不能改 invocation/address/帧归属，不能复用旧宿主 attempt。跨 content release 使用 [BACKUPS](BACKUPS.md) 的显式完整迁移；缺映射保留旧包并拒绝。
 
 完整独立示例见 `tests/consumer/extension.ts`：tarball 的公开工厂登记 v1、保存等待，再把完整调用升级到 args/resume 都变化的 v2。浏览器消费者另外验证 Player 保存/恢复及旧 attempt 拒绝。
 

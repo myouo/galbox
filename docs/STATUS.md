@@ -1,15 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-25。M0–M4 完成。当前分支 feat/developer-cli；本轮 M4-01=e56e46c、M4-02=91ec213，M4-03 交付另有本地提交。无推送/发布，完整任务状态以 tasks.json 为准。
+2026-10-25。M0–M4 与 M5-01 完成；M5 其余任务未完成。当前分支 feat/portable-backups，基线 8980849，本轮本地提交见 git log；没有推送/公开发布。完整任务状态以 tasks.json 为准，当前下一项 M5-02。
 
-新增实际 @galbox/cli init/validate/assets build/dev/build/saves analyze/verify、有限项目配置、标准 Builder/port/React 模板、受控项目登记、SourceMap 与必要行为发布门槛。Core 仍为唯一 TS 生产执行路径，不依赖 Node/Vite/DOM；CLI 通过项目 SDK 公共 ESM exports 工作。
+M5-01 新增正式 galbox-sdk/backups、Player 备份/准备/提交、显式完整内容迁移、IndexedDB 单事务导出和原子独立分支恢复。保留全部持久 profile、当前/上一槽位、recipe/onLoad/provenance 和原始修订；不转移 activation 权限，不覆盖 main/旧槽位。未保存的剧情位置、资源字节和原档附件不在备份中；总量有界。没有槽位的普通进度也可在默认菜单跨刷新选择，明确从头开始；公开 start(profileId)，无参数仍用 main。用法见 BACKUPS.md，支持集见 ADR 0008。
 
-最终验收：frozen 安装/check；54 单元；40 个仓库外模板/开发者真实命令与两个浏览器工作流；19 个引擎 Chromium 回归；独立 SDK tarball 严格类型/保存/恢复/导入/完整迁移。证据在 evidence/m4-03/REPORT.md（日志/JSON/摘要/截图），本地包在 artifacts/galbox-sdk-0.1.0.tgz 与 galbox-cli-0.1.0.tgz。旧证据只对应各自基线，当前修改用最新回归。
+最终回归：frozen 安装、check、63 单元、24 Chromium 用例（0 skip/flaky）、独立 SDK tarball 严格类型/原生 ESM/浏览器播放保存备份/完整 invocation 迁移、40 条独立 CLI 命令及两个开发浏览器工作流、4 个 synthetic 兼容测试均通过。证据在 evidence/m5-01/REPORT.md、顶层日志/JSON/截图和 source-manifest.json。旧阶段证据只对应各自基线；before-profile-entry 与失败日志为历史记录。已修复 Ajv standalone 的 CJS helper 导致原生 ESM 打包消费失败，补了回归，未添加运行时 Ajv。
 
-新项目用法见 CLI.md；完整增加路线、signal、完整调用迁移与自制来源见 DEVELOPER_WORKFLOW.md。开发者任务没有 workspace alias，坏 args/缺 mapping/缺迁移/旧 text revision 均实际失败且能定位。候选 verify 不写存储，也没有原作忠实性认证。
+本地包 artifacts/galbox-sdk-0.1.0.tgz 和 galbox-cli-0.1.0.tgz 已实际独立安装验证；SDK consumer 与 CLI 测得 SDK 包 SHA 相同，具体摘要在报告。运行 pnpm install --frozen-lockfile；本机用 export TMPDIR=/dev/shm 避开 /tmp 配额。pnpm dev → http://127.0.0.1:4173/，本轮服务已启动，实际点击阅读/备份菜单、Pixi canvas/Web Audio/0 pageerror 另有 dev-result.json。test:browser 前应停止该开发服务以释放严格端口。
 
-现有样例 pnpm dev → http://127.0.0.1:4173/；验证时保持该端口空闲。本机仍用 TMPDIR=/dev/shm 避开 /tmp 配额。标准项目通过显式两 tarball 初始化后 pnpm install/assets/check/dev/build。
+下一项 M5-02：读取 C10/C11、T12/T13/T16/T22/T25/T28，先写不可变发布闭包、有限能力与资源预算 ADR，再实现发布绑定/预算拒绝及设备失败、取消迟到验证。保持现有 TS Core/Host/Pixi/DOM/React/IndexedDB 路线；按素材证据增加必要媒体能力。当前仍整包预加载、主 chunk >500 kB、回执长期留存，尚无预算或性能测量认证。
 
-下一项 M5-01：便携备份/恢复、跨内容 release 的显式迁移政策与失败保留。先读 C05/C07/C11、T11/T27，继续现有保存/导入/owner 模型，不制造任意旧档 fallback。
-
-M5 资源预算、设备/性能矩阵、发行候选未完成；N/F/M6 仍缺明确 edition、可用资源/行为、原档附件、原作加载后继续参照。合成通过不算真实兼容；SDK/CLI 未占用或公开发布 npm 名称。
+M5-03 平台/性能矩阵与 M5-04 SDK alpha 候选未完成。N-01/F-01/M6 仍缺明确 edition、可用 Program/资源、原档附件和原作加载后继续参照；合成通过不算真实兼容。其他浏览器、移动真机、人耳音质、跨系列迁移和自动旧 release 获取未验证/未实现，详情见能力表。

@@ -1,13 +1,18 @@
-import { parseProfile, parseSnapshot } from '../protocol/index.js';
-import type { Snapshot, SlotMetadata, StoreImport } from '../protocol/index.js';
+import { parseProfile, parseSnapshot, ensure } from '../protocol/index.js';
+import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, HostPort, Scheduler, ActivationOptions } from '../runtime/ports.js';
 import { databaseState, parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation } from '../runtime/durable.js';
 export { Coordinator } from '../runtime/coordinator.js';
 export type { Store, ProgressBatch, ProgressReceipt, HostPort, Scheduler, Activation } from '../runtime/ports.js';
+import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 export class MemoryStore implements Store {
   private state=databaseState();
+  constructor(private readonly namespace?:string) {}
+  async backup(gameId:string,series:string,release:string){ensure(!this.namespace||this.namespace===storageNamespace(gameId,series),'BACKUP_NAMESPACE','Backup identity must match storage');return captureBackup(parseDatabase(this.state),gameId,series,release);}
+  async restoreBackup(commit:StoreBackupRestore){ensure(!this.namespace||this.namespace===storageNamespace(commit.backup.gameId,commit.backup.series),'BACKUP_NAMESPACE','Restore identity must match storage');const s=parseDatabase(this.state),r=commitBackupRestore(s,commit);this.state=s;return r;}
   async read(profileId?:string):Promise<Durable> {const s=parseDatabase(this.state);return {profile:selectProfile(s,profileId),head:s.head};}
   async readSlot(slot:string):Promise<SlotRecord|null> {const s=parseDatabase(this.state);return Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null;}
+  async listProfiles(){const s=parseDatabase(this.state);return [{profileId:'main',revision:s.profile.revision},...Object.entries(s.branches).map(([profileId,p])=>({profileId,revision:p.revision}))];}
   async listSlots(){const s=parseDatabase(this.state);return Object.entries(s.slots).map(([slot,r])=>({slot,revision:r.revision,metadata:r.metadata??{profileId:'main',label:slot}}));}
   async import(commit:StoreImport){const s=parseDatabase(this.state);const r=commitImport(s,commit);this.state=s;return r;}
   async save(slot:string,snapshot:Snapshot,expected:number,metadata?:SlotMetadata){const s=parseDatabase(this.state);const r=saveSlot(s,slot,snapshot,expected,metadata);this.state=s;return r;}

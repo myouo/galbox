@@ -1,0 +1,113 @@
+$ pnpm build && pnpm build:harness && playwright test
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 754 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-BXPKcxwa.css                        5.61 kB │ gzip:   1.96 kB
+apps/playground/dist/assets/webworkerAll-ALpc5IEH.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-BCdovYqg.js                         15.18 kB │ gzip:   4.76 kB
+apps/playground/dist/assets/browserAll-CYT2rONu.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-BTg19aBP.js                     1,061.30 kB │ gzip: 200.05 kB
+
+✓ built in 841ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 745 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-PstVo28z.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-B9w21qG_.js                         18.67 kB │ gzip:   5.40 kB
+tests/browser/harness/dist/init-CCIsTtXE.js                         31.99 kB │ gzip:   9.65 kB
+tests/browser/harness/dist/browserAll-BcquLmIe.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/sdk.js                                1,845.27 kB │ gzip: 200.16 kB
+
+✓ built in 672ms
+[WebServer] (node:983565) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:983585) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:983792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 23 tests using 1 worker
+
+(node:983815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/adapters.spec.ts:3:1 › browser resource identity, digest, owned bytes, cancellation lease and actual decode failure (1.1s)
+  ✓   2 tests/browser/adapters.spec.ts:23:1 › real IndexedDB isolates namespaces and rejects profile/slot/head conflicts (454ms)
+  ✓   3 tests/browser/adapters.spec.ts:35:1 › public Player saves partial animation group, resumes with new audio epoch, cleans instances (5.6s)
+  ✓   4 tests/browser/adapters.spec.ts:53:1 › load generations retain current profile and a delayed older preparation never takes over (2.0s)
+  ✓   5 tests/browser/adapters.spec.ts:68:1 › save already inside storage commit reports success after dispose; resources stay released (1.0s)
+  ✓   6 tests/browser/adapters.spec.ts:78:1 › blocked real audio startup retries the same task without repeating narrative updates (1.2s)
+  ✓   7 tests/browser/adapters.spec.ts:89:1 › old input epoch cannot act on an identical restored prompt; pause reasons remain independent (2.1s)
+  ✓   8 tests/browser/adapters.spec.ts:99:1 › postcommit failure retries the same activation; a new load supersedes it permanently (1.5s)
+  ✓   9 tests/browser/adapters.spec.ts:111:1 › missing Web Audio fails with an explicit unavailable diagnostic and no leftover canvas (742ms)
+  ✓  10 tests/browser/adapters.spec.ts:118:1 › initial Player activation plays a stop-on-restore one-shot; subsequent load stops it (1.5s)
+  ✘  11 tests/browser/backups.spec.ts:4:1 › default UI downloads a portable backup, restores an independent branch and loads it across refresh (3.4s)
+(node:984888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 tests/browser/backups.spec.ts:15:1 › real IndexedDB abort rolls back the entire restore; lost replies retry without activation or hook effects (2.6s)
+  ✓  13 tests/browser/backups.spec.ts:26:1 › another database consumes the backup; release migration is explicit and old slots remain exportable (1.0s)
+  ✓  14 tests/browser/backups.spec.ts:34:1 › restore committed before dispose returns the durable result and leaves a borrowed database usable (1.2s)
+  ✓  15 tests/browser/imports.spec.ts:3:1 › real UI imports into an independent profile, loads separately and preserves hooks after save/refresh (9.0s)
+  ✓  16 tests/browser/imports.spec.ts:17:1 › lost import/activation replies remain idempotent; pending retry does not reapply the hook (2.6s)
+  ✓  17 tests/browser/imports.spec.ts:27:1 › the final activation barrier hands off dirty profile before recomputing the load recipe (1.7s)
+  ✓  18 tests/browser/imports.spec.ts:35:1 › a late File read cannot clear or replace a newer prepared import (861ms)
+  ✓  19 tests/browser/player.spec.ts:17:1 › real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary profile (17.6s)
+  ✓  20 tests/browser/player.spec.ts:34:1 › menu pointer release cannot advance and repeated create/dispose releases canvas/audio (3.6s)
+  ✓  21 tests/browser/player.spec.ts:39:1 › keyboard activation consumes one stage and a menu cancels a held key (987ms)
+  ✓  22 tests/browser/player.spec.ts:43:1 › a blocked real audio start exposes a working retry button without advancing the story (2.2s)
+  ✓  23 tests/browser/synthetic.spec.ts:3:1 › synthetic binary preparation uses real Web Crypto and rejects corrupt source bytes (1.3s)
+
+
+  1) tests/browser/backups.spec.ts:4:1 › default UI downloads a portable backup, restores an independent branch and loads it across refresh
+
+    Error: expect(received).toMatch(expected)
+
+    Expected pattern: /^backup:/
+    Received string:  "main"
+
+      11 |  await page.getByLabel('选择便携备份',{exact:true}).setInputFiles({name:'backup.json',mimeType:'application/json',buffer:bytes});await expect(page.getByRole('button',{name:'确认恢复备份'})).toBeEnabled();await page.getByRole('button',{name:'确认恢复备份'}).click();await expect(page.getByTestId('backup-notice')).toContainText('已恢复 1');
+      12 |  const picker=page.getByLabel('存档槽位',{exact:true}),restored=await picker.locator('option').evaluateAll(options=>options.map(o=>o instanceof HTMLOptionElement?o.value:'').find(v=>v.startsWith('backup:')));expect(restored).toBeTruthy();await expect(picker.locator('option')).toHaveCount(2);await picker.selectOption(restored!);await page.getByRole('button',{name:'读取所选槽位',exact:true}).click();await expect(page.getByTestId('story-text')).toHaveText(text);
+    > 13 |  expect(JSON.parse((await page.getByTestId('diagnostics').textContent())??'{}').profileId).toMatch(/^backup:/);await page.reload();await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByLabel('存档槽位',{exact:true}).selectOption(restored!);await page.getByRole('button',{name:'读取所选槽位',exact:true}).click();await expect(page.getByTestId('story-text')).toHaveText(text);expect(JSON.parse((await page.getByTestId('diagnostics').textContent())??'{}').profile.read).toEqual(['opening.1@zh-1']);expect(errors).toEqual([]);await page.screenshot({path:`${process.env.GALBOX_EVIDENCE_DIR??'docs/evidence'}/backup-restored.png`});
+         |                                                                                            ^
+      14 | });
+      15 | test('real IndexedDB abort rolls back the entire restore; lost replies retry without activation or hook effects',async({page})=>{
+      16 |  await page.goto('/');await page.locator('body').click({position:{x:1,y:1}});const result=await page.evaluate(async()=>{
+        at /home/myo/Desktop/galbox-sdk/tests/browser/backups.spec.ts:13:92
+
+    Error Context: test-results/backups-default-UI-downloa-4061e-and-loads-it-across-refresh/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/backups-default-UI-downloa-4061e-and-loads-it-across-refresh/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/backups-default-UI-downloa-4061e-and-loads-it-across-refresh/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/backups.spec.ts:4:1 › default UI downloads a portable backup, restores an independent branch and loads it across refresh
+  22 passed (1.3m)
+[ELIFECYCLE] Command failed with exit code 1.

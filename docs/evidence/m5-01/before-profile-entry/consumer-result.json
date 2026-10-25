@@ -1,0 +1,24 @@
+{
+  "result": "passed",
+  "isolatedDirectory": "/dev/shm/galbox-consumer-sXPUFC",
+  "installed": "/dev/shm/galbox-consumer-sXPUFC/node_modules/.pnpm/galbox-sdk@file+galbox-sdk.tgz_react-dom@19.3.1_react@19.3.1__react@19.3.1/node_modules/galbox-sdk",
+  "typescript": "5.9.3",
+  "skipLibCheck": false,
+  "tarball": "artifacts/galbox-sdk-0.1.0.tgz",
+  "tarballSha256": "eabd653e266538d946fa4523ed47639c0e1a34c3a41cf47d6abeed508c41a019",
+  "browser": "156.0.8078.4",
+  "publicEntries": [
+    "core",
+    "protocol",
+    "port-kit",
+    "player",
+    "react",
+    "react/style.css",
+    "testing",
+    "save-bridge",
+    "backups"
+  ],
+  "playSaveRestore": true,
+  "portableBackupRestore": true,
+  "explicitContentMigration": true
+}

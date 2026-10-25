@@ -1,8 +1,8 @@
-import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue } from '../protocol/index.js';
-import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt } from '../protocol/index.js';
+import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt } from '../protocol/index.js';
+import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt, BackupRestoreReceipt } from '../protocol/index.js';
 import type { Durable, Activation, ProgressBatch, ProgressReceipt, SlotRecord, ActivationOptions } from './ports.js';
-export interface DatabaseState {profile:Profile;branches:Record<string,Profile>;slots:Record<string,SlotRecord>;head:Activation|null;activations:Record<string,Activation>;receipts:Record<string,ProgressReceipt>;imports:Record<string,StoreImportReceipt>;}
-export function databaseState():DatabaseState {return {profile:emptyProfile(),branches:{},slots:{},head:null,activations:{},receipts:{},imports:{}};}
+export interface DatabaseState {backups:Record<string,BackupRestoreReceipt>;profile:Profile;branches:Record<string,Profile>;slots:Record<string,SlotRecord>;head:Activation|null;activations:Record<string,Activation>;receipts:Record<string,ProgressReceipt>;imports:Record<string,StoreImportReceipt>;}
+export function databaseState():DatabaseState {return {backups:{},profile:emptyProfile(),branches:{},slots:{},head:null,activations:{},receipts:{},imports:{}};}
 export function object(input:unknown):asserts input is Record<string,unknown> {ensure(typeof input==='object'&&input!==null&&!Array.isArray(input),'STORAGE_CORRUPT','Expected object');}
 function key(id:string):void {ensure(typeof id==='string'&&id.length>0&&id.length<=256&&!['__proto__','constructor','prototype'].includes(id)&&!id.includes('\0'),'STORAGE_KEY','Invalid storage identity');}
 function own<T>(map:Record<string,T>,id:string):T|undefined {return Object.hasOwn(map,id)?map[id]:undefined;}
@@ -24,8 +24,9 @@ export function parseDatabase(input:unknown):DatabaseState {
   const branches:Record<string,Profile>={},imports:Record<string,StoreImportReceipt>={};
   if(input.branches!==undefined){object(input.branches);for(const [id,p]of Object.entries(input.branches)){key(id);branches[id]=parseProfile(p);}}
   if(input.imports!==undefined){object(input.imports);for(const [id,r]of Object.entries(input.imports)){key(id);imports[id]=importReceipt(r);}}
+  const backups:Record<string,BackupRestoreReceipt>={};if(input.backups!==undefined){object(input.backups);for(const [id,r]of Object.entries(input.backups)){key(id);backups[id]=parseBackupRestoreReceipt(r);}}
   const slots:Record<string,SlotRecord>={},activations:Record<string,Activation>={};for(const [id,v]of Object.entries(input.slots)){key(id);slots[id]=slotRecord(v);}for(const [id,v]of Object.entries(input.activations)){key(id);activations[id]=activation(v);}
-  return {profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
+  return {backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
 }
 function applyBatch(state:DatabaseState,input:ProgressBatch,profileId:string,authority:string|null):ProgressReceipt {
   const batch=parseProgressBatch(input);

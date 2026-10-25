@@ -8,3 +8,5 @@ export { openStore } from '../../../packages/galbox-sdk/src/storage/indexeddb.js
 export { verifiedBytes } from '../../../packages/galbox-sdk/src/web-host/assets.js';
 export * from 'galbox-sdk/save-bridge';
 export {createFixtureBinding} from '../../../fixtures/synthetic-saves/binding.js';
+
+export * from 'galbox-sdk/backups';

@@ -1,5 +1,9 @@
 import {useState} from 'react';
 import type {Player,PlayerView} from '../player/index.js';
+export function ProfilePicker({player,view}:{player:Player;view:PlayerView}){
+ const [selected,setSelected]=useState('main'),[notice,setNotice]=useState('');const current=view.profiles.some(p=>p.profileId===selected)?selected:'main';
+ return view.profiles.length>1?<div className="slot-picker"><label>开始时使用的进度<select aria-label="开始时使用的进度" value={current} onChange={e=>setSelected(e.target.value)}>{view.profiles.map((p,i)=><option key={p.profileId} value={p.profileId}>{p.profileId==='main'?'网页进度':`独立进度 ${i}`}</option>)}</select></label><button onClick={()=>{player.setMenu(false);void player.start(current).catch(e=>setNotice(String(e)));}}>使用所选进度从头开始</button>{notice&&<p>{notice}</p>}</div>:null;
+}
 export function SlotPicker({player,view}:{player:Player;view:PlayerView}){
  const [selected,setSelected]=useState('quick'),[notice,setNotice]=useState('');
  const current=view.slots.some(s=>s.slot===selected)?selected:view.slots[0]?.slot??'';

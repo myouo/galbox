@@ -1,4 +1,4 @@
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping } from './wire.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt } from './wire.js';
 export declare const validateProgram: { (data: unknown): data is Program; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateSnapshot: { (data: unknown): data is Snapshot; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateProfile: { (data: unknown): data is Profile; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
@@ -16,3 +16,6 @@ export declare const validateProgressBatchWire: { (data: unknown): data is Progr
 export declare const validateSourceMap: { (data: unknown): data is SourceMap; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validatePortObligation: { (data: unknown): data is PortObligation; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
 export declare const validateBehaviorMapping: { (data: unknown): data is BehaviorMapping; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validatePortableBackup: { (data: unknown): data is PortableBackup; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateStoreBackupRestore: { (data: unknown): data is StoreBackupRestore; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };
+export declare const validateBackupRestoreReceipt: { (data: unknown): data is BackupRestoreReceipt; errors?: readonly {readonly instancePath: string; readonly message?: string}[] | null };

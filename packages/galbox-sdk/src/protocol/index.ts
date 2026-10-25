@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping, validatePortableBackup, validateStoreBackupRestore, validateBackupRestoreReceipt } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping, PortableBackup, StoreBackupRestore, BackupRestoreReceipt } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -76,3 +76,7 @@ function rawInstructionAddress(data:unknown,path:string):string|undefined {const
 export function parseSourceMap(input:unknown):SourceMap {const data=detached(input);ensure(validateSourceMap(data),'SCHEMA_SOURCE_MAP',JSON.stringify(validateSourceMap.errors));return data;}
 export function parsePortObligation(input:unknown):PortObligation {const data=detached(input);ensure(validatePortObligation(data),'SCHEMA_OBLIGATION',JSON.stringify(validatePortObligation.errors));return data;}
 export function parseBehaviorMapping(input:unknown):BehaviorMapping {const data=detached(input);ensure(validateBehaviorMapping(data),'SCHEMA_MAPPING',JSON.stringify(validateBehaviorMapping.errors));return data;}
+
+export function parsePortableBackup(input:unknown):PortableBackup {const data=detached(input);ensure(validatePortableBackup(data),'SCHEMA_BACKUP',JSON.stringify(validatePortableBackup.errors));return data;}
+export function parseStoreBackupRestore(input:unknown):StoreBackupRestore {const data=detached(input);ensure(validateStoreBackupRestore(data),'SCHEMA_BACKUP_RESTORE',JSON.stringify(validateStoreBackupRestore.errors));return data;}
+export function parseBackupRestoreReceipt(input:unknown):BackupRestoreReceipt {const data=detached(input);ensure(validateBackupRestoreReceipt(data),'SCHEMA_BACKUP_RECEIPT',JSON.stringify(validateBackupRestoreReceipt.errors));return data;}

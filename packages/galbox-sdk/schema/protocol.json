@@ -2316,6 +2316,193 @@
         "addresses"
       ],
       "additionalProperties": false
+    },
+    "BackupProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "profile": {
+          "$ref": "#/definitions/Profile"
+        }
+      },
+      "required": [
+        "id",
+        "profile"
+      ],
+      "additionalProperties": false
+    },
+    "BackupSlot": {
+      "type": "object",
+      "properties": {
+        "slot": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "snapshot": {
+          "$ref": "#/definitions/Snapshot"
+        },
+        "previous": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Snapshot"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/SlotMetadata"
+        },
+        "previousMetadata": {
+          "$ref": "#/definitions/SlotMetadata"
+        }
+      },
+      "required": [
+        "slot",
+        "revision",
+        "snapshot",
+        "previous",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "PortableBackup": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "const": "galbox-backup"
+        },
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "gameId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "series": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.-]{1,80}$"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BackupProfile"
+          },
+          "maxItems": 64
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BackupSlot"
+          },
+          "maxItems": 128
+        },
+        "release": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        }
+      },
+      "required": [
+        "format",
+        "version",
+        "gameId",
+        "series",
+        "profiles",
+        "slots",
+        "release"
+      ],
+      "additionalProperties": false
+    },
+    "StoreBackupRestore": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "backup": {
+          "$ref": "#/definitions/PortableBackup"
+        }
+      },
+      "required": [
+        "id",
+        "backup"
+      ],
+      "additionalProperties": false
+    },
+    "BackupRestoreReceipt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+              },
+              "restoredId": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+              }
+            },
+            "required": [
+              "id",
+              "restoredId"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 64
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "slot": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+              },
+              "restoredSlot": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+              }
+            },
+            "required": [
+              "slot",
+              "restoredSlot"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 128
+        }
+      },
+      "required": [
+        "id",
+        "signature",
+        "profiles",
+        "slots"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

@@ -1,7 +1,8 @@
-import { ensure } from '../protocol/index.js';
-import type { Snapshot, SlotMetadata, StoreImport } from '../protocol/index.js';
+import { ensure, parseStoreBackupRestore } from '../protocol/index.js';
+import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
 import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation } from '../runtime/durable.js';
+import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
   const db=await new Promise<IDBDatabase>((resolve,reject)=>{
@@ -20,8 +21,11 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     });
   }
   return {
+    backup:(gameId:string,series:string,release:string)=>{ensure(namespace===storageNamespace(gameId,series),'BACKUP_NAMESPACE','Backup identity must match storage');return transact('readonly',s=>captureBackup(s,gameId,series,release));},
+    restoreBackup:(input:StoreBackupRestore)=>{const commit=parseStoreBackupRestore(input);ensure(namespace===storageNamespace(commit.backup.gameId,commit.backup.series),'BACKUP_NAMESPACE','Restore identity must match storage');return transact('readwrite',s=>commitBackupRestore(s,commit));},
     read:(profileId?:string)=>transact<Durable>('readonly',s=>({profile:selectProfile(s,profileId),head:s.head})),
     readSlot:(slot:string)=>transact<SlotRecord|null>('readonly',s=>Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null),
+    listProfiles:()=>transact('readonly',s=>[{profileId:'main',revision:s.profile.revision},...Object.entries(s.branches).map(([profileId,p])=>({profileId,revision:p.revision}))]),
     listSlots:()=>transact('readonly',s=>Object.entries(s.slots).map(([slot,r])=>({slot,revision:r.revision,metadata:r.metadata??{profileId:'main',label:slot}}))),
     import:(commit:StoreImport)=>transact('readwrite',s=>commitImport(s,commit)),
     save:(slot:string,snapshot:Snapshot,revision:number,metadata?:SlotMetadata)=>transact('readwrite',s=>saveSlot(s,slot,snapshot,revision,metadata)),
