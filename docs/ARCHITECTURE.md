@@ -1,6 +1,6 @@
 # galbox-sdk 实施架构
 
-状态：M0–M4 和 M5-01 按此架构建设；具体通过状态见 tasks.json 与 evidence/。本文把 [v0.6](reference/GalBox-SDK-v0.6-Implementation-Design.md) 收束为可开发的模块。长期语义约束见 [CONTRACTS](CONTRACTS.md)，阶段范围见 [MILESTONES](MILESTONES.md)。
+状态：M0–M5 按此架构建设；具体通过状态见 tasks.json 与 evidence/。本文把 [v0.6](reference/GalBox-SDK-v0.6-Implementation-Design.md) 收束为可开发的模块。长期语义约束见 [CONTRACTS](CONTRACTS.md)，阶段范围见 [MILESTONES](MILESTONES.md)。
 
 ## 1. 技术选择
 
@@ -47,6 +47,7 @@ SDK 主包目标名 `galbox-sdk`，公开 npm 名称尚未核验。内部模块�
 | galbox-sdk/save-bridge | 已登记来源、codec、mapping 与不透明导入计划 | M3 |
 | galbox-sdk/diagnostics | Program/快照追踪、SourceMap 与行为覆盖诊断 | M4 |
 | galbox-sdk/backups | 有界持久备份、完整内容迁移与隔离恢复计划 | M5-01 |
+| galbox-sdk/release | Program/目录/注册表/资源事实与预算的发布闭包 | M5-02 |
 
 根入口只导出常用 Player API；headless 用户使用 core/protocol 子路径。exports 精确列出，禁止 `./* → ./src/*` 暴露私有实现。某子入口尚未实现时不导出抛 NotImplemented 的伪产品接口。React 等可选 UI 依赖不能被 core 的运行包或类型声明间接引入。
 

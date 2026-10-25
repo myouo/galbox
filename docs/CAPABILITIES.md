@@ -1,4 +1,4 @@
-# 当前能力：M0–M4 与 M5-01/02
+# 当前能力：M0–M5 本地 alpha
 
 具体通过状态由 tasks.json 与 evidence/ 给出；后续任务不因本表列出目标而计为完成。
 
@@ -35,3 +35,5 @@ M4 提供实际 CLI/标准项目、SourceMap 与必要行为覆盖发布门槛�
 M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。只声明已执行平台证据；VRAM 仅 RGBA 估算，不冒充设备测量。
 
 实际平台与性能范围见 [PLATFORMS](PLATFORMS.md)：Core/API 目标通过，软件渲染/释放有长尾，不承诺 60 FPS 或视觉延迟。
+
+本地 0.1.0 alpha 候选与未完成的 N/F/M6 门槛见 [ALPHA](ALPHA.md)，不声明稳定 API 或真实两作支持。

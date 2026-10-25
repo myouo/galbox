@@ -35,7 +35,7 @@ function applyBatch(state:DatabaseState,input:ProgressBatch,profileId:string,aut
   const profile=selectProfile(state,profileId);ensure(profile.revision===batch.baseRevision,'PROFILE_CONFLICT','Reload durable state or explicitly discard local changes');
   ensure(batch.changes.length>0&&batch.through===batch.changes.at(-1)?.seq,'COMMIT_RANGE',batch.id);let previous=0;
   for(const c of batch.changes){ensure(c.seq>previous,'COMMIT_RANGE',batch.id);previous=c.seq;if(c.type==='read'){if(!profile.read.includes(c.unit))profile.read.push(c.unit);}else {ensure(c.type==='set','COMMIT_ACTION','Unknown action');profile.values[c.key]=parseValue(c.value);}}
-  profile.revision++;const receipt={id:batch.id,revision:profile.revision,through:batch.through,signature,profileId,authority};state.receipts[batch.id]=receipt;return {...receipt};
+  profile.revision++;parseProfile(profile);const receipt={id:batch.id,revision:profile.revision,through:batch.through,signature,profileId,authority};state.receipts[batch.id]=receipt;return {...receipt};
 }
 export function commitProgress(state:DatabaseState,batch:ProgressBatch,authority:string|null):ProgressReceipt {
   const existing=own(state.receipts,batch.id);

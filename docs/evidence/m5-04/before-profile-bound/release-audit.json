@@ -1,0 +1,804 @@
+{
+  "result": "passed",
+  "baseline": "308c1aef3a03710106948f8c4a16b47e2b84a8c2",
+  "revision": "b88c257534fda87771ac22fe24c0133bb95ad8ca",
+  "typescript": "5.9.3",
+  "strict": true,
+  "skipLibCheck": false,
+  "sdkVersion": "0.1.0",
+  "snapshotSchema": 1,
+  "classification": "local alpha candidate; no external publication",
+  "declarationFilesChanged": [
+    "dist/core/operations.d.ts",
+    "dist/player/index.d.ts",
+    "dist/protocol/generated/wire.d.ts",
+    "dist/protocol/index.d.ts",
+    "dist/release/index.d.ts",
+    "dist/release/inspect.d.ts",
+    "dist/save-bridge/index.d.ts",
+    "dist/web-host/assets.d.ts",
+    "dist/web-host/host.d.ts"
+  ],
+  "removed": [],
+  "changes": [
+    {
+      "entry": ".",
+      "name": "AssetRequest",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": ".",
+      "name": "PlayerOptions",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": ".",
+      "name": "PlayerView",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": ".",
+      "name": "ReleaseView",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./player",
+      "name": "AssetRequest",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": "./player",
+      "name": "PlayerOptions",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": "./player",
+      "name": "PlayerView",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": "./player",
+      "name": "ReleaseView",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./port-kit",
+      "name": "OperationRegistry",
+      "kind": "declaration-changed"
+    },
+    {
+      "entry": "./protocol",
+      "name": "ReleaseManifest",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./protocol",
+      "name": "ResourceBudget",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./protocol",
+      "name": "ResourceFact",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./protocol",
+      "name": "canonicalWireJSON",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./protocol",
+      "name": "parseReleaseManifest",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./protocol",
+      "name": "parseResourceBudget",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./protocol",
+      "name": "parseResourceFact",
+      "kind": "export-added"
+    },
+    {
+      "entry": "./release",
+      "kind": "entry-added",
+      "exports": [
+        "assertResourceFacts",
+        "canonicalReleaseJSON",
+        "createReleaseManifest",
+        "defaultResourceBudget",
+        "DigestPort",
+        "inspectResource",
+        "releaseFingerprint",
+        "ReleaseManifest",
+        "ReleaseOptions",
+        "ResourceBudget",
+        "ResourceFact",
+        "resourceUsage",
+        "ResourceUsage",
+        "verifyReleaseManifest"
+      ]
+    },
+    {
+      "entry": "./save-bridge",
+      "name": "SaveBindingRegistry",
+      "kind": "declaration-changed"
+    }
+  ],
+  "packages": [
+    {
+      "name": "galbox-sdk",
+      "version": "0.1.0",
+      "file": "artifacts/galbox-sdk-0.1.0.tgz",
+      "sha256": "d073fbb12156ff6501aa139455bf4d309723c74cfa673c43032bf6317f63e099",
+      "dryRun": true,
+      "actualPublish": false,
+      "files": [
+        {
+          "path": "README.md",
+          "size": 4433
+        },
+        {
+          "path": "dist/backups/index.d.ts",
+          "size": 1666
+        },
+        {
+          "path": "dist/backups/index.d.ts.map",
+          "size": 1538
+        },
+        {
+          "path": "dist/backups/index.js",
+          "size": 6741
+        },
+        {
+          "path": "dist/backups/index.js.map",
+          "size": 7229
+        },
+        {
+          "path": "dist/core/index.d.ts",
+          "size": 2852
+        },
+        {
+          "path": "dist/core/index.d.ts.map",
+          "size": 3155
+        },
+        {
+          "path": "dist/core/index.js",
+          "size": 33746
+        },
+        {
+          "path": "dist/core/index.js.map",
+          "size": 43655
+        },
+        {
+          "path": "dist/core/operations.d.ts",
+          "size": 5926
+        },
+        {
+          "path": "dist/core/operations.d.ts.map",
+          "size": 6646
+        },
+        {
+          "path": "dist/core/operations.js",
+          "size": 9707
+        },
+        {
+          "path": "dist/core/operations.js.map",
+          "size": 11676
+        },
+        {
+          "path": "dist/diagnostics/index.d.ts",
+          "size": 2064
+        },
+        {
+          "path": "dist/diagnostics/index.d.ts.map",
+          "size": 2087
+        },
+        {
+          "path": "dist/diagnostics/index.js",
+          "size": 5017
+        },
+        {
+          "path": "dist/diagnostics/index.js.map",
+          "size": 6602
+        },
+        {
+          "path": "dist/player/index.d.ts",
+          "size": 6376
+        },
+        {
+          "path": "dist/player/index.d.ts.map",
+          "size": 6421
+        },
+        {
+          "path": "dist/player/index.js",
+          "size": 29186
+        },
+        {
+          "path": "dist/player/index.js.map",
+          "size": 32569
+        },
+        {
+          "path": "dist/program-tools/index.d.ts",
+          "size": 980
+        },
+        {
+          "path": "dist/program-tools/index.d.ts.map",
+          "size": 765
+        },
+        {
+          "path": "dist/program-tools/index.js",
+          "size": 531
+        },
+        {
+          "path": "dist/program-tools/index.js.map",
+          "size": 463
+        },
+        {
+          "path": "dist/program-tools/linker.d.ts",
+          "size": 2239
+        },
+        {
+          "path": "dist/program-tools/linker.d.ts.map",
+          "size": 2500
+        },
+        {
+          "path": "dist/program-tools/linker.js",
+          "size": 7888
+        },
+        {
+          "path": "dist/program-tools/linker.js.map",
+          "size": 9589
+        },
+        {
+          "path": "dist/program-tools/registration.d.ts",
+          "size": 521
+        },
+        {
+          "path": "dist/program-tools/registration.d.ts.map",
+          "size": 506
+        },
+        {
+          "path": "dist/program-tools/registration.js",
+          "size": 1064
+        },
+        {
+          "path": "dist/program-tools/registration.js.map",
+          "size": 1040
+        },
+        {
+          "path": "dist/protocol/codecs.d.ts",
+          "size": 2176
+        },
+        {
+          "path": "dist/protocol/codecs.d.ts.map",
+          "size": 2498
+        },
+        {
+          "path": "dist/protocol/codecs.js",
+          "size": 5056
+        },
+        {
+          "path": "dist/protocol/codecs.js.map",
+          "size": 6872
+        },
+        {
+          "path": "dist/protocol/generated/operations.d.ts",
+          "size": 5245
+        },
+        {
+          "path": "dist/protocol/generated/operations.d.ts.map",
+          "size": 322
+        },
+        {
+          "path": "dist/protocol/generated/operations.js",
+          "size": 6322
+        },
+        {
+          "path": "dist/protocol/generated/operations.js.map",
+          "size": 3775
+        },
+        {
+          "path": "dist/protocol/generated/validators.d.ts",
+          "size": 4376
+        },
+        {
+          "path": "dist/protocol/generated/validators.d.ts.map",
+          "size": 496
+        },
+        {
+          "path": "dist/protocol/generated/validators.js",
+          "size": 1800148
+        },
+        {
+          "path": "dist/protocol/generated/validators.js.map",
+          "size": 1206319
+        },
+        {
+          "path": "dist/protocol/generated/wire.d.ts",
+          "size": 16267
+        },
+        {
+          "path": "dist/protocol/generated/wire.d.ts.map",
+          "size": 13045
+        },
+        {
+          "path": "dist/protocol/generated/wire.js",
+          "size": 99
+        },
+        {
+          "path": "dist/protocol/generated/wire.js.map",
+          "size": 136
+        },
+        {
+          "path": "dist/protocol/index.d.ts",
+          "size": 4034
+        },
+        {
+          "path": "dist/protocol/index.d.ts.map",
+          "size": 3557
+        },
+        {
+          "path": "dist/protocol/index.js",
+          "size": 9298
+        },
+        {
+          "path": "dist/protocol/index.js.map",
+          "size": 10155
+        },
+        {
+          "path": "dist/react/backup.d.ts",
+          "size": 201
+        },
+        {
+          "path": "dist/react/backup.d.ts.map",
+          "size": 242
+        },
+        {
+          "path": "dist/react/backup.js",
+          "size": 2272
+        },
+        {
+          "path": "dist/react/backup.js.map",
+          "size": 2198
+        },
+        {
+          "path": "dist/react/import.d.ts",
+          "size": 549
+        },
+        {
+          "path": "dist/react/import.d.ts.map",
+          "size": 515
+        },
+        {
+          "path": "dist/react/import.js",
+          "size": 4963
+        },
+        {
+          "path": "dist/react/import.js.map",
+          "size": 4913
+        },
+        {
+          "path": "dist/react/index.d.ts",
+          "size": 290
+        },
+        {
+          "path": "dist/react/index.d.ts.map",
+          "size": 286
+        },
+        {
+          "path": "dist/react/index.js",
+          "size": 8883
+        },
+        {
+          "path": "dist/react/index.js.map",
+          "size": 9147
+        },
+        {
+          "path": "dist/react/style.css",
+          "size": 5513
+        },
+        {
+          "path": "dist/release/index.d.ts",
+          "size": 1566
+        },
+        {
+          "path": "dist/release/index.d.ts.map",
+          "size": 1435
+        },
+        {
+          "path": "dist/release/index.js",
+          "size": 4687
+        },
+        {
+          "path": "dist/release/index.js.map",
+          "size": 4770
+        },
+        {
+          "path": "dist/release/inspect.d.ts",
+          "size": 263
+        },
+        {
+          "path": "dist/release/inspect.d.ts.map",
+          "size": 339
+        },
+        {
+          "path": "dist/release/inspect.js",
+          "size": 3427
+        },
+        {
+          "path": "dist/release/inspect.js.map",
+          "size": 3858
+        },
+        {
+          "path": "dist/runtime/backup.d.ts",
+          "size": 584
+        },
+        {
+          "path": "dist/runtime/backup.d.ts.map",
+          "size": 554
+        },
+        {
+          "path": "dist/runtime/backup.js",
+          "size": 4367
+        },
+        {
+          "path": "dist/runtime/backup.js.map",
+          "size": 5491
+        },
+        {
+          "path": "dist/runtime/coordinator.d.ts",
+          "size": 1327
+        },
+        {
+          "path": "dist/runtime/coordinator.d.ts.map",
+          "size": 1529
+        },
+        {
+          "path": "dist/runtime/coordinator.js",
+          "size": 6069
+        },
+        {
+          "path": "dist/runtime/coordinator.js.map",
+          "size": 7205
+        },
+        {
+          "path": "dist/runtime/durable.d.ts",
+          "size": 1781
+        },
+        {
+          "path": "dist/runtime/durable.d.ts.map",
+          "size": 1689
+        },
+        {
+          "path": "dist/runtime/durable.js",
+          "size": 11889
+        },
+        {
+          "path": "dist/runtime/durable.js.map",
+          "size": 14710
+        },
+        {
+          "path": "dist/runtime/ports.d.ts",
+          "size": 2928
+        },
+        {
+          "path": "dist/runtime/ports.d.ts.map",
+          "size": 3148
+        },
+        {
+          "path": "dist/runtime/ports.js",
+          "size": 44
+        },
+        {
+          "path": "dist/runtime/ports.js.map",
+          "size": 113
+        },
+        {
+          "path": "dist/runtime/recipe.d.ts",
+          "size": 733
+        },
+        {
+          "path": "dist/runtime/recipe.d.ts.map",
+          "size": 733
+        },
+        {
+          "path": "dist/runtime/recipe.js",
+          "size": 751
+        },
+        {
+          "path": "dist/runtime/recipe.js.map",
+          "size": 1050
+        },
+        {
+          "path": "dist/save-bridge/index.d.ts",
+          "size": 5484
+        },
+        {
+          "path": "dist/save-bridge/index.d.ts.map",
+          "size": 5834
+        },
+        {
+          "path": "dist/save-bridge/index.js",
+          "size": 9603
+        },
+        {
+          "path": "dist/save-bridge/index.js.map",
+          "size": 11206
+        },
+        {
+          "path": "dist/storage/indexeddb.d.ts",
+          "size": 178
+        },
+        {
+          "path": "dist/storage/indexeddb.d.ts.map",
+          "size": 255
+        },
+        {
+          "path": "dist/storage/indexeddb.js",
+          "size": 3810
+        },
+        {
+          "path": "dist/storage/indexeddb.js.map",
+          "size": 4755
+        },
+        {
+          "path": "dist/testing/index.d.ts",
+          "size": 2423
+        },
+        {
+          "path": "dist/testing/index.d.ts.map",
+          "size": 1813
+        },
+        {
+          "path": "dist/testing/index.js",
+          "size": 3546
+        },
+        {
+          "path": "dist/testing/index.js.map",
+          "size": 4680
+        },
+        {
+          "path": "dist/web-host/assets.d.ts",
+          "size": 799
+        },
+        {
+          "path": "dist/web-host/assets.d.ts.map",
+          "size": 891
+        },
+        {
+          "path": "dist/web-host/assets.js",
+          "size": 4491
+        },
+        {
+          "path": "dist/web-host/assets.js.map",
+          "size": 5010
+        },
+        {
+          "path": "dist/web-host/format.d.ts",
+          "size": 268
+        },
+        {
+          "path": "dist/web-host/format.d.ts.map",
+          "size": 284
+        },
+        {
+          "path": "dist/web-host/format.js",
+          "size": 529
+        },
+        {
+          "path": "dist/web-host/format.js.map",
+          "size": 831
+        },
+        {
+          "path": "dist/web-host/host.d.ts",
+          "size": 1945
+        },
+        {
+          "path": "dist/web-host/host.d.ts.map",
+          "size": 2080
+        },
+        {
+          "path": "dist/web-host/host.js",
+          "size": 14683
+        },
+        {
+          "path": "dist/web-host/host.js.map",
+          "size": 15266
+        },
+        {
+          "path": "dist/web-host/text.d.ts",
+          "size": 333
+        },
+        {
+          "path": "dist/web-host/text.d.ts.map",
+          "size": 402
+        },
+        {
+          "path": "dist/web-host/text.js",
+          "size": 667
+        },
+        {
+          "path": "dist/web-host/text.js.map",
+          "size": 1031
+        },
+        {
+          "path": "package.json",
+          "size": 1718
+        },
+        {
+          "path": "schema/protocol.json",
+          "size": 63864
+        }
+      ]
+    },
+    {
+      "name": "@galbox/cli",
+      "version": "0.1.0",
+      "file": "artifacts/galbox-cli-0.1.0.tgz",
+      "sha256": "f54b07401339a13be6c28d1e1993f47565a51acc368c1c785fa7e183244d7bf1",
+      "dryRun": true,
+      "actualPublish": false,
+      "files": [
+        {
+          "path": "README.md",
+          "size": 1794
+        },
+        {
+          "path": "dist/config.d.ts",
+          "size": 1222
+        },
+        {
+          "path": "dist/config.js",
+          "size": 3244
+        },
+        {
+          "path": "dist/config.js.map",
+          "size": 3757
+        },
+        {
+          "path": "dist/generated/config.d.ts",
+          "size": 378
+        },
+        {
+          "path": "dist/generated/config.js",
+          "size": 87
+        },
+        {
+          "path": "dist/generated/config.js.map",
+          "size": 128
+        },
+        {
+          "path": "dist/generated/validator.d.ts",
+          "size": 120
+        },
+        {
+          "path": "dist/generated/validator.js",
+          "size": 21457
+        },
+        {
+          "path": "dist/generated/validator.js.map",
+          "size": 18565
+        },
+        {
+          "path": "dist/index.d.ts",
+          "size": 251
+        },
+        {
+          "path": "dist/index.js",
+          "size": 7870
+        },
+        {
+          "path": "dist/index.js.map",
+          "size": 8952
+        },
+        {
+          "path": "dist/init.d.ts",
+          "size": 138
+        },
+        {
+          "path": "dist/init.js",
+          "size": 2618
+        },
+        {
+          "path": "dist/init.js.map",
+          "size": 2778
+        },
+        {
+          "path": "dist/main.d.ts",
+          "size": 31
+        },
+        {
+          "path": "dist/main.js",
+          "size": 145
+        },
+        {
+          "path": "dist/main.js.map",
+          "size": 231
+        },
+        {
+          "path": "dist/project.d.ts",
+          "size": 1222
+        },
+        {
+          "path": "dist/project.js",
+          "size": 8109
+        },
+        {
+          "path": "dist/project.js.map",
+          "size": 9446
+        },
+        {
+          "path": "dist/saves.d.ts",
+          "size": 2123
+        },
+        {
+          "path": "dist/saves.js",
+          "size": 3874
+        },
+        {
+          "path": "dist/saves.js.map",
+          "size": 4210
+        },
+        {
+          "path": "package.json",
+          "size": 441
+        },
+        {
+          "path": "schema/project.json",
+          "size": 1644
+        },
+        {
+          "path": "templates/standard/galbox.config.json",
+          "size": 445
+        },
+        {
+          "path": "templates/standard/index.html",
+          "size": 265
+        },
+        {
+          "path": "templates/standard/package.json",
+          "size": 549
+        },
+        {
+          "path": "templates/standard/port.mjs",
+          "size": 101
+        },
+        {
+          "path": "templates/standard/public/assets/coast.svg",
+          "size": 900
+        },
+        {
+          "path": "templates/standard/public/assets/music.wav",
+          "size": 88244
+        },
+        {
+          "path": "templates/standard/README.md",
+          "size": 1106
+        },
+        {
+          "path": "templates/standard/resource-policy.json",
+          "size": 171
+        },
+        {
+          "path": "templates/standard/src/main.tsx",
+          "size": 1674
+        },
+        {
+          "path": "templates/standard/src/style.css",
+          "size": 51
+        },
+        {
+          "path": "templates/standard/story.mjs",
+          "size": 2484
+        },
+        {
+          "path": "templates/standard/tsconfig.json",
+          "size": 337
+        }
+      ]
+    }
+  ]
+}

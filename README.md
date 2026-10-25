@@ -1,6 +1,6 @@
 # galbox-sdk
 
-强类型、可嵌入的视觉小说 Web SDK。已完成 M0–M4 与 M5-01：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
+强类型、可嵌入的视觉小说 Web SDK。M0–M5 通用门槛已完成，当前为 0.1.0 本地 alpha 候选：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
 
 《水仙》《海市蜃楼之馆》的真实资料仍缺，当前不声明商业作品兼容。完整任务状态见 [tasks.json](docs/tasks.json)，当前摘要见 [STATUS](docs/STATUS.md)，范围见 [能力表](docs/CAPABILITIES.md)。
 
@@ -54,14 +54,14 @@ player.dispose();
 
 内部快照接入当前持久 profile，不覆盖新的解锁。冲突不会自动合并非单调字段；`discardAndLoad` 是显式放弃当前未持久进度的入口。已提交存储操作不会因 dispose 被报告为无副作用取消。
 
-初始能力与限制见 [CAPABILITIES](docs/CAPABILITIES.md)，细节决策见 [ADR-0002](docs/decisions/0002-m0-m2-semantics.md)。有状态扩展与迁移用法见 [OPERATIONS](docs/OPERATIONS.md)。后续从 `CODEX_CONTINUE.md` 和任务表推进剩余 M5，不将本检查点称作最终两作支持版。
+初始能力与限制见 [CAPABILITIES](docs/CAPABILITIES.md)，细节决策见 [ADR-0002](docs/decisions/0002-m0-m2-semantics.md)。有状态扩展与迁移用法见 [OPERATIONS](docs/OPERATIONS.md)。后续从 `CODEX_CONTINUE.md` 和任务表推进 N/F 与 M6 的真实资料/兼容门槛，不将本检查点称作最终两作支持版。
 
 合成来源工厂和不可变准备计划见 [SAVE_BRIDGE](docs/SAVE_BRIDGE.md)。`pnpm test:compatibility` 明确区分 synthetic 通过与真实 N/F 缺资料；导入、独立进度与每次加载的事务钩子已实现。菜单选择 fixtures/synthetic-saves/data 下的 slot.bin 和 global.json，先检查报告、提交，再显式载入。
 
 标准项目 CLI 已提供 init/assets build/validate/dev/build/saves analyze/verify，见 [CLI](docs/CLI.md)。完整第三方扩展、调用迁移、自制来源与浏览器任务见 [DEVELOPER_WORKFLOW](docs/DEVELOPER_WORKFLOW.md)。
 
 ```bash
-pnpm test:cli  # 仓库外安装两 tarball、严格类型、40 个真实命令及两个浏览器工作流
+pnpm test:cli  # 仓库外安装两 tarball、严格类型、50 个真实命令及两个浏览器工作流
 node packages/cli/dist/main.js init /path/to/new-story \
   --sdk-tarball artifacts/galbox-sdk-0.1.0.tgz \
   --cli-tarball artifacts/galbox-cli-0.1.0.tgz
@@ -70,3 +70,7 @@ node packages/cli/dist/main.js init /path/to/new-story \
 CLI 的 dev 服务最后一次验证的发布数据；修改 story/resources 后运行 pnpm assets，更改登记后重启。工具不会把声明覆盖或 synthetic verify 当作真实 N/F 认证。
 
 便携备份与显式内容迁移见 [BACKUPS](docs/BACKUPS.md)，默认菜单可下载备份并恢复到独立进度。
+
+本地 alpha 范围、包摘要和 API 差异见 [ALPHA](docs/ALPHA.md)，实际平台和性能长尾见 [PLATFORMS](docs/PLATFORMS.md)。未执行真实 npm 发布、Git 推送或部署。
+
+`pnpm test:performance` 记录当前参考环境的实际原始样本；`pnpm test:release` 真实编译 API 基线并重新 pack/publish dry-run，需要完整 Git 历史，不执行实际发布。

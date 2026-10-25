@@ -1,6 +1,6 @@
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
-import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping } from '../protocol/index.js';
+import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit } from '../protocol/index.js';
 import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly, SourceLocation, PortObligation, BehaviorMapping } from '../protocol/index.js';
 
 export type AssetRef<K extends Asset['kind']> = { readonly id: string; readonly kind: K };
@@ -63,6 +63,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
       try {
       if(!['control.jump','control.branch','control.return','control.end'].includes(i.op))ensure(f.code[index+1],'FALLTHROUGH',i.at);
       switch(i.op) {
+        case 'text.page': readUnit(i);break;
         case 'control.jump': target(i.target); break;
         case 'control.branch': ensure(kind(i.left)===kind(i.right),'COMPARE_KIND',i.at); ensure(i.cmp==='eq'||kind(i.left)!=='bool','COMPARE_KIND',i.at); target(i.yes); target(i.no); break;
         case 'control.call': {

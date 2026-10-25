@@ -1,0 +1,10 @@
+$ pnpm build:sdk && vitest run
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+
+ RUN  v5.0.5 /home/myo/Desktop/galbox-sdk
+
+
+ Test Files  12 passed (12)
+      Tests  72 passed (72)
+   Start at  15:00:39
+   Duration  1.02s (tests 45%, import 29%, transform 25%, worker 1%)

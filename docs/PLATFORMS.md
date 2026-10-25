@@ -1,6 +1,6 @@
 # 平台与性能声明
 
-当前 alpha 的已验证参考环境为 Linux x64、Playwright Chromium 156.0.8078.4、SwiftShader WebGL 2、Web Audio 与真实 IndexedDB。证据：[M5-02 功能/故障](evidence/m5-02/REPORT.md)、[M5-03 性能](evidence/m5-03/REPORT.md)。同名能力存在不代表其他设备可用。
+当前 alpha 的已验证参考环境为 Linux x64、Playwright Chromium 156.0.8078.4、SwiftShader WebGL 2、Web Audio 与真实 IndexedDB。证据：[M5-02 功能/故障](evidence/m5-02/REPORT.md)、[M5-03 性能](evidence/m5-03/REPORT.md)。最终候选约束修复后的重验见 [M5-04](evidence/m5-04/REPORT.md)。同名能力存在不代表其他设备可用。
 
 | 环境或能力 | 状态 | 已执行的范围 |
 | --- | --- | --- |
@@ -18,6 +18,6 @@
 
 可复跑 `TMPDIR=/dev/shm pnpm test:performance`。脚本保留原始样本、硬件/驱动信息、Core 预算 1/8/100 的一致 Snapshot、初始化/网络/图像与音频解码、直接语义 API、两次 rAF、gl.finish、V8 heap 与资源计数。其返回值只以 Core 批次 P95 <4 ms、语义 API P95 <50 ms 两个工程目标判定。
 
-当前测得最重 Core 批次 P95 1.369 ms、语义 API P95 2.4 ms；两次 rAF 代理 P95 135.3 ms，dispose 有 1805.3 ms 长尾。创建/释放仅三个样本，不能作普遍分位数承诺。渲染/释放长尾尚未优化，软件参考环境不作 60 FPS/视觉响应保证。已测资源约 7.41 MiB RGBA 估算、0.49 MiB 实际 PCM；不是 VRAM/浏览器总内存测量，也不是大作品尺度认证。
+最终候选复测最重 Core 批次 P95 1.341 ms、语义 API P95 2.5 ms；两次 rAF 代理 P95 128.8 ms、dispose max 1673.6 ms，详见 evidence/m5-04/performance.json。初始基线曾测到 1805.3 ms 释放长尾，风险不因重跑消失。创建/释放仅三个样本，不能作普遍分位数承诺。渲染/释放长尾尚未优化，软件参考环境不作 60 FPS/视觉响应保证。已测资源约 7.41 MiB RGBA 估算、0.49 MiB 实际 PCM；不是 VRAM/浏览器总内存测量，也不是大作品尺度认证。
 
 发布绑定保证声明与字节一致，设备能力由实际 prepare/start 判定。没有覆盖的设备应标未验证；需要承诺某个移动设备时，先取得真实设备记录再扩充矩阵，不把“未测”改写为“兼容”。

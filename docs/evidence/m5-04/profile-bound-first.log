@@ -1,0 +1,35 @@
+
+ RUN  v5.0.5 /home/myo/Desktop/galbox-sdk
+
+ ❯ tests/unit/import-storage.test.ts (6 tests | 1 failed) 106ms
+   × rejects a valid batch whose combined profile exceeds wire limits without committing a partial value or receipt 42ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/import-storage.test.ts > rejects a valid batch whose combined profile exceeds wire limits without committing a partial value or receipt
+AssertionError: promise resolved "{ id: 'bound', revision: 1, …(4) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "authority": "bounded",
++   "id": "bound",
++   "profileId": "import:bounded",
++   "revision": 1,
++   "signature": "{\"id\":\"bound\",\"baseRevision\":0,\"through\":2,\"changes\":[{\"seq\":1,\"type\":\"set\",\"key\":\"partial\",\"value\":{\"kind\":\"i32\",\"value\":9}},{\"seq\":2,\"type\":\"read\",\"unit\":\"overflow@v1\"}]}",
++   "through": 2,
+  }
+
+ ❯ tests/unit/import-storage.test.ts:38:174
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  14:59:45
+   Duration  365ms (tests 40%, import 33%, transform 26%, worker 1%)

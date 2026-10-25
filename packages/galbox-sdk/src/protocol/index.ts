@@ -53,7 +53,7 @@ export function i32(value: number): Extract<Value, {kind: 'i32'}> {
 export function string(value: string): Extract<Value, {kind: 'string'}> { const v = parseValue({kind:'string',value}); ensure(v.kind === 'string','VALUE_KIND','string'); return v; }
 export function bool(value: boolean): Extract<Value, {kind: 'bool'}> { ensure(typeof value==='boolean','BOOL_TYPE','Expected boolean');return {kind:'bool',value}; }
 export function emptyProfile(): Profile { return {revision:0,values:{},read:[]}; }
-export function readUnit(text: {textId: string; revision: string}): string { return `${text.textId}@${text.revision}`; }
+export function readUnit(text: {textId: string; revision: string}): string {ensure(text&&typeof text.textId==='string'&&typeof text.revision==='string'&&[text.textId,text.revision].every(id=>/^[a-zA-Z][a-zA-Z0-9_.:/-]{0,127}$/.test(id)),'TEXT_IDENTITY','TextId/revision reserve @ as the ReadUnit separator');return `${text.textId}@${text.revision}`;}
 export const capabilities = ['adv', 'stage.linear', 'audio.wav', 'tasks.all', 'profile','operations'] as const;
 
 export function parseJsonValue(input:unknown):JsonValue {
