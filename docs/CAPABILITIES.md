@@ -6,10 +6,10 @@
 | --- | --- |
 | Core / ABI | 同步 TS、稳定地址、参数/返回槽/显式帧、单剧情流、预算续跑 |
 | 值 | bool/string/checked i32；eq/lt；无隐式转换 |
-| 图像 / 正文 | 单 Pixi WebGL；绝对 x/y/alpha 线性动画；DOM ADV、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
+| 图像 / 正文 | 单 Pixi WebGL；绝对 x/y/alpha 线性动画；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
 | 媒体 | Web Audio 短 WAV、真实获取/解码/启动/重试、音量；显式 replay/stop，不提供采样点精确续接 |
-| 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载 |
+| 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载；TrueType目录/真实字体准备与独有FontFace释放 |
 | 工作 / 持久进度 | 同步工作 profile、冻结提交批次、幂等回执、修订冲突、普通已读/解锁自动提交 |
 | 有状态操作 | 真实 codec/操作工厂、冻结表、每调用 State、signal wait、隔离和失败原子性、禁止重入 |
 | 操作迁移 | args/resume ABI 相同时的 state 迁移；否则完整 SavedInvocation 迁移并重验；缺迁移拒绝 |
@@ -40,8 +40,10 @@ M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。�
 
 H1-01 加固保持协议/API：静态舞台不重复提交，正文/进度仍推进；新 epoch/动画仍绘制，实例销毁保留共享 Pixi 池并释放本实例 context，取消后的迟到 renderer 也清理。最新证据见 [H1-01](evidence/h1-01/REPORT.md)。
 
-用户要求的完整常用能力与实例职责见 [COMMON_VN](COMMON_VN.md)。G1-01 已落地的设置数据/系统提供主、BGM、voice、sfx 音量和文字间隔，独立于剧情 profile 持久化，默认 UI 可用，见 [SETTINGS](SETTINGS.md)。G1-02 自动阅读/已读快进、实例按键映射及显示辅助已实现，规则见 [PLAYBACK](PLAYBACK.md)；G2-01 结构化正文/Ruby/有限文字效果已实现，见 [TEXT](TEXT.md)；NVL/多文本框/主题布局、图文存档、流程图、鉴赏和剧本 UI 等 G 项仍未完成。
+用户要求的完整常用能力与实例职责见 [COMMON_VN](COMMON_VN.md)。G1-01 已落地的设置数据/系统提供主、BGM、voice、sfx 音量和文字间隔，独立于剧情 profile 持久化，默认 UI 可用，见 [SETTINGS](SETTINGS.md)。G1-02 自动阅读/已读快进、实例按键映射及显示辅助已实现，规则见 [PLAYBACK](PLAYBACK.md)；G2-01 结构化正文/Ruby/有限文字效果已实现，见 [TEXT](TEXT.md)；G2-02 的NVL/多文本框/主题布局与TrueType准备已实现；图文存档、流程图、鉴赏和剧本 UI 等 G 项仍未完成。
 
 G0-02 的 bool/i32/string 表达式、checked 算术/短路/字符串/插值、显式 RNG 与完整恢复已落实，见 [EXPRESSIONS](EXPRESSIONS.md) 和 g0-02 证据；浮点/集合及其余 G 任务未完成。
 
 G2-01 由公开 richText/richPage 工厂和同源 Schema 提供 text.rich，字素/停顿/效果状态进入快照，可见正文与历史恢复均验证源签名。原 text.page/template 的 codepoint 档保留语义，新 rich 使用固定分割版本；当前默认历史显示纯文本摘要，交互式历史仍待 G4。有限支持集见 TEXT.md、ADR0016，未测平台和未启用版式不据此宣称支持。
+
+G2-02 的textLayout/主题/字体工厂、Core窗口指令、NVL确认条目闭包与隔离renderer端口见 [TEXT_LAYOUT](TEXT_LAYOUT.md)。必要字体加载先于激活，当前仅TrueType与显式system fallback，不把加载当作字形覆盖/所有排版认证。完整通用任务仍按tasks.json推进。

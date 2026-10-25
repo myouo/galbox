@@ -22,3 +22,7 @@
 ## G2-01 字素实现
 
 [unicode-segmenter 官方仓库](https://github.com/cometkim/unicode-segmenter) 的 grapheme 入口提供 Unicode17/UAX29 字素分割。实际安装并固定 0.17.3，版本/完整性由 SDK package.json 与 pnpm-lock.yaml 记录；查验本地 grapheme/core/data 模块为环境中立算法，仅 protocol/text.ts 获准导入。SDK 的字素跨 run、ZWJ/组合符、揭示/恢复与浏览器布局仍用本仓库实际测试验证，不把上游测试声明当作本 SDK 已通过的证据。
+
+## G2-02 字体准备
+
+[CSS Font Loading Module Level 3](https://drafts.csswg.org/css-font-loading/) 的 FontFace 二进制构造、load 与 FontFaceSet 登记/删除是字体宿主实现依据（草案，不将其当设备兼容认证）。SDK 实际检查原始 TrueType，并在当前Chromium测试加载、失败、取消和双实例释放；未测设备不借用规范存在作支持结论。原创Latin字体由fontTools4.60.1生成，正常消费不依赖Python。

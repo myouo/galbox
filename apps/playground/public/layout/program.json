@@ -1,0 +1,420 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-windows",
+  "title": "灯塔来信 · 双页值班簿",
+  "release": "windows-1",
+  "entry": "main",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "expressions",
+    "text.rich",
+    "text.windows"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "bgm",
+      "path": "../assets/bgm.wav",
+      "mime": "audio/wav",
+      "sha256": "a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5",
+      "kind": "audio"
+    },
+    {
+      "id": "lighthouse-grid",
+      "path": "lighthouse-grid.ttf",
+      "mime": "font/ttf",
+      "sha256": "8d051282b8ef7af73f7a12cbb668066211b1966460623ebbc5f4e34ac81e626c",
+      "kind": "font"
+    }
+  ],
+  "globals": [
+    {
+      "id": "route",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": ""
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "book:stage",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "book:stage",
+          "object": {
+            "id": "background",
+            "asset": "shore",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "book:music",
+          "task": "music",
+          "asset": "bgm",
+          "channel": "bgm",
+          "gain": 0.2,
+          "loop": true,
+          "restore": "replay",
+          "op": "audio.play"
+        },
+        {
+          "at": "book:welcome",
+          "textId": "book.welcome",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "澪"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "灯亮以前，把今晚的事写进值班簿吧。"
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "book:select",
+          "window": "logbook",
+          "op": "text.window.select"
+        },
+        {
+          "at": "book:first",
+          "textId": "book.first",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "LOGBOOK / 01"
+          },
+          "runs": [
+            {
+              "kind": "ruby",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "灯塔"
+              },
+              "reading": {
+                "kind": "string",
+                "op": "literal",
+                "value": "とうだい"
+              }
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "：傍晚，海风把最后一封信送到了码头。"
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "book:second",
+          "textId": "book.second",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "LOGBOOK / 02"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "入夜，第一束光穿过雾。纸上留下两个人的名字。"
+              },
+              "style": {
+                "effect": {
+                  "kind": "fade",
+                  "duration": 180
+                }
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "book:note-select",
+          "window": "note",
+          "op": "text.window.select"
+        },
+        {
+          "at": "book:note",
+          "textId": "book.note",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "窗边的纸条"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "「别忘了回信。」"
+              },
+              "style": {
+                "italic": true
+              }
+            },
+            {
+              "kind": "pause",
+              "duration": 200
+            },
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "字迹轻轻晃了一下。"
+              },
+              "style": {
+                "effect": {
+                  "kind": "wave",
+                  "amplitude": 1,
+                  "periodMs": 900
+                }
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "book:hide-note",
+          "window": "note",
+          "visible": false,
+          "op": "text.window.visible"
+        },
+        {
+          "at": "book:theme",
+          "window": "logbook",
+          "theme": "sea",
+          "op": "text.window.theme"
+        },
+        {
+          "at": "book:back",
+          "window": "logbook",
+          "op": "text.window.select"
+        },
+        {
+          "at": "book:third",
+          "textId": "book.third",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "澪"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "下一页，我们留给明天。"
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "book:choice",
+          "dest": "route",
+          "options": [
+            {
+              "id": "send",
+              "text": "把回信寄往海上",
+              "target": "book:clear"
+            },
+            {
+              "id": "keep",
+              "text": "把回信留在灯下",
+              "target": "book:clear"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "book:clear",
+          "window": "logbook",
+          "op": "text.window.clear"
+        },
+        {
+          "at": "book:ending",
+          "textId": "book.ending",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "新的一页"
+          },
+          "runs": [
+            {
+              "kind": "text",
+              "content": {
+                "kind": "string",
+                "op": "literal",
+                "value": "海风翻过值班簿。灯还亮着，明天仍有故事可以写。"
+              }
+            }
+          ],
+          "op": "text.rich"
+        },
+        {
+          "at": "book:unlock",
+          "key": "bookComplete",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "book:end",
+          "op": "control.end"
+        }
+      ]
+    }
+  ],
+  "textLayout": {
+    "version": 1,
+    "initialWindow": "dialogue",
+    "themes": [
+      {
+        "id": "night",
+        "font": {
+          "kind": "system",
+          "family": "serif"
+        },
+        "fontSize": 22,
+        "lineHeight": 1.8,
+        "letterSpacing": 0.5,
+        "color": "#F3E9D6",
+        "speakerColor": "#FFD580",
+        "background": "#102B3D",
+        "backgroundOpacity": 0.92,
+        "borderColor": "#A2A99B",
+        "borderWidth": 1,
+        "padding": 24,
+        "align": "left"
+      },
+      {
+        "id": "paper",
+        "font": {
+          "kind": "asset",
+          "asset": "lighthouse-grid",
+          "fallback": "serif"
+        },
+        "fontSize": 25,
+        "lineHeight": 1.8,
+        "letterSpacing": 0.5,
+        "color": "#233744",
+        "speakerColor": "#795635",
+        "background": "#EEE2C5",
+        "backgroundOpacity": 0.98,
+        "borderColor": "#AB8E62",
+        "borderWidth": 1,
+        "padding": 26,
+        "align": "left"
+      },
+      {
+        "id": "sea",
+        "font": {
+          "kind": "system",
+          "family": "serif"
+        },
+        "fontSize": 22,
+        "lineHeight": 1.8,
+        "letterSpacing": 0.5,
+        "color": "#D7EFF1",
+        "speakerColor": "#FFD580",
+        "background": "#123F50",
+        "backgroundOpacity": 0.92,
+        "borderColor": "#A2A99B",
+        "borderWidth": 1,
+        "padding": 24,
+        "align": "left"
+      }
+    ],
+    "windows": [
+      {
+        "id": "dialogue",
+        "mode": "adv",
+        "theme": "night",
+        "rect": {
+          "x": 48,
+          "y": 500,
+          "width": 1184,
+          "height": 188
+        },
+        "z": 0,
+        "visible": true,
+        "maxEntries": 1
+      },
+      {
+        "id": "logbook",
+        "mode": "nvl",
+        "theme": "paper",
+        "rect": {
+          "x": 48,
+          "y": 112,
+          "width": 730,
+          "height": 370
+        },
+        "z": 1,
+        "visible": false,
+        "maxEntries": 4
+      },
+      {
+        "id": "note",
+        "mode": "adv",
+        "theme": "sea",
+        "rect": {
+          "x": 820,
+          "y": 130,
+          "width": 410,
+          "height": 240
+        },
+        "z": 2,
+        "visible": false,
+        "maxEntries": 1
+      }
+    ]
+  }
+}

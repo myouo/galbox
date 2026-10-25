@@ -26,6 +26,8 @@ export class WebHost implements HostPort {
   private audioUnavailable=false;
   private audioOperation:Promise<void>=Promise.resolve();
   private facts:ResourceFact[]=[];
+  private fonts=new Map<string,FontFace>();private readonly fontPrefix=`galbox-${crypto.randomUUID()}`;
+  fontFamily(id:string):string {const face=this.fonts.get(id);ensure(face,'TEXT_FONT','Font has not been prepared');return face.family;}
   private canvas:HTMLCanvasElement|null=null;
   readonly resources:ResourceDiagnostics={graphics:'unverified',assets:0,encodedBytes:0,textureBytesEstimated:0,decodedAudioBytes:0,limits:parseResourceBudget(defaultResourceBudget)};
   readonly media:MediaDiagnostics={state:'unverified',starts:0,ended:0,blocked:0,decoded:0,active:0};
@@ -55,6 +57,9 @@ export class WebHost implements HostPort {
           try {
             const img=new Image();img.src=url;try{await img.decode();}catch{throw new GalboxError('IMAGE_FORMAT',`${asset.id}: image decode unavailable`);}ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);ensure(fact.kind==='image'&&img.naturalWidth===fact.width&&img.naturalHeight===fact.height,'RESOURCE_IMAGE_SIZE',asset.id);this.textures.set(asset.id,Texture.from(img));
           } finally {URL.revokeObjectURL(url);}
+        }else if(asset.kind==='font'){
+          ensure(typeof FontFace!=='undefined'&&document.fonts,'FONT_UNAVAILABLE','Font loading is unavailable');const face=new FontFace(`${this.fontPrefix}-${this.fonts.size}`,new Uint8Array(bytes).buffer);let abort:(()=>void)|undefined;
+          try{await Promise.race([face.load(),new Promise<never>((_resolve,reject)=>{abort=()=>reject(new GalboxError('ASSET_CANCELLED',asset.id));signal.addEventListener('abort',abort,{once:true});if(signal.aborted)abort();})]);ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);document.fonts.add(face);this.fonts.set(asset.id,face);}catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('FONT_FORMAT',`${asset.id}: font decode unavailable`);}finally{if(abort)signal.removeEventListener('abort',abort);}
         }else {
           ensure(this.context,'AUDIO_UNAVAILABLE','Audio context absent');
           try {const buffer=await this.context.decodeAudioData(new Uint8Array(bytes).buffer);ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);ensure(fact.kind==='audio'&&buffer.numberOfChannels===fact.channels&&Math.abs(buffer.duration-fact.frames/fact.sampleRate)<.002,'RESOURCE_AUDIO_SHAPE',asset.id);const actual=buffer.length*buffer.numberOfChannels*4;ensure(this.resources.decodedAudioBytes+actual<=this.resources.limits.maxAudioBytes,'RESOURCE_AUDIO_BUDGET',asset.id);this.resources.decodedAudioBytes+=actual;this.buffers.set(asset.id,buffer);this.media.decoded++;}
@@ -116,6 +121,7 @@ export class WebHost implements HostPort {
   private stopAudio():void {for(const channel of [...this.playing.keys()])this.stopChannel(channel);}
   private destroyApplication(app:Application<WebGLRenderer>|null):void {if(app?.renderer)app.destroy({removeView:true,releaseGlobalResources:false},{children:true});}
   dispose():void {
+    for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();
     if(this.disposed)return;this.disposed=true;this.stopAudio();for(const sprite of this.sprites.values())sprite.destroy();this.sprites.clear();
     this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
     for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();

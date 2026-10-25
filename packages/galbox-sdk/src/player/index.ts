@@ -22,14 +22,17 @@ import type {ResourceDiagnostics} from '../web-host/host.js';
 import {webFormatContext,webReleaseDigest} from '../web-host/format.js';
 import {InputController} from '../web-host/input.js';
 import type {PlaybackView} from '../runtime/playback.js';
-import { TextController } from '../web-host/text.js';
+import {createDomTextRenderer} from '../web-host/renderer.js';
+import type {TextRenderer,TextRendererFactory} from '../web-host/renderer.js';
+export {createDomTextRenderer} from '../web-host/renderer.js';
+export type {TextRenderer,TextRendererFactory,TextRendererContext} from '../web-host/renderer.js';
 import {prepareBackupRestore,materializeBackupRestore,storageNamespace} from '../backups/index.js';
 import type {PreparedBackupRestore,ContentMigration,PortableBackup,BackupRestoreReceipt} from '../backups/index.js';
 import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;preferencesDefaults?:unknown;}
+export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;preferencesDefaults?:unknown;textRenderer?:TextRendererFactory;}
 export interface ReleaseView {readonly origin:'manifest'|'derived';readonly sha256:string;readonly manifest:DeepReadonly<ReleaseManifest>;}
 export interface PreferencesResult {readonly record:DeepReadonly<PreferencesRecord>;readonly committed:true;readonly disposed:boolean;}
 export interface PlayerView {
@@ -64,7 +67,7 @@ export class Player {
   private lastImport:{slot:string;profileId:string}|null=null;
   private readonly importCommits=new WeakMap<PreparedImport,{id:string;slot:string;label:string}>();
   private readonly host:WebHost;
-  private readonly text:TextController;
+  private text:TextRenderer|null=null;
   private readonly inputController:InputController;
   private readonly program:Program;
   private readonly operations:OperationRegistry;
@@ -94,7 +97,7 @@ export class Player {
     this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
     this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);this.requestedRelease=options.release===undefined?null:parseReleaseManifest(options.release);this.resourceBudget=parseResourceBudget(options.resourceBudget??this.requestedRelease?.limits??defaultResourceBudget);ensure(!this.requestedRelease||canonicalReleaseJSON(this.resourceBudget)===canonicalReleaseJSON(this.requestedRelease.limits),'RELEASE_BUDGET','Player budget differs from manifest');
     this.preferencesDefaults=normalizePreferences(options.preferencesDefaults??defaultPreferences());this.preferences={revision:0,value:parsePlayerPreferences(this.preferencesDefaults)};
-    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);});this.text=new TextController(options.mount);this.host.applyAudioPreferences(this.preferences.value.audio);this.text.applyDisplayPreferences(this.preferences.value.display);
+    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);});this.host.applyAudioPreferences(this.preferences.value.audio);
     this.inputController=new InputController({state:()=>{const v=this.getSnapshot(),w=v.core?.run.wait;return {epoch:v.epoch,prompt:w&&'prompt'in w?w.prompt:null,text:w?.kind==='text',playing:v.lifecycle==='playing',paused:v.paused,menu:v.menu};},advance:(prompt,epoch)=>{void this.step(prompt,epoch).catch(e=>this.fail(e));},menu:()=>this.setMenu(!this.menu),auto:()=>{void this.setAuto(this.runtime?.playbackView().mode!=='auto').catch(e=>this.fail(e));},skip:value=>this.setFast(value),quickSave:()=>{void this.save().catch(e=>this.fail(e));},quickLoad:()=>{void this.load().catch(e=>this.fail(e));}},this.preferences.value.input);this.inputController.attach(options.mount);
     this.cached={playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
@@ -104,8 +107,9 @@ export class Player {
       const digest=webReleaseDigest(),releaseOptions={program:player.program,series:player.options.saveCompatibilitySeries,operations:player.operations,...(player.options.bindings?{bindings:player.options.bindings}:{})};
       if(player.requestedRelease)await verifyReleaseManifest(player.requestedRelease,releaseOptions,digest);ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');
       player.store=player.options.store??await openStore(player.namespace,player.options.database);player.ownsStore=!player.options.store;if(player.disposed){if(player.ownsStore)player.store.close();throw new GalboxError('PLAYER_CANCELLED','Creation cancelled');}
-      player.preferencesSupported=!!player.store.readPreferences&&!!player.store.writePreferences;if(player.preferencesSupported){const stored=await player.store.readPreferences?.();if(stored)player.preferences=normalizePreferencesRecord(stored);}ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');player.host.applyAudioPreferences(player.preferences.value.audio);player.text.applyDisplayPreferences(player.preferences.value.display);player.inputController.configure(player.preferences.value.input);
+      player.preferencesSupported=!!player.store.readPreferences&&!!player.store.writePreferences;if(player.preferencesSupported){const stored=await player.store.readPreferences?.();if(stored)player.preferences=normalizePreferencesRecord(stored);}ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');player.host.applyAudioPreferences(player.preferences.value.audio);player.inputController.configure(player.preferences.value.input);
       await player.host.init(player.program,player.options.provider,player.abort.signal,player.resourceBudget,player.requestedRelease?.resources);
+      const renderer=(player.options.textRenderer??createDomTextRenderer)({mount:player.options.mount,program:parseProgram(player.program),fontFamily:id=>player.host.fontFamily(id)});ensure(renderer&&typeof renderer.render==='function'&&typeof renderer.applyDisplayPreferences==='function'&&typeof renderer.dispose==='function','TEXT_RENDERER','Invalid text renderer');if(player.disposed){renderer.dispose();throw new GalboxError('PLAYER_CANCELLED','Creation cancelled');}player.text=renderer;renderer.applyDisplayPreferences(player.preferences.value.display);
       const manifest=player.requestedRelease??await createReleaseManifest({...releaseOptions,resources:player.host.resourceFacts(),limits:player.resourceBudget},digest);const sha256=await releaseFingerprint(manifest,digest);ensure(!player.disposed,'PLAYER_CANCELLED','Creation cancelled');player.release={origin:player.requestedRelease?'manifest':'derived',sha256,manifest};
       document.addEventListener('visibilitychange',player.visibility);window.addEventListener('blur',player.blur);window.addEventListener('focus',player.focus);
       await player.refreshSlots();const durable=await player.store.read();if(durable.head?.status==='committed-pending')player.lifecycle='committed-pending';player.frameId=requestAnimationFrame(player.frame);player.publish();return player;
@@ -115,7 +119,7 @@ export class Player {
   subscribe=(fn:()=>void):(()=>void)=>{this.listeners.add(fn);return ()=>this.listeners.delete(fn);};
   private publish():void {
     const core=this.runtime?.view()??null;this.fast=this.runtime?.playbackView().mode==='skip';
-    if(core){this.host.render(core.run);this.text.render(core.run);}
+    if(core&&!this.disposed){this.host.render(core.run);this.text?.render(parseSnapshot(core.run));}
     this.cached={playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
     for(const listener of [...this.listeners]){try{listener();}catch(error){this.error=error instanceof Error?error.message:String(error);}}
   }
@@ -158,7 +162,7 @@ export class Player {
   private async install(activation:Activation,owner:string,gen:number):Promise<void> {
     const store=this.requireStore(),head=await store.read(activation.profileId??'main');
     ensure(head.head?.id===activation.id&&(head.head.owner??head.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Candidate no longer owns the durable head');
-    this.inputController.clear();const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations);candidate.accept({type:'text.preferences',value:this.preferences.value.text});const epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text.render(candidate.view().run);
+    this.inputController.clear();const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations);candidate.accept({type:'text.preferences',value:this.preferences.value.text});const epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text?.render(candidate.view().run);
     const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100);this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
     await runtime.configurePlayback(this.preferences.value.playback);await runtime.pausePlayback(this.pauses.size>0);await runtime.start();this.host.assertReady();ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Takeover was superseded');
     await store.confirm(activation.id,owner);const confirmed=await store.read(this.profileId);ensure(confirmed.head?.id===activation.id&&(confirmed.head.owner??confirmed.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Head changed during takeover');
@@ -250,7 +254,7 @@ export class Player {
   exportPreferences():DeepReadonly<import('../protocol/index.js').PlayerPreferences>{this.requireStore();return parsePlayerPreferences(this.preferences.value);}
   importPreferences(input:unknown):Promise<PreferencesResult>{const value=normalizePreferences(input);return this.updatePreferences({audio:value.audio,text:value.text,playback:value.playback,input:value.input,display:value.display});}
   setVolume(value:number):void {this.host.setVolume(value);}
-  private async applyPreferences(record:PreferencesRecord):Promise<void> {this.preferences=normalizePreferencesRecord(record);if(this.disposed)return;const value=this.preferences.value;this.host.applyAudioPreferences(value.audio);this.text.applyDisplayPreferences(value.display);this.inputController.configure(value.input);await this.runtime?.configurePlayback(value.playback);await this.runtime?.dispatch({type:'text.preferences',value:value.text});this.publish();}
+  private async applyPreferences(record:PreferencesRecord):Promise<void> {this.preferences=normalizePreferencesRecord(record);if(this.disposed)return;const value=this.preferences.value;this.host.applyAudioPreferences(value.audio);this.text?.applyDisplayPreferences(value.display);this.inputController.configure(value.input);await this.runtime?.configurePlayback(value.playback);await this.runtime?.dispatch({type:'text.preferences',value:value.text});this.publish();}
   async updatePreferences(input:unknown):Promise<PreferencesResult> {
     const patch=parsePreferencesPatch(input),store=this.requireStore(),write=store.writePreferences?.bind(store);ensure(this.preferencesSupported&&write,'PREFERENCES_UNSUPPORTED','Storage has no preferences port');
     const work=this.preferencesTail.catch(()=>{}).then(async()=>{ensure(!this.disposed,'PLAYER_DISPOSED','Player unavailable');const value=mergePreferences(this.preferences.value,patch);let record:PreferencesRecord;try{record=await write(value,this.preferences.revision);}catch(error){if(error instanceof GalboxError&&error.code==='PREFERENCES_CONFLICT')throw error;throw new GalboxError('PREFERENCES_COMMIT_UNKNOWN',`Reload preferences to reconcile the durable result. ${String(error)}`);}await this.applyPreferences(record);return {record:parsePreferencesRecord(record),committed:true as const,disposed:this.disposed};});this.preferencesTail=work.then(()=>{},()=>{});return work;
@@ -263,7 +267,7 @@ export class Player {
   dispose():void {
     if(this.disposed)return;this.disposed=true;++this.generation;++this.importGeneration;this.options.signal?.removeEventListener('abort',this.abortRequested);this.abort.abort();cancelAnimationFrame(this.frameId);
     document.removeEventListener('visibilitychange',this.visibility);window.removeEventListener('blur',this.blur);window.removeEventListener('focus',this.focus);
-    this.unsubscribe?.();this.runtime?.stop();this.inputController.dispose();this.host.dispose();this.text.dispose();this.lifecycle='disposed';this.publish();this.listeners.clear();
+    this.unsubscribe?.();this.runtime?.stop();this.inputController.dispose();this.host.dispose();try{this.text?.dispose();}catch(error){this.error=String(error);}this.text=null;this.lifecycle='disposed';this.publish();this.listeners.clear();
     // IDB transactions already started finish before db.close. Borrowed stores remain open.
     if(this.ownsStore)this.store?.close();
   }

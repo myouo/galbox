@@ -35,7 +35,8 @@
           "kind": {
             "enum": [
               "image",
-              "audio"
+              "audio",
+              "font"
             ]
           },
           "path": {
@@ -46,7 +47,8 @@
             "enum": [
               "image/svg+xml",
               "image/png",
-              "audio/wav"
+              "audio/wav",
+              "font/ttf"
             ]
           }
         },

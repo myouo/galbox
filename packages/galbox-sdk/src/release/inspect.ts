@@ -2,6 +2,11 @@ import {ensure,parseResourceFact} from '../protocol/index.js';
 import type {Asset,ResourceFact} from '../protocol/index.js';
 export function inspectResource(asset:Pick<Asset,'id'|'kind'|'mime'>,bytes:Uint8Array,decodeUtf8:(bytes:Uint8Array)=>string):ResourceFact {
  const base={id:asset.id,bytes:bytes.byteLength};const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ if(asset.kind==='font'){
+  ensure(asset.mime==='font/ttf'&&bytes.length>=12&&view.getUint32(0)===0x00010000,'RESOURCE_FONT','Expected TrueType SFNT');const count=view.getUint16(4);ensure(count>0&&count<=64&&bytes.length>=12+count*16,'RESOURCE_FONT','Invalid font table directory');const tables=new Map<number,{offset:number;length:number}>();
+  for(let j=0;j<count;j++){const at=12+j*16,tag=view.getUint32(at),offset=view.getUint32(at+8),length=view.getUint32(at+12);ensure(!tables.has(tag)&&offset>=12+count*16&&length>0&&offset+length<=bytes.length,'RESOURCE_FONT','Invalid font table');tables.set(tag,{offset,length});}
+  for(const tag of [0x68656164,0x68686561,0x686d7478,0x6d617870,0x636d6170,0x6c6f6361,0x676c7966,0x6e616d65,0x706f7374])ensure(tables.has(tag),'RESOURCE_FONT','Required TrueType table missing');const head=tables.get(0x68656164),maxp=tables.get(0x6d617870);ensure(head&&head.length>=54&&maxp&&maxp.length>=6&&view.getUint32(head.offset+12)===0x5f0f3cf5,'RESOURCE_FONT','Invalid font header');return parseResourceFact({...base,kind:'font',format:'truetype',glyphs:view.getUint16(maxp.offset+4)});
+ }
  if(asset.kind==='image'){
   if(asset.mime==='image/png'){ensure(bytes.length>=33&&[137,80,78,71,13,10,26,10].every((b,i)=>bytes[i]===b)&&view.getUint32(8)===13&&view.getUint32(12)===0x49484452,'RESOURCE_PNG','Expected PNG IHDR');return parseResourceFact({...base,kind:'image',width:view.getUint32(16),height:view.getUint32(20)});}
   ensure(asset.mime==='image/svg+xml','RESOURCE_FORMAT',asset.mime);const text=decodeUtf8(bytes),root=text.match(/^\s*(?:<\?xml[^>]*>\s*)?<svg\b([^>]*)>/i);

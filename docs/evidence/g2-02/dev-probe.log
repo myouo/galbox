@@ -1,0 +1,135 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173/?demo=layout",
+  "status": 200,
+  "browser": "156.0.8078.4",
+  "savedWindows": [
+    {
+      "id": "dialogue",
+      "theme": "night",
+      "visible": true,
+      "entries": 1
+    },
+    {
+      "id": "logbook",
+      "theme": "paper",
+      "visible": true,
+      "entries": 1
+    },
+    {
+      "id": "note",
+      "theme": "sea",
+      "visible": false,
+      "entries": 0
+    }
+  ],
+  "restoredWindows": [
+    {
+      "id": "dialogue",
+      "theme": "night",
+      "visible": true,
+      "entries": 1
+    },
+    {
+      "id": "logbook",
+      "theme": "sea",
+      "visible": true,
+      "entries": 3
+    },
+    {
+      "id": "note",
+      "theme": "sea",
+      "visible": false,
+      "entries": 1
+    }
+  ],
+  "active": "logbook",
+  "profile": {
+    "revision": 6,
+    "values": {
+      "bookComplete": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "book.welcome@zh-1",
+      "book.first@zh-1",
+      "book.second@zh-1",
+      "book.note@zh-1",
+      "book.third@zh-1",
+      "book.ending@zh-1"
+    ]
+  },
+  "preferences": {
+    "revision": 1,
+    "value": {
+      "version": 2,
+      "audio": {
+        "master": 0.6,
+        "bgm": 1,
+        "voice": 1,
+        "sfx": 1
+      },
+      "text": {
+        "intervalMs": 32
+      },
+      "playback": {
+        "autoDelayMs": 1500,
+        "skipUnread": false
+      },
+      "input": {
+        "advance": [
+          "Enter",
+          "Space"
+        ],
+        "menu": [
+          "Escape"
+        ],
+        "auto": [
+          "KeyA"
+        ],
+        "skip": [
+          "ControlLeft",
+          "ControlRight"
+        ],
+        "quickSave": [
+          "F5"
+        ],
+        "quickLoad": [
+          "F9"
+        ]
+      },
+      "display": {
+        "fontScale": 1.25,
+        "windowOpacity": 1
+      }
+    }
+  },
+  "playback": {
+    "mode": "manual",
+    "reason": "manual",
+    "elapsedMs": 0,
+    "voice": "none"
+  },
+  "fonts": [
+    {
+      "family": "galbox-9b2096e7-a142-483e-95b9-33303c8c7047-0",
+      "status": "loaded"
+    }
+  ],
+  "release": {
+    "origin": "manifest",
+    "sha256": "f00463ec32c473c9d78b509e776c0d1e9f6efbbe42bb587d46715f2a4e9ae5dd"
+  },
+  "media": {
+    "state": "available",
+    "starts": 1,
+    "ended": 0,
+    "blocked": 0,
+    "decoded": 1,
+    "active": 1
+  },
+  "canvas": 1,
+  "pageErrors": []
+}

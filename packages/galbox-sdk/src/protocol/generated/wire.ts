@@ -213,6 +213,28 @@ export type Instruction =
        * @maxItems 128
        */
       runs: [RichTextSourceRun, ...RichTextSourceRun[]];
+    }
+  | {
+      at: string;
+      op: 'text.window.select';
+      window: string;
+    }
+  | {
+      at: string;
+      op: 'text.window.clear';
+      window: string;
+    }
+  | {
+      at: string;
+      op: 'text.window.visible';
+      window: string;
+      visible: boolean;
+    }
+  | {
+      at: string;
+      op: 'text.window.theme';
+      window: string;
+      theme: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -489,6 +511,20 @@ export type RngConfig =
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextFont".
+ */
+export type TextFont =
+  | {
+      kind: 'system';
+      family: 'serif' | 'sans-serif' | 'monospace';
+    }
+  | {
+      kind: 'asset';
+      asset: string;
+      fallback: 'serif' | 'sans-serif' | 'monospace';
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "TextRun".
  */
 export type TextRun =
@@ -640,6 +676,13 @@ export type ResourceFact =
       channels: number;
       sampleRate: number;
       frames: number;
+    }
+  | {
+      id: string;
+      kind: 'font';
+      bytes: number;
+      format: 'truetype';
+      glyphs: number;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -693,6 +736,7 @@ export interface Program {
    */
   behaviorMappings?: BehaviorMapping[];
   rng?: RngConfig;
+  textLayout?: TextLayout;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -700,10 +744,10 @@ export interface Program {
  */
 export interface Asset {
   id: string;
-  kind: 'image' | 'audio';
+  kind: 'image' | 'audio' | 'font';
   path: string;
   sha256: string;
-  mime: 'image/svg+xml' | 'image/png' | 'audio/wav';
+  mime: 'image/svg+xml' | 'image/png' | 'audio/wav' | 'font/ttf';
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -819,6 +863,61 @@ export interface BehaviorMapping {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextLayout".
+ */
+export interface TextLayout {
+  version: 1;
+  initialWindow: string;
+  /**
+   * @minItems 1
+   * @maxItems 16
+   */
+  themes: [TextTheme, ...TextTheme[]];
+  /**
+   * @minItems 1
+   * @maxItems 8
+   */
+  windows: [TextWindow, ...TextWindow[]];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextTheme".
+ */
+export interface TextTheme {
+  id: string;
+  font: TextFont;
+  fontSize: number;
+  lineHeight: number;
+  letterSpacing: number;
+  color: string;
+  speakerColor: string;
+  background: string;
+  backgroundOpacity: number;
+  borderColor: string;
+  borderWidth: number;
+  padding: number;
+  align: 'left' | 'center' | 'right';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextWindow".
+ */
+export interface TextWindow {
+  id: string;
+  mode: 'adv' | 'nvl';
+  theme: string;
+  rect: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  z: number;
+  visible: boolean;
+  maxEntries: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Snapshot".
  */
 export interface Snapshot {
@@ -859,6 +958,7 @@ export interface Snapshot {
    */
   invocations?: SavedInvocation[];
   rng?: RngState;
+  textLayout?: TextLayoutState;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -893,6 +993,10 @@ export interface TextState {
     at: string;
   };
   rich?: RichTextState;
+  window?: {
+    id: string;
+    at: string;
+  };
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -989,6 +1093,39 @@ export interface RngState {
   algorithm: 'lcg32@1';
   state: number;
   draws: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "TextLayoutState".
+ */
+export interface TextLayoutState {
+  version: 1;
+  signature: string;
+  active: string;
+  /**
+   * @minItems 1
+   * @maxItems 8
+   */
+  windows: [
+    {
+      id: string;
+      theme: string;
+      visible: boolean;
+      /**
+       * @maxItems 32
+       */
+      entries: TextState[];
+    },
+    ...{
+      id: string;
+      theme: string;
+      visible: boolean;
+      /**
+       * @maxItems 32
+       */
+      entries: TextState[];
+    }[]
+  ];
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

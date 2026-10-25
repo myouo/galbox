@@ -1,9 +1,9 @@
 # 当前实施计划
 
-G2-01 已完成有限验收。顺序：ADR0016 固定支持集 → Schema/生成物/真实工厂 → Core 字素/停顿/效果 continuation 与恢复来源验证 → DOM 完整布局/原创信纸章节 → 单元/浏览器/仓库外消费者/既有完整门槛。实际日志在 evidence/g2-01，任务状态唯一来源 tasks.json。
+G2-02已完成有限验收。ADR0017→Schema/真实工厂→Core窗口/NVL与来源闭包→FontFace准备/清理→隔离renderer端口/默认DOM→原创双页值班簿→单元、浏览器、独立打包和原有门槛。实际日志evidence/g2-02，完整状态唯一来源tasks.json。
 
-最终通过105单元/44浏览器、仓库外严格打包消费者、50 CLI、4 synthetic、性能/API/pack/dry-run，并实际在开发服务保存剩余段内停顿、刷新恢复继续到结局。新的 text.rich uses uax29-17.0.0@1，旧 page/template 保留 codepoint；Auto/快进共用 isTextComplete，不在 UI 另写揭示或剧情状态。源变更/标记缺失/非法 continuation 拒绝并保留旧档。
+最终114单元/48浏览器/独立tarball/54 CLI/4 synthetic/性能/API/pack/dry-run通过，renderer迟到取消/已提交失败恢复均实际执行。CLI同步font配置与验证，并新增真实字体资产build/validate/build/损坏拒绝（总54命令）。不把仅CSS皮肤或静态接口计作窗口系统。
 
-下一项 G2-02：先定义 ADV/NVL、多窗口、主题/布局、必要字体与保存恢复支持集，再按 Schema/公开工厂/Core 状态/DOM/Player/默认 UI/独立消费闭环，不把纯 CSS 皮肤当作完整窗口系统。G0-03 与其余 G 项保留待办。
+下一项G0-03：先定义有限浮点/集合值族、类型化表达式、大小边界与完整内容迁移ADR，再同步Schema/生成物/真实工厂/Core/保存恢复/失败反例。此项是G3舞台完整变换的既定依赖，不重开语言选型。
 
-N/F 真实资料阻塞不阻塞通用工作。当前 dev 已启动，重启服务使用 pnpm dev；browser 套件前释放 4173/4174。未真实 push/publish/部署，当前结果不代表完整 GalGame 功能或真实作品认证。
+当前dev已启动，实际保存/刷新恢复/换主题/清页并到结局，保留6条已读/解锁/当前设置。N/F真实资料阻塞独立保留；完整G0–G7未完成，不推送/发布/部署。

@@ -7,3 +7,5 @@
 .galbox-player .preferences{grid-template-columns:minmax(0,1fr)}.galbox-player .preferences>*{min-width:0;max-width:100%}.galbox-player .preferences p{overflow-wrap:anywhere}
 
 .galbox-text-unit[data-effect=wave],.galbox-text-unit[data-effect=shake]{display:inline-block}.galbox-text ruby{ruby-position:over}.galbox-text rt{font-size:.55em;letter-spacing:normal}@media(prefers-reduced-motion:reduce){.galbox-text-unit[data-effect]{transform:none!important;opacity:1!important}}
+
+.galbox-text-window{pointer-events:auto;box-sizing:border-box}.galbox-text-window .galbox-text-entry{position:static;margin:0 0 .75em}.galbox-text-window .galbox-text-entry:last-child{margin-bottom:0}.galbox-text-window p{white-space:pre-wrap}

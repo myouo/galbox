@@ -43,3 +43,5 @@ G0-02 新增现有值族纯表达式、已求值模板正文和完整确定性�
 G1-02 已完成当前支持集：协调器自动阅读/快进、真实语音结束、实例按键映射、显示辅助、偏好 v2/迁移和设置导入导出/默认恢复。当前包及最终重验见 [G1-02](evidence/g1-02/REPORT.md)：95 单元、41 浏览器、独立消费者、50 CLI、4 synthetic、性能与 API 审计通过。偏好 v1 可向 v2 规范化，旧二进制不能读新偏好，Snapshot 音频启动语义不变。下一项 G2-01；完整 G0–G7/N/F/M6 仍未完成。
 
 G2-01 已完成结构化正文有限集：text.rich/公开工厂、固定字素/Ruby、安全样式和活动时间效果/停顿，以及完整 continuation 与恢复来源校验。新增原创 /?demo=text；当前证据 [G2-01](evidence/g2-01/REPORT.md)：105 单元、44 浏览器、仓库外消费者、50 CLI、4 synthetic、性能/API/打包 dry-run 和开发服务刷新恢复。当前 SDK SHA=f459960fd8a1c35f108b5800b73bcb4ca247d6f9bca9d82238d10cb7871e494a，旧二进制不承诺前向读取新 rich；旧 codepoint 档未改解释。NVL/多文本框/主题布局仍为下一项 G2-02，完整 G0–G7/N/F/M6 未完成。
+
+G2-02有限支持集完成：ADV/NVL、多窗口与声明式主题、TrueType准备、隔离renderer端口和窗口/历史来源闭包。原创/?demo=layout；最新证据 [G2-02](evidence/g2-02/REPORT.md)：114单元、48浏览器、独立消费者、54 CLI、4 synthetic、性能/API/dry-run和真实dev保存/刷新/清页。当前SDK SHA=6591a423544a250dc47a99f4252b64984f8407dc47c988b3e2d9b7ccf461d636，CLI SHA=3034e05a62f3c1dbada1d0a0ba56e6596081716a6cc22988c6f3567b874fc35e。旧无布局档不改语义，新Program缺布局状态需迁移；未启用字体/排版分支和其余G任务仍保留，下一项G0-03，完整两作支持未完成。

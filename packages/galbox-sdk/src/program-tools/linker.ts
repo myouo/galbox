@@ -1,6 +1,7 @@
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
-import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig } from '../protocol/index.js';
+import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig,parseTextLayout } from '../protocol/index.js';
+import {validateTextLayout} from '../protocol/layout.js';
 import {richTextSignature,compileRichText} from '../protocol/text.js';
 import {validateExpressionTree,templateSignature} from '../protocol/expressions.js';
 import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly, SourceLocation, PortObligation, BehaviorMapping } from '../protocol/index.js';
@@ -34,9 +35,10 @@ export class ProgramBuilder {
   source(at:string,source:SourceLocation):this {const entries=parseSourceMap([{at,source}]);this.data.sourceMap=[...(this.data.sourceMap??[]),...entries];return this;}
   obligation(value:PortObligation):this {this.data.obligations=[...(this.data.obligations??[]),parsePortObligation(value)];return this;}
   mapping(value:BehaviorMapping):this {this.data.behaviorMappings=[...(this.data.behaviorMappings??[]),parseBehaviorMapping(value)];return this;}
+  textLayout(input:import('../protocol/index.js').TextLayout):this {this.data.textLayout=parseTextLayout(input);return this;}
   rngFromHost():this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seedSource:'host'});return this;}
   rng(seed:number):this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seed});return this;}
-  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
+  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
   private readonly program: Program;
@@ -57,8 +59,9 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
   ensure(p.capabilities.every(c=>capabilities.some(s=>s===c)),'UNSUPPORTED_CAPABILITY',p.capabilities.join(','));
   if(p.rng)ensure(p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng.lcg32');
   const richIds=new Set(p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich').map(i=>readUnit(i)));for(const op of p.functions.flatMap(f=>f.code))if(op.op==='text.page'||op.op==='text.template')ensure(!richIds.has(readUnit(op)),'TEXT_FORMAT_IDENTITY','Rich and legacy text cannot share textId/revision');
+  validateTextLayout(p);
   const main=p.functions.find(f=>f.id === p.entry); ensure(main && !main.params.length && main.returns==='void','ENTRY','Entry must take no parameters and return void');
-  for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&a.mime==='audio/wav'),'ASSET_KIND',a.id);
+  for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&a.mime==='audio/wav')||(a.kind==='font'&&a.mime==='font/ttf'),'ASSET_KIND',a.id);
   for(const f of p.functions) {
     const slots=[...p.globals,...f.params,...f.locals]; unique(slots.map(s=>s.id),'SLOT_DUPLICATE');
     for(const s of slots)ensure(s.kind===s.initial.kind,'VALUE_KIND',s.id);
@@ -71,6 +74,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
       try {
       if(!['control.jump','control.branch','control.return','control.end'].includes(i.op))ensure(f.code[index+1],'FALLTHROUGH',i.at);
       switch(i.op) {
+        case 'text.window.select':case 'text.window.clear':case 'text.window.visible':case 'text.window.theme':ensure(p.textLayout?.windows.some(w=>w.id===i.window),'TEXT_WINDOW',i.window);if(i.op==='text.window.theme')ensure(p.textLayout?.themes.some(t=>t.id===i.theme),'TEXT_THEME',i.theme);break;
         case 'text.page': readUnit(i);break;
         case 'text.template': ensure(p.capabilities.includes('expressions'),'EXPRESSION_CAPABILITY','Declare expressions');readUnit(i);validateExpressionTree(i.speaker,id=>slots.find(s=>s.id===id)?.kind);validateExpressionTree(i.content,id=>slots.find(s=>s.id===id)?.kind);templateSignature(i.speaker,i.content);break;
         case 'text.rich': {ensure(p.capabilities.includes('text.rich')&&p.capabilities.includes('expressions'),'TEXT_CAPABILITY','Declare text.rich and expressions');readUnit(i);validateExpressionTree(i.speaker,id=>slots.find(s=>s.id===id)?.kind);for(const run of i.runs){if(run.kind==='text'||run.kind==='ruby'){validateExpressionTree(run.content,id=>slots.find(s=>s.id===id)?.kind);if(run.kind==='ruby')validateExpressionTree(run.reading,id=>slots.find(s=>s.id===id)?.kind);}}richTextSignature(i);if(i.runs.every(r=>(r.kind!=='text'&&r.kind!=='ruby')||r.content.op==='literal'&&(r.kind!=='ruby'||r.reading.op==='literal'))){compileRichText(i.runs.map(r=>{if(r.kind==='text')return {...r,content:r.content.op==='literal'?r.content.value:''};if(r.kind==='ruby')return {...r,content:r.content.op==='literal'?r.content.value:'',reading:r.reading.op==='literal'?r.reading.value:''};return r;}));}break;}

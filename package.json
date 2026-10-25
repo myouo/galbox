@@ -17,7 +17,7 @@
     "dev": "pnpm build:sdk && vite --config apps/playground/vite.config.ts --host 127.0.0.1",
     "test:browser": "pnpm build && pnpm build:harness && playwright test",
     "test:consumer": "node scripts/consumer.mjs",
-    "fixture": "tsx fixtures/standard-novel/build.ts && tsx fixtures/synthetic-saves/build.ts && tsx fixtures/expression-novel/build.ts && tsx fixtures/text-novel/build.ts",
+    "fixture": "tsx fixtures/standard-novel/build.ts && tsx fixtures/synthetic-saves/build.ts && tsx fixtures/expression-novel/build.ts && tsx fixtures/text-novel/build.ts && tsx fixtures/layout-novel/build.ts",
     "build:harness": "vite build --config tests/browser/harness/vite.config.ts",
     "test:compatibility": "pnpm build:sdk && node scripts/compatibility.mjs",
     "build:cli": "pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs",

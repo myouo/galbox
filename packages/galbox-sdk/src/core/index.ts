@@ -1,5 +1,6 @@
 import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
+import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
 import {compileRichText,richTextSignature,textSegmentation,tickRichText,revealRichText,isTextComplete,validateRichText} from '../protocol/text.js';
 import type {TextPlan} from '../protocol/text.js';
 import {evaluateExpression,templateSignature} from '../protocol/expressions.js';
@@ -44,7 +45,7 @@ export class Core {
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(this.program.entry),rng=initialRng(this.program.rng,rngSeed);
-      this.s={version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
+      const textLayout=initialTextLayout(this.program);this.s={...(textLayout?{textLayout}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
@@ -89,7 +90,7 @@ export class Core {
   accept(event:CoreEvent):void {
     ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');
     if(this.revoked||this.s.status==='failed')return;
-    if(event.type==='text.preferences'){const value=parseTextPreferences(event.value);this.textInterval=value.intervalMs;this.textRemainder=0;if(this.s.text?.rich){if(this.s.text.rich.baseIntervalMs!==value.intervalMs)this.s.text.rich.remainderMs=0;this.s.text.rich.baseIntervalMs=value.intervalMs;}return;}
+    if(event.type==='text.preferences'){const value=parseTextPreferences(event.value);this.textInterval=value.intervalMs;this.textRemainder=0;if(this.s.wait?.kind==='text'&&this.s.text?.rich){if(this.s.text.rich.baseIntervalMs!==value.intervalMs)this.s.text.rich.remainderMs=0;this.s.text.rich.baseIntervalMs=value.intervalMs;}return;}
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
       if(this.consumed.has(event.inputId)||!this.s.wait||!('prompt'in this.s.wait)||event.prompt!==this.s.wait.prompt)return;
@@ -100,7 +101,7 @@ export class Core {
       } else if(this.s.wait.kind==='text'&&this.s.text) {
         if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich)revealRichText(this.s.text,this.textPlan());else this.s.text.revealed=length(this.s.text.content);return;}
         if(!isTextComplete(this.s.text))return;
-        this.read();this.s.history.push(parseTextState(this.s.text));this.top().pc=this.next();this.s.wait=null;this.s.status='running';
+        this.read();this.s.history.push(parseTextState(this.s.text));confirmWindowText(this.s);this.top().pc=this.next();this.s.wait=null;this.s.status='running';
       }
       return;
     }
@@ -223,19 +224,23 @@ export class Core {
       case 'extension.invoke':this.invokeOperation(i);return;
       case 'value.set':this.put(i.dest,this.get(i.value));break;
       case 'i32.add.checked': {const a=this.get(i.left),b=this.get(i.right);ensure(a.kind==='i32'&&b.kind==='i32','I32_OPERAND',i.at);this.put(i.dest,i32(a.value+b.value));break;}
-      case 'text.page': {this.richPlan=null;const prompt=++this.s.counter;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt};wait({kind:'text',at:i.at,prompt});return;}
-      case 'text.template': {this.richPlan=null;const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(speaker.value.length>0&&content.value.length>0,'TEMPLATE_EMPTY','Text and speaker must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);this.s.counter=prompt;this.textRemainder=0;this.s.text={textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.textInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}};wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.page': {const prompt=this.s.counter+1,text=parseTextState({textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt});prepareWindowText(this.program,this.s,text,i.at);this.richPlan=null;this.s.counter=prompt;this.textRemainder=0;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.template': {this.richPlan=null;const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(speaker.value.length>0&&content.value.length>0,'TEMPLATE_EMPTY','Text and speaker must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.textInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}});prepareWindowText(this.program,this.s,text,i.at);this.s.counter=prompt;this.textRemainder=0;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
       case 'text.rich': {
         const speaker=this.expression(i.speaker);ensure(speaker.kind==='string'&&speaker.value.length>0,'TEMPLATE_EMPTY','Speaker must not be empty');
         const textValue=(expression:import('../protocol/index.js').StringExpression)=>{const value=this.expression(expression);ensure(value.kind==='string'&&value.value.length>0,'TEMPLATE_EMPTY','Rich content/reading must not be empty');return value.value;};
         const runs=i.runs.map(run=>run.kind==='text'?{...run,content:textValue(run.content)}:run.kind==='ruby'?{...run,content:textValue(run.content),reading:textValue(run.reading)}:{...run});
         const plan=compileRichText(runs),signature=richTextSignature(i),prompt=this.s.counter+1;i32(prompt);
         const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:i.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:this.textInterval,revealedAt:[]}});
-        tickRichText(text,0,plan);validateRichText(text,i);this.richPlan=plan;this.s.text=text;this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});return;
+        tickRichText(text,0,plan);validateRichText(text,i);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});return;
       }
       case 'random.i32': {ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');const min=this.expression(i.min),max=this.expression(i.max);ensure(min.kind==='i32'&&max.kind==='i32','EXPRESSION_KIND','Random bounds require i32');const result=sampleI32(this.s.rng,min.value,max.value);this.put(i.dest,result.value);this.s.rng=result.rng;break;}
       case 'rng.seed': ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');this.s.rng={algorithm:'lcg32@1',state:i.seed,draws:0};break;
-      case 'text.clear':this.s.text=null;break;
+      case 'text.clear':if(this.s.textLayout)clearTextWindow(this.s,this.s.textLayout.active);else this.s.text=null;break;
+      case 'text.window.select': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w&&this.s.textLayout,'TEXT_WINDOW',i.window);this.s.textLayout.active=w.id;w.visible=true;break;}
+      case 'text.window.clear':clearTextWindow(this.s,i.window);break;
+      case 'text.window.visible': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.visible=i.visible;break;}
+      case 'text.window.theme': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.theme=i.theme;break;}
       case 'choice':wait({kind:'choice',at:i.at,prompt:++this.s.counter,options:i.options.map(o=>({...o})),dest:i.dest});return;
       case 'stage.put': {
         ensure(!this.s.tasks.some(t=>t.kind==='animation'&&t.target===i.object.id&&t.status==='running'),'STAGE_BUSY',i.object.id);
@@ -284,8 +289,9 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
   ensure(!!p.rng===!!s.rng&&(!s.rng||s.rng.algorithm===p.rng?.algorithm),'RESTORE_RNG','RNG state missing or unavailable; explicit migration required');
   ensure(s.release===p.release,'RELEASE_MISMATCH','Snapshot release unavailable; migration required');
   const richSources=p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich');
-  for(const text of [...(s.text?[s.text]:[]),...s.history]){if(text.rich){const source=richSources.find(i=>i.at===text.rich?.at);ensure(source,'RESTORE_RICH_SOURCE','Rich source unavailable; explicit migration required');validateRichText(text,source);}else ensure(!richSources.some(i=>i.textId===text.textId&&i.revision===text.revision),'RESTORE_RICH_SOURCE','Missing structured text continuation');}
+  for(const text of [...(s.text?[s.text]:[]),...s.history,...(s.textLayout?.windows.flatMap(w=>w.entries)??[])]){if(text.rich){const source=richSources.find(i=>i.at===text.rich?.at);ensure(source,'RESTORE_RICH_SOURCE','Rich source unavailable; explicit migration required');validateRichText(text,source);}else ensure(!richSources.some(i=>i.textId===text.textId&&i.revision===text.revision),'RESTORE_RICH_SOURCE','Missing structured text continuation');}
   if(s.text?.template){const text=s.text,origin=text.template,source=p.functions.flatMap(f=>f.code).find(i=>i.at===origin?.at);ensure(source?.op==='text.template'&&text.textId===source.textId&&text.revision===source.revision&&text.revealed<=length(text.content)&&origin?.signature===templateSignature(source.speaker,source.content),'RESTORE_TEMPLATE','Displayed template changed; explicit migration required');}
+  validateWindowState(p,s);
   ensure(s.status==='waiting'||s.status==='ended','RESTORE_PHASE','Only semantic waits and end are restorable');
   ensure(s.frames.length>0&&s.frames[0]?.functionId===p.entry&&!s.frames[0].returnTo,'RESTORE_FRAME','Invalid entry frame');
   const checkSlots=(actual:Record<string,Value>,expected:readonly {id:string;kind:string}[])=>{

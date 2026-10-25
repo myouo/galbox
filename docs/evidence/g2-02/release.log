@@ -1,0 +1,30 @@
+$ pnpm build:cli && node scripts/release-audit.mjs
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+{
+  "result": "passed",
+  "baseline": "2720eb4",
+  "entriesBefore": 13,
+  "entriesAfter": 13,
+  "added": 21,
+  "changed": 12,
+  "removed": 0,
+  "packages": [
+    {
+      "name": "galbox-sdk",
+      "version": "0.1.0",
+      "file": "artifacts/galbox-sdk-0.1.0.tgz",
+      "sha256": "6591a423544a250dc47a99f4252b64984f8407dc47c988b3e2d9b7ccf461d636",
+      "dryRun": true,
+      "actualPublish": false
+    },
+    {
+      "name": "@galbox/cli",
+      "version": "0.1.0",
+      "file": "artifacts/galbox-cli-0.1.0.tgz",
+      "sha256": "3034e05a62f3c1dbada1d0a0ba56e6596081716a6cc22988c6f3567b874fc35e",
+      "dryRun": true,
+      "actualPublish": false
+    }
+  ]
+}

@@ -102,3 +102,5 @@ M6 汇总 SDK、工具、模板、操作/能力说明、平台证据与两作兼
 G1-02 的有限支持集由 ADR0015、PLAYBACK.md 和 SETTINGS.md 约束：协调器 Auto/快进、真实 voice 结束事件、实例物理键映射、显示辅助、v1→v2 偏好迁移及设置 JSON。此项不改变 M0–M2 的 Snapshot 音频启动回执含义；富文本/NVL/可声明文本框仍按 G2 单独验收。
 
 G2-01 有限支持集见 ADR0016、TEXT.md：text.rich、字素/Ruby、safe style、速度/毫秒停顿、淡入/波动/抖动，以及完整 continuation/来源恢复验证和 DOM 预建布局。G2-02 继续 ADV/NVL、多文本框、主题/布局/必要字体与 renderer 端口；当前字素分割实现不扩大为已支持所有排版能力。
+
+G2-02 有限支持集见 ADR0017、TEXT_LAYOUT.md：最多8窗口/16主题、ADV/NVL/显式容量和清页、真实TrueType准备、renderer端口与完整快照闭包。系统字体为显式fallback；不把字号/行距布局当作竖排/禁则/自动分页或完整字形覆盖。

@@ -142,7 +142,8 @@
           "type": "string",
           "enum": [
             "image",
-            "audio"
+            "audio",
+            "font"
           ]
         },
         "path": {
@@ -158,7 +159,8 @@
           "enum": [
             "image/svg+xml",
             "image/png",
-            "audio/wav"
+            "audio/wav",
+            "font/ttf"
           ]
         }
       },
@@ -1085,6 +1087,107 @@
             "runs"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "text.window.select"
+            },
+            "window": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "window"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "text.window.clear"
+            },
+            "window": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "window"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "text.window.visible"
+            },
+            "window": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "visible": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "window",
+            "visible"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "type": "string",
+              "const": "text.window.theme"
+            },
+            "window": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "theme": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "window",
+            "theme"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -1216,6 +1319,9 @@
         },
         "rng": {
           "$ref": "#/definitions/RngConfig"
+        },
+        "textLayout": {
+          "$ref": "#/definitions/TextLayout"
         }
       },
       "required": [
@@ -1362,6 +1468,24 @@
         },
         "rich": {
           "$ref": "#/definitions/RichTextState"
+        },
+        "window": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "id",
+            "at"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1761,6 +1885,9 @@
         },
         "rng": {
           "$ref": "#/definitions/RngState"
+        },
+        "textLayout": {
+          "$ref": "#/definitions/TextLayoutState"
         }
       },
       "required": [
@@ -2796,6 +2923,41 @@
             "channels",
             "sampleRate",
             "frames"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "kind": {
+              "type": "string",
+              "const": "font"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 67108864
+            },
+            "format": {
+              "type": "string",
+              "const": "truetype"
+            },
+            "glyphs": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "bytes",
+            "format",
+            "glyphs"
           ],
           "additionalProperties": false
         }
@@ -5206,6 +5368,311 @@
         "pauseRemainingMs",
         "baseIntervalMs",
         "revealedAt"
+      ],
+      "additionalProperties": false
+    },
+    "TextFont": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "system"
+            },
+            "family": {
+              "type": "string",
+              "enum": [
+                "serif",
+                "sans-serif",
+                "monospace"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "family"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "asset"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "fallback": {
+              "type": "string",
+              "enum": [
+                "serif",
+                "sans-serif",
+                "monospace"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "asset",
+            "fallback"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "TextTheme": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "font": {
+          "$ref": "#/definitions/TextFont"
+        },
+        "fontSize": {
+          "type": "number",
+          "minimum": 12,
+          "maximum": 64
+        },
+        "lineHeight": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "letterSpacing": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "speakerColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "backgroundOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "borderColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "borderWidth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "padding": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 96
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "font",
+        "fontSize",
+        "lineHeight",
+        "letterSpacing",
+        "color",
+        "speakerColor",
+        "background",
+        "backgroundOpacity",
+        "borderColor",
+        "borderWidth",
+        "padding",
+        "align"
+      ],
+      "additionalProperties": false
+    },
+    "TextWindow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "adv",
+            "nvl"
+          ]
+        },
+        "theme": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "rect": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1280
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 720
+            },
+            "width": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1280
+            },
+            "height": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 720
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ],
+          "additionalProperties": false
+        },
+        "z": {
+          "type": "integer",
+          "minimum": -128,
+          "maximum": 128
+        },
+        "visible": {
+          "type": "boolean"
+        },
+        "maxEntries": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      },
+      "required": [
+        "id",
+        "mode",
+        "theme",
+        "rect",
+        "z",
+        "visible",
+        "maxEntries"
+      ],
+      "additionalProperties": false
+    },
+    "TextLayout": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "initialWindow": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextTheme"
+          },
+          "minItems": 1,
+          "maxItems": 16
+        },
+        "windows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextWindow"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      },
+      "required": [
+        "version",
+        "initialWindow",
+        "themes",
+        "windows"
+      ],
+      "additionalProperties": false
+    },
+    "TextLayoutState": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,65536}$"
+        },
+        "active": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+              },
+              "theme": {
+                "type": "string",
+                "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+              },
+              "visible": {
+                "type": "boolean"
+              },
+              "entries": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/TextState"
+                },
+                "maxItems": 32
+              }
+            },
+            "required": [
+              "id",
+              "theme",
+              "visible",
+              "entries"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      },
+      "required": [
+        "version",
+        "signature",
+        "active",
+        "windows"
       ],
       "additionalProperties": false
     }

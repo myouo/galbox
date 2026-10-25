@@ -373,6 +373,54 @@ export const operationSpecs = {
       "speaker",
       "runs"
     ]
+  },
+  "text.window.select": {
+    "opcode": "text.window.select",
+    "parameters": [
+      "at",
+      "window"
+    ],
+    "required": [
+      "at",
+      "window"
+    ]
+  },
+  "text.window.clear": {
+    "opcode": "text.window.clear",
+    "parameters": [
+      "at",
+      "window"
+    ],
+    "required": [
+      "at",
+      "window"
+    ]
+  },
+  "text.window.visible": {
+    "opcode": "text.window.visible",
+    "parameters": [
+      "at",
+      "window",
+      "visible"
+    ],
+    "required": [
+      "at",
+      "window",
+      "visible"
+    ]
+  },
+  "text.window.theme": {
+    "opcode": "text.window.theme",
+    "parameters": [
+      "at",
+      "window",
+      "theme"
+    ],
+    "required": [
+      "at",
+      "window",
+      "theme"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke"] as const;

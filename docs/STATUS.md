@@ -1,19 +1,19 @@
 # galbox-sdk 当前状态
 
-2026-10-25。G2-01 已完成有限支持集，完整常用 GalGame G0–G7 仍在建设。分支 feat/structured-text-effects，基线 108566e，本轮本地提交见 git log。没有外部发布、push、部署或远程 CI；tasks.json 为完整状态唯一来源。下一项 G2-02。
+2026-10-25。G2-02已完成有限支持集，完整常用GalGame G0–G7仍在建设。分支feat/text-windows-layouts，基线2720eb4，本轮本地提交见git log。没有外部发布、push、部署或远程CI；tasks.json为完整状态唯一来源。下一项G0-03。
 
-G2-01：text.rich、公开 richText/richPage 工厂、文字/Ruby/换行/速度/毫秒停顿、安全颜色/粗斜体/下划线/缩放及 fade/wave/shake。新正文固定字素分割，旧 page/template 和旧档保留 codepoint。DOM 预建完整布局，隐藏未来字素并更新可见性/效果，不用 innerHTML。正文不参与 Pixi 合成；默认历史仍为纯正文摘要，但快照保留完整 runs。
+G2-02：Program.textLayout与主题/窗口/字体工厂，Core选窗/显隐/清页/换主题；ADV替换、NVL累积，确认段与唯一当前揭示分开，容量满明确拒绝，清窗不删全局history/已读。Snapshot保存布局/字体签名、active、各窗主题/显隐/确认条目与正文来源，恢复验证全部闭包，缺状态不猜迁移，旧无布局路径保留。规则见ADR0017、TEXT_LAYOUT.md。
 
-Snapshot 保存已求值 runs、源 at/规范签名、分割身份、cursor、活动 elapsed、字符余量、显现时刻和剩余停顿。当前可见正文/历史恢复均验证来源与 continuation，缺标记/源变更拒绝而保留原档，不用后来变量重算旧页。当前玩家偏好独立，重新应用同一间隔保留余量。Core/Auto/快进共用 isTextComplete，段内停顿/淡入未完不提前推进，周期效果不阻挡 Auto。规则见 ADR0016、TEXT.md。
+TrueType字体通过provider/摘要/编码预算/发布事实与实际FontFace加载，在激活前就绪；失败/取消/迟到加载不泄漏，实例独有family只由自己释放。textRenderer工厂在资源就绪后创建，隔离Program/快照，默认createDomTextRenderer可包装复用；dispose后不render，已提交渲染失败留pending给新renderer接管。布局按逻辑画幅缩放，叠乘当前玩家字号/背景偏好。仍为单剧情流、单Pixi舞台。
 
-仅新增锁定 unicode-segmenter 0.17.3，经 protocol/text.ts 的明确中立导入边界；不用设备 Intl.Segmenter，不引入第二 Core。原创《灯塔来信·信纸上的光》在 /?demo=text，Builder/Program/清单与生产 Core/Player/DOM/IndexedDB 同一路径，没有 UI 硬编码剧情。
+原创《灯塔来信·双页值班簿》在/?demo=layout，三窗/ADV/NVL/主题/清页及原创Latin TrueType同生产路径。静态检查按AST区分window数据属性与设备全局，并实际测试window/globalThis.window/全局简写拒绝；strict/headless未放宽。fontTools4.60.1仅是隔离的可选字体重建工具，普通pnpm fixture直接用提交TTF，无Python消费依赖。
 
-最终源码通过 frozen install/check、105 单元、44 Chromium（0 skip/flaky）、仓库外 tarball strict/skipLibCheck=false/原生 ESM 与新工厂/字素/停顿/效果恢复、50 CLI 命令/两个工作流、4 synthetic、三次活动性能、API/pack/publish dry-run。证据 evidence/g2-01/REPORT.md、日志/JSON/截图/source-manifest.json。消费者首轮夹具少算3 ms 的失败日志保留，修正为575 ms未完/578 ms刚好完成的边界断言后重验通过。
+最终通过frozen install/check、114单元、48 Chromium（0 skip/flaky）、仓库外tarball strict/skipLibCheck=false/原生ESM与NVL/字体/renderer/便携恢复、54 CLI命令（含新字体构建/验证/打包/损坏拒绝）、4 synthetic、三个活动性能、API/pack/publish dry-run。证据evidence/g2-02/REPORT.md、日志/JSON/截图/source-manifest.json。首轮测试夹具分类/入口、启动读取prompt时序和CLI包装模块定位错误均保留；修正夹具后全量重验，不删断言或skip。
 
-SDK 0.1.0 artifacts/galbox-sdk-0.1.0.tgz SHA=f459960fd8a1c35f108b5800b73bcb4ca247d6f9bca9d82238d10cb7871e494a；CLI SHA=f54b07401339a13be6c28d1e1993f47565a51acc368c1c785fa7e183244d7bf1，consumer/CLI/audit 一致。相对108566e按入口计12新增/4声明变化，无导出删除；Snapshot wire version=1 的可选 rich 扩展，旧二进制不能前向读新能力，不承诺稳定 API。
+SDK0.1.0 artifacts/galbox-sdk-0.1.0.tgz SHA=6591a423544a250dc47a99f4252b64984f8407dc47c988b3e2d9b7ccf461d636；CLI SHA=3034e05a62f3c1dbada1d0a0ba56e6596081716a6cc22988c6f3567b874fc35e，consumer/CLI/audit一致。相对2720eb4按入口计21新增/12声明变化，无导出删除；Snapshot wire version=1可选窗口扩展，新Program缺窗口状态须迁移，旧二进制不承诺前向读取，不宣称稳定API。
 
-当前参考：228 次语义 API P95 3.2 ms、两帧观察 P95 37.8 ms、最重 Core 批次 P95 1.339 ms，三个完整活动销毁85.8/72.3/77.5 ms，原500 ms局部门槛通过。仅 Linux/Chromium/SwiftShader/Web Audio；无视觉延迟/60 FPS、真机/物理 GPU/真实 VRAM/人耳音质或大作品保证。整包预加载/chunk体积/回执规模等限制保留。
+参考性能：228次语义API P95 6.5ms、两帧观察P95 58ms、最重Core批次P95 1.300ms，三次活动销毁190.7/313.9/247.3ms，原500ms局部门槛通过。仅Linux/Chromium/SwiftShader/Web Audio，不承诺视觉延迟/60 FPS、真机/物理GPU/VRAM/全部字形/音质或大作品；整包预加载、chunk体积及规模限制保留。
 
-运行 export TMPDIR=/dev/shm（本机/tmp配额限制），pnpm install --frozen-lockfile，pnpm dev。基础 http://127.0.0.1:4173/；表达式 /?demo=expressions；结构化正文 /?demo=text。当前 dev 已启动，实际 UI 保存剩余606 ms的段内停顿，刷新恢复/Auto继续到结局，3条已读/解锁/当前字号保留、manual、1 canvas、真实音频、0 pageerror，见 dev-result.json/截图。browser 前停 dev 释放4173/4174。
+运行export TMPDIR=/dev/shm（本机/tmp配额）、pnpm install --frozen-lockfile、pnpm dev。当前dev已启动：http://127.0.0.1:4173/?demo=layout 。实际UI保存/刷新恢复三窗/NVL、换主题、清页、继续结局再读旧槽，6条已读/解锁/当前字号保留、1字体loaded、1 canvas、0 pageerror，见dev-result.json与截图。browser前停dev释放4173/4174。
 
-下一项 G2-02：ADV/NVL、多文本框、声明式主题布局/必要字体及 renderer 端口，先定 ADR，再按 Schema/工厂/Core/DOM/Player/UI/独立消费实现。G0-03 浮点/集合、G3 演出/媒体、G4 图文存档/回溯、G5 流程图/鉴赏、G6 剧本 UI/完整界面、G7 全面验收仍未完成。N/F 缺指定 edition、Program/资源、真实原档附件及原作加载继续参照，blocked 独立保留；M6 未完成，不以原创或 synthetic 冒充真实兼容。
+下一项G0-03：浮点/集合值族、通用数据表达式与明确迁移，补G3完整舞台演出的既定依赖。WOFF/WOFF2/可变字体、竖排/禁则/自动分页、G3演出/视频、G4图文存档/回溯、G5流程图/鉴赏、G6剧本UI和G7全面验收仍未完成。N/F缺edition/Program/资源/真实原档附件和原作继续参照，blocked独立保留；M6未完成，不以原创或synthetic冒充真实兼容。

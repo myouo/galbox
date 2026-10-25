@@ -13,7 +13,7 @@
     "G6",
     "G7"
   ],
-  "current_task": "G2-02",
+  "current_task": "G0-03",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1344,7 +1344,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按实际通用正文/演出需求落实值语义、ABI/迁移与反例，不以 G0-02 的现有值族冒充全部数值能力。"
+      "next_action": "先写有限浮点/集合值族、类型化表达式、大小/数值规范与完整内容迁移ADR；同步Schema/生成物/真实工厂/Core/保存恢复与失败原子性，用原创样例和独立消费验证，再推进依赖它的G3。"
     },
     {
       "id": "G1-01",
@@ -1470,7 +1470,7 @@
         "docs/evidence/g2-01/source-manifest.json"
       ],
       "blocker": null,
-      "next_action": "本有限支持集已完成；下一项 G2-02 ADV/NVL、多文本框与主题布局；G0-03 和其它通用 G 项仍未完成。"
+      "next_action": "本支持集及G2-02窗口/主题有限集完成；当前G0-03值族扩展，其余通用G项仍未完成。"
     },
     {
       "id": "G2-02",
@@ -1480,11 +1480,13 @@
         "G2-01",
         "G1-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "done",
+      "verification": "passed",
       "outputs": [
-        "text layouts/themes and renderer ports"
+        "textLayout/主题/字体真实工厂、Core ADV/NVL与窗口指令",
+        "窗口/历史/来源闭包恢复与隔离正文renderer端口",
+        "TrueType准备/取消/释放、原创双页值班簿与浏览器/独立消费/CLI"
       ],
       "contracts": [
         "C01",
@@ -1499,9 +1501,20 @@
         "nvl-history",
         "custom-text-renderer"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g2-02/REPORT.md",
+        "docs/evidence/g2-02/check.log",
+        "docs/evidence/g2-02/unit.log",
+        "docs/evidence/g2-02/browser-results.json",
+        "docs/evidence/g2-02/consumer-result.json",
+        "docs/evidence/g2-02/result.json",
+        "docs/evidence/g2-02/performance.json",
+        "docs/evidence/g2-02/release-audit.json",
+        "docs/evidence/g2-02/dev-result.json",
+        "docs/evidence/g2-02/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先写 ADV/NVL、多窗口、主题布局/必要字体与 renderer 端口的有限支持集/恢复 ADR；同步 Schema/工厂/Core/DOM/Player/默认界面，验证页面历史、窗口状态、切换/恢复和独立消费，不只添加 CSS 皮肤。"
+      "next_action": "本有限支持集已完成；下一项G0-03浮点/集合值与表达式，补G3演出依赖；字体/排版未启用分支及G3–G7继续保留。"
     },
     {
       "id": "G3-01",

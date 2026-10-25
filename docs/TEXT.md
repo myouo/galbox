@@ -1,6 +1,6 @@
 # 结构化正文与效果（G2-01）
 
-SDK 提供 `text.rich`、安全样式和统一揭示/恢复状态，作品声明内容与参数，React 不解释正文或推进 PC。当前为基础横排 ADV；NVL、多文本框、布局主题、字体加载/竖排/禁则/自动分页仍由 G2-02 等后续任务建设。
+SDK 提供 `text.rich`、安全样式和统一揭示/恢复状态，作品声明内容与参数，React 不解释正文或推进 PC。本页介绍结构化正文；G2-02 的 ADV/NVL、多文本框、声明式主题与 TrueType 准备见 [TEXT_LAYOUT](TEXT_LAYOUT.md)。竖排/禁则/自动分页等尚未启用。
 
 ```ts
 import {richPage,richText as R,expr as E,variable} from 'galbox-sdk/port-kit';
