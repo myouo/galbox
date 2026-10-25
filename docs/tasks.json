@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "H2-02",
+  "current_task": "G3-03",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1936,7 +1936,7 @@
         "docs/evidence/h2-01/dev-result.json",
         "docs/evidence/h2-01/source-manifest.json"
       ],
-      "next_action": "用户WebGL硬检查故障对应有限兼容集完成；下一H2-02补Canvas滤镜/隔离转场与预算/像素对等，再继续G3-03；当前Canvas明确拒绝未对等能力，不能静默跳过。"
+      "next_action": "H2-01与H2-02有限兼容集均通过；当前按G3-03继续，不能把有限Canvas效果和单平台验收扩大为全部通用/作品完成。"
     },
     {
       "milestone": "H2",
@@ -1954,9 +1954,9 @@
       "blocker": null,
       "id": "H2-02",
       "title": "Canvas图像滤镜与隔离转场对等",
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "bounded Canvas isolated composition/filter implementation and pixel conformance"
       ],
@@ -1964,8 +1964,20 @@
         "canvas-effects-conformance",
         "canvas-composition-budget"
       ],
-      "evidence": [],
-      "next_action": "实现有界中间表面的滤镜/透明层交叉淡化与相机组滤镜，验证父子/混合/半透明RGBA并补中间表面内存预算；之前Canvas明确拒绝这些能力，不得静默跳过。"
+      "evidence": [
+        "docs/evidence/h2-02/REPORT.md",
+        "docs/evidence/h2-02/check.log",
+        "docs/evidence/h2-02/unit.log",
+        "docs/evidence/h2-02/browser-results.json",
+        "docs/evidence/h2-02/canvas-parity.json",
+        "docs/evidence/h2-02/consumer-result.json",
+        "docs/evidence/h2-02/result.json",
+        "docs/evidence/h2-02/performance.json",
+        "docs/evidence/h2-02/release-audit.json",
+        "docs/evidence/h2-02/dev-result.json",
+        "docs/evidence/h2-02/source-manifest.json"
+      ],
+      "next_action": "既有有限舞台Canvas组/相机滤镜与透明转场、预算/故障处理验收完成；下一G3-03视频/热点/限时交互。模糊为有容差近似，极端层叠超预算明确拒绝，完整G7与N/F未完成。"
     }
   ]
 }

@@ -9527,6 +9527,11 @@
             "webgl",
             "canvas"
           ]
+        },
+        "maxCanvasBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 536870912
         }
       }
     }

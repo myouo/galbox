@@ -35,4 +35,4 @@ Snapshot.scene保存相机/舞台滤镜/遮罩，object保存变换/裁切/图�
 
 原创《灯塔来信·光影回信》在http://127.0.0.1:4173/?demo=stage ，输入fixtures/stage-novel/build.ts。运行时把distance从140改成9999，已启动相对移动仍到410；真实保存/刷新/两路线和WebGL像素验证使用同一生产路径。它不代表真实两作兼容。
 
-H2-01设备兼容扩展见 GRAPHICS.md：Canvas复用上述逻辑状态与基础场景图，GPU滤镜/隔离crossfade目前提前拒绝，H2-02继续；本页G3-01效果通过不代表已完成Canvas全效果对等。
+H2-01设备兼容扩展见 GRAPHICS.md：Canvas复用上述逻辑状态与基础场景图，既有blur/brightness/grayscale与隔离crossfade按ADR0022的Canvas离屏栈与预算实现；模糊有光学近似容差，不能扩大成任意shader/全平台逐像素保证。

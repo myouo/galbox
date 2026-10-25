@@ -52,4 +52,4 @@ G0-03 的checked i64、位模式f64、null/有序集合与数据表达式已落�
 
 G3-01舞台有限集见 [STAGE](STAGE.md)：一次解析表达式/相对参数、按属性冲突、取消/替换/finish、闭包恢复和真正Pixi/WebGL像素验证。图像效果不包含DOM正文/UI，空容器/非矩形mask/任意shader及未列效果仍不计支持；资源/任务规模及其它平台未认证。
 
-图像设备：H2-01 使用同一 Pixi 场景图提供 WebGL2→Canvas2D 自动后备、强制后端与诊断，基本舞台/DOM/媒体/存档跨后端；Canvas 对 GPU 滤镜/隔离 crossfade 前置拒绝，H2-02 未完成。见 GRAPHICS.md，不能借此声称所有 GPU 效果已对等。
+图像设备：H2-01 使用同一 Pixi 场景图提供 WebGL2→Canvas2D 自动后备、强制后端与诊断，基本舞台/DOM/媒体/存档跨后端；Canvas 提供有界组滤镜/相机滤镜/隔离 crossfade（ADR0022），预算超限明确拒绝。见 GRAPHICS.md，不能借此声称所有 GPU 效果已对等。

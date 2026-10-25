@@ -1,0 +1,48 @@
+import {AlphaFilter,BlurFilter,ColorMatrixFilter,Matrix} from 'pixi.js';
+import type {CanvasRenderer,Filter} from 'pixi.js';
+import {ensure,GalboxError} from '../protocol/index.js';
+import {canvasPlan,defaultCanvasBytes} from '../protocol/canvas.js';
+import type {CanvasPlan} from '../protocol/canvas.js';
+import type {Snapshot,DeepReadonly} from '../protocol/index.js';
+type Context=CanvasRenderer['canvasContext']['activeContext']&CanvasRenderingContext2D;
+interface Surface {canvas:HTMLCanvasElement;context:Context;}
+interface Frame {surface:Surface;parent:CanvasRenderer['canvasContext']['activeContext'];projection:Matrix;blend:CanvasRenderer['canvasContext']['_activeBlendMode'];filters:Filter[];}
+export interface CanvasDiagnostics {bytesEstimated:number;peakBytesEstimated:number;surfaces:number;blur:'native'|'cpu';}
+function surface(width:number,height:number):Surface {const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const context=canvas.getContext('2d',{willReadFrequently:true});if(!context){canvas.width=canvas.height=0;throw new GalboxError('GRAPHICS_UNAVAILABLE','Canvas composition context unavailable');}return {canvas,context:Object.assign(context,{webkitImageSmoothingEnabled:false,mozImageSmoothingEnabled:false,oImageSmoothingEnabled:false,msImageSmoothingEnabled:false})};}
+function nativeBlur():boolean {const s=surface(3,3);try{if(!('filter'in s.context))return false;s.context.filter='blur(1px)';s.context.fillStyle='#ffffff';s.context.fillRect(1,1,1,1);return s.context.getImageData(0,0,1,1).data[3]!>0;}finally{s.canvas.width=s.canvas.height=0;}}
+function clear(s:Surface):void {s.context.setTransform(1,0,0,1,0,0);s.context.globalAlpha=1;s.context.globalCompositeOperation='source-over';s.context.filter='none';s.context.clearRect(0,0,s.canvas.width,s.canvas.height);}
+export class CanvasEffects {
+ readonly diagnostics:CanvasDiagnostics;
+ private back:Surface|undefined;private pool:Surface[]=[];private scratch:Surface|undefined;private a:Float32Array|undefined;private b:Float32Array|undefined;private frames:Frame[]=[];private plan:CanvasPlan|undefined;private disposed=false;
+ private readonly oldPush:CanvasRenderer['filter']['push'];private readonly oldPop:CanvasRenderer['filter']['pop'];
+ constructor(private readonly renderer:CanvasRenderer,private readonly limit=defaultCanvasBytes){this.diagnostics={bytesEstimated:0,peakBytesEstimated:0,surfaces:0,blur:nativeBlur()?'native':'cpu'};this.oldPush=renderer.filter.push;this.oldPop=renderer.filter.pop;renderer.filter.push=instruction=>this.push(instruction);renderer.filter.pop=()=>this.pop();}
+ validate(snapshot:DeepReadonly<Snapshot>):CanvasPlan {return canvasPlan(snapshot,this.diagnostics.blur==='native',this.limit);}
+ private releaseComposition():void {for(const s of [...this.pool,...(this.scratch?[this.scratch]:[])])s.canvas.width=s.canvas.height=0;this.pool=[];this.scratch=undefined;this.a=this.b=undefined;}
+ private prepare(snapshot:DeepReadonly<Snapshot>):void {
+  const p=this.validate(snapshot);ensure(!this.frames.length,'CANVAS_STACK','Unfinished previous frame');if(!this.back)this.back=surface(1280,720);
+  if(!this.plan||p.width!==this.plan.width||p.height!==this.plan.height||p.depth!==this.plan.depth||p.blur!==this.plan.blur){this.releaseComposition();try{for(let n=0;n<p.depth;n++)this.pool.push(surface(p.width,p.height));if(p.blur){if(this.diagnostics.blur==='native')this.scratch=surface(p.width,p.height);else{this.a=new Float32Array(p.width*p.height*4);this.b=new Float32Array(p.width*p.height*4);}}}catch(error){this.releaseComposition();this.plan=undefined;this.diagnostics.bytesEstimated=1280*720*4;this.diagnostics.surfaces=1;throw error;}}
+  this.plan=p;this.diagnostics.bytesEstimated=p.bytes;this.diagnostics.peakBytesEstimated=Math.max(this.diagnostics.peakBytesEstimated,p.bytes);this.diagnostics.surfaces=1+this.pool.length+(this.scratch?1:0);
+ }
+ draw(snapshot:DeepReadonly<Snapshot>,render:()=>void):void {try{this.drawFrame(snapshot,render);}catch(error){this.dispose();throw error;}}
+ private drawFrame(snapshot:DeepReadonly<Snapshot>,render:()=>void):void {
+  ensure(!this.disposed,'HOST_DISPOSED','Canvas effects disposed');this.prepare(snapshot);const back=this.back;ensure(back,'CANVAS_SURFACE','Back buffer absent');const r=this.renderer,system=r.canvasContext,target=r.renderTarget.getGpuRenderTarget(r.view.renderTarget),old={canvas:target.canvas,context:target.context,root:system.rootContext,active:system.activeContext,projection:system._projTransform,blend:system._activeBlendMode};target.canvas=back.canvas;target.context=back.context;system.rootContext=back.context;
+  try{render();ensure(!this.frames.length,'CANVAS_STACK','Unbalanced filter frame');old.root.save();try{old.root.setTransform(1,0,0,1,0,0);old.root.globalAlpha=1;old.root.globalCompositeOperation='copy';old.root.drawImage(back.canvas,0,0);}finally{old.root.restore();}}
+  finally{this.frames=[];target.canvas=old.canvas;target.context=old.context;system.rootContext=old.root;system.activeContext=old.active;system._projTransform=old.projection;system._activeBlendMode=old.blend;}
+ }
+ private push(instruction:Parameters<CanvasRenderer['filter']['push']>[0]):void {
+  const filters=instruction.filterEffect.filters.filter(f=>f.enabled);ensure(filters.every(f=>f instanceof BlurFilter||f instanceof ColorMatrixFilter||f instanceof AlphaFilter&&f.alpha===1),'GRAPHICS_FILTER_UNSUPPORTED','Unsupported Canvas filter');const p=this.plan,s=this.pool[this.frames.length];ensure(p&&s,'CANVAS_COMPOSITION_BUDGET','Filter stack exceeds prepared plan');clear(s);const system=this.renderer.canvasContext;this.frames.push({surface:s,parent:system.activeContext,projection:system._projTransform,blend:system._activeBlendMode,filters});system.activeContext=s.context;system._projTransform=new Matrix(1,0,0,1,p.padding,p.padding);system._activeBlendMode='normal';
+ }
+ private pop():void {
+  const frame=this.frames.pop(),p=this.plan;ensure(frame&&p,'CANVAS_STACK','Filter pop without push');const s=frame.surface;for(const filter of frame.filters){if(filter instanceof BlurFilter){const sigma=Math.abs(filter.strength);if(sigma>0)this.blur(s,sigma);}else if(filter instanceof ColorMatrixFilter)this.color(s,filter.matrix);}
+  const system=this.renderer.canvasContext;system.activeContext=frame.parent;system._projTransform=frame.projection;system._activeBlendMode=frame.blend;const blend=frame.filters.at(-1)?.blendMode??'normal',mode=system.blendModes[blend];ensure(mode,'GRAPHICS_FEATURE_UNSUPPORTED','Unsupported filter blend');frame.parent.save();try{frame.parent.setTransform(1,0,0,1,0,0);frame.parent.globalAlpha=1;frame.parent.globalCompositeOperation=mode;const offset=this.frames.length?0:-p.padding;frame.parent.drawImage(s.canvas,offset,offset);}finally{frame.parent.restore();}
+ }
+ private color(s:Surface,m:readonly number[]):void {const image=s.context.getImageData(0,0,s.canvas.width,s.canvas.height),d=image.data;for(let i=0;i<d.length;i+=4){const r=d[i]!/255,g=d[i+1]!/255,b=d[i+2]!/255,a=d[i+3]!/255;d[i]=(m[0]!*r+m[1]!*g+m[2]!*b+m[3]!*a+m[4]!)*255;d[i+1]=(m[5]!*r+m[6]!*g+m[7]!*b+m[8]!*a+m[9]!)*255;d[i+2]=(m[10]!*r+m[11]!*g+m[12]!*b+m[13]!*a+m[14]!)*255;d[i+3]=(m[15]!*r+m[16]!*g+m[17]!*b+m[18]!*a+m[19]!)*255;}s.context.putImageData(image,0,0);}
+ private blur(s:Surface,sigma:number):void {
+  if(this.diagnostics.blur==='native'){const scratch=this.scratch;ensure(scratch,'CANVAS_SURFACE','Blur workspace absent');clear(scratch);scratch.context.filter=`blur(${sigma}px)`;scratch.context.drawImage(s.canvas,0,0);scratch.context.filter='none';clear(s);s.context.drawImage(scratch.canvas,0,0);return;}
+  const a=this.a,b=this.b;ensure(a&&b,'CANVAS_SURFACE','CPU blur workspace absent');const width=s.canvas.width,height=s.canvas.height,image=s.context.getImageData(0,0,width,height),d=image.data;for(let i=0;i<d.length;i+=4){const alpha=d[i+3]!/255;a[i]=d[i]!*alpha;a[i+1]=d[i+1]!*alpha;a[i+2]=d[i+2]!*alpha;a[i+3]=d[i+3]!;}
+  let lower=Math.floor(Math.sqrt(4*sigma*sigma+1));if(lower%2===0)lower--;const upper=lower+2,count=Math.round((12*sigma*sigma-3*lower*lower-12*lower-9)/(-4*lower-4));for(let pass=0;pass<3;pass++){const radius=((pass<count?lower:upper)-1)/2;box(a,b,width,height,radius,true);box(b,a,width,height,radius,false);}
+  for(let i=0;i<d.length;i+=4){const alpha=a[i+3]!;d[i]=alpha>0?a[i]!*255/alpha:0;d[i+1]=alpha>0?a[i+1]!*255/alpha:0;d[i+2]=alpha>0?a[i+2]!*255/alpha:0;d[i+3]=alpha;}s.context.putImageData(image,0,0);
+ }
+ dispose():void {if(this.disposed)return;this.disposed=true;this.renderer.filter.push=this.oldPush;this.renderer.filter.pop=this.oldPop;this.releaseComposition();if(this.back)this.back.canvas.width=this.back.canvas.height=0;this.back=undefined;this.frames=[];this.plan=undefined;this.diagnostics.bytesEstimated=0;this.diagnostics.surfaces=0;}
+}
+function box(input:Float32Array,output:Float32Array,width:number,height:number,radius:number,horizontal:boolean):void {const lines=horizontal?height:width,length=horizontal?width:height,stride=horizontal?4:width*4,denominator=2*radius+1;for(let line=0;line<lines;line++){const base=horizontal?line*width*4:line*4;for(let channel=0;channel<4;channel++){let sum=0;for(let n=0;n<=Math.min(radius,length-1);n++)sum+=input[base+n*stride+channel]!;for(let n=0;n<length;n++){output[base+n*stride+channel]=sum/denominator;const remove=n-radius,add=n+radius+1;if(remove>=0)sum-=input[base+remove*stride+channel]!;if(add<length)sum+=input[base+add*stride+channel]!;}}}}

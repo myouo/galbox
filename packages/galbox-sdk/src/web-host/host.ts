@@ -1,3 +1,4 @@
+import {defaultCanvasBytes} from '../protocol/canvas.js';
 import {prepareGraphics,destroyGraphicsApplication,validateCanvasProgram,validateCanvasSnapshot} from './graphics.js';
 import type {GraphicsApplication} from './graphics.js';
 import {prepareMedia,validateLoop} from './media.js';
@@ -15,7 +16,7 @@ import type { AssetProvider } from './assets.js';
 function stopSignal(){let cancel=()=>{};const cancelled=new Promise<void>(resolve=>{cancel=resolve;});return {cancel,cancelled};}
 interface Playing {source:AudioNode;buffer?:AudioBufferSourceNode;element?:HTMLAudioElement;gain:GainNode;scriptGain:number;role:'bgm'|'voice'|'sfx';task:Task;epoch:number;reported:boolean;blocked?:boolean;sequence:number;cancelled:Promise<void>;cancel:()=>void;pending?:Promise<void>;report:Parameters<HostPort['effect']>[2];ended?:Parameters<HostPort['effect']>[3];}
 export interface MediaDiagnostics {state:'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;loops:number;elementStarts:number;}
-export interface ResourceDiagnostics {renderer:'webgl'|'canvas'|null;graphicsFallback:string|null;graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
+export interface ResourceDiagnostics {canvasBlur:'native'|'cpu'|null;canvasBytesEstimated:number;canvasPeakBytesEstimated:number;canvasSurfaces:number;renderer:'webgl'|'canvas'|null;graphicsFallback:string|null;graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
   private app:GraphicsApplication|null=null;
   private readonly graphicsOptions:GraphicsOptions;
@@ -37,7 +38,7 @@ export class WebHost implements HostPort {
   private fonts=new Map<string,FontFace>();private readonly fontPrefix=`galbox-${crypto.randomUUID()}`;
   fontFamily(id:string):string {const face=this.fonts.get(id);ensure(face,'TEXT_FONT','Font has not been prepared');return face.family;}
   private canvas:HTMLCanvasElement|null=null;
-  readonly resources:ResourceDiagnostics={renderer:null,graphicsFallback:null,graphics:'unverified',assets:0,encodedBytes:0,textureBytesEstimated:0,decodedAudioBytes:0,mediaElementBytes:0,limits:parseResourceBudget(defaultResourceBudget)};
+  readonly resources:ResourceDiagnostics={canvasBlur:null,canvasBytesEstimated:0,canvasPeakBytesEstimated:0,canvasSurfaces:0,renderer:null,graphicsFallback:null,graphics:'unverified',assets:0,encodedBytes:0,textureBytesEstimated:0,decodedAudioBytes:0,mediaElementBytes:0,limits:parseResourceBudget(defaultResourceBudget)};
   readonly media:MediaDiagnostics={state:'unverified',starts:0,ended:0,blocked:0,decoded:0,active:0,loops:0,elementStarts:0};
   constructor(private readonly mount:HTMLElement,private readonly fault?:(error:Error)=>void,graphics:unknown={renderer:'auto'}) {this.graphicsOptions=parseGraphicsOptions(graphics);}
   resourceFacts():ResourceFact[]{return this.facts.map(parseResourceFact);}
@@ -50,9 +51,9 @@ export class WebHost implements HostPort {
       if(typeof AudioContext==='undefined'){this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Web Audio is unavailable on this device');}
       try{this.context=new AudioContext();}catch{this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Audio context creation failed');}this.master=this.context.createGain();this.master.gain.value=this.volume;this.master.connect(this.context.destination);
       this.media.state=this.context.state==='running'?'available':'needs-user-action';
-      const {app,backend,fallback}=await prepareGraphics(this.graphicsOptions,()=>this.disposed||signal.aborted,app=>{this.app=app;});this.resources.renderer=backend;this.resources.graphicsFallback=fallback;if(app.renderer instanceof CanvasRenderer)validateCanvasProgram(program,app.renderer.canvasContext.blendModes);
+      const {app,backend,fallback}=await prepareGraphics(this.graphicsOptions,()=>this.disposed||signal.aborted,app=>{this.app=app;});this.resources.renderer=backend;this.resources.graphicsFallback=fallback;if(app.renderer instanceof CanvasRenderer){validateCanvasProgram(program,app.renderer.canvasContext.blendModes);ensure((this.graphicsOptions.maxCanvasBytes??defaultCanvasBytes)>=1280*720*4,'CANVAS_COMPOSITION_BUDGET','Canvas back buffer exceeds budget');}
       this.canvas=app.canvas;if(backend==='webgl')this.canvas.addEventListener('webglcontextlost',this.lost);this.resources.graphics='available';this.mount.appendChild(app.canvas);app.canvas.setAttribute('aria-label',`${program.title}图像舞台`);app.canvas.style.width='100%';app.canvas.style.height='100%';
-      app.stage.sortableChildren=true;this.stage=new ImageStage(app,this.textures);
+      app.stage.sortableChildren=true;this.stage=new ImageStage(app,this.textures,this.graphicsOptions.maxCanvasBytes);
       for(const asset of program.assets){
         const remaining=this.resources.limits.maxEncodedBytes-this.resources.encodedBytes;ensure(remaining>0,'RESOURCE_ENCODED_BUDGET',asset.id);const bytes=await verifiedBytes(provider,program,asset,signal,Math.min(this.resources.limits.maxAssetBytes,remaining));ensure(!this.disposed,'HOST_DISPOSED',asset.id);
         const fact=inspectResource(asset,bytes,b=>new TextDecoder('utf-8',{fatal:true}).decode(b)),usage=resourceUsage([...this.facts,fact],this.resources.limits,this.context.sampleRate);
@@ -91,10 +92,11 @@ export class WebHost implements HostPort {
     });this.audioOperation=next;return next;
   }
   setEpoch(epoch:number):void {this.stopAudio();this.epoch=epoch;this.stage?.invalidate();}
-  validateGraphicsPlan(snapshot:DeepReadonly<Snapshot>):void {if(this.app?.renderer instanceof CanvasRenderer)validateCanvasSnapshot(snapshot,this.app.renderer.canvasContext.blendModes);}
+  private syncCanvasDiagnostics():void {const d=this.stage?.canvasDiagnostics();if(d){this.resources.canvasBlur=d.blur;this.resources.canvasBytesEstimated=d.bytesEstimated;this.resources.canvasPeakBytesEstimated=d.peakBytesEstimated;this.resources.canvasSurfaces=d.surfaces;}}
+  validateGraphicsPlan(snapshot:DeepReadonly<Snapshot>):void {if(this.app?.renderer instanceof CanvasRenderer)validateCanvasSnapshot(snapshot,this.app.renderer.canvasContext.blendModes);this.stage?.validate(snapshot);}
   render(run:DeepReadonly<Snapshot>):void {
     if(!this.app||this.disposed||this.resources.graphics!=='available')return;
-    this.validateGraphicsPlan(run);this.mix=run.audioState??null;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.stage?.render(run);
+    try{this.validateGraphicsPlan(run);this.mix=run.audioState??null;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.stage?.render(run);this.syncCanvasDiagnostics();}catch(error){this.syncCanvasDiagnostics();this.resources.graphics='unavailable';this.stopAudio();this.fault?.(error instanceof Error?error:new Error(String(error)));throw error;}
   }
   effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2],playbackEnded?:Parameters<HostPort['effect']>[3]):void {
     if(this.disposed||epoch!==this.epoch)return;
@@ -134,7 +136,7 @@ export class WebHost implements HostPort {
   dispose():void {
     for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();
     if(this.disposed)return;this.disposed=true;this.stopAudio();this.stage?.dispose();this.stage=null;
-    this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
+    this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.canvasBytesEstimated=0;this.resources.canvasSurfaces=0;this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
     for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();for(const asset of this.mediaAssets.values())URL.revokeObjectURL(asset.url);this.mediaAssets.clear();this.resources.mediaElementBytes=0;
     this.destroyApplication(this.app);this.app=null;
     if(this.context&&this.context.state!=='closed')void this.context.close().catch(()=>{});this.context=null;this.master=null;this.media.active=0;

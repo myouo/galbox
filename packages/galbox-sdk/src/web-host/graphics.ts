@@ -1,21 +1,19 @@
 import {Application,CanvasRenderer,WebGLRenderer} from 'pixi.js';
 import {ensure,GalboxError} from '../protocol/index.js';
-import type {GraphicsOptions,Program,Snapshot,DeepReadonly,StageFilters,StageObject} from '../protocol/index.js';
+import type {GraphicsOptions,Program,Snapshot,DeepReadonly,StageObject} from '../protocol/index.js';
 export type GraphicsApplication=Application<WebGLRenderer|CanvasRenderer>;
 export type GraphicsBackend='webgl'|'canvas';
-function hasFilters(f:DeepReadonly<StageFilters>|undefined):boolean{return !!f&&(f.blur!==0||f.brightness!==1||f.grayscale!==0);}
-function supportedObject(o:DeepReadonly<StageObject>):boolean{return !hasFilters(o.filters)&&!o.layers;}
 type BlendMap=CanvasRenderer['canvasContext']['blendModes'];
 function validateBlend(blend:StageObject['blend'],map:BlendMap):void {if(blend)ensure(map[blend]===({normal:'source-over',add:'lighter',multiply:'multiply',screen:'screen'} as const)[blend],'GRAPHICS_FEATURE_UNSUPPORTED',`Canvas device does not support ${blend} blending`);}
 export function validateCanvasProgram(program:DeepReadonly<Program>,map:BlendMap):void {
  for(const f of program.functions)for(const i of f.code){
   if(i.op==='stage.put')validateBlend(i.object.blend,map);if(i.op==='stage.image')validateBlend(i.style?.blend,map);if(i.op==='stage.style')validateBlend(i.style.blend,map);
-  ensure(i.op!=='stage.filter'&&i.op!=='stage.transition'&&(i.op!=='stage.put'||supportedObject(i.object)),'GRAPHICS_FEATURE_UNSUPPORTED',`Canvas compatibility mode cannot execute filters or crossfade at ${i.at}`);
+
  }
 }
 export function validateCanvasSnapshot(snapshot:DeepReadonly<Snapshot>,map:BlendMap):void {
  snapshot.stage.forEach(o=>validateBlend(o.blend,map));
- ensure(!hasFilters(snapshot.scene?.filters)&&snapshot.stage.every(supportedObject)&&!snapshot.tasks.some(t=>t.status==='running'&&(t.stageTask?.type==='filter'||t.stageTask?.type==='transition')),'GRAPHICS_FEATURE_UNSUPPORTED','Canvas compatibility mode cannot restore GPU filters or layered crossfade');
+
 }
 // Application has no renderer until asynchronous initialization succeeds.
 export function destroyGraphicsApplication(app:GraphicsApplication|null):void {if(app?.renderer)app.destroy({removeView:true,releaseGlobalResources:false},{children:true});}

@@ -3188,4 +3188,5 @@ export interface AudioPlaybackEvent {
  */
 export interface GraphicsOptions {
   renderer: 'auto' | 'webgl' | 'canvas';
+  maxCanvasBytes?: number;
 }

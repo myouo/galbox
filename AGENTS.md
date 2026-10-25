@@ -15,7 +15,7 @@
 
 ## 固定架构
 
-- 唯一 TypeScript 生产 Core，TypeScript Web Host；单 Pixi 图像舞台（WebGL2 优先、Canvas 兼容后备，遵守 ADR0021 的能力拒绝边界）、DOM 正文、React 默认 UI、IndexedDB、pnpm/Vite。WASM 当前不引入，仅按具体模块证据考虑。
+- 唯一 TypeScript 生产 Core，TypeScript Web Host；单 Pixi 图像舞台（WebGL2 优先、Canvas 兼容后备，遵守 ADR0021/0022 的设备与合成预算边界）、DOM 正文、React 默认 UI、IndexedDB、pnpm/Vite。WASM 当前不引入，仅按具体模块证据考虑。
 - 初期一个主库 `packages/galbox-sdk`，通过显式 exports 提供入口；runtime/web-host/storage 等先做内部模块。CLI 在 M4 有实际功能时建立。
 - protocol/core/runtime 不依赖 DOM、Node I/O、React、Pixi 或具体作品；使用独立 TS 检查和导入约束验证。runtime 接收平台中立端口；Blob/File/AbortSignal 留在 Web adapter。
 - Core 管剧情与权威逻辑，coordinator 管串行消息和宿主编排，Host 管设备，Storage 管原子提交。React 不推进 PC，不作为存档权威。

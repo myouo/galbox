@@ -1,5 +1,6 @@
 import {Container,Sprite,Graphics,BlurFilter,ColorMatrixFilter,AlphaFilter} from 'pixi.js';
-import {WebGLRenderer} from 'pixi.js';
+import {CanvasEffects} from './canvas-effects.js';
+import {WebGLRenderer,CanvasRenderer} from 'pixi.js';
 import type {Texture,Filter} from 'pixi.js';
 import type {GraphicsApplication} from './graphics.js';
 import {ensure} from '../protocol/index.js';
@@ -16,8 +17,10 @@ class Filters {
 }
 interface Display {root:Container;image:Container;compositor:AlphaFilter|null;sprites:Sprite[];mask:Graphics|null;clipKey:string;filters:Filters;}
 export class ImageStage {
- private readonly world=new Container();private readonly overlay=new Graphics();private readonly filters=new Filters();private readonly displays=new Map<string,Display>();private key:string|null=null;private disposed=false;
- constructor(private readonly app:GraphicsApplication,private readonly textures:ReadonlyMap<string,Texture>){this.world.sortableChildren=true;this.world.zIndex=0;this.overlay.zIndex=1;app.stage.addChild(this.world,this.overlay);}
+ private readonly world=new Container();private readonly overlay=new Graphics();private readonly filters=new Filters();private readonly displays=new Map<string,Display>();private key:string|null=null;private disposed=false;private readonly effects:CanvasEffects|undefined;
+ constructor(private readonly app:GraphicsApplication,private readonly textures:ReadonlyMap<string,Texture>,maxCanvasBytes?:number){this.effects=app.renderer instanceof CanvasRenderer?new CanvasEffects(app.renderer,maxCanvasBytes):undefined;this.world.sortableChildren=true;this.world.zIndex=0;this.overlay.zIndex=1;app.stage.addChild(this.world,this.overlay);}
+ canvasDiagnostics(){return this.effects?.diagnostics;}
+ validate(snapshot:DeepReadonly<Snapshot>):void {this.effects?.validate(snapshot);}
  invalidate():void {this.key=null;}
  render(snapshot:DeepReadonly<Snapshot>):void {
   if(this.disposed)return;const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene});if(key===this.key)return;
@@ -32,7 +35,7 @@ export class ImageStage {
   }
   for(const o of snapshot.stage){const d=this.displays.get(o.id);ensure(d,'STAGE_RENDER','Object absent');const parent=o.parent?this.displays.get(o.parent)?.root:this.world;ensure(parent,'STAGE_RENDER','Parent absent');parent.addChild(d.root);}
   const scene=snapshot.scene??initialScene(),camera=scene.camera;this.world.position.set(640+(scene.shake?.x??0),360+(scene.shake?.y??0));this.world.pivot.set(camera.x,camera.y);this.world.scale.set(camera.zoom);this.world.rotation=-camera.rotation*Math.PI/180;this.filters.apply(this.world,scene.filters);this.overlay.clear();if(scene.overlay.alpha>0)this.overlay.rect(0,0,1280,720).fill({color:scene.overlay.color,alpha:scene.overlay.alpha});
-  this.app.render();if(this.app.renderer instanceof WebGLRenderer)this.app.renderer.gl.flush();this.key=key;
+  if(this.effects)this.effects.draw(snapshot,()=>this.app.render());else this.app.render();if(this.app.renderer instanceof WebGLRenderer)this.app.renderer.gl.flush();this.key=key;
  }
- dispose():void {if(this.disposed)return;this.disposed=true;for(const d of this.displays.values())d.root.removeFromParent();for(const d of this.displays.values()){d.filters.dispose();d.compositor?.destroy(false);d.root.destroy({children:true});}this.displays.clear();this.filters.dispose();this.world.removeFromParent();this.world.destroy({children:true});this.overlay.removeFromParent();this.overlay.destroy();this.key=null;}
+ dispose():void {if(this.disposed)return;this.disposed=true;this.effects?.dispose();for(const d of this.displays.values())d.root.removeFromParent();for(const d of this.displays.values()){d.filters.dispose();d.compositor?.destroy(false);d.root.destroy({children:true});}this.displays.clear();this.filters.dispose();this.world.removeFromParent();this.world.destroy({children:true});this.overlay.removeFromParent();this.overlay.destroy();this.key=null;}
 }

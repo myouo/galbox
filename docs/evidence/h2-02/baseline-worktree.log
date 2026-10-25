@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-fFYE3M e241dd8
+HEAD is now at e241dd8 fix: allow Pixi Canvas fallback when WebGL is unavailable
+Preparing worktree (detached HEAD e241dd8)
