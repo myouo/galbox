@@ -1,0 +1,8 @@
+// Optional fixture authoring tool: requires ffmpeg with libvorbis/libopus/libmp3lame.
+import {writeFile,mkdir,rm} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+const root=new URL('./assets/',import.meta.url);await mkdir(root,{recursive:true});
+function wave(seconds,freq){const rate=22050,n=Math.floor(seconds*rate),bytes=Buffer.alloc(44+n*2);bytes.write('RIFF');bytes.writeUInt32LE(36+n*2,4);bytes.write('WAVEfmt ',8);bytes.writeUInt32LE(16,16);bytes.writeUInt16LE(1,20);bytes.writeUInt16LE(1,22);bytes.writeUInt32LE(rate,24);bytes.writeUInt32LE(rate*2,28);bytes.writeUInt16LE(2,32);bytes.writeUInt16LE(16,34);bytes.write('data',36);bytes.writeUInt32LE(n*2,40);for(let i=0;i<n;i++){const t=i/rate,env=Math.min(1,t*20,(seconds-t)*20),value=(Math.sin(t*freq*Math.PI*2)+.35*Math.sin(t*freq*1.5*Math.PI*2))*env*1500;bytes.writeInt16LE(Math.round(value),44+i*2);}return bytes;}
+for(const [name,seconds,freq,codec,ext]of [['bgm-long',35,174,'libvorbis','ogg'],['voice-opus',1.2,392,'libopus','ogg'],['signal-mp3',.35,660,'libmp3lame','mp3']]){const source=new URL(`${name}.wav`,root),target=new URL(`${name}.${ext}`,root);await writeFile(source,wave(seconds,freq));const args=['-hide_banner','-loglevel','error','-y','-i',source.pathname,'-map_metadata','-1','-fflags','+bitexact','-flags:a','+bitexact','-c:a',codec,...(codec==='libmp3lame'?['-b:a','64k','-write_xing','0']:codec==='libopus'?['-b:a','32k']:['-q:a','2']),target.pathname];execFileSync('ffmpeg',args);await rm(source);}
+await writeFile(new URL('voice-buffer.wav',root),wave(.7,523));
+console.log('Generated original synthetic tones; not human voice recordings');

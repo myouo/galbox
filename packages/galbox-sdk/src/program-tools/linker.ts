@@ -1,3 +1,4 @@
+import {isAudioInstruction,audioExpressions} from '../protocol/audio.js';
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
 import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig,parseTextLayout } from '../protocol/index.js';
@@ -28,7 +29,7 @@ export function imagePut(at: string, id: string, asset: AssetRef<'image'>, posit
 }
 function programNeedsExtended(p:Program):boolean {
  return p.globals.some(s=>extendedValue(s.initial))||p.functions.some(f=>![...['void','i32','bool','string']].includes(f.returns)||[...f.params,...f.locals].some(s=>extendedValue(s.initial))||f.code.some(i=>{
-  if(isStageInstruction(i))return true;
+  if(isStageInstruction(i)||isAudioInstruction(i))return true;
   if(operands(i).some(o=>'literal'in o?extendedValue(o.literal):'expression'in o&&extendedExpression(o.expression)))return true;
   if(i.op==='profile.set')return extendedValue(i.value);if(i.op==='profile.expression')return extendedExpression(i.value);
   if(i.op==='text.template')return extendedExpression(i.speaker)||extendedExpression(i.content);
@@ -50,7 +51,7 @@ export class ProgramBuilder {
   capability(value:typeof capabilities[number]):this {ensure(capabilities.some(c=>c===value),'UNSUPPORTED_CAPABILITY',value);this.data.capabilities=[...new Set([...this.data.capabilities,value])];return this;}
   rngFromHost():this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seedSource:'host'});return this;}
   rng(seed:number):this {this.data.rng=parseRngConfig({algorithm:'lcg32@1',seed});return this;}
-  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='profile.expression'||i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(programNeedsExtended(this.data))this.data.capabilities=[...new Set([...this.data.capabilities,'values.extended'])];if(this.data.functions.some(f=>f.code.some(i=>isStageInstruction(i)||i.op==='stage.put'&&Object.keys(i.object).some(k=>!['id','asset','z','position'].includes(k)))))this.data.capabilities=[...new Set([...this.data.capabilities,'stage.effects','expressions','values.extended'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
+  build(operations:OperationRegistry=emptyOperations): Program {if(this.data.functions.some(f=>f.code.some(i=>i.op==='profile.expression'||i.op==='text.template'||i.op==='text.rich'||i.op==='random.i32'||operands(i).some(o=>'expression'in o))))this.data.capabilities=[...new Set([...this.data.capabilities,'expressions'])];if(this.data.functions.some(f=>f.code.some(i=>i.op==='text.rich')))this.data.capabilities=[...new Set([...this.data.capabilities,'text.rich'])];if(this.data.textLayout)this.data.capabilities=[...new Set([...this.data.capabilities,'text.windows'])];if(programNeedsExtended(this.data))this.data.capabilities=[...new Set([...this.data.capabilities,'values.extended'])];if(this.data.functions.some(f=>f.code.some(i=>isStageInstruction(i)||i.op==='stage.put'&&Object.keys(i.object).some(k=>!['id','asset','z','position'].includes(k)))))this.data.capabilities=[...new Set([...this.data.capabilities,'stage.effects','expressions','values.extended'])];if(this.data.functions.some(f=>f.code.some(isAudioInstruction)))this.data.capabilities=[...new Set([...this.data.capabilities,'audio.extended','expressions','values.extended'])];if(this.data.assets.some(a=>a.kind==='audio'&&(a.mime!=='audio/wav'||a.playback==='element')))this.data.capabilities=[...new Set([...this.data.capabilities,'audio.media'])];if(this.data.rng)this.data.capabilities=[...new Set([...this.data.capabilities,'rng.lcg32'])];return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
   private readonly program: Program;
@@ -74,7 +75,8 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
   const richIds=new Set(p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich').map(i=>readUnit(i)));for(const op of p.functions.flatMap(f=>f.code))if(op.op==='text.page'||op.op==='text.template')ensure(!richIds.has(readUnit(op)),'TEXT_FORMAT_IDENTITY','Rich and legacy text cannot share textId/revision');
   validateTextLayout(p);
   const main=p.functions.find(f=>f.id === p.entry); ensure(main && !main.params.length && main.returns==='void','ENTRY','Entry must take no parameters and return void');
-  for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&a.mime==='audio/wav')||(a.kind==='font'&&a.mime==='font/ttf'),'ASSET_KIND',a.id);
+  for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&['audio/wav','audio/mpeg','audio/ogg'].includes(a.mime))||(a.kind==='font'&&a.mime==='font/ttf'),'ASSET_KIND',a.id);
+  for(const a of p.assets){ensure(a.kind==='audio'||a.playback===undefined,'ASSET_PLAYBACK','Playback mode only applies to audio');if(a.kind==='audio'&&(a.mime!=='audio/wav'||a.playback==='element'))ensure(p.capabilities.includes('audio.media'),'MEDIA_CAPABILITY','Declare audio.media');}
   for(const f of p.functions) {
     const slots=[...p.globals,...f.params,...f.locals]; unique(slots.map(s=>s.id),'SLOT_DUPLICATE');
     for(const s of slots)ensure(s.kind===s.initial.kind,'VALUE_KIND',s.id);
@@ -86,6 +88,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
       const i=f.code[index]; ensure(i,'INSTRUCTION','missing');
       try {
       if(!['control.jump','control.branch','control.return','control.end'].includes(i.op))ensure(f.code[index+1],'FALLTHROUGH',i.at);
+      if('task'in i&&typeof i.task==='string')ensure(!i.task.startsWith('voice-replay:'),'AUDIO_RESERVED_TASK','Reserved voice replay name');if(isAudioInstruction(i)){ensure(p.capabilities.includes('audio.extended')&&p.capabilities.includes('expressions'),'AUDIO_CAPABILITY','Declare audio.extended and expressions');audioExpressions(i).forEach(e=>validateExpressionTree(e,id=>slots.find(s=>s.id===id)?.kind));if(i.op==='audio.track')ensure(p.assets.some(a=>a.id===i.asset&&a.kind==='audio'),'ASSET_KIND',i.asset);}
       if(isStageInstruction(i)){ensure(p.capabilities.includes('stage.effects')&&p.capabilities.includes('expressions'),'STAGE_CAPABILITY','Declare stage.effects and expressions');stageExpressions(i).forEach(e=>validateExpressionTree(e,id=>slots.find(s=>s.id===id)?.kind));if(i.op==='stage.image'||i.op==='stage.transition')ensure(p.assets.some(a=>a.id===i.asset&&a.kind==='image'),'ASSET_KIND',i.at);}
       switch(i.op) {
         case 'text.window.select':case 'text.window.clear':case 'text.window.visible':case 'text.window.theme':ensure(p.textLayout?.windows.some(w=>w.id===i.window),'TEXT_WINDOW',i.window);if(i.op==='text.window.theme')ensure(p.textLayout?.themes.some(t=>t.id===i.theme),'TEXT_THEME',i.theme);break;

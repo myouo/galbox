@@ -8,7 +8,7 @@
 | 值 | bool/string/checked i32/i64、位模式f64、null与有界有序list/dict；显式比较/转换，无隐式转换 |
 | 图像 / 正文 | 单 Pixi WebGL；有界二维pose/层级/裁切/混合、相机/基础滤镜/fade/crossfade/shake与独立属性任务；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
-| 媒体 | Web Audio 短 WAV、真实获取/解码/启动/重试、音量；显式 replay/stop，不提供采样点精确续接 |
+| 媒体 | WAV/MP3/单流 Ogg Vorbis/Opus；验证 Blob 的长媒体 element 与 buffer、自然完成/等待、循环点、bus 淡化/语音 duck、当前正文重播；replay 从零/stop，不含网络流与精确 seek，见 MEDIA.md |
 | 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载；TrueType目录/真实字体准备与独有FontFace释放 |
 | 工作 / 持久进度 | 同步工作 profile、冻结提交批次、幂等回执、修订冲突、普通已读/解锁自动提交 |
 | 有状态操作 | 真实 codec/操作工厂、冻结表、每调用 State、signal wait、隔离和失败原子性、禁止重入 |

@@ -1,0 +1,329 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173/?demo=media",
+  "status": 200,
+  "browser": "156.0.8078.4",
+  "saved": {
+    "audioState": {
+      "version": 1,
+      "gains": {
+        "bgm": 0.223,
+        "voice": 1,
+        "sfx": 1
+      },
+      "duck": {
+        "enabled": true,
+        "level": 0.3,
+        "attackMs": 120,
+        "releaseMs": 300,
+        "value": 0.3,
+        "from": 1,
+        "to": 0.3,
+        "elapsed": 120,
+        "duration": 120
+      },
+      "stopVoiceOnAdvance": true
+    },
+    "tasks": [
+      {
+        "id": "task:1",
+        "name": "silent",
+        "kind": "audio-fade",
+        "at": "wind:silent",
+        "status": "completed",
+        "elapsed": 1,
+        "duration": 1,
+        "attempt": 1,
+        "audioFade": {
+          "signature": "{\"at\":\"wind:silent\",\"channel\":\"bgm\",\"duration\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":1},\"easing\":\"linear\",\"op\":\"audio.fade\",\"policy\":\"reject\",\"task\":\"silent\",\"to\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"0000000000000000\"}}",
+          "channel": "bgm",
+          "from": 1,
+          "to": 0,
+          "easing": "linear"
+        }
+      },
+      {
+        "id": "task:3",
+        "name": "music",
+        "kind": "media",
+        "at": "wind:music",
+        "status": "running",
+        "elapsed": 0,
+        "duration": 0,
+        "attempt": 1,
+        "asset": "bgm-long",
+        "channel": "bgm",
+        "gain": 0.3,
+        "loop": true,
+        "restore": "replay",
+        "mediaTask": {
+          "version": 1,
+          "signature": "{\"asset\":\"bgm-long\",\"at\":\"wind:music\",\"channel\":\"bgm\",\"gain\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3fd3333333333333\"},\"loop\":true,\"loopEndMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":10000},\"loopStartMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":5000},\"op\":\"audio.track\",\"restore\":\"replay\",\"task\":\"music\"}",
+          "phase": "playing",
+          "loopStartMs": 5000,
+          "loopEndMs": 10000,
+          "replay": false
+        }
+      },
+      {
+        "id": "task:4",
+        "name": "fade-in",
+        "kind": "audio-fade",
+        "at": "wind:fade-in",
+        "status": "running",
+        "elapsed": 223,
+        "duration": 1000,
+        "attempt": 1,
+        "audioFade": {
+          "signature": "{\"at\":\"wind:fade-in\",\"channel\":\"bgm\",\"duration\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":1000},\"easing\":\"linear\",\"op\":\"audio.fade\",\"policy\":\"reject\",\"task\":\"fade-in\",\"to\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3ff0000000000000\"}}",
+          "channel": "bgm",
+          "from": 0,
+          "to": 1,
+          "easing": "linear"
+        }
+      },
+      {
+        "id": "task:5",
+        "name": "voice",
+        "kind": "media",
+        "at": "wind:voice",
+        "status": "running",
+        "elapsed": 0,
+        "duration": 0,
+        "attempt": 2,
+        "asset": "voice-opus",
+        "channel": "voice",
+        "gain": 0.7,
+        "loop": false,
+        "restore": "replay",
+        "mediaTask": {
+          "version": 1,
+          "signature": "{\"asset\":\"voice-opus\",\"at\":\"wind:voice\",\"channel\":\"voice\",\"gain\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3fe6666666666666\"},\"loop\":false,\"loopEndMs\":null,\"loopStartMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":0},\"op\":\"audio.track\",\"restore\":\"replay\",\"task\":\"voice\"}",
+          "phase": "playing",
+          "loopStartMs": 0,
+          "loopEndMs": null,
+          "replay": false
+        }
+      }
+    ],
+    "resources": {
+      "graphics": "available",
+      "assets": 5,
+      "encodedBytes": 89352,
+      "textureBytesEstimated": 3686400,
+      "decodedAudioBytes": 134388,
+      "mediaElementBytes": 57540,
+      "limits": {
+        "maxAssetBytes": 16777216,
+        "maxEncodedBytes": 33554432,
+        "maxTextureBytes": 134217728,
+        "maxAudioBytes": 33554432,
+        "maxImageSide": 4096,
+        "maxAudioMs": 30000
+      }
+    }
+  },
+  "restored": {
+    "audioState": {
+      "version": 1,
+      "gains": {
+        "bgm": 0.269,
+        "voice": 1,
+        "sfx": 1
+      },
+      "duck": {
+        "enabled": true,
+        "level": 0.3,
+        "attackMs": 120,
+        "releaseMs": 300,
+        "value": 0.3,
+        "from": 1,
+        "to": 0.3,
+        "elapsed": 120,
+        "duration": 120
+      },
+      "stopVoiceOnAdvance": true
+    },
+    "tasks": [
+      {
+        "id": "task:1",
+        "name": "silent",
+        "kind": "audio-fade",
+        "at": "wind:silent",
+        "status": "completed",
+        "elapsed": 1,
+        "duration": 1,
+        "attempt": 1,
+        "audioFade": {
+          "signature": "{\"at\":\"wind:silent\",\"channel\":\"bgm\",\"duration\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":1},\"easing\":\"linear\",\"op\":\"audio.fade\",\"policy\":\"reject\",\"task\":\"silent\",\"to\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"0000000000000000\"}}",
+          "channel": "bgm",
+          "from": 1,
+          "to": 0,
+          "easing": "linear"
+        }
+      },
+      {
+        "id": "task:3",
+        "name": "music",
+        "kind": "media",
+        "at": "wind:music",
+        "status": "running",
+        "elapsed": 0,
+        "duration": 0,
+        "attempt": 2,
+        "asset": "bgm-long",
+        "channel": "bgm",
+        "gain": 0.3,
+        "loop": true,
+        "restore": "replay",
+        "mediaTask": {
+          "version": 1,
+          "signature": "{\"asset\":\"bgm-long\",\"at\":\"wind:music\",\"channel\":\"bgm\",\"gain\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3fd3333333333333\"},\"loop\":true,\"loopEndMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":10000},\"loopStartMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":5000},\"op\":\"audio.track\",\"restore\":\"replay\",\"task\":\"music\"}",
+          "phase": "playing",
+          "loopStartMs": 5000,
+          "loopEndMs": 10000,
+          "replay": false
+        }
+      },
+      {
+        "id": "task:4",
+        "name": "fade-in",
+        "kind": "audio-fade",
+        "at": "wind:fade-in",
+        "status": "running",
+        "elapsed": 269,
+        "duration": 1000,
+        "attempt": 1,
+        "audioFade": {
+          "signature": "{\"at\":\"wind:fade-in\",\"channel\":\"bgm\",\"duration\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":1000},\"easing\":\"linear\",\"op\":\"audio.fade\",\"policy\":\"reject\",\"task\":\"fade-in\",\"to\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3ff0000000000000\"}}",
+          "channel": "bgm",
+          "from": 0,
+          "to": 1,
+          "easing": "linear"
+        }
+      },
+      {
+        "id": "task:5",
+        "name": "voice",
+        "kind": "media",
+        "at": "wind:voice",
+        "status": "running",
+        "elapsed": 0,
+        "duration": 0,
+        "attempt": 3,
+        "asset": "voice-opus",
+        "channel": "voice",
+        "gain": 0.7,
+        "loop": false,
+        "restore": "replay",
+        "mediaTask": {
+          "version": 1,
+          "signature": "{\"asset\":\"voice-opus\",\"at\":\"wind:voice\",\"channel\":\"voice\",\"gain\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3fe6666666666666\"},\"loop\":false,\"loopEndMs\":null,\"loopStartMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":0},\"op\":\"audio.track\",\"restore\":\"replay\",\"task\":\"voice\"}",
+          "phase": "playing",
+          "loopStartMs": 0,
+          "loopEndMs": null,
+          "replay": false
+        }
+      }
+    ]
+  },
+  "naturallyEnded": {
+    "id": "task:9",
+    "name": "signal",
+    "kind": "media",
+    "at": "wind:signal",
+    "status": "completed",
+    "elapsed": 0,
+    "duration": 0,
+    "attempt": 1,
+    "asset": "signal-mp3",
+    "channel": "sfx",
+    "gain": 0.4,
+    "loop": false,
+    "restore": "replay",
+    "mediaTask": {
+      "version": 1,
+      "signature": "{\"asset\":\"signal-mp3\",\"at\":\"wind:signal\",\"channel\":\"sfx\",\"gain\":{\"kind\":\"f64\",\"op\":\"literal\",\"value\":\"3fd999999999999a\"},\"loop\":false,\"loopEndMs\":null,\"loopStartMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":0},\"op\":\"audio.track\",\"restore\":\"replay\",\"task\":\"signal\"}",
+      "phase": "ended",
+      "loopStartMs": 0,
+      "loopEndMs": null,
+      "replay": false
+    }
+  },
+  "profile": {
+    "revision": 4,
+    "values": {
+      "mediaComplete": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "wind.first@zh-1",
+      "wind.second@zh-1",
+      "wind.third@zh-1",
+      "wind.ending@zh-1"
+    ]
+  },
+  "preferences": {
+    "revision": 1,
+    "value": {
+      "version": 2,
+      "audio": {
+        "master": 0.6,
+        "bgm": 1,
+        "voice": 1,
+        "sfx": 1
+      },
+      "text": {
+        "intervalMs": 0
+      },
+      "playback": {
+        "autoDelayMs": 1500,
+        "skipUnread": false
+      },
+      "input": {
+        "advance": [
+          "Enter",
+          "Space"
+        ],
+        "menu": [
+          "Escape"
+        ],
+        "auto": [
+          "KeyA"
+        ],
+        "skip": [
+          "ControlLeft",
+          "ControlRight"
+        ],
+        "quickSave": [
+          "F5"
+        ],
+        "quickLoad": [
+          "F9"
+        ]
+      },
+      "display": {
+        "fontScale": 1,
+        "windowOpacity": 1
+      }
+    }
+  },
+  "release": {
+    "origin": "manifest",
+    "sha256": "4a902bdf6d5317bc203af1c1f421a105f91c53c3fbcea358f9cb404a979d2ca7"
+  },
+  "media": {
+    "state": "available",
+    "starts": 2,
+    "ended": 0,
+    "blocked": 0,
+    "decoded": 1,
+    "active": 2,
+    "loops": 0,
+    "elementStarts": 2
+  },
+  "canvas": 1,
+  "pageErrors": []
+}

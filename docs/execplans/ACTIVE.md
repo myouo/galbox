@@ -1,7 +1,9 @@
 # 当前实施计划
 
-G3-01已完成有限支持验收：ADR0019→Schema/工厂→Core一次解析/通道锁/快照→Pixi图像层级/滤镜/正确RGBA转场→原创光影回信→单元/实际浏览器像素/独立消费及既有门槛。完整状态tasks.json，日志evidence/g3-01。
+G3-02已完成有限集：ADR0020→Schema/工厂→Core自然完成/混音/语音身份→Web element与buffer→原创风声回放→149单元/60浏览器/独立tarball/58 CLI/4 synthetic/性能/API及实际dev保存刷新。完整状态tasks.json，证据evidence/g3-02/REPORT.md。本地提交见git log，无外部发布。
 
-最终137单元/54浏览器/consumer/54 CLI/4 synthetic/性能/API与dev实际134ms保存/刷新/继续均通过。不能把新滤镜/转场作用域扩大到DOM正文/UI，或把有限128对象/256任务当长作品认证。Stage Task完成由Core活动时间，Host回调不能伪造。
+下一项G3-03：先定义有限视频编码、热点输入、期限在激活/暂停/恢复中的语义与保存策略，再使Schema/工厂/Core/Host/失败反例、原创浏览器与独立消费一起落实。不得猜选择/媒体完成，不把startup ack当自然结束。
 
-通过后按任务表进入G3-02媒体能力：先定义播放/等待/恢复/失败策略，再沿正式Core/Host/资源/存储闭环，不能把音频startup ack当媒体结束或猜seek。当前dev已启动/?demo=stage并实际验证保存/刷新/旧参数；N/F资料阻塞独立保留，不停通用工作、不外部发布。
+G3-04保留真正版本化网络流/IntegrityEvidence，并为G7依赖，现有Blob渐进解码不能冒充网络边下边播。图文存档/流程图/鉴赏/UI及G7仍未完成。N/F资料阻塞独立保留。
+
+当前dev已启动http://127.0.0.1:4173/?demo=media，实际重播/223ms淡入保存/刷新/自然结束/继续结局再读旧槽验证通过。browser前停dev释放4173/4174，所有命令export TMPDIR=/dev/shm。分支feat/audio-tracks-and-long-media，基线f9d4099。

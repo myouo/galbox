@@ -332,6 +332,46 @@ export type Instruction =
       op: 'task.finish';
       at: string;
       task: string;
+    }
+  | {
+      op: 'audio.track';
+      at: string;
+      task: string;
+      asset: string;
+      channel: 'bgm' | 'voice' | 'sfx';
+      gain: StageNumberExpression;
+      loop: boolean;
+      loopStartMs: I32Expression;
+      loopEndMs: I32Expression | null;
+      restore: 'replay' | 'stop';
+    }
+  | {
+      op: 'audio.fade';
+      at: string;
+      task: string;
+      channel: 'bgm' | 'voice' | 'sfx';
+      to: StageNumberExpression;
+      duration: I32Expression;
+      easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+      policy: 'reject' | 'replace';
+    }
+  | {
+      op: 'audio.duck';
+      at: string;
+      enabled: boolean;
+      level: StageNumberExpression;
+      attackMs: I32Expression;
+      releaseMs: I32Expression;
+    }
+  | {
+      op: 'audio.policy';
+      at: string;
+      stopVoiceOnAdvance: boolean;
+    }
+  | {
+      op: 'audio.wait';
+      at: string;
+      task: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1260,6 +1300,11 @@ export type Wait =
       kind: 'operation';
       at: string;
       invocation: string;
+    }
+  | {
+      kind: 'media';
+      at: string;
+      task: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1344,6 +1389,8 @@ export type ResourceFact =
       channels: number;
       sampleRate: number;
       frames: number;
+      encoding?: 'wav' | 'mp3' | 'vorbis' | 'opus';
+      playback?: 'buffer' | 'element';
     }
   | {
       id: string;
@@ -1415,7 +1462,8 @@ export interface Asset {
   kind: 'image' | 'audio' | 'font';
   path: string;
   sha256: string;
-  mime: 'image/svg+xml' | 'image/png' | 'audio/wav' | 'font/ttf';
+  mime: 'image/svg+xml' | 'image/png' | 'audio/wav' | 'font/ttf' | 'audio/mpeg' | 'audio/ogg';
+  playback?: 'buffer' | 'element';
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1787,6 +1835,7 @@ export interface Snapshot {
   rng?: RngState;
   textLayout?: TextLayoutState;
   scene?: StageScene;
+  audioState?: AudioState;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1825,6 +1874,7 @@ export interface TextState {
     id: string;
     at: string;
   };
+  voice?: VoiceRecipe;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1852,12 +1902,23 @@ export interface RichTextState {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "VoiceRecipe".
+ */
+export interface VoiceRecipe {
+  asset: string;
+  at: string;
+  signature: string;
+  gain: number;
+  restore: 'replay' | 'stop';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Task".
  */
 export interface Task {
   id: string;
   status: TaskStatus;
-  kind: 'animation' | 'delay' | 'audio' | 'stage';
+  kind: 'animation' | 'delay' | 'audio' | 'stage' | 'media' | 'audio-fade';
   elapsed: number;
   duration: number;
   attempt: number;
@@ -1872,6 +1933,8 @@ export interface Task {
   name: string;
   at?: string;
   stageTask?: StageTaskState;
+  mediaTask?: MediaTaskState;
+  audioFade?: AudioFadeState;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1900,6 +1963,29 @@ export interface StageCamera {
   y: number;
   zoom: number;
   rotation: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "MediaTaskState".
+ */
+export interface MediaTaskState {
+  version: 1;
+  signature: string;
+  phase: 'pending' | 'playing' | 'ended' | 'blocked' | 'failed' | 'cancelled' | 'superseded';
+  loopStartMs: number;
+  loopEndMs: number | null;
+  replay: boolean;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "AudioFadeState".
+ */
+export interface AudioFadeState {
+  signature: string;
+  channel: 'bgm' | 'voice' | 'sfx';
+  from: number;
+  to: number;
+  easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1997,6 +2083,31 @@ export interface StageScene {
     alpha: number;
   };
   shake?: StageOffset;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "AudioState".
+ */
+export interface AudioState {
+  version: 1;
+  gains: {
+    bgm: number;
+    voice: number;
+    sfx: number;
+  };
+  duck: {
+    enabled: boolean;
+    level: number;
+    attackMs: number;
+    releaseMs: number;
+    value: number;
+    from: number;
+    to: number;
+    elapsed: number;
+    duration: number;
+  };
+  stopVoiceOnAdvance: boolean;
+  pendingVoice?: VoiceRecipe;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2192,6 +2303,7 @@ export interface ResourceBudget {
   maxAudioBytes: number;
   maxImageSide: number;
   maxAudioMs: number;
+  maxMediaMs?: number;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

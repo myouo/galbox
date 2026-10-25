@@ -180,7 +180,16 @@
             "image/svg+xml",
             "image/png",
             "audio/wav",
-            "font/ttf"
+            "font/ttf",
+            "audio/mpeg",
+            "audio/ogg"
+          ]
+        },
+        "playback": {
+          "type": "string",
+          "enum": [
+            "buffer",
+            "element"
           ]
         }
       },
@@ -1709,6 +1718,211 @@
             "task"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "audio.track"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "bgm",
+                "voice",
+                "sfx"
+              ]
+            },
+            "gain": {
+              "$ref": "#/definitions/StageNumberExpression"
+            },
+            "loop": {
+              "type": "boolean"
+            },
+            "loopStartMs": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "loopEndMs": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/I32Expression"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "restore": {
+              "type": "string",
+              "enum": [
+                "replay",
+                "stop"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "asset",
+            "channel",
+            "gain",
+            "loop",
+            "loopStartMs",
+            "loopEndMs",
+            "restore"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "audio.fade"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "bgm",
+                "voice",
+                "sfx"
+              ]
+            },
+            "to": {
+              "$ref": "#/definitions/StageNumberExpression"
+            },
+            "duration": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "easing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease-in",
+                "ease-out",
+                "ease-in-out"
+              ]
+            },
+            "policy": {
+              "type": "string",
+              "enum": [
+                "reject",
+                "replace"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task",
+            "channel",
+            "to",
+            "duration",
+            "easing",
+            "policy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "audio.duck"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "level": {
+              "$ref": "#/definitions/StageNumberExpression"
+            },
+            "attackMs": {
+              "$ref": "#/definitions/I32Expression"
+            },
+            "releaseMs": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "enabled",
+            "level",
+            "attackMs",
+            "releaseMs"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "audio.policy"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "stopVoiceOnAdvance": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "stopVoiceOnAdvance"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "audio.wait"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "task"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -2012,6 +2226,9 @@
             "at"
           ],
           "additionalProperties": false
+        },
+        "voice": {
+          "$ref": "#/definitions/VoiceRecipe"
         }
       },
       "required": [
@@ -2051,7 +2268,9 @@
             "animation",
             "delay",
             "audio",
-            "stage"
+            "stage",
+            "media",
+            "audio-fade"
           ]
         },
         "elapsed": {
@@ -2116,6 +2335,12 @@
         },
         "stageTask": {
           "$ref": "#/definitions/StageTaskState"
+        },
+        "mediaTask": {
+          "$ref": "#/definitions/MediaTaskState"
+        },
+        "audioFade": {
+          "$ref": "#/definitions/AudioFadeState"
         }
       },
       "required": [
@@ -2304,6 +2529,29 @@
             "invocation"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "media"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "task"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -2421,6 +2669,9 @@
         },
         "scene": {
           "$ref": "#/definitions/StageScene"
+        },
+        "audioState": {
+          "$ref": "#/definitions/AudioState"
         }
       },
       "required": [
@@ -3368,6 +3619,11 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 120000
+        },
+        "maxMediaMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7200000
         }
       },
       "required": [
@@ -3447,7 +3703,23 @@
             "frames": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 11520000
+              "maximum": 691200000
+            },
+            "encoding": {
+              "type": "string",
+              "enum": [
+                "wav",
+                "mp3",
+                "vorbis",
+                "opus"
+              ]
+            },
+            "playback": {
+              "type": "string",
+              "enum": [
+                "buffer",
+                "element"
+              ]
             }
           },
           "required": [
@@ -8998,6 +9270,249 @@
       "required": [],
       "additionalProperties": false,
       "minProperties": 1
+    },
+    "VoiceRecipe": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "at": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,65536}$"
+        },
+        "gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "restore": {
+          "type": "string",
+          "enum": [
+            "replay",
+            "stop"
+          ]
+        }
+      },
+      "required": [
+        "asset",
+        "at",
+        "signature",
+        "gain",
+        "restore"
+      ],
+      "additionalProperties": false
+    },
+    "MediaTaskState": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,65536}$"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "playing",
+            "ended",
+            "blocked",
+            "failed",
+            "cancelled",
+            "superseded"
+          ]
+        },
+        "loopStartMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7200000
+        },
+        "loopEndMs": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 7200000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "replay": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "version",
+        "signature",
+        "phase",
+        "loopStartMs",
+        "loopEndMs",
+        "replay"
+      ],
+      "additionalProperties": false
+    },
+    "AudioFadeState": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,65536}$"
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "bgm",
+            "voice",
+            "sfx"
+          ]
+        },
+        "from": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "to": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "easing": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "ease-in",
+            "ease-out",
+            "ease-in-out"
+          ]
+        }
+      },
+      "required": [
+        "signature",
+        "channel",
+        "from",
+        "to",
+        "easing"
+      ],
+      "additionalProperties": false
+    },
+    "AudioState": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "gains": {
+          "type": "object",
+          "properties": {
+            "bgm": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "voice": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "sfx": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "bgm",
+            "voice",
+            "sfx"
+          ],
+          "additionalProperties": false
+        },
+        "duck": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "attackMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            },
+            "releaseMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "from": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "to": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "elapsed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            },
+            "duration": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 60000
+            }
+          },
+          "required": [
+            "enabled",
+            "level",
+            "attackMs",
+            "releaseMs",
+            "value",
+            "from",
+            "to",
+            "elapsed",
+            "duration"
+          ],
+          "additionalProperties": false
+        },
+        "stopVoiceOnAdvance": {
+          "type": "boolean"
+        },
+        "pendingVoice": {
+          "$ref": "#/definitions/VoiceRecipe"
+        }
+      },
+      "required": [
+        "version",
+        "gains",
+        "duck",
+        "stopVoiceOnAdvance"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

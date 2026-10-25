@@ -615,6 +615,91 @@ export const operationSpecs = {
       "at",
       "task"
     ]
+  },
+  "audio.track": {
+    "opcode": "audio.track",
+    "parameters": [
+      "at",
+      "task",
+      "asset",
+      "channel",
+      "gain",
+      "loop",
+      "loopStartMs",
+      "loopEndMs",
+      "restore"
+    ],
+    "required": [
+      "at",
+      "task",
+      "asset",
+      "channel",
+      "gain",
+      "loop",
+      "loopStartMs",
+      "loopEndMs",
+      "restore"
+    ]
+  },
+  "audio.fade": {
+    "opcode": "audio.fade",
+    "parameters": [
+      "at",
+      "task",
+      "channel",
+      "to",
+      "duration",
+      "easing",
+      "policy"
+    ],
+    "required": [
+      "at",
+      "task",
+      "channel",
+      "to",
+      "duration",
+      "easing",
+      "policy"
+    ]
+  },
+  "audio.duck": {
+    "opcode": "audio.duck",
+    "parameters": [
+      "at",
+      "enabled",
+      "level",
+      "attackMs",
+      "releaseMs"
+    ],
+    "required": [
+      "at",
+      "enabled",
+      "level",
+      "attackMs",
+      "releaseMs"
+    ]
+  },
+  "audio.policy": {
+    "opcode": "audio.policy",
+    "parameters": [
+      "at",
+      "stopVoiceOnAdvance"
+    ],
+    "required": [
+      "at",
+      "stopVoiceOnAdvance"
+    ]
+  },
+  "audio.wait": {
+    "opcode": "audio.wait",
+    "parameters": [
+      "at",
+      "task"
+    ],
+    "required": [
+      "at",
+      "task"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke","profile.expression"] as const;

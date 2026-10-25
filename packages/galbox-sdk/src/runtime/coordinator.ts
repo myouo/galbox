@@ -63,7 +63,7 @@ export class Coordinator {
       if(this.queue.length){this.scheduler.defer(()=>this.work());return;}this.draining=false;
     } catch(error) {this.current?.reject(error);this.current=null;this.draining=false;this.notify();}
   }
-  private accept(event:RuntimeEvent):void{switch(event.type){case 'playback.mode':this.playback.setMode(event.mode);return;case 'playback.preferences':this.playback.configure(event.value);return;case 'playback.pause':this.playback.pause(event.value);return;case 'playback.ended':this.playback.ended(event.value.task,event.value.attempt);return;default:this.core.accept(event);if(event.type==='task')this.playback.started(event.task,event.attempt,event.result);}}
+  private accept(event:RuntimeEvent):void{switch(event.type){case 'playback.mode':this.playback.setMode(event.mode);return;case 'playback.preferences':this.playback.configure(event.value);return;case 'playback.pause':this.playback.pause(event.value);return;case 'playback.ended':this.core.accept({type:'media.ended',task:event.value.task,attempt:event.value.attempt});this.playback.ended(event.value.task,event.value.attempt);return;default:this.core.accept(event);if(event.type==='task')this.playback.started(event.task,event.attempt,event.result);}}
   private effects():void{for(const effect of this.core.drainEffects()){this.playback.effect(effect);this.host.effect(effect,this.epoch,(task,attempt,result)=>{if(!this.stopped)void this.dispatch({type:'task',task,attempt,result}).catch(()=>{});},(task,attempt)=>{if(!this.stopped)void this.reportPlayback({epoch:this.epoch,task,attempt,state:'ended'}).catch(()=>{});});}}
   flush():Promise<void> {
     const next=this.flushTail.catch(()=>{}).then(async()=>{

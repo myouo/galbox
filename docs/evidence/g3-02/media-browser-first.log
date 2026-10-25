@@ -1,0 +1,237 @@
+$ pnpm build && pnpm build:harness && playwright test -- media.spec.ts
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 782 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-Bo143X8H.css                        6.66 kB │ gzip:   2.26 kB
+apps/playground/dist/assets/webworkerAll-BdToCGyZ.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-DiKslO2a.js                         14.58 kB │ gzip:   4.66 kB
+apps/playground/dist/assets/browserAll-CBZ3XyaM.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-C4tHL2bh.js                     2,128.07 kB │ gzip: 306.25 kB
+
+✓ built in 1.26s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 780 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-Dw48wpg6.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/defaultFilter.vert-DBKfXOpv.js            0.78 kB │ gzip:   0.35 kB
+tests/browser/harness/dist/disposal-probe.js                         3.25 kB │ gzip:   1.33 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-0kpVo1g2.js                         18.08 kB │ gzip:   5.30 kB
+tests/browser/harness/dist/browserAll-MwIeSq2i.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/lib-Dc6b971V.js                         317.59 kB │ gzip:  80.32 kB
+tests/browser/harness/dist/sdk.js                                5,159.05 kB │ gzip: 452.95 kB
+
+✓ built in 1.06s
+[WebServer] (node:2319676) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2319696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2319810) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 58 tests using 1 worker
+
+(node:2319830) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/adapters.spec.ts:3:1 › resource identity/ownership/cancellation, invalid header refusal and decoder failure cleanup (1.8s)
+  ✓   2 tests/browser/adapters.spec.ts:24:1 › real IndexedDB isolates namespaces and rejects profile/slot/head conflicts (734ms)
+  ✓   3 tests/browser/adapters.spec.ts:36:1 › public Player saves partial animation group, resumes with new audio epoch, cleans instances (3.7s)
+  ✓   4 tests/browser/adapters.spec.ts:54:1 › load generations retain current profile and a delayed older preparation never takes over (1.1s)
+  ✓   5 tests/browser/adapters.spec.ts:69:1 › save already inside storage commit reports success after dispose; resources stay released (1.0s)
+  ✓   6 tests/browser/adapters.spec.ts:79:1 › blocked real audio startup retries the same task without repeating narrative updates (1.0s)
+  ✓   7 tests/browser/adapters.spec.ts:90:1 › old input epoch cannot act on an identical restored prompt; pause reasons remain independent (1.1s)
+  ✓   8 tests/browser/adapters.spec.ts:100:1 › postcommit failure retries the same activation; a new load supersedes it permanently (1.2s)
+  ✓   9 tests/browser/adapters.spec.ts:112:1 › missing Web Audio fails with an explicit unavailable diagnostic and no leftover canvas (808ms)
+  ✓  10 tests/browser/adapters.spec.ts:119:1 › initial Player activation plays a stop-on-restore one-shot; subsequent load stops it (1.0s)
+  ✓  11 tests/browser/backups.spec.ts:4:1 › default UI downloads a portable backup, restores an independent branch and loads it across refresh (3.7s)
+  ✓  12 tests/browser/backups.spec.ts:15:1 › real IndexedDB abort rolls back the entire restore; lost replies retry without activation or hook effects (1.1s)
+  ✓  13 tests/browser/backups.spec.ts:26:1 › another database consumes the backup; release migration is explicit and old slots remain exportable (1.0s)
+  ✓  14 tests/browser/backups.spec.ts:34:1 › restore committed before dispose returns the durable result and leaves a borrowed database usable (1.1s)
+  ✓  15 tests/browser/backups.spec.ts:41:1 › profile-only backups remain selectable after refresh and explicitly start a new story with restored read progress (2.2s)
+  ✓  16 tests/browser/data.spec.ts:6:1 › original supply chapter computes exact f64/i64/collections and preserves current profile across old-save refresh and both choices (5.0s)
+  ✓  17 tests/browser/data.spec.ts:12:1 › real IndexedDB numeric migration validates every current/previous cut and keeps the original branch intact (1.3s)
+  ✓  18 tests/browser/data.spec.ts:22:1 › a failed numeric candidate does not commit its profile/audio intentions or revoke the old active player (1.1s)
+  ✓  19 tests/browser/disposal.spec.ts:4:1 › static text/profile updates skip Pixi drawing; epoch and animation changes still draw from owned stage values (2.1s)
+  ✓  20 tests/browser/disposal.spec.ts:15:1 › disposing one Player loses only its context and preserves shared Pixi pools and another live Player (1.4s)
+  ✓  21 tests/browser/disposal.spec.ts:21:1 › a cancelled Application.init that completes late destroys the newly allocated context exactly once (978ms)
+  ✓  22 tests/browser/expressions.spec.ts:6:1 › original logbook runs expressions and evaluated text, replays saved RNG cuts across refresh and completes both choices (4.5s)
+  ✓  23 tests/browser/expressions.spec.ts:13:1 › host seed is sampled once before durable activation and pending recovery or load never samples again (1.2s)
+  ✓  24 tests/browser/imports.spec.ts:3:1 › real UI imports into an independent profile, loads separately and preserves hooks after save/refresh (5.0s)
+  ✓  25 tests/browser/imports.spec.ts:17:1 › lost import/activation replies remain idempotent; pending retry does not reapply the hook (1.2s)
+  ✓  26 tests/browser/imports.spec.ts:27:1 › the final activation barrier hands off dirty profile before recomputing the load recipe (1.2s)
+  ✓  27 tests/browser/imports.spec.ts:35:1 › a late File read cannot clear or replace a newer prepared import (908ms)
+  ✓  28 tests/browser/layout.spec.ts:6:1 › original ADV/NVL chapter preserves multiple windows, themes, history and profile across refresh and plays both choices (5.0s)
+  ✓  29 tests/browser/layout.spec.ts:13:1 › public renderer is created after fonts, receives isolated data, scales logical layout and disposes exactly once (1.2s)
+  ✓  30 tests/browser/layout.spec.ts:20:1 › font failures and aborts clean prepared resources before activation; separate players retain their own loaded fonts (1.4s)
+  ✓  31 tests/browser/layout.spec.ts:29:1 › renderer creation cancellation releases its late result, and a committed render failure recovers through a fresh renderer (1.4s)
+  ✓  32 tests/browser/media.spec.ts:6:1 › original wind chapter replays voice, saves live mix, refreshes and completes both routes with natural media waits (8.1s)
+  ✘  33 tests/browser/media.spec.ts:14:1 › native long media clocks pause, loop segments, mix envelopes and restore with fresh requests without retained PCM (966ms)
+(node:2322247) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  34 tests/browser/media.spec.ts:24:1 › blocked element startup retries its invocation and stale ended callbacks cannot finish replayed voice (1.9s)
+(node:2322410) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  35 tests/browser/media.spec.ts:30:1 › unsupported decoders fail before activation; permanent play failure leaves a recoverable durable pending head (1.7s)
+(node:2322597) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  36 tests/browser/playback.spec.ts:4:1 › Auto waits for native voice completion, pauses in menus and rebuilds voice gates on restore (3.9s)
+  ✓  37 tests/browser/playback.spec.ts:22:1 › configured input is scoped per instance, ignores repeats/editors and discards held inputs after load or focus loss (1.7s)
+  ✓  38 tests/browser/playback.spec.ts:40:1 › default UI persists playback, mappings and display settings, imports/exports JSON and restores defaults (3.7s)
+  ✓  39 tests/browser/playback.spec.ts:54:1 › real IndexedDB v1 preferences migrate without losing revision and reset uses authored defaults (920ms)
+  ✓  40 tests/browser/player.spec.ts:17:1 › real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary profile (7.7s)
+  ✓  41 tests/browser/player.spec.ts:34:1 › menu pointer release cannot advance and repeated create/dispose releases canvas/audio (1.1s)
+  ✓  42 tests/browser/player.spec.ts:39:1 › keyboard activation consumes one stage and a menu cancels a held key (887ms)
+  ✓  43 tests/browser/player.spec.ts:43:1 › a blocked real audio start exposes a working retry button without advancing the story (844ms)
+  ✓  44 tests/browser/preferences.spec.ts:3:1 › default settings persist across refresh and loading an older story slot does not restore older preferences (2.8s)
+  ✓  45 tests/browser/preferences.spec.ts:10:1 › live role gains multiply script gain once, future sources use current preferences and snapshot gains remain authored (1.2s)
+  ✓  46 tests/browser/preferences.spec.ts:17:1 › real IndexedDB settings isolate namespaces, reject stale writers, reconcile unknown replies and report committed disposal (996ms)
+  ✓  47 tests/browser/release.spec.ts:4:1 › published release rejects changed Program, binding registry, provider identity and physical resource facts before activation (907ms)
+  ✓  48 tests/browser/release.spec.ts:13:1 › predecode image budget and ignored acquire cancellation clean initialization and return each late lease once (924ms)
+  ✓  49 tests/browser/release.spec.ts:20:1 › real PNG and WAV decoding report owned memory; a failed audio start releases nodes and actual context loss pauses the session (1.2s)
+  ✓  50 tests/browser/release.spec.ts:28:1 › HTTP streaming is bounded even when the server supplies no Content-Length (718ms)
+  ✓  51 tests/browser/release.spec.ts:32:1 › permanent audio failure retains a committed pending activation; a fresh Host resumes without repeating startup profile writes (1.3s)
+  ✘  52 tests/browser/stage.spec.ts:6:1 › original stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes (3.5s)
+(node:2323757) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  53 tests/browser/stage.spec.ts:13:1 › actual WebGL pixels implement premultiplied crossfade, filters, hierarchy masks, camera, affine rotation and overlay (7.1s)
+  ✓  54 tests/browser/stage.spec.ts:32:1 › real IndexedDB refuses corrupt active effect state without replacing the working head or deleting either slot (1.5s)
+  ✓  55 tests/browser/synthetic.spec.ts:3:1 › synthetic binary preparation uses real Web Crypto and rejects corrupt source bytes (729ms)
+  ✓  56 tests/browser/text.spec.ts:6:1 › original rich chapter renders Ruby/styles, persists a complete page across refresh and plays both routes including Auto (4.4s)
+  ✓  57 tests/browser/text.spec.ts:12:1 › real DOM keeps layout and Unicode units stable; IndexedDB restore recreates saved pause, fraction and effect phase (2.2s)
+  ✓  58 tests/browser/text.spec.ts:24:1 › rich DOM treats source markup as text and rejects changed-source loads without destroying the active run or old slot (1.0s)
+
+
+  1) tests/browser/media.spec.ts:14:1 › native long media clocks pause, loop segments, mix envelopes and restore with fresh requests without retained PCM 
+
+    Error: page.evaluate: GalboxError: SCHEMA_INSTRUCTION: [{"instancePath":"","schemaPath":"#/oneOf/0/required","keyword":"required","params":{"missingProperty":"target"},"message":"must have required property 'target'"},{"instancePath":"","schemaPath":"#/oneOf/1/required","keyword":"required","params":{"missingProperty":"left"},"message":"must have required property 'left'"},{"instancePath":"","schemaPath":"#/oneOf/2/required","keyword":"required","params":{"missingProperty":"function"},"message":"must have required property 'function'"},{"instancePath":"","schemaPath":"#/oneOf/3/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/4/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/5/required","keyword":"required","params":{"missingProperty":"dest"},"message":"must have required property 'dest'"},{"instancePath":"","schemaPath":"#/oneOf/6/required","keyword":"required","params":{"missingProperty":"dest"},"message":"must have required property 'dest'"},{"instancePath":"","schemaPath":"#/oneOf/7/required","keyword":"required","params":{"missingProperty":"textId"},"message":"must have required property 'textId'"},{"instancePath":"","schemaPath":"#/oneOf/8/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/9/required","keyword":"required","params":{"missingProperty":"options"},"message":"must have required property 'options'"},{"instancePath":"","schemaPath":"#/oneOf/10/required","keyword":"required","params":{"missingProperty":"object"},"message":"must have required property 'object'"},{"instancePath":"","schemaPath":"#/oneOf/11/required","keyword":"required","params":{"missingProperty":"id"},"message":"must have required property 'id'"},{"instancePath":"","schemaPath":"#/oneOf/12/required","keyword":"required","params":{"missingProperty":"id"},"message":"must have required property 'id'"},{"instancePath":"","schemaPath":"#/oneOf/13/required","keyword":"required","params":{"missingProperty":"group"},"message":"must have required property 'group'"},{"instancePath":"","schemaPath":"#/oneOf/14/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/15/required","keyword":"required","params":{"missingProperty":"restore"},"message":"must have required property 'restore'"},{"instancePath":"","schemaPath":"#/oneOf/16/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/17/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/18/required","keyword":"required","params":{"missingProperty":"key"},"message":"must have required property 'key'"},{"instancePath":"","schemaPath":"#/oneOf/19/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/20/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"task"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/21/required","keyword":"required","params":{"missingProperty":"allow"},"message":"must have required property 'allow'"},{"instancePath":"","schemaPath":"#/oneOf/22/required","keyword":"required","params":{"missingProperty":"operation"},"message":"must have required property 'operation'"},{"instancePath":"","schemaPath":"#/oneOf/23/required","keyword":"required","params":{"missingProperty":"key"},"message":"must have required property 'key'"},{"instancePath":"","schemaPath":"#/oneOf/24/required","keyword":"required","params":{"missingProperty":"textId"},"message":"must have required property 'textId'"},{"instancePath":"","schemaPath":"#/oneOf/25/required","keyword":"required","params":{"missingProperty":"dest"},"message":"must have required property 'dest'"},{"instancePath":"","schemaPath":"#/oneOf/26/required","keyword":"required","params":{"missingProperty":"seed"},"message":"must have required property 'seed'"},{"instancePath":"","schemaPath":"#/oneOf/27/required","keyword":"required","params":{"missingProperty":"textId"},"message":"must have required property 'textId'"},{"instancePath":"","schemaPath":"#/oneOf/28/required","keyword":"required","params":{"missingProperty":"window"},"message":"must have required property 'window'"},{"instancePath":"","schemaPath":"#/oneOf/29/required","keyword":"required","params":{"missingProperty":"window"},"message":"must have required property 'window'"},{"instancePath":"","schemaPath":"#/oneOf/30/required","keyword":"required","params":{"missingProperty":"window"},"message":"must have required property 'window'"},{"instancePath":"","schemaPath":"#/oneOf/31/required","keyword":"required","params":{"missingProperty":"window"},"message":"must have required property 'window'"},{"instancePath":"","schemaPath":"#/oneOf/32/required","keyword":"required","params":{"missingProperty":"key"},"message":"must have required property 'key'"},{"instancePath":"","schemaPath":"#/oneOf/33/required","keyword":"required","params":{"missingProperty":"id"},"message":"must have required property 'id'"},{"instancePath":"","schemaPath":"#/oneOf/34/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/35/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/36/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/37/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/38/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/39/required","keyword":"required","params":{"missingProperty":"duration"},"message":"must have required property 'duration'"},{"instancePath":"","schemaPath":"#/oneOf/40/required","keyword":"required","params":{"missingProperty":"id"},"message":"must have required property 'id'"},{"instancePath":"","schemaPath":"#/oneOf/41/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"asset"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/42/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"asset"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf/43/required","keyword":"required","params":{"missingProperty":"restore"},"message":"must have required property 'restore'"},{"instancePath":"","schemaPath":"#/oneOf/44/required","keyword":"required","params":{"missingProperty":"to"},"message":"must have required property 'to'"},{"instancePath":"","schemaPath":"#/oneOf/45/required","keyword":"required","params":{"missingProperty":"enabled"},"message":"must have required property 'enabled'"},{"instancePath":"","schemaPath":"#/oneOf/46/required","keyword":"required","params":{"missingProperty":"stopVoiceOnAdvance"},"message":"must have required property 'stopVoiceOnAdvance'"},{"instancePath":"","schemaPath":"#/oneOf/47/additionalProperties","keyword":"additionalProperties","params":{"additionalProperty":"asset"},"message":"must NOT have additional properties"},{"instancePath":"","schemaPath":"#/oneOf","keyword":"oneOf","params":{"passingSchemas":null},"message":"must match exactly one schema in oneOf"}]
+        at B (http://127.0.0.1:4174/sdk.js:76866:16)
+        at ao (http://127.0.0.1:4174/sdk.js:76917:9)
+        at Cd (http://127.0.0.1:4174/sdk.js:83474:10)
+        at Module.wd (http://127.0.0.1:4174/sdk.js:83484:64)
+        at eval (eval at evaluate (:370:30), <anonymous>:27:18)
+        at async <anonymous>:396:30
+        at B (http://127.0.0.1:4174/sdk.js:76866:16)
+        at ao (http://127.0.0.1:4174/sdk.js:76917:9)
+        at Cd (http://127.0.0.1:4174/sdk.js:83474:10)
+        at Module.wd (http://127.0.0.1:4174/sdk.js:83484:64)
+        at eval (eval at evaluate (:370:30), <anonymous>:27:18)
+        at async <anonymous>:396:30
+        at /home/myo/Desktop/galbox-sdk/tests/browser/media.spec.ts:16:26
+
+    Error Context: test-results/media-native-long-media-cl-1979b-quests-without-retained-PCM/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/media-native-long-media-cl-1979b-quests-without-retained-PCM/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/media-native-long-media-cl-1979b-quests-without-retained-PCM/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/media.spec.ts:24:1 › blocked element startup retries its invocation and stale ended callbacks cannot finish replayed voice 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 3
+
+      25 |  await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();await page.locator('body').click({position:{x:1,y:1}});const result=await page.evaluate(async()=>{
+      26 |   const url='http://127.0.0.1:4174/sdk.js',sdk:typeof Harness=await import(url),p=sdk.parseProgram(await(await fetch('/media/program.json')).json()),f=p.functions[0];if(!f)throw new Error('function');f.entry='wind:voice';f.code=f.code.filter(i=>['wind:voice','wind:first','wind:end'].includes(i.at));const mount=document.createElement('div');document.body.append(mount);const play=HTMLMediaElement.prototype.play;let fail=true;const elements:HTMLMediaElement[]=[];HTMLMediaElement.prototype.play=function(){elements.push(this);if(fail){fail=false;return Promise.reject(new DOMException('Injected autoplay policy','NotAllowedError'));}return play.call(this);};let player:import('galbox-sdk/player').Player|undefined;try{player=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,new URL('/media/',location.href).href),mount,store:new sdk.MemoryStore(),saveCompatibilitySeries:'media-retry'});await player.start();await new Promise(r=>setTimeout(r,30));const blocked=player.capture().tasks.find(t=>t.kind==='media');await player.retryAudio();await new Promise(r=>setTimeout(r,80));const started=player.capture().tasks.find(t=>t.kind==='media'),old=elements.at(-1),late=old?.onended;await player.replayVoice();await new Promise(r=>setTimeout(r,80));if(old&&late)late.call(old,new Event('ended'));const replayed=player.capture().tasks.find(t=>t.kind==='media');return {blocked,started,replayed,read:player.getSnapshot().core?.profile.read,starts:player.getSnapshot().media.elementStarts};}finally{player?.dispose();HTMLMediaElement.prototype.play=play;mount.remove();}
+    > 27 |  });expect(result.blocked?.status).toBe('blocked');expect(result.started?.id).toBe(result.blocked?.id);expect(result.started?.attempt).toBe((result.blocked?.attempt??0)+1);expect(result.started?.mediaTask?.phase).toBe('playing');expect(result.replayed?.id).toBe(result.started?.id);expect(result.replayed?.attempt).toBe((result.started?.attempt??0)+1);expect(result.replayed?.status).toBe('running');expect(result.starts).toBe(2);expect(result.read).toEqual([]);
+         |                                                                                                                                                                                                                                                                                                                                                                                                                                       ^
+      28 | });
+      29 |
+      30 | test('unsupported decoders fail before activation; permanent play failure leaves a recoverable durable pending head',async({page})=>{
+        at /home/myo/Desktop/galbox-sdk/tests/browser/media.spec.ts:27:423
+
+    Error Context: test-results/media-blocked-element-star-5f3ed-annot-finish-replayed-voice/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/media-blocked-element-star-5f3ed-annot-finish-replayed-voice/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/media-blocked-element-star-5f3ed-annot-finish-replayed-voice/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/media.spec.ts:30:1 › unsupported decoders fail before activation; permanent play failure leaves a recoverable durable pending head 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "pending"
+    Received: "committed-pending"
+
+      31 |  await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();await page.locator('body').click({position:{x:1,y:1}});const result=await page.evaluate(async()=>{
+      32 |   const url='http://127.0.0.1:4174/sdk.js',sdk:typeof Harness=await import(url),p=sdk.parseProgram(await(await fetch('/media/program.json')).json()),f=p.functions[0];if(!f)throw new Error('function');f.entry='wind:voice';f.code=f.code.filter(i=>['wind:voice','wind:first','wind:end'].includes(i.at));const mount=document.createElement('div');document.body.append(mount);const store=new sdk.MemoryStore(),can=HTMLMediaElement.prototype.canPlayType,play=HTMLMediaElement.prototype.play;let unsupported='',permanent='',player:import('galbox-sdk/player').Player|undefined;try{HTMLMediaElement.prototype.canPlayType=()=>'';try{await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,new URL('/media/',location.href).href),mount,store,saveCompatibilitySeries:'media-fail'});}catch(e){unsupported=String(e);}HTMLMediaElement.prototype.canPlayType=can;const before=await store.read();player=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,new URL('/media/',location.href).href),mount,store,saveCompatibilitySeries:'media-fail'});HTMLMediaElement.prototype.play=()=>Promise.reject(new DOMException('Injected decoder failure','NotSupportedError'));try{await player.start();}catch(e){permanent=String(e);}const pending=await store.read(),lifecycle=player.getSnapshot().lifecycle;player.dispose();HTMLMediaElement.prototype.play=play;player=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,new URL('/media/',location.href).href),mount,store,saveCompatibilitySeries:'media-fail'});await player.resumeCommitted();const recovered=await store.read();return {unsupported,permanent,before:before.head,pending:pending.head?.status,lifecycle,ids:[pending.head?.id,recovered.head?.id],recovered:recovered.head?.status,revisions:[pending.profile.revision,recovered.profile.revision]};}finally{player?.dispose();HTMLMediaElement.prototype.canPlayType=can;HTMLMediaElement.prototype.play=play;mount.remove();}
+    > 33 |  });expect(result.unsupported).toContain('MEDIA_UNAVAILABLE');expect(result.permanent).toContain('AUDIO_UNAVAILABLE');expect(result.before).toBeNull();expect(result.pending).toBe('committed-pending');expect(result.lifecycle).toBe('committed-pending');expect(result.ids[0]).toBe(result.ids[1]);expect(result.recovered).toBe('activated');expect(result.revisions[0]).toBe(result.revisions[1]);
+         |                                                                                                                                                                               ^
+      34 | });
+      35 |
+        at /home/myo/Desktop/galbox-sdk/tests/browser/media.spec.ts:33:175
+
+    Error Context: test-results/media-unsupported-decoders-fc4fa-erable-durable-pending-head/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/media-unsupported-decoders-fc4fa-erable-durable-pending-head/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/media-unsupported-decoders-fc4fa-erable-durable-pending-head/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/stage.spec.ts:6:1 › original stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 2400
+    Received:   2400
+
+       5 | async function advance(page:Page){await expect.poll(async()=>(await data(page)).wait?.kind).toBe('text');const prompt=(await data(page)).wait.prompt;await page.getByTestId('advance').click();if((await data(page)).wait?.prompt===prompt)await page.getByTestId('advance').click();await expect.poll(async()=>(await data(page)).wait?.prompt).not.toBe(prompt);}
+       6 | test('original stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes',async({page})=>{
+    >  7 |  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/?demo=stage');await page.getByRole('button',{name:'开始阅读',exact:true}).click();await advance(page);await expect.poll(async()=>(await data(page)).wait?.at).toBe('light:motion');await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByRole('button',{name:'快速保存',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存到浏览器');const saved=await data(page),move=saved.tasks.find((t:{name:string})=>t.name==='drift');expect(move.elapsed).toBeGreaterThan(0);expect(move.elapsed).toBeLessThan(2400);expect(move.stageTask.to.x).toBe(410);expect(saved.stage.find((o:{id:string})=>o.id==='glow').parent).toBe('letter');await page.waitForTimeout(150);expect((await data(page)).tasks.find((t:{name:string})=>t.name==='drift').elapsed).toBe(move.elapsed);
+         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^
+       8 |  await page.reload();await page.getByRole('button',{name:'读取快速存档',exact:true}).click();await page.getByTestId('advance').waitFor();await page.getByRole('button',{name:'菜单',exact:true}).click();const restored=(await data(page)).tasks.find((t:{name:string})=>t.name==='drift');expect(restored.stageTask).toEqual(move.stageTask);expect(restored.elapsed).toBeGreaterThanOrEqual(move.elapsed);expect((await data(page)).globals.distance.value).toBe('40c3878000000000');await page.getByRole('button',{name:'关闭',exact:true}).click();await page.getByRole('button',{name:'暂停',exact:true}).click();await page.screenshot({path:`${process.env.GALBOX_EVIDENCE_DIR??'docs/evidence'}/stage-playable.png`});await page.getByRole('button',{name:'继续',exact:true}).click();await advance(page);await expect.poll(async()=>(await data(page)).wait?.at).toBe('light:quiet');await advance(page);await page.getByRole('button',{name:'让回信乘风出发',exact:true}).click();await page.getByTestId('advance').waitFor();expect((await data(page)).stage.find((o:{id:string})=>o.id==='letter').position.alpha).toBe(0);await advance(page);await page.getByRole('button',{name:'再次阅读',exact:true}).waitFor();
+       9 |  await page.reload();await page.getByRole('button',{name:'读取快速存档',exact:true}).click();await advance(page);await expect.poll(async()=>(await data(page)).wait?.at).toBe('light:quiet');await advance(page);await page.getByRole('button',{name:'把回信留给守灯人',exact:true}).click();await page.getByTestId('advance').waitFor();expect((await data(page)).stage.find((o:{id:string})=>o.id==='letter').position.alpha).toBe(1);await advance(page);await page.getByRole('button',{name:'再次阅读',exact:true}).waitFor();await expect.poll(async()=>(await data(page)).profile.values.stageComplete?.value).toBe(true);expect((await data(page)).profile.read).toHaveLength(4);expect(errors).toEqual([]);
+      10 | });
+        at /home/myo/Desktop/galbox-sdk/tests/browser/stage.spec.ts:7:606
+
+    Error Context: test-results/stage-original-stage-chapt-632db-n-and-completes-both-routes/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stage-original-stage-chapt-632db-n-and-completes-both-routes/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/stage-original-stage-chapt-632db-n-and-completes-both-routes/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests/browser/media.spec.ts:14:1 › native long media clocks pause, loop segments, mix envelopes and restore with fresh requests without retained PCM 
+    tests/browser/media.spec.ts:24:1 › blocked element startup retries its invocation and stale ended callbacks cannot finish replayed voice 
+    tests/browser/media.spec.ts:30:1 › unsupported decoders fail before activation; permanent play failure leaves a recoverable durable pending head 
+    tests/browser/stage.spec.ts:6:1 › original stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes 
+  54 passed (2.3m)
+[ELIFECYCLE] Command failed with exit code 1.

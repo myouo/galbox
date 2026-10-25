@@ -48,7 +48,16 @@
               "image/svg+xml",
               "image/png",
               "audio/wav",
-              "font/ttf"
+              "font/ttf",
+              "audio/mpeg",
+              "audio/ogg"
+            ]
+          },
+          "playback": {
+            "type": "string",
+            "enum": [
+              "buffer",
+              "element"
             ]
           }
         },

@@ -13,7 +13,8 @@ export interface ProjectConfig {
     id: string;
     kind: "image" | "audio" | "font";
     path: string;
-    mime: "image/svg+xml" | "image/png" | "audio/wav" | "font/ttf";
+    mime: "image/svg+xml" | "image/png" | "audio/wav" | "font/ttf" | "audio/mpeg" | "audio/ogg";
+    playback?: "buffer" | "element";
   }[];
   series?: string;
   resourcePolicy?: string;

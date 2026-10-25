@@ -17,7 +17,7 @@ export function resourceUsage(input:readonly ResourceFact[],policy:unknown=defau
  if(decodeRate!==undefined)ensure(Number.isFinite(decodeRate)&&decodeRate>0,'RESOURCE_AUDIO_RATE','Invalid device decode rate');
  for(const f of facts){ensure(!ids.has(f.id),'RESOURCE_DUPLICATE',f.id);ids.add(f.id);ensure(f.bytes<=limits.maxAssetBytes,'RESOURCE_ASSET_BUDGET',f.id);encodedBytes+=f.bytes;
   if(f.kind==='image'){ensure(Math.max(f.width,f.height)<=limits.maxImageSide,'RESOURCE_IMAGE_SIDE',f.id);textureBytesEstimated+=f.width*f.height*4;}
-  else if(f.kind==='audio'){ensure(f.frames*1000/f.sampleRate<=limits.maxAudioMs,'RESOURCE_AUDIO_DURATION',f.id);audioBytesEstimated+=Math.ceil(f.frames*(decodeRate??f.sampleRate)/f.sampleRate)*f.channels*4;}
+  else if(f.kind==='audio'){ensure(f.frames*1000/f.sampleRate<=(f.playback==='element'?limits.maxMediaMs??3600000:limits.maxAudioMs),'RESOURCE_AUDIO_DURATION',f.id);if(f.playback!=='element')audioBytesEstimated+=Math.ceil(f.frames*(decodeRate??f.sampleRate)/f.sampleRate)*f.channels*4;}
  }
  ensure(encodedBytes<=limits.maxEncodedBytes,'RESOURCE_ENCODED_BUDGET','Encoded preload total');ensure(textureBytesEstimated<=limits.maxTextureBytes,'RESOURCE_TEXTURE_BUDGET','Estimated RGBA texture total');ensure(audioBytesEstimated<=limits.maxAudioBytes,'RESOURCE_AUDIO_BUDGET','Decoded PCM estimate');return {encodedBytes,textureBytesEstimated,audioBytesEstimated,assets:facts.length};
 }

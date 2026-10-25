@@ -1,0 +1,342 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-media",
+  "title": "灯塔来信 · 风声回放",
+  "release": "media-1",
+  "entry": "main",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "values.extended",
+    "audio.extended",
+    "expressions",
+    "audio.media"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "bgm-long",
+      "path": "assets/bgm-long.ogg",
+      "mime": "audio/ogg",
+      "sha256": "9edbbb97412863a8dc7ad0b2774d5bbdc32d6ca6371b9ea92093d280e00b696d",
+      "kind": "audio"
+    },
+    {
+      "id": "voice-opus",
+      "path": "assets/voice-opus.ogg",
+      "mime": "audio/ogg",
+      "sha256": "5a4823d9ca78fdd3f73823ed1d87366d1455457b1a767cbdbc4d9536790f3aba",
+      "kind": "audio"
+    },
+    {
+      "id": "voice-buffer",
+      "path": "assets/voice-buffer.wav",
+      "mime": "audio/wav",
+      "sha256": "756a25bb86dc886696dec0863b30440c108899eaeec7034f6d4217c2517d6880",
+      "kind": "audio"
+    },
+    {
+      "id": "signal-mp3",
+      "path": "assets/signal-mp3.mp3",
+      "mime": "audio/mpeg",
+      "sha256": "efc7836a8807f6a478c74fc149bc941d62dab11537cc48e6be0b25fc42acd58b",
+      "kind": "audio"
+    }
+  ],
+  "globals": [
+    {
+      "id": "route",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": ""
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "wind:stage",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "wind:stage",
+          "object": {
+            "id": "background",
+            "asset": "shore",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "wind:silent",
+          "task": "silent",
+          "channel": "bgm",
+          "to": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "0000000000000000"
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1
+          },
+          "easing": "linear",
+          "policy": "reject",
+          "op": "audio.fade"
+        },
+        {
+          "at": "wind:silent-wait",
+          "group": "silent",
+          "members": [
+            "silent"
+          ],
+          "op": "task.join"
+        },
+        {
+          "at": "wind:music",
+          "task": "music",
+          "asset": "bgm-long",
+          "channel": "bgm",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fd3333333333333"
+          },
+          "loop": true,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 5000
+          },
+          "loopEndMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 10000
+          },
+          "restore": "replay",
+          "op": "audio.track"
+        },
+        {
+          "at": "wind:fade-in",
+          "task": "fade-in",
+          "channel": "bgm",
+          "to": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3ff0000000000000"
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1000
+          },
+          "easing": "linear",
+          "policy": "reject",
+          "op": "audio.fade"
+        },
+        {
+          "at": "wind:duck",
+          "enabled": true,
+          "level": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fd3333333333333"
+          },
+          "attackMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 120
+          },
+          "releaseMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 300
+          },
+          "op": "audio.duck"
+        },
+        {
+          "at": "wind:voice",
+          "task": "voice",
+          "asset": "voice-opus",
+          "channel": "voice",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fe6666666666666"
+          },
+          "restore": "replay",
+          "loop": false,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "wind:first",
+          "textId": "wind.first",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "灯亮以前，听一听海风吧。信纸上留下的每一个字，都想再说给你听一次。",
+          "op": "text.page"
+        },
+        {
+          "at": "wind:second-voice",
+          "task": "voice",
+          "asset": "voice-buffer",
+          "channel": "voice",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fe4cccccccccccd"
+          },
+          "restore": "stop",
+          "loop": false,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "wind:second",
+          "textId": "wind.second",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "「还记得那封信吗？」澪问。我点点头，远处传来短短的一声回应。",
+          "op": "text.page"
+        },
+        {
+          "at": "wind:policy",
+          "stopVoiceOnAdvance": false,
+          "op": "audio.policy"
+        },
+        {
+          "at": "wind:signal",
+          "task": "signal",
+          "asset": "signal-mp3",
+          "channel": "sfx",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fd999999999999a"
+          },
+          "restore": "replay",
+          "loop": false,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "wind:signal-wait",
+          "task": "signal",
+          "op": "audio.wait"
+        },
+        {
+          "at": "wind:third",
+          "textId": "wind.third",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "声音落下以后，海面恢复了安静。现在，该轮到我们回信了。",
+          "op": "text.page"
+        },
+        {
+          "at": "wind:fade-out",
+          "task": "fade-out",
+          "channel": "bgm",
+          "to": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "0000000000000000"
+          },
+          "duration": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1000
+          },
+          "easing": "linear",
+          "policy": "reject",
+          "op": "audio.fade"
+        },
+        {
+          "at": "wind:fade-wait",
+          "group": "fade",
+          "members": [
+            "fade-out"
+          ],
+          "op": "task.join"
+        },
+        {
+          "at": "wind:stop",
+          "channel": "bgm",
+          "op": "audio.stop"
+        },
+        {
+          "at": "wind:choice",
+          "dest": "route",
+          "options": [
+            {
+              "id": "send",
+              "text": "把回信送向海上",
+              "target": "wind:ending"
+            },
+            {
+              "id": "keep",
+              "text": "把回声留在灯下",
+              "target": "wind:ending"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "wind:ending",
+          "textId": "wind.ending",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "海风替我们收好最后一句话。灯亮着，回信就不会走失。",
+          "op": "text.page"
+        },
+        {
+          "at": "wind:unlock",
+          "key": "mediaComplete",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "wind:end",
+          "op": "control.end"
+        }
+      ]
+    }
+  ]
+}

@@ -13,9 +13,9 @@
     "G6",
     "G7"
   ],
-  "current_task": "G3-02",
+  "current_task": "G3-03",
   "engine_status": "general_vn_expansion",
-  "last_updated": "2026-10-25",
+  "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -1357,7 +1357,7 @@
         "docs/evidence/g0-03/source-manifest.json"
       ],
       "blocker": null,
-      "next_action": "本数据支持集和G3-01舞台有限集完成；当前G3-02媒体扩展，其余通用任务未完成。"
+      "next_action": "本数据支持集与G3-01舞台/G3-02音频有限集已完成；当前G3-03视频/交互，其他通用任务未完成。"
     },
     {
       "id": "G1-01",
@@ -1570,7 +1570,7 @@
         "docs/evidence/g3-01/source-manifest.json"
       ],
       "blocker": null,
-      "next_action": "本有限舞台支持集完成；下一项G3-02常用编码/长媒体/循环淡化压低和语音回放；其它效果与G3–G7继续保留。"
+      "next_action": "本舞台及G3-02音频有限集已完成；按current_task继续G3-03，网络流G3-04及其余通用目标仍保留。"
     },
     {
       "id": "G3-02",
@@ -1580,11 +1580,11 @@
         "G1-01",
         "G0-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
-        "streaming/media adapters and voice identity"
+        "verified element/buffer audio adapters, natural completion tasks, mix envelopes and voice identity; versioned network streaming remains G3-04"
       ],
       "contracts": [
         "C01",
@@ -1599,9 +1599,20 @@
         "voice-replay",
         "media-unavailable"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g3-02/REPORT.md",
+        "docs/evidence/g3-02/check.log",
+        "docs/evidence/g3-02/unit.log",
+        "docs/evidence/g3-02/browser-results.json",
+        "docs/evidence/g3-02/consumer-result.json",
+        "docs/evidence/g3-02/result.json",
+        "docs/evidence/g3-02/performance.json",
+        "docs/evidence/g3-02/release-audit.json",
+        "docs/evidence/g3-02/dev-result.json",
+        "docs/evidence/g3-02/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定义常用音频编码/长媒体adapter、循环/淡化/压低/语音身份回放、等待/暂停/恢复与失败策略ADR；同步Schema/资源事实/Host/Player/UI/存档和独立消费，不把startup ack当自然结束或猜seek。"
+      "next_action": "本有限音频/长媒体解码/混音/当前正文语音支持集完成；下一项G3-03视频/热点/限时交互。v0.6版本化网络流与分级完整性仍为G3-04（G7依赖），不能用Blob渐进解码冒充网络streaming，其余通用能力和N/F真实认证未完成。"
     },
     {
       "id": "G3-03",
@@ -1632,7 +1643,37 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先记录有限视频编码/资源身份、热点输入/期限/激活/保存恢复策略ADR，再沿Schema/真实工厂/Core/Host/失败反例/原创浏览器与独立消费实现，不把启动确认当自然结束或猜用户选择。"
+    },
+    {
+      "id": "G3-04",
+      "milestone": "G3",
+      "title": "版本化网络流式媒体与分级完整性",
+      "depends_on": [
+        "G3-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "versioned streaming asset lease and integrity evidence",
+        "network-progressive media without whole-file acquisition barrier"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "versioned-media-stream",
+        "stream-integrity",
+        "stream-cancel-isolation"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按v0.6资源身份/IntegrityEvidence扩展平台中立lease与Web流式adapter；以慢速分块真实HTTP证明未整轨下载即播放，区分目录预期摘要/已验证字节/版本化URL保障级别，验证取消隔离、断网/身份变化和恢复；现有Blob渐进解码不得冒充网络流。"
     },
     {
       "id": "G4-01",
@@ -1826,7 +1867,8 @@
       "title": "完整通用 GalGame 原创验收作品与独立消费",
       "depends_on": [
         "G6-02",
-        "G3-01"
+        "G3-01",
+        "G3-04"
       ],
       "status": "todo",
       "implementation": "not_started",
