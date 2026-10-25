@@ -18,4 +18,5 @@ jobs:
       - run: pnpm test
       - run: pnpm test:compatibility
       - run: pnpm test:browser
+      - run: pnpm test:cli
       - run: pnpm test:consumer

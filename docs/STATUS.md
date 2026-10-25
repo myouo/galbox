@@ -1,13 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-25。Git 已初始化；M0–M2 基线 7d463b3，M3-01/02/03 分别为 06becf4、1ef8913、06e4077。当前分支 feat/stateful-operations；仅本地提交，无推送或发布。
+2026-10-25。当前分支 feat/developer-cli，从 M3 完整检查点 b4e1851 接续；仅本地提交，没有推送或发布。完整任务状态以 tasks.json 为准。
 
-M0–M3 已完成。M3 加入受检有状态操作/完整调用迁移、来源绑定/不可变准备计划、有界候选 recipe，以及独立 profile 的导入事务和显式激活。pending 恢复保持语义 activation ID，owner/sequence 控制接管资格，旧回执不复活。完整任务状态只以 tasks.json 为准。
+M0–M3 与 M4-01 已完成。新增 @galbox/cli 的 init/validate/assets build/dev/build、有限配置生成、标准 Builder/port/React 模板和受控 PortRegistration。CLI 从项目自己的 SDK 公共 ESM exports 加载，不借 workspace 源码。
 
-最终验证：frozen 安装、pnpm check、50 单元测试、19 真实 Chromium 测试、合成兼容 suite、skipLibCheck=false 的 tarball 独立类型/播放/保存/恢复/导入/迁移通过。证据在 evidence/m3-04/REPORT.md，包含源码摘要、真实日志/JSON、失败修复和截图。旧报告只对应各自基线，当前回归以本目录为准。
+最近验证：pnpm check、51 单元测试；仓库外 tarball 安装模板并执行 16 个真实命令，frozen 安装/严格类型/静态构建/HTTP dev/浏览器保存刷新恢复通过。记录在 evidence/m4-01/REPORT.md。M3 的 50/19 回归对应 b4e1851；M4 后续整合仍须重验受影响路径。
 
-运行：export TMPDIR=/dev/shm（本机 /tmp 配额满）；pnpm install --frozen-lockfile；pnpm dev，地址 http://127.0.0.1:4173/。菜单导入 fixtures/synthetic-saves/data 中的 slot.bin + global.json，检查报告→提交→显式载入；网页进度保留。样本严格标合成，不是 N/F 原档兼容。API 与约束在 OPERATIONS.md、SAVE_BRIDGE.md、ADR-0003～0006。
+运行现有样例仍为 pnpm dev；新项目按 CLI.md 传 artifacts 下的两 tarball 后安装/运行。本机工具继续使用 TMPDIR=/dev/shm。CLI 的 dev 服务是独立模板测试时启动/关闭，不占用现有 4173 服务。
 
-未完成：M4 CLI/模板/诊断、M5 便携备份/跨内容迁移/资源预算/平台与性能验收，及 N/F/M6。N-01/F-01 仍缺明确发行版/资源/原档/原作继续参照，通用 SDK 不因此阻塞。
+下一项 M4-02：SourceMap/必要行为映射声明的验证和发布阻断，saves analyze/verify 只准备候选，不猜真人或媒体结果；然后完成 M4-03 的独立开发者扩展/迁移/binding 工作流。
 
-下一项 M4-01：在现有公开 SDK 上建立真正的 CLI init/validate/assets/dev/build 与标准模板，隔离 tarball 安装验证；不得建立空命令或源码路径别名。先核对 Git/本状态和任务表，再读 M4 及相关契约/验收。
+M4-02/03、M5、N/F/M6 未完成。真实 N/F 版本/素材/原档/原作继续参照仍缺；不会以 synthetic 通过代替。平台/性能/跨内容版本迁移/原版导出等限制保持。

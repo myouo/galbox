@@ -78,3 +78,7 @@ it('checks runtime manifest kinds against the factory schema and rejects a forge
 it('rejects reentrant reducer access while retaining the pre-invocation state',()=>{
  let core:Core;const op=defineOperation({id:'test.reentrant',version:1,args,state,resume,manifest,initialize(){return {count:0};},reduce(){core.run(1);return {state:{count:1},actions:[],effects:[],flow:{kind:'continue'}};}});const operations=createOperationRegistry([op]);core=new Core(program(op),undefined,undefined,'restore',operations);const before=core.view().run;expect(()=>core.run(100)).toThrow('CORE_REENTRANT');expect(core.view().run).toEqual(before);expect(core.pending()).toEqual([]);
 });
+import {createPortRegistration,readPortRegistration} from '../../packages/galbox-sdk/src/program-tools/index.js';
+it('project registrations preserve real frozen registries and reject structural forgeries',()=>{
+ const operations=createOperationRegistry([counter()]),registration=createPortRegistration({operations});expect(readPortRegistration(registration).operations).toBe(operations);expect(Object.isFrozen(registration)).toBe(true);expect(()=>readPortRegistration({...registration})).toThrow('PORT_REGISTRATION');
+});

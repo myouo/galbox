@@ -26,3 +26,13 @@ for(const [name,body] of Object.entries(output)) {
  } else await writeFile(p,body);
 }
 if(drift)process.exitCode=1;
+
+const cliSchema=JSON.parse(await readFile('packages/cli/schema/project.json','utf8'));
+const cliAjv=new Ajv({allErrors:true,strict:true,code:{source:true,esm:true}});const cliValidate=cliAjv.compile(cliSchema);
+const cliOutput={
+ 'config.ts':await compile(cliSchema,'ProjectConfig',{bannerComment:'/* Generated from schema/project.json. */',additionalProperties:false,maxItems:0}),
+ 'validator.js':standalone.default(cliAjv,cliValidate)+'\n',
+ 'validator.d.ts':`import type {ProjectConfig} from './config.js';\nexport default function validate(input:unknown):input is ProjectConfig;\n`
+};
+for(const [name,body]of Object.entries(cliOutput)){const p=`packages/cli/src/generated/${name}`;if(process.argv.includes('--check')){if(await readFile(p,'utf8').catch(()=>null)!==body){console.error(`Generated drift: ${p}`);drift=true;}}else await writeFile(p,body);}
+if(drift)process.exitCode=1;

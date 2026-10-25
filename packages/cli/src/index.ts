@@ -1,0 +1,26 @@
+import {readFile,readdir,mkdir,writeFile,lstat} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {build,createServer} from 'vite';
+import {initProject} from './init.js';
+import {validateProject,buildAssets} from './project.js';
+import {CliError,diagnostic,requireValue,safePath} from './config.js';
+export {initProject} from './init.js';
+export {validateProject,buildAssets,openProject} from './project.js';
+export type {Diagnostic} from './config.js';
+function args(input:readonly string[]):{words:string[];options:Map<string,string|true>} {const words:string[]=[],options=new Map<string,string|true>();for(let i=0;i<input.length;i++){const part=input[i];if(!part)continue;if(!part.startsWith('--')){words.push(part);continue;}const name=part.slice(2);requireValue(!options.has(name),'CLI_OPTION',`Repeated --${name}`);if(name==='json'||name==='help'){options.set(name,true);continue;}const value=input[++i];requireValue(value&&!value.startsWith('--'),'CLI_OPTION',`--${name} needs a value`);options.set(name,value);}return {words,options};}
+export async function runCLI(input:readonly string[],cwd=process.cwd()):Promise<number> {
+ let json=false;try {
+  const {words,options}=args(input);json=options.has('json');for(const key of options.keys())requireValue(['json','help','project','port','sdk-tarball','cli-tarball'].includes(key),'CLI_OPTION',`Unknown --${key}`);const directory=typeof options.get('project')==='string'?path.resolve(cwd,String(options.get('project'))):cwd,command=words[0];
+  const accepted=new Set(['json','help',...(command==='init'?['sdk-tarball','cli-tarball']:command==='dev'?['project','port']:['project'])]);for(const key of options.keys())requireValue(accepted.has(key),'CLI_OPTION',`--${key} is not valid for ${command??'help'}`);
+  const print=(value:unknown)=>console.log(JSON.stringify(value,null,json?2:0));
+  if(!command||command==='help'||options.has('help')){console.log('galbox init <directory> [--sdk-tarball path --cli-tarball path]\ngalbox assets build [--project directory]\ngalbox validate|build|dev [--project directory] [--json]\ngalbox dev [--port number]\nTrusted local source/port ESM modules are used; no old scripts or saves are executed.');return 0;}
+  if(command==='init'){requireValue(words.length===2&&words[1],'CLI_USAGE','init needs a new directory');const sdk=options.get('sdk-tarball'),cli=options.get('cli-tarball');const root=await initProject(path.resolve(cwd,words[1]),{...(typeof sdk==='string'?{sdkTarball:path.resolve(cwd,sdk)}:{}),...(typeof cli==='string'?{cliTarball:path.resolve(cwd,cli)}:{})});print({status:'created',root,next:['pnpm install','pnpm assets','pnpm check','pnpm dev']});return 0;}
+  if(command==='assets'){requireValue(words.length===2&&words[1]==='build','CLI_USAGE','Use assets build');const result=await buildAssets(directory);print({status:'built',gameId:result.program.gameId,release:result.program.release,assets:result.assets});return 0;}
+  requireValue(words.length===1&&['validate','build','dev'].includes(command),'CLI_COMMAND','Unknown command or extra arguments');const {project,program,assets}=await validateProject(directory);
+  if(command==='validate'){print({status:'valid',gameId:program.gameId,release:program.release,assets});return 0;}
+  const publicRoot=await safePath(project.root,project.config.assetsRoot),config={root:project.root,configFile:false as const,publicDir:publicRoot,base:'./',logLevel:'error' as const};
+  if(command==='build'){const out=await safePath(project.root,'dist',true);let existing:string[]=[];try{requireValue(!(await lstat(out)).isSymbolicLink(),'BUILD_OUTPUT','dist cannot be a symlink');existing=await readdir(out);}catch(error){if(!(error!==null&&typeof error==='object'&&'code'in error&&error.code==='ENOENT'))throw error;}if(existing.length)requireValue(existing.includes('.galbox-output.json'),'BUILD_OUTPUT','Refusing to clean an unowned nonempty dist directory');await build({...config,build:{outDir:out,emptyOutDir:true}});await mkdir(out,{recursive:true});await writeFile(path.join(out,'.galbox-output.json'),JSON.stringify({version:1,gameId:program.gameId,release:program.release})+'\n');print({status:'built',directory:out,gameId:program.gameId});return 0;}
+  const raw=options.get('port'),port=raw===undefined?4173:Number(raw);requireValue(Number.isInteger(port)&&port>=0&&port<=65535,'CLI_PORT','Port must be an integer from 0 to 65535');const server=await createServer({...config,server:{host:'127.0.0.1',port,strictPort:true}});await server.listen();const address=server.httpServer?.address();requireValue(address&&typeof address!=='string','CLI_SERVER','No listening address');print({status:'listening',url:`http://127.0.0.1:${address.port}/`,root:project.root});for(const signal of ['SIGINT','SIGTERM'] as const)process.once(signal,()=>{void server.close();});return 0;
+ }catch(error){const detail=diagnostic(error);if(json)console.error(JSON.stringify({status:'error',diagnostics:[detail]},null,2));else console.error(`${detail.file??''}${detail.file?': ':''}${detail.code}: ${detail.message}`);return 1;}
+}

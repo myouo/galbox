@@ -1,0 +1,1 @@
+{"version":1,"source":"story.mjs","port":"port.mjs","program":"public/program.json","assetsRoot":"public","assets":[{"id":"coast","kind":"image","path":"assets/coast.svg","mime":"image/svg+xml"},{"id":"music","kind":"audio","path":"assets/music.wav","mime":"audio/wav"}]}

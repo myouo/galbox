@@ -1,0 +1,13 @@
+{
+  "result": "passed",
+  "project": "/dev/shm/galbox-cli-sRQu21/Story Project",
+  "sdkInstalled": "/dev/shm/galbox-cli-sRQu21/Story Project/node_modules/.pnpm/galbox-sdk@file+vendor+galbox-sdk.tgz_react-dom@19.3.1_react@19.3.1__react@19.3.1/node_modules/galbox-sdk",
+  "cliInstalled": "/dev/shm/galbox-cli-sRQu21/Story Project/node_modules/.pnpm/@galbox+cli@file+vendor+galbox-cli.tgz_react-dom@19.3.1_react@19.3.1__react@19.3.1/node_modules/@galbox/cli",
+  "browser": "Chromium",
+  "strict": true,
+  "playSaveRestore": true,
+  "devURL": "http://127.0.0.1:45565/",
+  "commands": 16,
+  "sdkSha256": "ef07cb7094c5af7be5e5d7e91113d6563dc268d5192f8b7f23663880b24e6f1f",
+  "cliSha256": "de0ee493bfa0b019126fd283e0f167863471ff20fb8ac7c12fa8bc2afe1642fb"
+}

@@ -1,0 +1,6 @@
+{
+  "name":"galbox-standard-project","private":true,"type":"module","packageManager":"pnpm@11.28.5","engines":{"node":">=22.12"},
+  "scripts":{"assets":"galbox assets build","validate":"galbox validate","check":"tsc --noEmit && galbox validate","build":"galbox assets build && tsc --noEmit && galbox build","dev":"galbox assets build && galbox dev"},
+  "dependencies":{"galbox-sdk":"0.1.0","react":"19.3.1","react-dom":"19.3.1"},
+  "devDependencies":{"@galbox/cli":"0.1.0","typescript":"5.9.3","@types/react":"19.2.7","@types/react-dom":"19.2.3"}
+}

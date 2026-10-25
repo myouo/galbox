@@ -1,0 +1,197 @@
+[
+  {
+    "cmd": "pnpm",
+    "args": [
+      "build:cli"
+    ],
+    "cwd": "/home/myo/Desktop/galbox-sdk",
+    "exit": 0,
+    "stdout": "",
+    "stderr": "$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs\n$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "--dir",
+      "packages/galbox-sdk",
+      "pack",
+      "--out",
+      "/dev/shm/galbox-cli-sRQu21/sdk.tgz"
+    ],
+    "cwd": "/home/myo/Desktop/galbox-sdk",
+    "exit": 0,
+    "stdout": "package: galbox-sdk@0.1.0\nTarball Contents\ndist/core/index.d.ts\ndist/core/index.d.ts.map\ndist/core/index.js\ndist/core/index.js.map\ndist/core/operations.d.ts\ndist/core/operations.d.ts.map\ndist/core/operations.js\ndist/core/operations.js.map\ndist/player/index.d.ts\ndist/player/index.d.ts.map\ndist/player/index.js\ndist/player/index.js.map\ndist/program-tools/index.d.ts\ndist/program-tools/index.d.ts.map\ndist/program-tools/index.js\ndist/program-tools/index.js.map\ndist/program-tools/linker.d.ts\ndist/program-tools/linker.d.ts.map\ndist/program-tools/linker.js\ndist/program-tools/linker.js.map\ndist/program-tools/registration.d.ts\ndist/program-tools/registration.d.ts.map\ndist/program-tools/registration.js\ndist/program-tools/registration.js.map\ndist/protocol/codecs.d.ts\ndist/protocol/codecs.d.ts.map\ndist/protocol/codecs.js\ndist/protocol/codecs.js.map\ndist/protocol/generated/operations.d.ts\ndist/protocol/generated/operations.d.ts.map\ndist/protocol/generated/operations.js\ndist/protocol/generated/operations.js.map\ndist/protocol/generated/validators.d.ts\ndist/protocol/generated/validators.d.ts.map\ndist/protocol/generated/validators.js\ndist/protocol/generated/validators.js.map\ndist/protocol/generated/wire.d.ts\ndist/protocol/generated/wire.d.ts.map\ndist/protocol/generated/wire.js\ndist/protocol/generated/wire.js.map\ndist/protocol/index.d.ts\ndist/protocol/index.d.ts.map\ndist/protocol/index.js\ndist/protocol/index.js.map\ndist/react/import.d.ts\ndist/react/import.d.ts.map\ndist/react/import.js\ndist/react/import.js.map\ndist/react/index.d.ts\ndist/react/index.d.ts.map\ndist/react/index.js\ndist/react/index.js.map\ndist/react/style.css\ndist/runtime/coordinator.d.ts\ndist/runtime/coordinator.d.ts.map\ndist/runtime/coordinator.js\ndist/runtime/coordinator.js.map\ndist/runtime/durable.d.ts\ndist/runtime/durable.d.ts.map\ndist/runtime/durable.js\ndist/runtime/durable.js.map\ndist/runtime/ports.d.ts\ndist/runtime/ports.d.ts.map\ndist/runtime/ports.js\ndist/runtime/ports.js.map\ndist/runtime/recipe.d.ts\ndist/runtime/recipe.d.ts.map\ndist/runtime/recipe.js\ndist/runtime/recipe.js.map\ndist/save-bridge/index.d.ts\ndist/save-bridge/index.d.ts.map\ndist/save-bridge/index.js\ndist/save-bridge/index.js.map\ndist/storage/indexeddb.d.ts\ndist/storage/indexeddb.d.ts.map\ndist/storage/indexeddb.js\ndist/storage/indexeddb.js.map\ndist/testing/index.d.ts\ndist/testing/index.d.ts.map\ndist/testing/index.js\ndist/testing/index.js.map\ndist/web-host/assets.d.ts\ndist/web-host/assets.d.ts.map\ndist/web-host/assets.js\ndist/web-host/assets.js.map\ndist/web-host/format.d.ts\ndist/web-host/format.d.ts.map\ndist/web-host/format.js\ndist/web-host/format.js.map\ndist/web-host/host.d.ts\ndist/web-host/host.d.ts.map\ndist/web-host/host.js\ndist/web-host/host.js.map\ndist/web-host/text.d.ts\ndist/web-host/text.d.ts.map\ndist/web-host/text.js\ndist/web-host/text.js.map\npackage.json\nREADME.md\nschema/protocol.json\nTarball Details\n/dev/shm/galbox-cli-sRQu21/sdk.tgz\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "--dir",
+      "packages/cli",
+      "pack",
+      "--out",
+      "/dev/shm/galbox-cli-sRQu21/cli.tgz"
+    ],
+    "cwd": "/home/myo/Desktop/galbox-sdk",
+    "exit": 0,
+    "stdout": "package: @galbox/cli@0.1.0\nTarball Contents\ndist/config.d.ts\ndist/config.js\ndist/config.js.map\ndist/generated/config.d.ts\ndist/generated/config.js\ndist/generated/config.js.map\ndist/generated/validator.d.ts\ndist/generated/validator.js\ndist/generated/validator.js.map\ndist/index.d.ts\ndist/index.js\ndist/index.js.map\ndist/init.d.ts\ndist/init.js\ndist/init.js.map\ndist/main.d.ts\ndist/main.js\ndist/main.js.map\ndist/project.d.ts\ndist/project.js\ndist/project.js.map\npackage.json\nREADME.md\nschema/project.json\ntemplates/standard/galbox.config.json\ntemplates/standard/index.html\ntemplates/standard/package.json\ntemplates/standard/port.mjs\ntemplates/standard/public/assets/coast.svg\ntemplates/standard/public/assets/music.wav\ntemplates/standard/README.md\ntemplates/standard/src/main.tsx\ntemplates/standard/src/style.css\ntemplates/standard/story.mjs\ntemplates/standard/tsconfig.json\nTarball Details\n/dev/shm/galbox-cli-sRQu21/cli.tgz\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "/home/myo/.nvm/versions/node/v24.15.0/bin/node",
+    "args": [
+      "/home/myo/Desktop/galbox-sdk/packages/cli/dist/main.js",
+      "init",
+      "/dev/shm/galbox-cli-sRQu21/Story Project",
+      "--sdk-tarball",
+      "/dev/shm/galbox-cli-sRQu21/sdk.tgz",
+      "--cli-tarball",
+      "/dev/shm/galbox-cli-sRQu21/cli.tgz"
+    ],
+    "cwd": "/home/myo/Desktop/galbox-sdk",
+    "exit": 0,
+    "stdout": "{\"status\":\"created\",\"root\":\"/dev/shm/galbox-cli-sRQu21/Story Project\",\"next\":[\"pnpm install\",\"pnpm assets\",\"pnpm check\",\"pnpm dev\"]}\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "/home/myo/.nvm/versions/node/v24.15.0/bin/node",
+    "args": [
+      "/home/myo/Desktop/galbox-sdk/packages/cli/dist/main.js",
+      "init",
+      "/dev/shm/galbox-cli-sRQu21/Story Project"
+    ],
+    "cwd": "/home/myo/Desktop/galbox-sdk",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "INIT_NOT_EMPTY: init refuses to overwrite a nonempty directory\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "install"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 0,
+    "stdout": "[WARN] The store at /home/myo/.local/share/pnpm/store/v11 is not used because packages cannot be hard linked from it into this project. Using the store at /dev/shm/.pnpm-store/v11 instead. Set storeDir to choose the store.\nProgress: resolved 1, reused 0, downloaded 0, added 0\nPackages: +36\n++++++++++++++++++++++++++++++++++++\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /dev/shm/.pnpm-store/v11\n  Virtual store is at:             node_modules/.pnpm\nProgress: resolved 61, reused 36, downloaded 0, added 36, done\n\ndependencies:\n+ galbox-sdk 0.1.0\n+ react 19.3.1\n+ react-dom 19.3.1\n\ndevDependencies:\n+ @galbox/cli 0.1.0\n+ @types/react 19.2.7 (19.3.0 is available)\n+ @types/react-dom 19.2.3 (19.3.0 is available)\n+ typescript 5.9.3 (7.0.2 is available)\n\nDone in 1.1s using pnpm v11.28.5\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "install",
+      "--frozen-lockfile"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 0,
+    "stdout": "[WARN] The store at /home/myo/.local/share/pnpm/store/v11 is not used because packages cannot be hard linked from it into this project. Using the store at /dev/shm/.pnpm-store/v11 instead. Set storeDir to choose the store.\n✓ Lockfile passes supply-chain policies (verified 701ms ago)\nLockfile is up to date, resolution step is skipped\nAlready up to date\n\nDone in 780ms using pnpm v11.28.5\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "assets"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 0,
+    "stdout": "{\"status\":\"built\",\"gameId\":\"my-lighthouse-novel\",\"release\":\"story-1\",\"assets\":[{\"id\":\"coast\",\"bytes\":900,\"sha256\":\"50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638\"},{\"id\":\"music\",\"bytes\":88244,\"sha256\":\"a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5\"}]}\n",
+    "stderr": "$ galbox assets build\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "check"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 0,
+    "stdout": "{\"status\":\"valid\",\"gameId\":\"my-lighthouse-novel\",\"release\":\"story-1\",\"assets\":[{\"id\":\"coast\",\"bytes\":900,\"sha256\":\"50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638\"},{\"id\":\"music\",\"bytes\":88244,\"sha256\":\"a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5\"}]}\n",
+    "stderr": "$ tsc --noEmit && galbox validate\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "build"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 0,
+    "stdout": "{\"status\":\"built\",\"gameId\":\"my-lighthouse-novel\",\"release\":\"story-1\",\"assets\":[{\"id\":\"coast\",\"bytes\":900,\"sha256\":\"50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638\"},{\"id\":\"music\",\"bytes\":88244,\"sha256\":\"a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5\"}]}\n{\"status\":\"built\",\"directory\":\"/dev/shm/galbox-cli-sRQu21/Story Project/dist\",\"gameId\":\"my-lighthouse-novel\"}\n",
+    "stderr": "$ galbox assets build && tsc --noEmit && galbox build\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "exec",
+      "galbox",
+      "validate",
+      "--json"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 0,
+    "stdout": "{\n  \"status\": \"valid\",\n  \"gameId\": \"my-lighthouse-novel\",\n  \"release\": \"story-1\",\n  \"assets\": [\n    {\n      \"id\": \"coast\",\n      \"bytes\": 900,\n      \"sha256\": \"50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638\"\n    },\n    {\n      \"id\": \"music\",\n      \"bytes\": 88244,\n      \"sha256\": \"a50aefc54807b2035d01d36fa4bef979cf3772a9f32b047889f8b5cdca1a18a5\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "exec",
+      "galbox",
+      "validate",
+      "--json"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\n  \"status\": \"error\",\n  \"diagnostics\": [\n    {\n      \"code\": \"ASSET_DIGEST\",\n      \"message\": \"coast: assets/coast.svg does not match the published bytes\"\n    }\n  ]\n}\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "exec",
+      "galbox",
+      "build",
+      "--json"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\n  \"status\": \"error\",\n  \"diagnostics\": [\n    {\n      \"code\": \"ASSET_DIGEST\",\n      \"message\": \"coast: assets/coast.svg does not match the published bytes\"\n    }\n  ]\n}\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "exec",
+      "galbox",
+      "nonsense"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "CLI_COMMAND: Unknown command or extra arguments\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "exec",
+      "galbox",
+      "validate",
+      "--port",
+      "42"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "CLI_OPTION: --port is not valid for validate\n"
+  },
+  {
+    "cmd": "pnpm",
+    "args": [
+      "exec",
+      "galbox",
+      "assets",
+      "build"
+    ],
+    "cwd": "/dev/shm/galbox-cli-sRQu21/Story Project",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "PROJECT_PATH: ../../outside.svg\n"
+  }
+]

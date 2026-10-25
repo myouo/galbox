@@ -6,3 +6,5 @@ export {defineSaveSource,defineSaveCodec,defineSaveMapping,bindOriginalSave,crea
 export type {OriginalSaveFile,FormatContext,CompatibilityBinding,PreparedImport} from '../save-bridge/index.js';
 export {defineRestoreRecipe,prepareRestoreRecipe} from '../runtime/recipe.js';
 export type {RecoveryInstruction,PreparedRecovery} from '../runtime/recipe.js';
+export {createPortRegistration,readPortRegistration} from './registration.js';
+export type {PortRegistration} from './registration.js';

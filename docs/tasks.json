@@ -4,10 +4,10 @@
   "kit_version": "1.0",
   "design_baseline": "docs/reference/GalBox-SDK-v0.6-Implementation-Design.md",
   "current_scope": [
-    "M3"
+    "M4"
   ],
-  "current_task": "M4-01",
-  "engine_status": "m3_complete",
+  "current_task": "M4-02",
+  "engine_status": "in_progress",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
@@ -619,9 +619,9 @@
         "M2-06",
         "M3-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "packages/cli init/validate/assets/dev/build",
         "template"
@@ -633,9 +633,11 @@
       "acceptance": [
         "template-clean-install"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/m4-01/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+      "next_action": "接 M4-02 的 SourceMap/必要行为阻断与 saves analyze/verify。"
     },
     {
       "id": "M4-02",
