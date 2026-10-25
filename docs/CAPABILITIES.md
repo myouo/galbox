@@ -1,4 +1,4 @@
-# 当前能力：M0–M3
+# 当前能力：M0–M4
 
 具体通过状态由 tasks.json 与 evidence/ 给出；后续任务不因本表列出目标而计为完成。
 
@@ -19,10 +19,12 @@
 | 激活 | 最终冻结/dirty 交接/重新读取 profile；profile + candidate + head 原子提交；owner/sequence 资格与 pending 恢复 |
 | 默认 UI | React 菜单/选择/历史、导入报告/显式载入、跨刷新槽位选择；暂停原因与输入 epoch 隔离 |
 | 打包嵌入 | protocol/core/port-kit/player/react/testing/save-bridge/CSS 显式入口；独立 tarball 消费 |
-| 未实现 | timed-choice、视频/热点、relative 动画、其他 source 值族、跨内容 release 迁移、原档导出、便携备份、CLI |
+| 未实现 | timed-choice、视频/热点、relative 动画、其他 source 值族、跨内容 release 迁移、原档导出、便携备份 |
 
 OperationSpec 与 recipe opcode 从 schema 生成。类型工厂由真实运行时校验支撑，readonly 不代替所有权。扩展为受信任同步 TS，不被称作同 realm 安全沙箱。
 
 平台证据仅限当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio。没有移动真机、其他浏览器、人耳音质或性能预算认证。体积提示、整包预加载和长期回执留存的规模问题保留给 M5。
 
 fixture-save@1 与消费者格式均为原创 synthetic，不提供 NScripter/KAG 或《水仙》《海市蜃楼之馆》的兼容声明。N/F 所需最小输入见 INPUTS_REQUIRED.md。
+
+M4 提供实际 CLI/标准项目、SourceMap 与必要行为覆盖发布门槛、只读 saves analyze/verify，以及独立 tarball 扩展/完整调用迁移/合成 binding 的开发者工作流。Node/Vite 仅在 CLI；Core 不依赖它们。覆盖清单和标准候选校验不是原作忠实性认证。

@@ -6,8 +6,8 @@
   "current_scope": [
     "M4"
   ],
-  "current_task": "M4-03",
-  "engine_status": "in_progress",
+  "current_task": "M5-01",
+  "engine_status": "m4_complete",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
@@ -37,7 +37,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -71,7 +72,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -102,7 +104,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -135,7 +138,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -165,7 +169,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -195,7 +200,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -229,7 +235,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -265,7 +272,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -299,7 +307,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -333,7 +342,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -368,7 +378,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -405,7 +416,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -448,7 +460,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -479,7 +492,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -511,7 +525,8 @@
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接续 M3-02；扩展调用、迁移与完整回归已通过。"
@@ -542,7 +557,8 @@
       "evidence": [
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "继续 M3-03 有界候选 recipe；本项只产生准备计划，不宣称已导入或已激活。"
@@ -573,7 +589,8 @@
       ],
       "evidence": [
         "docs/evidence/m3-03/REPORT.md",
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接 M3-04 独立 profile/导入事务/激活恰好一次；本项只完成候选恢复执行。"
@@ -606,7 +623,8 @@
         "synthetic-import-flow"
       ],
       "evidence": [
-        "docs/evidence/m3-04/REPORT.md"
+        "docs/evidence/m3-04/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "M3 gate complete; next M4-01 provides a real CLI/template workflow."
@@ -634,7 +652,8 @@
         "template-clean-install"
       ],
       "evidence": [
-        "docs/evidence/m4-01/REPORT.md"
+        "docs/evidence/m4-01/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接 M4-02 的 SourceMap/必要行为阻断与 saves analyze/verify。"
@@ -663,7 +682,8 @@
         "diagnostic-location"
       ],
       "evidence": [
-        "docs/evidence/m4-02/REPORT.md"
+        "docs/evidence/m4-02/REPORT.md",
+        "docs/evidence/m4-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "接 M4-03：完整独立开发者扩展/迁移/binding、类型与浏览器验证。"
@@ -677,9 +697,9 @@
         "M3-04",
         "M4-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "consumer extension/migration/binding",
         "SDK guides"
@@ -693,9 +713,11 @@
         "T24",
         "packed-consumer-full"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/m4-03/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+      "next_action": "M4 gate complete; next M5-01 portable backup, content migrations and failure preservation."
     },
     {
       "id": "M5-01",

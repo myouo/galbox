@@ -1,9 +1,12 @@
-# M4 当前计划
+# 当前实施计划
 
-2026-10-25：从 b4e1851 接续，工作分支 feat/developer-cli。
+2026-10-25：M4-01～03 完成，证据 evidence/m4-03/REPORT.md；工作分支 feat/developer-cli。
 
-1. M4-01：标准项目 Schema、受控项目登记、真实 CLI init/validate/assets build/dev/build；独立 tarball 安装模板并播放/保存恢复。
-2. M4-02：SourceMap、必要行为映射阻断、实际 saves analyze/verify 和可定位诊断。
-3. M4-03：独立开发者扩展/迁移/binding、故障定位与文档，从公开包完成完整工作流。
+实际新能力：标准项目/真实 CLI、来源定位/必要映射门槛、仓库外完整扩展/迁移/binding 工作流。54 单元、40 CLI 子命令/两个浏览器、19 引擎浏览器与严格 SDK 消费者通过；没有第二解释器或源码 alias。
 
-已成立的语言/图像/存储路线保持；CLI 不增加另一条解释器。每个阶段完成实际验收再更新任务表和证据并提交。N/F 保持资料阻塞。
+下一项 M5-01：
+
+1. 核对 Git、STATUS/tasks 和当前保存/导入/activation schema。
+2. 读 C05/C07/C11、T11/T27；定义有界便携备份和版本/引用闭包。
+3. 构建显式内容迁移政策和恢复失败保留；无迁移/旧 release 不可取得时不能造 fallback。
+4. 接 M5-02 资源/发布闭包，再做真实平台/性能与本地发行候选；N/F 资料不足不阻塞通用工作。

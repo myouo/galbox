@@ -1,0 +1,19 @@
+import {codec,defineOperation,waitFor,createOperationRegistry,defineInvocationMigration,defineSaveSource,defineSaveCodec,defineSaveMapping,bindOriginalSave,createSaveBindingRegistry,createPortRegistration,defineRestoreRecipe,instruction} from 'galbox-sdk/port-kit';
+import {createCore} from 'galbox-sdk/core';
+import {i32,bool} from 'galbox-sdk/protocol';
+const n=codec.integer('developer.integer'),a1=codec.object('developer.args@1',{delta:n}),s1=codec.object('developer.state@1',{count:n}),r1=codec.object('developer.resume@1',{kind:codec.literal('developer.continue','continue'),value:n});
+const a2=codec.object('developer.args@2',{step:n}),s2=codec.object('developer.state@2',{total:n}),r2=codec.object('developer.resume@2',{kind:codec.literal('developer.finish','finish'),amount:n});
+const manifest={implementation:'developer.signal@1',save:'safe',restore:'continue',resumeKinds:['continue'],jumpTargets:[],recipe:false};
+// Literal manifest values are checked through explicit factory schemas below.
+let initialized1=0,initialized2=0;
+export const counter1=defineOperation({id:'developer.signal',version:1,args:a1,state:s1,resume:r1,manifest:{...manifest,save:'safe',restore:'continue',resumeKinds:['continue']},initialize(){initialized1++;return {count:0};},reduce(input,state){const count=state.count+(input.kind==='start'?input.args.delta:input.event.value);return {state:{count},actions:[{type:'set',dest:'signalValue',value:i32(count)}],effects:[],flow:input.kind==='start'?{kind:'wait',wait:waitFor(r1,'continue','signal')}:{kind:'continue'}};}});
+export const counter2=defineOperation({id:'developer.signal',version:2,args:a2,state:s2,resume:r2,manifest:{...manifest,implementation:'developer.signal@2',save:'safe',restore:'continue',resumeKinds:['finish']},initialize(){initialized2++;return {total:0};},reduce(input,state){const total=state.total+(input.kind==='start'?input.args.step:input.event.amount);return {state:{total},actions:[{type:'set',dest:'signalValue',value:i32(total)}],effects:[],flow:input.kind==='start'?{kind:'wait',wait:waitFor(r2,'finish','signal')}:{kind:'continue'}};}});
+export const counter=counter2;
+export function initializationCounts(){return {v1:initialized1,v2:initialized2};}
+const migration=defineInvocationMigration(counter1,counter2,old=>({args:{step:old.args.delta},state:{total:old.state.count},phase:old.phase,wait:old.wait?waitFor(r2,'finish',old.wait.request):null}));
+export const operations=createOperationRegistry([counter1,counter2],[migration]);
+const original=codec.object('developer.original@1',{locator:codec.literal('developer.locator','main:signal'),value:codec.literal('developer.value',2)}),source=defineSaveSource('developer-synthetic@1',original);
+const decoder=defineSaveCodec(source,{version:1,async decode(files,context){const file=files.find(f=>f.name==='original.json');if(!file)return {status:'needs-input',code:'FILE_REQUIRED',message:'Provide original.json'};return {status:'ready',state:original.parse(JSON.parse(context.decodeUtf8(file.bytes)))};}});
+const hook=defineRestoreRecipe('developer.on-load',[instruction('profile.i32.add.checked',{at:'recipe:loads',key:'loads',delta:1})]);
+const mapping=defineSaveMapping(decoder,{id:'developer.mapping@1',version:1,label:'开发者自制格式（合成）',target:{gameId:'my-lighthouse-novel',release:'story-1'},convert(state,program){const profile={revision:0,values:{loads:i32(4),developerOrigin:bool(true)},read:[]},core=createCore(program,profile,undefined,{operations});core.run(100);const snapshot=core.capture();if(snapshot.wait?.at!==state.locator)return {status:'unsupported',code:'LOCATOR',message:'Source point unavailable'};return {grade:'semantic',warnings:['自制合成格式，只校验标准状态，不是商业作品认证'],payload:{snapshot,profile,recipe:hook,onLoad:hook}};}});
+export default createPortRegistration({operations,bindings:createSaveBindingRegistry([bindOriginalSave(decoder,mapping)])});

@@ -1,6 +1,6 @@
 # galbox-sdk
 
-强类型、可嵌入的视觉小说 Web SDK。已完成 M0–M3：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
+强类型、可嵌入的视觉小说 Web SDK。已完成 M0–M4：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
 
 《水仙》《海市蜃楼之馆》的真实资料仍缺，当前不声明商业作品兼容。完整任务状态见 [tasks.json](docs/tasks.json)，当前摘要见 [STATUS](docs/STATUS.md)，范围见 [能力表](docs/CAPABILITIES.md)。
 
@@ -57,3 +57,14 @@ player.dispose();
 初始能力与限制见 [CAPABILITIES](docs/CAPABILITIES.md)，细节决策见 [ADR-0002](docs/decisions/0002-m0-m2-semantics.md)。有状态扩展与迁移用法见 [OPERATIONS](docs/OPERATIONS.md)。后续从 `CODEX_CONTINUE.md` 和任务表推进剩余 M3，不将本检查点称作最终两作支持版。
 
 合成来源工厂和不可变准备计划见 [SAVE_BRIDGE](docs/SAVE_BRIDGE.md)。`pnpm test:compatibility` 明确区分 synthetic 通过与真实 N/F 缺资料；导入、独立进度与每次加载的事务钩子已实现。菜单选择 fixtures/synthetic-saves/data 下的 slot.bin 和 global.json，先检查报告、提交，再显式载入。
+
+标准项目 CLI 已提供 init/assets build/validate/dev/build/saves analyze/verify，见 [CLI](docs/CLI.md)。完整第三方扩展、调用迁移、自制来源与浏览器任务见 [DEVELOPER_WORKFLOW](docs/DEVELOPER_WORKFLOW.md)。
+
+```bash
+pnpm test:cli  # 仓库外安装两 tarball、严格类型、40 个真实命令及两个浏览器工作流
+node packages/cli/dist/main.js init /path/to/new-story \
+  --sdk-tarball artifacts/galbox-sdk-0.1.0.tgz \
+  --cli-tarball artifacts/galbox-cli-0.1.0.tgz
+```
+
+CLI 的 dev 服务最后一次验证的发布数据；修改 story/resources 后运行 pnpm assets，更改登记后重启。工具不会把声明覆盖或 synthetic verify 当作真实 N/F 认证。

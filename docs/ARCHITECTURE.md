@@ -1,6 +1,6 @@
 # galbox-sdk 实施架构
 
-状态：M0–M2 已按此架构建设；具体通过状态见 tasks.json 与 evidence/。本文把 [v0.6](reference/GalBox-SDK-v0.6-Implementation-Design.md) 收束为可开发的模块。长期语义约束见 [CONTRACTS](CONTRACTS.md)，阶段范围见 [MILESTONES](MILESTONES.md)。
+状态：M0–M4 已按此架构建设；具体通过状态见 tasks.json 与 evidence/。本文把 [v0.6](reference/GalBox-SDK-v0.6-Implementation-Design.md) 收束为可开发的模块。长期语义约束见 [CONTRACTS](CONTRACTS.md)，阶段范围见 [MILESTONES](MILESTONES.md)。
 
 ## 1. 技术选择
 

@@ -1,9 +1,15 @@
 # @galbox/cli
 
-Local Galbox project tooling. Implemented commands: init, assets build, validate, dev, build.
+Galbox project tooling: `init`, `assets build`, `validate`, `dev`, `build`, `saves analyze`, `saves verify`.
 
-Use `galbox init directory --sdk-tarball sdk.tgz --cli-tarball cli.tgz` for unpublished local artifacts, then `pnpm install`, `pnpm assets`, `pnpm check`, `pnpm dev`, `pnpm build` inside the project.
+Use `galbox init directory --sdk-tarball sdk.tgz --cli-tarball cli.tgz` for unpublished local artifacts, then `pnpm install`, `pnpm assets`, `pnpm check`, `pnpm dev`, `pnpm build` inside the project. Settings and local package overrides are written to pnpm-workspace.yaml for pnpm 11.
 
-`story.mjs` and `port.mjs` are trusted project ESM code using public SDK factories; original saves are never executed. `validate` checks the published Program, semantic links, asset kind/header and actual SHA-256. `assets build` explicitly regenerates the catalog and published Program. `dev` serves the last valid publication; after source/assets changes run `pnpm assets` and restart dev if registration changed. `build` validates before bundling; it does not silently accept changed bytes.
+story.mjs and port.mjs are trusted ESM using public SDK factories; original saves are never executed. validate checks structural/semantic links, declared mandatory behavior coverage, asset kind/header and actual SHA-256. assets build explicitly regenerates the catalog and published Program. dev serves the last valid publication; run assets after source/resource changes and restart dev after registration changes.
 
-init refuses nonempty directories; asset/project paths cannot escape via traversal or symlinks. Unknown commands/options fail. Output is local; there is no automatic publish/deploy.
+build validates before bundling and refuses unowned nonempty dist directories. init atomically publishes a new project and refuses a nonempty destination. Project/asset paths cannot escape through traversal or symlinks. Unknown commands or invalid command options fail.
+
+SourceMap diagnostics retain address/file/line/column. Missing necessary mapping blocks publication even when the Program itself links. This is declared coverage, not original-game fidelity certification.
+
+saves analyze/verify use explicitly registered sources or --internal. Internal verify requires --profile. Verification prepares a bounded candidate without storage writes or guessed human/media results; originalReference remains not-verified. Missing input and unsupported sources return exit 2; validation errors return 1.
+
+No automatic npm publish or external deploy is performed. M5 backups/content migration/platform budgets and N/F original-reference certification are separate work.
