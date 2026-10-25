@@ -6,7 +6,7 @@
 | --- | --- |
 | Core / ABI | 同步 TS、稳定地址、参数/返回槽/显式帧、单剧情流、预算续跑 |
 | 值 | bool/string/checked i32/i64、位模式f64、null与有界有序list/dict；显式比较/转换，无隐式转换 |
-| 图像 / 正文 | 单 Pixi WebGL；有界二维pose/层级/裁切/混合、相机/基础滤镜/fade/crossfade/shake与独立属性任务；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
+| 图像 / 正文 | 单 Pixi（WebGL2 优先、Canvas 基础兼容，效果差异见 GRAPHICS）；有界二维pose/层级/裁切/混合、相机/基础滤镜/fade/crossfade/shake与独立属性任务；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
 | 媒体 | WAV/MP3/单流 Ogg Vorbis/Opus；验证 Blob 的长媒体 element 与 buffer、自然完成/等待、循环点、bus 淡化/语音 duck、当前正文重播；replay 从零/stop，不含网络流与精确 seek，见 MEDIA.md |
 | 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载；TrueType目录/真实字体准备与独有FontFace释放 |
@@ -24,7 +24,7 @@
 
 OperationSpec 与 recipe opcode 从 schema 生成。类型工厂由真实运行时校验支撑，readonly 不代替所有权。扩展为受信任同步 TS，不被称作同 realm 安全沙箱。
 
-平台证据仅限当前 Linux + Playwright Chromium + 软件 WebGL/Web Audio。没有移动真机、其他浏览器或人耳音质认证；当前参考环境的性能基线见 PLATFORMS.md。体积提示、整包预加载和长期回执留存的规模问题保留给 M5。
+平台证据仅限当前 Linux + Playwright Chromium + 软件 WebGL/Canvas2D/Web Audio。没有移动真机、其他浏览器或人耳音质认证；当前参考环境的性能基线见 PLATFORMS.md。体积提示、整包预加载和长期回执留存的规模问题保留给 M5。
 
 fixture-save@1 与消费者格式均为原创 synthetic，不提供 NScripter/KAG 或《水仙》《海市蜃楼之馆》的兼容声明。N/F 所需最小输入见 INPUTS_REQUIRED.md。
 
@@ -51,3 +51,5 @@ G2-02 的textLayout/主题/字体工厂、Core窗口指令、NVL确认条目闭�
 G0-03 的checked i64、位模式f64、null/有序集合与数据表达式已落地，包含profile.expression、原生入口规范化、嵌套所有权和完整迁移负例，见 [DATA_VALUES](DATA_VALUES.md)。i32旧语义保留，新Program类型不匹配的旧槽位明确拒绝；G3演出和后续系统继续。
 
 G3-01舞台有限集见 [STAGE](STAGE.md)：一次解析表达式/相对参数、按属性冲突、取消/替换/finish、闭包恢复和真正Pixi/WebGL像素验证。图像效果不包含DOM正文/UI，空容器/非矩形mask/任意shader及未列效果仍不计支持；资源/任务规模及其它平台未认证。
+
+图像设备：H2-01 使用同一 Pixi 场景图提供 WebGL2→Canvas2D 自动后备、强制后端与诊断，基本舞台/DOM/媒体/存档跨后端；Canvas 对 GPU 滤镜/隔离 crossfade 前置拒绝，H2-02 未完成。见 GRAPHICS.md，不能借此声称所有 GPU 效果已对等。

@@ -1,0 +1,57 @@
+$ pnpm build:sdk && vite --config apps/playground/vite.config.ts --host 127.0.0.1
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+
+  VITE v8.3.5  ready in 181 ms
+
+  ➜  Local:   http://127.0.0.1:4173/
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/values.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/stage.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/audio.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/expressions.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/normalize.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/generated/operations.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/codecs.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/text.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/index.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/core/operations.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/layout.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/linker.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/core/audio.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/core/stage.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/core/rng.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/core/index.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/runtime/recipe.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/settings/index.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/runtime/durable.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/runtime/backup.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/backups/index.js
+2:42:23 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/runtime/playback.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/runtime/coordinator.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/storage/indexeddb.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/graphics.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/media.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/release/audio.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/stage.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/save-bridge/index.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/release/inspect.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/release/index.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/assets.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/host.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/format.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/input.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/text.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/web-host/renderer.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/player/index.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/expressions.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/stage.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/audio.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/registration.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/text.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/layout.js
+2:42:24 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/program-tools/index.js
+2:42:25 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/protocol/generated/validators.js
+2:42:25 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/react/backup.js
+2:42:25 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/react/import.js
+2:42:25 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/react/preferences.js
+2:42:25 AM [vite] (client) page reload /home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/react/index.js
+2:42:25 AM [vite] (client) hmr update /@fs/home/myo/Desktop/galbox-sdk/packages/galbox-sdk/dist/react/style.css

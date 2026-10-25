@@ -14,7 +14,7 @@ function App(){
  const mount=useRef<HTMLDivElement>(null),[player,setPlayer]=useState<Player|null>(null),[error,setError]=useState('');
  useEffect(()=>{let active=true,instance:Player|undefined;void(async()=>{
   try{const response=await fetch(demo.program);if(!response.ok)throw new Error('PROGRAM_HTTP');const program:unknown=await response.json();const releaseResponse=await fetch(demo.program+'.release.json');if(!releaseResponse.ok)throw new Error('RELEASE_HTTP');const release=parseReleaseManifest(await releaseResponse.json());if(!mount.current||!active)return;
-   instance=await createPlayer({program,provider:createHttpProvider(program,new URL('./',new URL(demo.program,location.href)).href),mount:mount.current,saveCompatibilitySeries:release.series,release,bindings:createSaveBindingRegistry(demo.synthetic?[createFixtureBinding(program)]:[])});
+   instance=await createPlayer({program,provider:createHttpProvider(program,new URL('./',new URL(demo.program,location.href)).href),mount:mount.current,saveCompatibilitySeries:release.series,release,graphics:{renderer:new URLSearchParams(location.search).get('renderer')==='canvas'?'canvas':new URLSearchParams(location.search).get('renderer')==='webgl'?'webgl':'auto'},bindings:createSaveBindingRegistry(demo.synthetic?[createFixtureBinding(program)]:[])});
    if(!active){instance.dispose();return;}setPlayer(instance);
   }catch(e){if(active)setError(e instanceof Error?e.message:String(e));}
  })();return()=>{active=false;instance?.dispose();};},[]);

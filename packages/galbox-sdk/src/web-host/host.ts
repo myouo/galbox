@@ -1,10 +1,12 @@
+import {prepareGraphics,destroyGraphicsApplication,validateCanvasProgram,validateCanvasSnapshot} from './graphics.js';
+import type {GraphicsApplication} from './graphics.js';
 import {prepareMedia,validateLoop} from './media.js';
 import type {PreparedMedia} from './media.js';
 import {audioPlayback} from '../release/audio.js';
 import {ImageStage} from './stage.js';
-import { Application, Texture, WebGLRenderer } from 'pixi.js';
-import { ensure, GalboxError,parseResourceFact,parseResourceBudget,parseAudioPreferences } from '../protocol/index.js';
-import type { Program, DeepReadonly, Snapshot,ResourceBudget,ResourceFact,Task,AudioState } from '../protocol/index.js';
+import { Texture,CanvasRenderer } from 'pixi.js';
+import { ensure, GalboxError,parseResourceFact,parseResourceBudget,parseAudioPreferences,parseGraphicsOptions } from '../protocol/index.js';
+import type { Program, DeepReadonly, Snapshot,ResourceBudget,ResourceFact,Task,AudioState,GraphicsOptions } from '../protocol/index.js';
 import {inspectResource,resourceUsage,defaultResourceBudget,canonicalReleaseJSON} from '../release/index.js';
 import type { HostPort } from '../runtime/ports.js';
 import type { Effect } from '../core/index.js';
@@ -13,9 +15,10 @@ import type { AssetProvider } from './assets.js';
 function stopSignal(){let cancel=()=>{};const cancelled=new Promise<void>(resolve=>{cancel=resolve;});return {cancel,cancelled};}
 interface Playing {source:AudioNode;buffer?:AudioBufferSourceNode;element?:HTMLAudioElement;gain:GainNode;scriptGain:number;role:'bgm'|'voice'|'sfx';task:Task;epoch:number;reported:boolean;blocked?:boolean;sequence:number;cancelled:Promise<void>;cancel:()=>void;pending?:Promise<void>;report:Parameters<HostPort['effect']>[2];ended?:Parameters<HostPort['effect']>[3];}
 export interface MediaDiagnostics {state:'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;loops:number;elementStarts:number;}
-export interface ResourceDiagnostics {graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
+export interface ResourceDiagnostics {renderer:'webgl'|'canvas'|null;graphicsFallback:string|null;graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
-  private app:Application<WebGLRenderer>|null=null;
+  private app:GraphicsApplication|null=null;
+  private readonly graphicsOptions:GraphicsOptions;
   private stage:ImageStage|null=null;
   private textures=new Map<string,Texture>();
   private buffers=new Map<string,AudioBuffer>();
@@ -34,9 +37,9 @@ export class WebHost implements HostPort {
   private fonts=new Map<string,FontFace>();private readonly fontPrefix=`galbox-${crypto.randomUUID()}`;
   fontFamily(id:string):string {const face=this.fonts.get(id);ensure(face,'TEXT_FONT','Font has not been prepared');return face.family;}
   private canvas:HTMLCanvasElement|null=null;
-  readonly resources:ResourceDiagnostics={graphics:'unverified',assets:0,encodedBytes:0,textureBytesEstimated:0,decodedAudioBytes:0,mediaElementBytes:0,limits:parseResourceBudget(defaultResourceBudget)};
+  readonly resources:ResourceDiagnostics={renderer:null,graphicsFallback:null,graphics:'unverified',assets:0,encodedBytes:0,textureBytesEstimated:0,decodedAudioBytes:0,mediaElementBytes:0,limits:parseResourceBudget(defaultResourceBudget)};
   readonly media:MediaDiagnostics={state:'unverified',starts:0,ended:0,blocked:0,decoded:0,active:0,loops:0,elementStarts:0};
-  constructor(private readonly mount:HTMLElement,private readonly fault?:(error:Error)=>void) {}
+  constructor(private readonly mount:HTMLElement,private readonly fault?:(error:Error)=>void,graphics:unknown={renderer:'auto'}) {this.graphicsOptions=parseGraphicsOptions(graphics);}
   resourceFacts():ResourceFact[]{return this.facts.map(parseResourceFact);}
   applyAudioPreferences(input:unknown):void {const audio=parseAudioPreferences(input);this.volume=audio.master;this.roleVolumes={bgm:audio.bgm,voice:audio.voice,sfx:audio.sfx};if(this.master)this.master.gain.value=this.volume;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);}
   assertReady():void {ensure(!this.disposed&&this.resources.graphics==='available','GRAPHICS_UNAVAILABLE','Recreate the player to prepare the graphics device');ensure(!this.audioUnavailable&&this.context&&this.context.state!=='closed','AUDIO_UNAVAILABLE','Audio device closed');}
@@ -47,11 +50,8 @@ export class WebHost implements HostPort {
       if(typeof AudioContext==='undefined'){this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Web Audio is unavailable on this device');}
       try{this.context=new AudioContext();}catch{this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Audio context creation failed');}this.master=this.context.createGain();this.master.gain.value=this.volume;this.master.connect(this.context.destination);
       this.media.state=this.context.state==='running'?'available':'needs-user-action';
-      const app=new Application<WebGLRenderer>();this.app=app;
-      try{await app.init({width:1280,height:720,preference:'webgl',background:'#122c44',antialias:true,autoStart:false});}catch{if(this.disposed)this.destroyApplication(app);this.resources.graphics='unavailable';throw new GalboxError('GRAPHICS_UNAVAILABLE','WebGL initialization failed');}
-      if(this.disposed||signal.aborted){this.destroyApplication(app);throw new GalboxError('HOST_DISPOSED','Initialization cancelled');}
-      ensure(app.renderer instanceof WebGLRenderer,'GRAPHICS_UNAVAILABLE','This Host requires the declared WebGL backend');
-      this.canvas=app.canvas;this.canvas.addEventListener('webglcontextlost',this.lost);this.resources.graphics='available';this.mount.appendChild(app.canvas);app.canvas.setAttribute('aria-label',`${program.title}图像舞台`);app.canvas.style.width='100%';app.canvas.style.height='100%';
+      const {app,backend,fallback}=await prepareGraphics(this.graphicsOptions,()=>this.disposed||signal.aborted,app=>{this.app=app;});this.resources.renderer=backend;this.resources.graphicsFallback=fallback;if(app.renderer instanceof CanvasRenderer)validateCanvasProgram(program,app.renderer.canvasContext.blendModes);
+      this.canvas=app.canvas;if(backend==='webgl')this.canvas.addEventListener('webglcontextlost',this.lost);this.resources.graphics='available';this.mount.appendChild(app.canvas);app.canvas.setAttribute('aria-label',`${program.title}图像舞台`);app.canvas.style.width='100%';app.canvas.style.height='100%';
       app.stage.sortableChildren=true;this.stage=new ImageStage(app,this.textures);
       for(const asset of program.assets){
         const remaining=this.resources.limits.maxEncodedBytes-this.resources.encodedBytes;ensure(remaining>0,'RESOURCE_ENCODED_BUDGET',asset.id);const bytes=await verifiedBytes(provider,program,asset,signal,Math.min(this.resources.limits.maxAssetBytes,remaining));ensure(!this.disposed,'HOST_DISPOSED',asset.id);
@@ -91,9 +91,10 @@ export class WebHost implements HostPort {
     });this.audioOperation=next;return next;
   }
   setEpoch(epoch:number):void {this.stopAudio();this.epoch=epoch;this.stage?.invalidate();}
+  validateGraphicsPlan(snapshot:DeepReadonly<Snapshot>):void {if(this.app?.renderer instanceof CanvasRenderer)validateCanvasSnapshot(snapshot,this.app.renderer.canvasContext.blendModes);}
   render(run:DeepReadonly<Snapshot>):void {
     if(!this.app||this.disposed||this.resources.graphics!=='available')return;
-    this.mix=run.audioState??null;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.stage?.render(run);
+    this.validateGraphicsPlan(run);this.mix=run.audioState??null;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.stage?.render(run);
   }
   effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2],playbackEnded?:Parameters<HostPort['effect']>[3]):void {
     if(this.disposed||epoch!==this.epoch)return;
@@ -129,7 +130,7 @@ export class WebHost implements HostPort {
   validateAudioPlan(snapshot:DeepReadonly<Snapshot>):void {for(const t of snapshot.tasks)if((t.kind==='media'||t.kind==='audio')&&['running','blocked','completed'].includes(t.status)&&t.asset){const info=this.mediaAssets.get(t.asset),buffer=this.buffers.get(t.asset);validateLoop({...t},info?.durationMs??(buffer?.duration??0)*1000);}}
   private stopChannel(channel:string):void {const p=this.playing.get(channel);if(p){this.playing.delete(channel);p.sequence++;p.cancel();if(p.element){p.element.onended=null;p.element.ontimeupdate=null;p.element.onerror=null;p.element.pause();p.element.removeAttribute('src');p.element.load();}if(p.buffer){p.buffer.onended=null;try{p.buffer.stop();}catch{}}p.source.disconnect();p.gain.disconnect();this.media.active=this.playing.size;}}
   private stopAudio():void {for(const channel of [...this.playing.keys()])this.stopChannel(channel);}
-  private destroyApplication(app:Application<WebGLRenderer>|null):void {if(app?.renderer)app.destroy({removeView:true,releaseGlobalResources:false},{children:true});}
+  private destroyApplication(app:GraphicsApplication|null):void {destroyGraphicsApplication(app);}
   dispose():void {
     for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();
     if(this.disposed)return;this.disposed=true;this.stopAudio();this.stage?.dispose();this.stage=null;

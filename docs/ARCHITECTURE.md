@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | 语义 Core | TypeScript strict、纯同步调用、无宿主 I/O | 只做标准状态转换，不直接读取设备时间 |
 | 协调与 Web Host | TypeScript | 同一生产运行时，Node 虚拟 Host 验证同一 Core |
-| 图像 | 单 PixiJS/WebGL 后端 | 初始 x/y/alpha/层级；原型也使用这一后端 |
+| 图像 | 单 PixiJS 场景图，WebGL2 优先/Canvas 兼容后备 | 初始 x/y/alpha/层级；原型也使用这一后端 |
 | 正文 | 独立 DOM/CSS 控制器 | 逻辑画幅、文本版本、揭示进度由标准状态控制 |
 | 默认菜单 | React | 只订阅 Player 只读视图、提交语义动作 |
 | 音频 | Web Audio；按后续素材需求增加媒体元素路径 | M2 先真实短 WAV，明确重播/停止恢复；不宣称精确长音轨续接 |
@@ -17,7 +17,7 @@
 | 构建 | pnpm workspace、TypeScript、Vite | M0 固定相容版本、packageManager/engines 与 lockfile |
 | 验证 | Vitest、规范 trace、Playwright、打包消费者 | 真机和原作对照在对应发布门槛单列 |
 
-不预建 Rust/WASM Core、第二 renderer、剧情 Worker、OPFS、通用插件市场。若出现真实阻塞，先用有界样本证明，再在既定边界内评估变更。版本在实际 Codex 环境的 M0 核对锁定，不能把文档历史验证版本当作“当前最新”。
+不预建 Rust/WASM Core、另一套舞台状态解释器、剧情 Worker、OPFS、通用插件市场。若出现真实阻塞，先用有界样本证明，再在既定边界内评估变更。版本在实际 Codex 环境的 M0 核对锁定，不能把文档历史验证版本当作“当前最新”。
 
 ## 2. 仓库与公开入口
 
@@ -140,3 +140,5 @@ M0 实现构建期生成和只读漂移检查，明确哪些生成文件进入�
 主库输出 ESM、类型声明和必要静态/协议产物；Node 测试从 headless exports 使用同一实现。M2 对 tarball 做独立安装测试，检查 exports、类型和依赖完整性，不借源码 paths。M4 CLI 可调用成熟构建/素材工具，不重做编解码器。
 
 开发 trace 与玩家历史分开；公共 fixture 原创可分发，真实素材和私有原档不默认提交仓库。阶段报告说明已验证环境和缺口，性能数值以测量为准。
+
+用户设备实际反馈后的图像调整见 ADR0021/GRAPHICS.md：Canvas 是同一 Pixi 场景图的设备实现，不改变 Core/Coordinator/存档；未能对等的 GPU 滤镜/隔离转场明确前置拒绝，H2-02 保留。

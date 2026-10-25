@@ -22,3 +22,5 @@ export function instrumentDisposal(mode='baseline'){
  wrap(AudioContext.prototype,'close',original=>function(...args){return measure('AudioContext.close',()=>original.apply(this,args));});
  return {events,renders,get globalClears(){return globalClears;},dispose(player){phase++;disposing=true;const t=performance.now();try{player.dispose();return performance.now()-t;}finally{disposing=false;}},restore(){for(const restore of restores.reverse())restore();}};
 }
+
+export function failWebGLInitialization(){const original=Application.prototype.init;let context;const attempts=[];Application.prototype.init=async function(options){attempts.push(options.preference[0]);if(options.preference[0]==='webgl'){context=options.context;throw new Error('Injected WebGL initialization failure');}return original.call(this,options);};return {snapshot:()=>({attempts:[...attempts],failedContextLost:context?.isContextLost()??false}),restore(){Application.prototype.init=original;}};}

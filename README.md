@@ -1,6 +1,6 @@
 # galbox-sdk
 
-强类型、可嵌入的视觉小说 Web SDK。已有 M0–M5 有限 alpha 底座；完整常用 GalGame 功能正在按 G0–G7 建设：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用 Pixi WebGL、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
+强类型、可嵌入的视觉小说 Web SDK。已有 M0–M5 有限 alpha 底座；完整常用 GalGame 功能正在按 G0–G7 建设：同一正式 TypeScript Core 驱动原创《灯塔来信》，使用同一 Pixi 舞台（WebGL2 优先、Canvas 兼容后备）、DOM 正文、React 默认 UI、Web Audio 与 IndexedDB。
 
 《水仙》《海市蜃楼之馆》的真实资料仍缺，当前不声明商业作品兼容。完整任务状态见 [tasks.json](docs/tasks.json)，当前摘要见 [STATUS](docs/STATUS.md)，范围见 [能力表](docs/CAPABILITIES.md)。
 
@@ -90,3 +90,5 @@ G2-02 原创章节：[灯塔来信·双页值班簿](http://127.0.0.1:4173/?demo
 G0-03 原创章节：[灯塔来信·补给簿](http://127.0.0.1:4173/?demo=data)。正式SDK计算并保存位模式f64、精确i64、有序列表/字典与普通profile；构造/算子、失败边界及完整迁移规则见 [DATA_VALUES](docs/DATA_VALUES.md)。完整舞台/媒体和其它通用G系统仍在后续任务中。
 
 G3-01 原创章节：[灯塔来信·光影回信](http://127.0.0.1:4173/?demo=stage)。正式SDK承接二维变换/层级/相机/基础滤镜/转场/震动与并行任务，参数只求值一次，活动状态可保存恢复；支持集、冲突规则与限制见 [STAGE](docs/STAGE.md)。后续长媒体、图文存档、流程图等继续按任务表建设。
+
+无 WebGL 的环境可直接自动使用基础 Canvas 模式，或打开 `http://127.0.0.1:4173/?renderer=canvas`；设备选项和已知效果边界见 [图像兼容性](docs/GRAPHICS.md)。Canvas 滤镜/隔离转场仍由 H2-02 继续，不能静默跳过。

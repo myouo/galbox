@@ -3182,3 +3182,10 @@ export interface AudioPlaybackEvent {
   attempt: number;
   state: 'ended';
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "GraphicsOptions".
+ */
+export interface GraphicsOptions {
+  renderer: 'auto' | 'webgl' | 'canvas';
+}

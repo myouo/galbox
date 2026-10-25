@@ -1,6 +1,6 @@
 # 舞台、相机与并行效果（G3-01）
 
-SDK使用同一TypeScript Core和单Pixi/WebGL舞台。Core解析表达式并保存逻辑效果，Host重建图像对象，不让React推进动画、PC或制造媒体完成。图像效果不包含DOM正文/UI。
+SDK使用同一TypeScript Core和单Pixi舞台（WebGL2优先、Canvas基础兼容）。Core解析表达式并保存逻辑效果，Host重建图像对象，不让React推进动画、PC或制造媒体完成。图像效果不包含DOM正文/UI。
 
 ```ts
 import {stageImage,stageTween,stageFilter,stageCamera,stageTransition,stageShake,stageFade,expr as E} from 'galbox-sdk/port-kit';
@@ -34,3 +34,5 @@ Snapshot.scene保存相机/舞台滤镜/遮罩，object保存变换/裁切/图�
 限制：128对象、256保留任务、4转场图层、8层父图；不是长作品规模认证。非矩形mask、空容器节点、任意shader、路径/骨骼、其它转场/滤镜未导出，不以扩展点计已实现。全平台、视觉延迟/60FPS、实际VRAM未认证。只有图像舞台参与这些效果。
 
 原创《灯塔来信·光影回信》在http://127.0.0.1:4173/?demo=stage ，输入fixtures/stage-novel/build.ts。运行时把distance从140改成9999，已启动相对移动仍到410；真实保存/刷新/两路线和WebGL像素验证使用同一生产路径。它不代表真实两作兼容。
+
+H2-01设备兼容扩展见 GRAPHICS.md：Canvas复用上述逻辑状态与基础场景图，GPU滤镜/隔离crossfade目前提前拒绝，H2-02继续；本页G3-01效果通过不代表已完成Canvas全效果对等。

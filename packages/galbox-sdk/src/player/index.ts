@@ -33,7 +33,7 @@ import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;preferencesDefaults?:unknown;textRenderer?:TextRendererFactory;}
+export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;graphics?:import('../protocol/index.js').GraphicsOptions;preferencesDefaults?:unknown;textRenderer?:TextRendererFactory;}
 export interface ReleaseView {readonly origin:'manifest'|'derived';readonly sha256:string;readonly manifest:DeepReadonly<ReleaseManifest>;}
 export interface PreferencesResult {readonly record:DeepReadonly<PreferencesRecord>;readonly committed:true;readonly disposed:boolean;}
 export interface PlayerView {
@@ -98,7 +98,7 @@ export class Player {
     this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
     this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);this.requestedRelease=options.release===undefined?null:parseReleaseManifest(options.release);this.resourceBudget=parseResourceBudget(options.resourceBudget??this.requestedRelease?.limits??defaultResourceBudget);ensure(!this.requestedRelease||canonicalReleaseJSON(this.resourceBudget)===canonicalReleaseJSON(this.requestedRelease.limits),'RELEASE_BUDGET','Player budget differs from manifest');
     this.preferencesDefaults=normalizePreferences(options.preferencesDefaults??defaultPreferences());this.preferences={revision:0,value:parsePlayerPreferences(this.preferencesDefaults)};
-    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);});this.host.applyAudioPreferences(this.preferences.value.audio);
+    this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);},options.graphics);this.host.applyAudioPreferences(this.preferences.value.audio);
     this.inputController=new InputController({state:()=>{const v=this.getSnapshot(),w=v.core?.run.wait;return {epoch:v.epoch,prompt:w&&'prompt'in w?w.prompt:null,text:w?.kind==='text',playing:v.lifecycle==='playing',paused:v.paused,menu:v.menu};},advance:(prompt,epoch)=>{void this.step(prompt,epoch).catch(e=>this.fail(e));},menu:()=>this.setMenu(!this.menu),auto:()=>{void this.setAuto(this.runtime?.playbackView().mode!=='auto').catch(e=>this.fail(e));},skip:value=>this.setFast(value),quickSave:()=>{void this.save().catch(e=>this.fail(e));},quickLoad:()=>{void this.load().catch(e=>this.fail(e));}},this.preferences.value.input);this.inputController.attach(options.mount);
     this.cached={canReplayVoice:false,playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits}},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
@@ -179,7 +179,7 @@ export class Player {
         if(policy.start){const candidate=await this.initialCandidate(durable.profile);snapshot=candidate.capture();changes=candidate.pending();mode='initial';}
         else {ensure(baseline,'LOAD_BASELINE','Missing snapshot');snapshot=validateRestore(this.program,baseline,this.operations);if(policy.recipe){const prepared=prepareRestoreRecipe(this.program,durable.profile,snapshot,policy.recipe,{operations:this.operations});snapshot=prepared.snapshot;changes=prepared.changes;mode='initial';}}
         ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale during preparation');id=`${this.instance}:a${gen}`;
-        this.host.validateAudioPlan(snapshot);
+        this.host.validateGraphicsPlan(snapshot);this.host.validateAudioPlan(snapshot);
         const initial=changes.length?Object.freeze({id:`${id}:initial`,baseRevision:durable.profile.revision,through:changes.at(-1)?.seq??0,changes:Object.freeze(changes.map(c=>c.type==='set'?Object.freeze({...c,value:freezeJson(c.value)}):Object.freeze(c)))}):undefined;
         this.host.assertReady();committing=true;const activation=await store.activate(id,snapshot,expectedHead,durable.profile.revision,initial,{profileId:policy.profileId,mode,owner:id,...(policy.onLoad?{onLoad:policy.onLoad}:{}),...(policy.provenance!==undefined?{provenance:policy.provenance}:{}),...(policy.slot?{slot:policy.slot}:{})});committed=true;old?.stop();this.unsubscribe?.();this.runtime=null;this.lifecycle='committed-pending';this.publish();await this.install(activation,id,gen);
       }catch(error){
@@ -276,3 +276,5 @@ export class Player {
   }
 }
 export async function createPlayer(options:PlayerOptions):Promise<Player> {return Player.create(options);}
+
+export type {GraphicsOptions} from '../protocol/index.js';

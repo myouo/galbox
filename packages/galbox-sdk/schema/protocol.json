@@ -9513,6 +9513,22 @@
         "stopVoiceOnAdvance"
       ],
       "additionalProperties": false
+    },
+    "GraphicsOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "renderer"
+      ],
+      "properties": {
+        "renderer": {
+          "enum": [
+            "auto",
+            "webgl",
+            "canvas"
+          ]
+        }
+      }
     }
   },
   "type": "object",

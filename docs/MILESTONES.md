@@ -110,3 +110,5 @@ G0-03有限值集和算子见ADR0018、DATA_VALUES.md：checked i64、位模式f
 G3-01有限集见ADR0019、STAGE.md：二维pose/父图/矩形clip/基本混合、三类滤镜、相机、fade/crossfade/shake、通道冲突和解析任务闭包。Core时钟完成、Host重建，最多128对象/256保留任务/4图层/8层父图；其它效果、长媒体或长作品尺度不得借用此通过结论。
 
 G3-02有限集见ADR0020、MEDIA.md：WAV/MP3/单流Vorbis/Opus、已验证Blob长媒体element、独立自然完成任务/等待、loop点、Core bus淡化/duck、当前正文语音重播。replay从0，stop-policy活动媒体等待不允许保存，旧audio.play启动ABI保留；网络流/AAC/视频/精确seek/历史回放不借此计入。
+
+H2 图像设备兼容性因用户实际故障插入：H2-01 支持 auto(WebGL2→Canvas)/强制设备，基础画面与存档跨后端，具体边界见 ADR0021/GRAPHICS.md。H2-02 继续 Canvas 滤镜/隔离转场及预算/像素对等，并加入 G7。G3-03 视频/热点/限时交互仍待实现。

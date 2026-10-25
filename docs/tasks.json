@@ -11,9 +11,10 @@
     "G4",
     "G5",
     "G6",
-    "G7"
+    "G7",
+    "H2"
   ],
-  "current_task": "G3-03",
+  "current_task": "H2-02",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1868,7 +1869,8 @@
       "depends_on": [
         "G6-02",
         "G3-01",
-        "G3-04"
+        "G3-04",
+        "H2-02"
       ],
       "status": "todo",
       "implementation": "not_started",
@@ -1892,6 +1894,78 @@
       "evidence": [],
       "blocker": null,
       "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+    },
+    {
+      "milestone": "H2",
+      "depends_on": [
+        "G3-01",
+        "G3-02"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C07",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "blocker": null,
+      "id": "H2-01",
+      "title": "无WebGL图像设备后备与能力诊断",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "Pixi Canvas fallback and graphics selection",
+        "actual no-WebGL play/save/restore and device failure evidence"
+      ],
+      "acceptance": [
+        "canvas-fallback",
+        "renderer-save-portability",
+        "graphics-capability-refusal"
+      ],
+      "evidence": [
+        "docs/evidence/h2-01/REPORT.md",
+        "docs/evidence/h2-01/check.log",
+        "docs/evidence/h2-01/unit.log",
+        "docs/evidence/h2-01/browser-results.json",
+        "docs/evidence/h2-01/consumer-result.json",
+        "docs/evidence/h2-01/result.json",
+        "docs/evidence/h2-01/performance.json",
+        "docs/evidence/h2-01/release-audit.json",
+        "docs/evidence/h2-01/dev-result.json",
+        "docs/evidence/h2-01/source-manifest.json"
+      ],
+      "next_action": "用户WebGL硬检查故障对应有限兼容集完成；下一H2-02补Canvas滤镜/隔离转场与预算/像素对等，再继续G3-03；当前Canvas明确拒绝未对等能力，不能静默跳过。"
+    },
+    {
+      "milestone": "H2",
+      "depends_on": [
+        "H2-01"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C07",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "blocker": null,
+      "id": "H2-02",
+      "title": "Canvas图像滤镜与隔离转场对等",
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "bounded Canvas isolated composition/filter implementation and pixel conformance"
+      ],
+      "acceptance": [
+        "canvas-effects-conformance",
+        "canvas-composition-budget"
+      ],
+      "evidence": [],
+      "next_action": "实现有界中间表面的滤镜/透明层交叉淡化与相机组滤镜，验证父子/混合/半透明RGBA并补中间表面内存预算；之前Canvas明确拒绝这些能力，不得静默跳过。"
     }
   ]
 }
