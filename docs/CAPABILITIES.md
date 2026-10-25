@@ -40,6 +40,6 @@ M5-02 的发布/资源预算与设备失败规则见 [RELEASES](RELEASES.md)。�
 
 H1-01 加固保持协议/API：静态舞台不重复提交，正文/进度仍推进；新 epoch/动画仍绘制，实例销毁保留共享 Pixi 池并释放本实例 context，取消后的迟到 renderer 也清理。最新证据见 [H1-01](evidence/h1-01/REPORT.md)。
 
-用户要求的完整常用能力与实例职责见 [COMMON_VN](COMMON_VN.md)。G1-01 已落地的设置数据/系统提供主、BGM、voice、sfx 音量和文字间隔，独立于剧情 profile 持久化，默认 UI 可用，见 [SETTINGS](SETTINGS.md)。自动阅读/输入、富文本/NVL/多文本框、图文存档、流程图、鉴赏和剧本 UI 等 G 项尚未完成。
+用户要求的完整常用能力与实例职责见 [COMMON_VN](COMMON_VN.md)。G1-01 已落地的设置数据/系统提供主、BGM、voice、sfx 音量和文字间隔，独立于剧情 profile 持久化，默认 UI 可用，见 [SETTINGS](SETTINGS.md)。G1-02 自动阅读/已读快进、实例按键映射及显示辅助已实现，规则见 [PLAYBACK](PLAYBACK.md)；富文本/NVL/多文本框、图文存档、流程图、鉴赏和剧本 UI 等 G 项仍未完成。
 
 G0-02 的 bool/i32/string 表达式、checked 算术/短路/字符串/插值、显式 RNG 与完整恢复已落实，见 [EXPRESSIONS](EXPRESSIONS.md) 和 g0-02 证据；浮点/集合及其余 G 任务未完成。

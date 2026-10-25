@@ -24,5 +24,5 @@ export interface Store {
   confirm(id:string,owner?:string):Promise<Activation>;
   close():void;
 }
-export interface HostPort {effect(effect:Effect,epoch:number,report:(task:string,attempt:number,result:'completed'|'blocked'|'failed')=>void):void;}
+export interface HostPort {effect(effect:Effect,epoch:number,report:(task:string,attempt:number,result:'completed'|'blocked'|'failed')=>void,playbackEnded?:(task:string,attempt:number)=>void):void;}
 export interface Scheduler {defer(callback:()=>void):void;}

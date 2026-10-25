@@ -1,0 +1,17 @@
+[WebServer] (node:1703721) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1703741) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1703998) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:1704010) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/playback.spec.ts:4:1 › Auto waits for native voice completion, pauses in menus and rebuilds voice gates on restore (3.9s)
+  ✓  2 tests/browser/playback.spec.ts:22:1 › configured input is scoped per instance, ignores repeats/editors and discards held inputs after load or focus loss (1.7s)
+  ✓  3 tests/browser/playback.spec.ts:40:1 › default UI persists playback, mappings and display settings, imports/exports JSON and restores defaults (3.8s)
+  ✓  4 tests/browser/playback.spec.ts:53:1 › real IndexedDB v1 preferences migrate without losing revision and reset uses authored defaults (857ms)
+
+  4 passed (18.1s)

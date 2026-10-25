@@ -92,7 +92,7 @@ export class WebHost implements HostPort {
     }
     this.app.render();this.app.renderer.gl.flush();this.renderedStage=run.stage.map(o=>({...o,position:{...o.position}}));
   }
-  effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2]):void {
+  effect(effect:Effect,epoch:number,report:Parameters<HostPort['effect']>[2],playbackEnded?:Parameters<HostPort['effect']>[3]):void {
     if(this.disposed||epoch!==this.epoch)return;
     if(effect.type==='audio-stop'){this.stopChannel(effect.channel);return;}
     if(effect.type==='audio-gain'){const playing=this.playing.get(effect.channel);if(playing){playing.scriptGain=effect.gain;playing.gain.gain.value=effect.gain*this.roleVolumes[playing.role];}return;}
@@ -106,7 +106,7 @@ export class WebHost implements HostPort {
     try {
       source=context.createBufferSource();gain=context.createGain();source.buffer=buffer;source.loop=task.loop??false;gain.gain.value=(task.gain??1)*this.roleVolumes[task.channel];source.connect(gain);gain.connect(master);
       const playing={source,gain,scriptGain:task.gain??1,role:task.channel},channel=task.channel;this.playing.set(channel,playing);
-      source.onended=()=>{if(this.playing.get(channel)===playing){this.playing.delete(channel);this.media.ended++;this.media.active=this.playing.size;}playing.source.disconnect();playing.gain.disconnect();};
+      source.onended=()=>{if(!this.disposed&&epoch===this.epoch&&this.playing.get(channel)===playing){this.playing.delete(channel);this.media.ended++;this.media.active=this.playing.size;playbackEnded?.(task.id,task.attempt);}playing.source.disconnect();playing.gain.disconnect();};
       source.start();this.media.starts++;this.media.active=this.playing.size;this.media.state='available';report(task.id,task.attempt,'completed');
     }catch(error){const unavailable=error instanceof DOMException&&error.name==='NotSupportedError';if(task.channel)this.playing.delete(task.channel);if(source){source.onended=null;try{source.stop();}catch{}source.disconnect();}gain?.disconnect();this.media.active=this.playing.size;if(unavailable){this.audioUnavailable=true;this.media.state='unavailable';report(task.id,task.attempt,'failed');this.fault?.(new GalboxError('AUDIO_UNAVAILABLE','Audio source unavailable on this device'));}else{this.media.blocked++;this.media.state='needs-user-action';report(task.id,task.attempt,'blocked');}}
   }

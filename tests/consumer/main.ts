@@ -7,6 +7,7 @@ import {expr as E,assignExpression,templatePage,randomI32} from 'galbox-sdk/port
 import { instruction,variable,set,createSaveBindingRegistry } from 'galbox-sdk/port-kit';
 import { i32,bool,parseProgram,parseSnapshot } from 'galbox-sdk/protocol';
 import { DefaultUI } from 'galbox-sdk/react';
+import {normalizePreferences} from 'galbox-sdk/settings';
 void DefaultUI;
 instruction('control.end',{at:'end'});set('ok',variable('n','i32'),i32(1));
 if(false){
@@ -24,10 +25,12 @@ const button=document.getElementById('run');
 button?.addEventListener('click',()=>{void(async()=>{
  const mount=document.getElementById('stage');if(!mount)throw new Error('mount');const program:unknown=await(await fetch('./program.json')).json();const release:unknown=await(await fetch('./consumer.release.json')).json();
  const player=await createPlayer({program,provider:createHttpProvider(program,location.href),mount,saveCompatibilitySeries:'consumer',release});
+ const settings=normalizePreferences({version:1,audio:{master:.4,bgm:.7,voice:1,sfx:1},text:{intervalMs:32}});await player.importPreferences(settings);await player.updatePreferences({input:{advance:['KeyD']},playback:{autoDelayMs:60000},display:{fontScale:1.25,windowOpacity:.7}});const settingsBackup=player.exportPreferences();await player.resetPreferences();await player.importPreferences(settingsBackup);if(player.getSnapshot().preferences.value.input.advance[0]!=='KeyD'||mount.querySelector<HTMLElement>('.galbox-text')?.style.getPropertyValue('--galbox-font-scale')!=='1.25')throw new Error('Settings import/default reset failed');
  if(player.getSnapshot().release?.origin!=='manifest'||player.getSnapshot().resources.decodedAudioBytes<=0)throw new Error('Missing verified release/resource report');await player.updatePreferences({audio:{master:.4,bgm:.7},text:{intervalMs:32}});if(player.getSnapshot().preferences.value.audio.master!==.4)throw new Error('Preferences not applied');await player.start();const before=player.getSnapshot().core?.run.wait;if(before?.kind!=='text')throw new Error('Initial wait');
- await player.input('reveal',before.prompt,player.getSnapshot().epoch);await player.save('consumer');await player.input('advance',before.prompt,player.getSnapshot().epoch);
+ await player.input('reveal',before.prompt,player.getSnapshot().epoch);await player.setAuto(true);if(player.getSnapshot().playback.mode!=='auto')throw new Error('Auto API failed');await player.save('consumer');await player.input('advance',before.prompt,player.getSnapshot().epoch);
  const advanced=player.getSnapshot().core?.run.text?.textId;if(advanced==='opening.1')throw new Error('Did not advance');await player.load('consumer');
  if(player.getSnapshot().core?.run.text?.textId!=='opening.1')throw new Error('Did not restore');
+ if(player.getSnapshot().playback.mode!=='manual'||player.exportPreferences().display.fontScale!==1.25)throw new Error('Restore mixed playback session and durable preferences');
  if(!player.getSnapshot().core?.profile.read.includes('opening.1@zh-1'))throw new Error('Lost durable read progress');
  const portable=await player.exportBackup(),backupPlan=prepareBackupRestore(portable,{program,series:'consumer'});materializeBackupRestore(backupPlan,{program,series:'consumer'});const restoredBackup=await player.commitBackupRestore(backupPlan),backupEpoch=player.getSnapshot().epoch;await player.load(restoredBackup.slots[0]!.restoredSlot);if(player.getSnapshot().epoch<=backupEpoch||!player.getSnapshot().profileId.startsWith('backup:')||!player.getSnapshot().core?.profile.read.includes('opening.1@zh-1'))throw new Error('Portable backup restore failed');
  await player.start(restoredBackup.profiles[0]!.restoredId);if(!player.getSnapshot().profileId.startsWith('backup:')||!player.getSnapshot().core?.profile.read.includes('opening.1@zh-1'))throw new Error('Profile-only restart lost reading progress');

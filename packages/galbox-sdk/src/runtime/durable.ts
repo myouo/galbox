@@ -1,3 +1,4 @@
+import {normalizePreferencesRecord,normalizePreferences} from '../settings/index.js';
 import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt, parsePlayerPreferences, parsePreferencesRecord } from '../protocol/index.js';
 import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt, BackupRestoreReceipt, PreferencesRecord } from '../protocol/index.js';
 import type { Durable, Activation, ProgressBatch, ProgressReceipt, SlotRecord, ActivationOptions } from './ports.js';
@@ -26,7 +27,7 @@ export function parseDatabase(input:unknown):DatabaseState {
   if(input.imports!==undefined){object(input.imports);for(const [id,r]of Object.entries(input.imports)){key(id);imports[id]=importReceipt(r);}}
   const backups:Record<string,BackupRestoreReceipt>={};if(input.backups!==undefined){object(input.backups);for(const [id,r]of Object.entries(input.backups)){key(id);backups[id]=parseBackupRestoreReceipt(r);}}
   const slots:Record<string,SlotRecord>={},activations:Record<string,Activation>={};for(const [id,v]of Object.entries(input.slots)){key(id);slots[id]=slotRecord(v);}for(const [id,v]of Object.entries(input.activations)){key(id);activations[id]=activation(v);}
-  return {preferences:input.preferences===undefined||input.preferences===null?null:parsePreferencesRecord(input.preferences),backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
+  return {preferences:input.preferences===undefined||input.preferences===null?null:normalizePreferencesRecord(input.preferences),backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
 }
 function applyBatch(state:DatabaseState,input:ProgressBatch,profileId:string,authority:string|null):ProgressReceipt {
   const batch=parseProgressBatch(input);
@@ -62,4 +63,4 @@ export function commitActivation(state:DatabaseState,id:string,snapshot:unknown,
 export function claimActivation(state:DatabaseState,id:string,owner:string):Activation {key(owner);ensure(state.head?.id===id&&state.head.status==='committed-pending','ACTIVATION_SUPERSEDED','Only the current pending activation can be claimed');state.head.owner=owner;state.head.sequence++;state.activations[id]=activation(state.head);return activation(state.head);}
 export function confirmActivation(state:DatabaseState,id:string,owner=id):Activation {ensure(state.head?.id===id&&(state.head.owner??state.head.id)===owner&&state.head.status!=='superseded','ACTIVATION_SUPERSEDED',id);state.head.status='activated';state.activations[id]=activation(state.head);return activation(state.head);}
 
-export function commitPreferences(state:DatabaseState,input:unknown,expectedRevision:number):PreferencesRecord {const value=parsePlayerPreferences(input);ensure(Number.isInteger(expectedRevision)&&expectedRevision>=0&&expectedRevision===(state.preferences?.revision??0),'PREFERENCES_CONFLICT','Refresh preferences before retrying');const record=parsePreferencesRecord({revision:expectedRevision+1,value});state.preferences=record;return parsePreferencesRecord(record);}
+export function commitPreferences(state:DatabaseState,input:unknown,expectedRevision:number):PreferencesRecord {const value=normalizePreferences(input);ensure(Number.isInteger(expectedRevision)&&expectedRevision>=0&&expectedRevision===(state.preferences?.revision??0),'PREFERENCES_CONFLICT','Refresh preferences before retrying');const record=parsePreferencesRecord({revision:expectedRevision+1,value});state.preferences=record;return parsePreferencesRecord(record);}
