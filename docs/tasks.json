@@ -6,7 +6,7 @@
   "current_scope": [
     "M4"
   ],
-  "current_task": "M4-02",
+  "current_task": "M4-03",
   "engine_status": "in_progress",
   "last_updated": "2026-10-25",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -647,9 +647,9 @@
         "M3-04",
         "M4-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "saves analyze/verify",
         "SourceMap/PortObligation reports"
@@ -662,9 +662,11 @@
         "T15",
         "diagnostic-location"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/m4-02/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "依赖完成后按 MILESTONES 和 ACCEPTANCE 实现并记录实际证据。"
+      "next_action": "接 M4-03：完整独立开发者扩展/迁移/binding、类型与浏览器验证。"
     },
     {
       "id": "M4-03",

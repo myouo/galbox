@@ -12,6 +12,7 @@
     "packages/galbox-sdk/src/runtime/**/*",
     "packages/galbox-sdk/src/program-tools/**/*",
     "packages/galbox-sdk/src/testing/**/*",
-    "packages/galbox-sdk/src/save-bridge/**/*"
+    "packages/galbox-sdk/src/save-bridge/**/*",
+    "packages/galbox-sdk/src/diagnostics/**/*"
   ]
 }

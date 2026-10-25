@@ -3,7 +3,8 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import validate from './generated/validator.js';
 import type {ProjectConfig} from './generated/config.js';
-export interface Diagnostic {code:string;message:string;file?:string;path?:string;address?:string;source?:{file:string;line:number;column:number};}
+export interface Diagnostic {code:string;message:string;file?:string;path?:string;address?:string;source?:{file:string;line:number;column:number;locator?:string};obligation?:string;}
+export class ReportError extends Error {constructor(readonly diagnostics:readonly Diagnostic[]){super(diagnostics.map(d=>d.message).join('\n'));}}
 export class CliError extends Error {constructor(readonly diagnostic:Diagnostic){super(diagnostic.message);this.name='CliError';}}
 export function requireValue(value:unknown,code:string,message:string):asserts value {if(!value)throw new CliError({code,message});}
 export function diagnostic(error:unknown,file?:string):Diagnostic {

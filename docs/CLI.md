@@ -27,3 +27,19 @@ CLI 从目标项目的直接 node_modules/galbox-sdk 读取显式公共 ESM expo
 pnpm 11 的候选覆盖写入 pnpm-workspace.yaml，避免 CLI 间接依赖去下载未发布 SDK；包管理设置变更依据：[pnpm 11 官方说明](https://pnpm.io/blog/releases/11.0)。外部依赖版本固定，首次安装后可用 frozen-lockfile 复验。
 
 下一部分 M4-02 接入可定位来源和必要行为覆盖、saves analyze/verify；没有实现的命令现在会失败，不返回占位成功。
+
+## 来源与必要行为
+
+ProgramBuilder.source(at,{file,line,column,locator?}) 登记 Builder/原定位；obligation 声明必要行为，mapping 将它连接到标准地址。普通 linkProgram 仍只证明标准语义合法；inspectProgram 与 CLI validate/build 另查必要映射覆盖。删除必要 mapping 会以 OBLIGATION_UNMAPPED 阻断，报告指向义务的源文件/行列。该覆盖声明不是原作忠实性认证。
+
+公开 `galbox-sdk/diagnostics` 提供 inspectProgram、inspectSnapshot、locateAddress。快照追踪含调用帧、等待、invocation 和任务来源；旧任务没有 at 时列出声明的候选创建地址，不猜唯一来源。结构/链接错误保留标准地址和 SourceMap 位置。
+
+```sh
+galbox validate --json
+galbox saves analyze snapshot.json --internal --json
+galbox saves verify snapshot.json --internal --profile profile.json --json
+galbox saves analyze slot.bin global.json --source fixture-save@1/lighthouse --schema fixture.original@1 --version 1 --json
+galbox saves verify slot.bin global.json --source fixture-save@1/lighthouse --schema fixture.original@1 --version 1 --json
+```
+
+原档命令只使用 port.mjs 登记的明确来源，没有绑定或存在歧义时返回 needs-input/退出 2；不做通用归档识别。internal verify 要求明确提供当前 profile，不用默认值伪造恢复依据。verify 只核验标准候选，保留真人/媒体 continuation，不写存储，也不声称已由原作加载继续验证。无迁移/文本修订改变明确失败，输入档案保留。

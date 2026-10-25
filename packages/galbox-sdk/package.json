@@ -41,6 +41,10 @@
     "./save-bridge": {
       "types": "./dist/save-bridge/index.d.ts",
       "import": "./dist/save-bridge/index.js"
+    },
+    "./diagnostics": {
+      "types": "./dist/diagnostics/index.d.ts",
+      "import": "./dist/diagnostics/index.js"
     }
   },
   "dependencies": {

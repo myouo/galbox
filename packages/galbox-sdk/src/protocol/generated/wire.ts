@@ -207,6 +207,16 @@ export type JsonValue =
       [k: string]: JsonValue;
     };
 /**
+ * @maxItems 10000
+ *
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SourceMap".
+ */
+export type SourceMap = {
+  at: string;
+  source: SourceLocation;
+}[];
+/**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "TaskStatus".
  */
@@ -345,6 +355,15 @@ export interface Program {
    */
   functions: Function[];
   title: string;
+  sourceMap?: SourceMap;
+  /**
+   * @maxItems 10000
+   */
+  obligations?: PortObligation[];
+  /**
+   * @maxItems 10000
+   */
+  behaviorMappings?: BehaviorMapping[];
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -423,6 +442,39 @@ export interface Position {
 export interface SchemaRef {
   id: string;
   signature: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SourceLocation".
+ */
+export interface SourceLocation {
+  file: string;
+  line: number;
+  column: number;
+  locator?: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "PortObligation".
+ */
+export interface PortObligation {
+  id: string;
+  kind: 'behavior';
+  required: boolean;
+  description: string;
+  source: SourceLocation;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "BehaviorMapping".
+ */
+export interface BehaviorMapping {
+  obligation: string;
+  /**
+   * @minItems 1
+   * @maxItems 256
+   */
+  addresses: [string, ...string[]];
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -515,6 +567,7 @@ export interface Task {
   loop?: boolean;
   restore?: 'replay' | 'stop';
   name: string;
+  at?: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

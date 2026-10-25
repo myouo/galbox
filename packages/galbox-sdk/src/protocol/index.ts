@@ -1,5 +1,5 @@
-import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire } from './generated/validators.js';
-import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire } from './generated/wire.js';
+import { validateProgram, validateSnapshot, validateProfile, validateInstruction, validateValue, validateJsonValue, validateOperationOutcome, validateSavedInvocation, validateOperationResume, validateOperationWait, validateRestoreRecipe, validateSlotMetadata, validateStoreImport, validateProgressBatchWire, validateSourceMap, validatePortObligation, validateBehaviorMapping } from './generated/validators.js';
+import type { Program, Snapshot, Profile, Instruction, Value, JsonValue, OperationOutcome, SavedInvocation, OperationResume, OperationWait, RestoreRecipe, SlotMetadata, StoreImport, ProgressBatchWire, SourceMap, PortObligation, BehaviorMapping } from './generated/wire.js';
 export type * from './generated/wire.js';
 export { operationSpecs, recoveryOpcodes } from './generated/operations.js';
 type JsonPrimitive = Extract<JsonValue,string|number|boolean|null>;
@@ -9,7 +9,7 @@ type ReadonlyJsonValue=JsonPrimitive|ReadonlyJsonArray|ReadonlyJsonObject;
 type ReadonlyNode<T> = T extends string | number | boolean | bigint | symbol | null | undefined ? T : {readonly [K in keyof T]:DeepReadonly<T[K]>};
 export type DeepReadonly<T> = [T] extends [string|number|boolean|bigint|symbol|null|undefined] ? T : [T] extends [JsonValue] ? [JsonValue] extends [T] ? ReadonlyJsonValue : ReadonlyNode<T> : ReadonlyNode<T>;
 export class GalboxError extends Error {
-  constructor(readonly code: string, message: string) { super(`${code}: ${message}`); this.name = 'GalboxError'; }
+  constructor(readonly code: string, readonly reason: string, readonly location?:{address?:string;path?:string}) { super(`${code}: ${reason}`); this.name = 'GalboxError'; }
 }
 export function ensure(condition: unknown, code: string, message: string): asserts condition {
   if (!condition) throw new GalboxError(code, message);
@@ -32,7 +32,7 @@ function detached(input: unknown): unknown {
   catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('INPUT_JSON','Expected plain acyclic JSON');}
 }
 export function parseProgram(input: unknown): Program {
-  const data = detached(input); ensure(validateProgram(data), 'SCHEMA_PROGRAM', JSON.stringify(validateProgram.errors)); return data;
+  const data = detached(input);if(!validateProgram(data)){const path=validateProgram.errors?.find(e=>/\/functions\/\d+\/code\/\d+/.test(e.instancePath))?.instancePath??validateProgram.errors?.[0]?.instancePath??'';const address=rawInstructionAddress(data,path);throw new GalboxError('SCHEMA_PROGRAM',JSON.stringify(validateProgram.errors),{path,...(address?{address}:{})});}return data;
 }
 export function parseSnapshot(input: unknown): Snapshot {
   const data = detached(input); ensure(validateSnapshot(data), 'SCHEMA_SNAPSHOT', JSON.stringify(validateSnapshot.errors)); return data;
@@ -71,3 +71,8 @@ export function parseSlotMetadata(input:unknown):SlotMetadata {const data=detach
 export function parseStoreImport(input:unknown):StoreImport {const data=detached(input);ensure(validateStoreImport(data),'SCHEMA_STORE_IMPORT',JSON.stringify(validateStoreImport.errors));return data;}
 
 export function parseProgressBatch(input:unknown):ProgressBatchWire {const data=detached(input);ensure(validateProgressBatchWire(data),'SCHEMA_PROGRESS_BATCH',JSON.stringify(validateProgressBatchWire.errors));return data;}
+
+function rawInstructionAddress(data:unknown,path:string):string|undefined {const match=path.match(/\/functions\/(\d+)\/code\/(\d+)/);if(!match||data===null||typeof data!=='object'||!('functions'in data)||!Array.isArray(data.functions))return;const f:unknown=data.functions[Number(match[1])];if(f===null||typeof f!=='object'||!('code'in f)||!Array.isArray(f.code))return;const i:unknown=f.code[Number(match[2])];return i!==null&&typeof i==='object'&&'at'in i&&typeof i.at==='string'?i.at:undefined;}
+export function parseSourceMap(input:unknown):SourceMap {const data=detached(input);ensure(validateSourceMap(data),'SCHEMA_SOURCE_MAP',JSON.stringify(validateSourceMap.errors));return data;}
+export function parsePortObligation(input:unknown):PortObligation {const data=detached(input);ensure(validatePortObligation(data),'SCHEMA_OBLIGATION',JSON.stringify(validatePortObligation.errors));return data;}
+export function parseBehaviorMapping(input:unknown):BehaviorMapping {const data=detached(input);ensure(validateBehaviorMapping(data),'SCHEMA_MAPPING',JSON.stringify(validateBehaviorMapping.errors));return data;}

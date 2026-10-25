@@ -18,5 +18,7 @@ export default function buildProgram(assets,port){
   op('profile.set',{at:'tower:unlock',key:'towerUnlocked',value:bool(true)}),
   op('text.page',{at:'main:ending',textId:'ending',revision:'zh-1',speaker:'海风的回信',content:'这一次，信有了归处。\n完'}),
   op('control.end',{at:'main:end'}),
- ]});return b.build(port.operations);
+ ]});b.source('main:opening',{file:'story.mjs',line:12,column:1}).source('main:choice',{file:'story.mjs',line:13,column:1});
+ b.obligation({id:'route-choice',kind:'behavior',required:true,description:'Both authored routes remain selectable',source:{file:'story.mjs',line:13,column:1,locator:'authored:route-choice'}});
+ b.mapping({obligation:'route-choice',addresses:['main:choice']});return b.build(port.operations);
 }

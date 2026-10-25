@@ -1,7 +1,7 @@
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
-import { parseProgram, parseInstruction, parseValue, ensure, capabilities } from '../protocol/index.js';
-import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly } from '../protocol/index.js';
+import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping } from '../protocol/index.js';
+import type { Program, Instruction, Value, ValueKind, Operand, Function as ProgramFunction, Slot, Asset, Position, DeepReadonly, SourceLocation, PortObligation, BehaviorMapping } from '../protocol/index.js';
 
 export type AssetRef<K extends Asset['kind']> = { readonly id: string; readonly kind: K };
 export type Variable<K extends ValueKind> = {readonly id: string; readonly kind: K};
@@ -28,6 +28,9 @@ export class ProgramBuilder {
   asset<K extends Asset['kind']>(kind: K, data: Omit<Asset,'kind'>): AssetRef<K> { this.data.assets.push({...data,kind}); return {id:data.id,kind}; }
   global(value: Slot): this { this.data.globals.push(value); return this; }
   function(value: ProgramFunction): this { this.data.functions.push(value); return this; }
+  source(at:string,source:SourceLocation):this {const entries=parseSourceMap([{at,source}]);this.data.sourceMap=[...(this.data.sourceMap??[]),...entries];return this;}
+  obligation(value:PortObligation):this {this.data.obligations=[...(this.data.obligations??[]),parsePortObligation(value)];return this;}
+  mapping(value:BehaviorMapping):this {this.data.behaviorMappings=[...(this.data.behaviorMappings??[]),parseBehaviorMapping(value)];return this;}
   build(operations:OperationRegistry=emptyOperations): Program { return linkProgram(this.data,operations).copy(); }
 }
 export class LinkedProgram {
@@ -57,6 +60,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
     target(f.entry); ensure(f.code.length>0,'FUNCTION_EMPTY',f.id);
     for(let index=0;index<f.code.length;index++) {
       const i=f.code[index]; ensure(i,'INSTRUCTION','missing');
+      try {
       if(!['control.jump','control.branch','control.return','control.end'].includes(i.op))ensure(f.code[index+1],'FALLTHROUGH',i.at);
       switch(i.op) {
         case 'control.jump': target(i.target); break;
@@ -76,6 +80,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
         case 'extension.invoke': {const op=operations.get(i.operation,i.version);op.validateArgs(i.args,i.argsSchema);op.manifest.jumpTargets.forEach(target);break;}
         case 'audio.play': ensure(p.assets.find(a=>a.id===i.asset)?.kind==='audio','ASSET_KIND',i.at); break;
       }
+      }catch(error){if(error instanceof GalboxError)throw new GalboxError(error.code,error.reason,{...error.location,address:i.at});throw error;}
     }
   }
 }

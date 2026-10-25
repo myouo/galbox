@@ -193,7 +193,7 @@ export class Core {
   }
   private execute(i:Instruction):void {
     const wait=(w:NonNullable<Snapshot['wait']>)=>{this.s.wait=w;this.s.status='waiting';};
-    const task=(name:string,kind:Task['kind'],duration:number):Task=>({id:`task:${++this.s.counter}`,name,kind,status:'running',elapsed:0,duration,attempt:1});
+    const task=(name:string,kind:Task['kind'],duration:number):Task=>({id:`task:${++this.s.counter}`,name,kind,status:'running',elapsed:0,duration,attempt:1,at:i.at});
     switch(i.op) {
       case 'control.jump':this.top().pc=i.target;return;
       case 'control.branch': {
