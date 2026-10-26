@@ -94,3 +94,5 @@ G3-01 原创章节：[灯塔来信·光影回信](http://127.0.0.1:4173/?demo=st
 无 WebGL 的环境可直接自动使用基础 Canvas 模式，或打开 `http://127.0.0.1:4173/?renderer=canvas`；设备选项和已知效果边界见 [图像兼容性](docs/GRAPHICS.md)。Canvas 现支持有界滤镜与隔离转场；预算和模糊近似边界见图像兼容文档。
 
 影片/矩形热点/活动期限原创章节位于 `/?demo=interactive`（可加 `&renderer=canvas`），API与保存边界见 [影片](docs/VIDEO.md)、[互动](docs/INTERACTIONS.md)。完整通用功能与真实两作仍以任务表为准。
+
+版本化渐进媒体章节 `/?demo=streaming` 使用正式SDK与通用CLI/Vite Range服务；调用方显式接受URL版本等级，详见 [串流与完整性](docs/STREAMING.md)。完整SHA与版本地址不混用，慢速HTTP渐进证据单独记录。

@@ -1,3 +1,4 @@
+import {streamCatalog} from '../protocol/streams.js';
 import {startVideo,videoReport,videoEnded,videoSaveReason,validateVideo} from './video.js';
 import {prepareInteraction,activateInteraction,pickInteraction,tickInteraction,restoreInteraction} from '../protocol/interaction.js';
 import {initialAudioState,isAudioInstruction,audioExpressions,tickAudio,updateDuck,stopAudioTasks,bindVoice,mediaReport,mediaEnded,mediaSaveReason} from '../protocol/audio.js';
@@ -56,7 +57,7 @@ export class Core {
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(this.program.entry),rng=initialRng(this.program.rng,rngSeed);
-      const textLayout=initialTextLayout(this.program);this.s={...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
+      const textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program);this.s={...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
@@ -307,7 +308,7 @@ export class Core {
 }
 function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations,initial=false):Snapshot {
   const p=linkProgram(input,operations).copy(),s=parseSnapshot(snapshot);
-  s.invocations=s.invocations??[];
+  ensure(s.streamCatalog===streamCatalog(p),'RESTORE_STREAM_CATALOG','Streaming catalog/version changed; explicit migration required');s.invocations=s.invocations??[];
   for(let index=0;index<s.invocations.length;index++){
     const old=s.invocations[index];ensure(old,'RESTORE_INVOCATION','Missing invocation');
     const frame=s.frames[old.frameDepth-1];const code=p.functions.find(f=>f.id===frame?.functionId)?.code;const target=code?.find(i=>i.at===old.at);

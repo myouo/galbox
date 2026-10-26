@@ -13,3 +13,5 @@ SourceMap diagnostics retain address/file/line/column. Missing necessary mapping
 saves analyze/verify use explicitly registered sources or --internal. Internal verify requires --profile. Verification prepares a bounded candidate without storage writes or guessed human/media results; originalReference remains not-verified. Missing input and unsupported sources return exit 2; validation errors return 1.
 
 No automatic npm publish or external deploy is performed. M5 backups/content migration/platform budgets and N/F original-reference certification are separate work.
+
+Versioned streaming: `@galbox/cli/stream-http` exports `serveVersionedMedia(root,request,response)` and `versionedMediaPlugin(root)`. CLI dev serves content-SHA versioned GET/HEAD/Range with strong ETag/immutable headers and rejects stale versions; static deployments need an equivalent server contract. Browser code must explicitly opt into `streaming:{integrity:'versioned-url'}`. This metadata guarantee is weaker than complete client digest verification.

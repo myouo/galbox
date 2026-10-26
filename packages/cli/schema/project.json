@@ -61,6 +61,24 @@
               "buffer",
               "element"
             ]
+          },
+          "transport": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "versioned-url"
+              },
+              "version": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+              }
+            },
+            "required": [
+              "kind",
+              "version"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

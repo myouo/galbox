@@ -193,6 +193,24 @@
             "buffer",
             "element"
           ]
+        },
+        "transport": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "versioned-url"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "version"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -2834,6 +2852,10 @@
         },
         "audioState": {
           "$ref": "#/definitions/AudioState"
+        },
+        "streamCatalog": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,65536}$"
         }
       },
       "required": [
@@ -10126,6 +10148,227 @@
           "additionalProperties": false
         }
       ]
+    },
+    "ResolvedStreamIdentity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "gameId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "release": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "catalogSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "assetId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "expectedSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+            },
+            "kind": {
+              "type": "string",
+              "const": "audio"
+            },
+            "mime": {
+              "type": "string",
+              "enum": [
+                "audio/wav",
+                "audio/mpeg",
+                "audio/ogg"
+              ]
+            }
+          },
+          "required": [
+            "gameId",
+            "release",
+            "catalogSha256",
+            "assetId",
+            "expectedSha256",
+            "version",
+            "kind",
+            "mime"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "gameId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "release": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "catalogSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "assetId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "expectedSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+            },
+            "kind": {
+              "type": "string",
+              "const": "video"
+            },
+            "mime": {
+              "type": "string",
+              "enum": [
+                "video/webm"
+              ]
+            }
+          },
+          "required": [
+            "gameId",
+            "release",
+            "catalogSha256",
+            "assetId",
+            "expectedSha256",
+            "version",
+            "kind",
+            "mime"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "StreamDescriptor": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "$ref": "#/definitions/ResolvedStreamIdentity"
+        },
+        "uri": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,4096}$"
+        }
+      },
+      "required": [
+        "identity",
+        "uri"
+      ],
+      "additionalProperties": false
+    },
+    "IntegrityEvidence": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "const": "expected"
+            },
+            "expectedSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "level",
+            "expectedSha256"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "const": "digest-verified"
+            },
+            "expectedSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "verifiedSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 67108864
+            }
+          },
+          "required": [
+            "level",
+            "expectedSha256",
+            "verifiedSha256",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "const": "versioned-url"
+            },
+            "expectedSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+            },
+            "etag": {
+              "type": "string",
+              "pattern": "^\"[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}\"$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 67108864
+            }
+          },
+          "required": [
+            "level",
+            "expectedSha256",
+            "version",
+            "etag",
+            "bytes"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "StreamingOptions": {
+      "type": "object",
+      "properties": {
+        "integrity": {
+          "type": "string",
+          "const": "versioned-url"
+        }
+      },
+      "required": [
+        "integrity"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

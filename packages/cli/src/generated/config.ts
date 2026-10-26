@@ -15,6 +15,10 @@ export interface ProjectConfig {
     path: string;
     mime: "image/svg+xml" | "image/png" | "audio/wav" | "font/ttf" | "audio/mpeg" | "audio/ogg" | "video/webm";
     playback?: "buffer" | "element";
+    transport?: {
+      kind: "versioned-url";
+      version: string;
+    };
   }[];
   series?: string;
   resourcePolicy?: string;

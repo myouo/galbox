@@ -1,0 +1,21 @@
+# 版本化媒体串流与完整性
+
+普通资源仍由provider.acquire取得独占bytes并计算完整SHA-256。串流必须明确声明 Asset.transport={kind:'versioned-url',version}，仅允许element音频/已有video格式；Builder推断media.stream能力。必须提供正式release与资源事实，并在createPlayer设置 streaming:{integrity:'versioned-url'}。省略策略即拒绝，不默默降低原有验证或改为完整下载。
+
+createHttpProvider提供streams端口，默认限同源。平台中立MediaStreamProvider.open接收streamRequest工厂生成的请求（game/release/catalogSHA/asset/kind/MIME/预期SHA/version与相应媒体fact），使用Cancellation而不是AbortSignal，返回身份/HTTP URI/归还函数。Audio与Video fact在真实工厂关联；外部返回结构仍由Host校验。自定义provider不能靠verified标签升级等级。
+
+Host自己执行条件HEAD：If-Match等于强版本ETag，检查长度与release fact一致、MIME、identity编码、Range bytes、immutable缓存承诺及无redirect。URI必须HTTP(S)、无内嵌凭据/fragment，galbox-version参数匹配逻辑版本。默认provider为每个Host租约追加独立nonce；自定义跨源必须允许匿名CORS和HEAD/If-Match，并暴露这些响应头。
+
+完整性等级明确区分：expected仅为目录期待；digest-verified是实际完整bytes摘要相符；versioned-url仅表示版本地址和HTTP元数据已经核对。预期SHA和强ETag都不是客户端已经验证完整文件，即使原生播放器下载完也不自动升级。原生媒体GET/range响应不由JS逐字节校验，因此依赖源站维持同版本URL不可变、Range同一表示、过期版本拒绝。不能防恶意源站在同版本下伪造等长同形内容；需要密码完整性时保留bytes路径，不接受versioned-url策略。
+
+资源诊断integrity逐资产给出等级和factOrigin（inspected或manifest）。encodedBytes是实际取得并摘要验证的bytes库存；streamDeclaredBytes是远端目录长度，catalogEncodedBytes是预算内总目录长度；stream没有私有Blob或整轨AudioBuffer。decoded/texture估计不等于decoder/RAM/VRAM测量，现有每档/总目录和媒体时长上限仍适用。
+
+初始化检查metadata/实际设备解码，接管前和每个新播放attempt再次HEAD。旧槽恢复前版本不符则不换head、不回写profile，槽可导出。Core保存有界streamCatalog逻辑目录token，跨目录/路径/摘要/版本的旧快照无显式迁移就拒绝；不保存临时URI、租约、验证等级或物理播放位置。replay/stop/forbid沿已有语义。
+
+每个Host拥有自己的准备缓存租约，播放请求有独立epoch/attempt/取消及element；stop/cancel清理本请求，Host失败/dispose归还每个租约恰好一次。迟到provider结果也会归还，不能复活。共享provider不得把一个租约的取消当作全部消费者取消。release失败时SDK仍清自己的图像/音频与其它租约并报告STREAM_LEASE，provider仍负责其外部资源的实际归还。
+
+buffering是媒体事实，不制造自然end。网络/解码错误或异常短结束显式失败；没有自动猜完成或透明重连。可在网络恢复后新建Host并重播合法切点。源站在HEAD与GET之间违背immutable契约的恶意替换不等于已被客户端密码检测，范围必须保持诚实。
+
+CLI提供@galbox/cli/stream-http的serveVersionedMedia/versionedMediaPlugin，CLI dev和playground dev/preview已接入：内容SHA作版本、If-Match、单Range/后缀Range、强ETag/identity/immutable，版本失配412，路径/外部symlink拒绝。本地工具为发布计算完整摘要是正常的，不等于客户端先下载完整媒体。静态部署也必须配置相同HTTP契约；不会自动发布服务器。不同源站可以实现同样协议，不能用弱ETag静态服务冒充。
+
+示例 /?demo=streaming 为原创长音调与合成测试图案，客户端沿正式SDK。慢速HTTP证据记录实际发送区间去重后再比较文件总长；仅“响应还没关闭”不能证明渐进播放。完整证据见evidence/g3-04/REPORT.md、stream-progress.json，决策ADR0024。

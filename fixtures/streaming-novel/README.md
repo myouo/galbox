@@ -1,0 +1,3 @@
+原创《灯塔来信·海上传声》验证正式SDK的版本化音视频、保存重播和诚实完整性等级。80秒正弦音与16秒合成测试图案/正弦音均由build-media.mjs声明生成，不是真人或真实作品素材。正常pnpm fixture使用提交的编码；可选重建需要ffmpeg并重建摘要/manifest后重验。
+
+pnpm dev后/?demo=streaming由通用版本化HTTP中间件服务，资产version使用其内容SHA，调用端显式接受versioned-url等级。真实慢速HTTP的渐进证明在测试服务器，不能把快速服务器下原生预取全文件冒充渐进证据。

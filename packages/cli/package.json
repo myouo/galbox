@@ -1,5 +1,32 @@
 {
-  "name":"@galbox/cli","version":"0.1.0","type":"module","license":"UNLICENSED","engines":{"node":">=22.12"},
-  "bin":{"galbox":"./dist/main.js"},"exports":{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"}},
-  "files":["dist","templates","schema","README.md"],"dependencies":{"galbox-sdk":"workspace:*","vite":"8.3.5"}
+  "name": "@galbox/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "bin": {
+    "galbox": "./dist/main.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./stream-http": {
+      "types": "./dist/stream-http.d.ts",
+      "import": "./dist/stream-http.js"
+    }
+  },
+  "files": [
+    "dist",
+    "templates",
+    "schema",
+    "README.md"
+  ],
+  "dependencies": {
+    "galbox-sdk": "workspace:*",
+    "vite": "8.3.5"
+  }
 }

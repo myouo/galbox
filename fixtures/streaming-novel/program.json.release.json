@@ -1,0 +1,51 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-streaming",
+  "release": "streaming-1",
+  "series": "1",
+  "programSha256": "57d6c99cbbfadc65a10db3c65dc044666000142d564acf5793fe5bcbaae6420a",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "c76c2b93a4aedf25ce86fc5e8d2fc49ce0b29265c5de1b5c4637911f5beeb7a6",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "radio",
+      "kind": "audio",
+      "bytes": 1280646,
+      "playback": "element",
+      "encoding": "mp3",
+      "sampleRate": 44100,
+      "channels": 1,
+      "frames": 3529728
+    },
+    {
+      "id": "window",
+      "kind": "video",
+      "bytes": 584795,
+      "format": "webm",
+      "codec": "vp8",
+      "width": 320,
+      "height": 180,
+      "durationMs": 16008,
+      "audio": "opus"
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

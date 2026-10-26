@@ -10,6 +10,7 @@
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
 | 媒体 | WAV/MP3/单流 Ogg Vorbis/Opus；验证 Blob 的长媒体 element 与 buffer、自然完成/等待、循环点、bus 淡化/语音 duck、当前正文重播；replay 从零/stop，不含网络流与精确 seek，见 MEDIA.md |
 | 影片 / 互动 | opaque WebM/VP8及单Opus/Vorbis音轨，同Pixi canvas/WebGL与Canvas；startup/自然end/skip分离，replay/forbid；矩形热点/键盘、一次求值enabled、prepared启用屏障、活动期限/明示timeout和剩余时间恢复，见VIDEO/INTERACTIONS |
+| 串流 / 完整性 | 显式版本化HTTP element媒体、条件HEAD/身份校验、中立取消/租约、expected/digest-verified/versioned-url分级；慢速Range渐进/恢复重验。URL等级依赖源站immutable契约，不冒充完整摘要，见STREAMING.md |
 | 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载；TrueType目录/真实字体准备与独有FontFace释放 |
 | 工作 / 持久进度 | 同步工作 profile、冻结提交批次、幂等回执、修订冲突、普通已读/解锁自动提交 |
 | 有状态操作 | 真实 codec/操作工厂、冻结表、每调用 State、signal wait、隔离和失败原子性、禁止重入 |

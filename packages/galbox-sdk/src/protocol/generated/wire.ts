@@ -1478,6 +1478,53 @@ export type InteractionEvent =
       x: number;
       y: number;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ResolvedStreamIdentity".
+ */
+export type ResolvedStreamIdentity =
+  | {
+      gameId: string;
+      release: string;
+      catalogSha256: string;
+      assetId: string;
+      expectedSha256: string;
+      version: string;
+      kind: 'audio';
+      mime: 'audio/wav' | 'audio/mpeg' | 'audio/ogg';
+    }
+  | {
+      gameId: string;
+      release: string;
+      catalogSha256: string;
+      assetId: string;
+      expectedSha256: string;
+      version: string;
+      kind: 'video';
+      mime: 'video/webm';
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "IntegrityEvidence".
+ */
+export type IntegrityEvidence =
+  | {
+      level: 'expected';
+      expectedSha256: string;
+    }
+  | {
+      level: 'digest-verified';
+      expectedSha256: string;
+      verifiedSha256: string;
+      bytes: number;
+    }
+  | {
+      level: 'versioned-url';
+      expectedSha256: string;
+      version: string;
+      etag: string;
+      bytes: number;
+    };
 
 export interface Wire {
   program: Program;
@@ -1533,6 +1580,10 @@ export interface Asset {
   sha256: string;
   mime: 'image/svg+xml' | 'image/png' | 'audio/wav' | 'font/ttf' | 'audio/mpeg' | 'audio/ogg' | 'video/webm';
   playback?: 'buffer' | 'element';
+  transport?: {
+    kind: 'versioned-url';
+    version: string;
+  };
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1926,6 +1977,7 @@ export interface Snapshot {
   textLayout?: TextLayoutState;
   scene?: StageScene;
   audioState?: AudioState;
+  streamCatalog?: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -3330,4 +3382,19 @@ export interface AudioPlaybackEvent {
 export interface GraphicsOptions {
   renderer: 'auto' | 'webgl' | 'canvas';
   maxCanvasBytes?: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StreamDescriptor".
+ */
+export interface StreamDescriptor {
+  identity: ResolvedStreamIdentity;
+  uri: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StreamingOptions".
+ */
+export interface StreamingOptions {
+  integrity: 'versioned-url';
 }

@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G3-04",
+  "current_task": "G4-01",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1664,9 +1664,9 @@
       "depends_on": [
         "G3-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "versioned streaming asset lease and integrity evidence",
         "network-progressive media without whole-file acquisition barrier"
@@ -1683,9 +1683,21 @@
         "stream-integrity",
         "stream-cancel-isolation"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g3-04/REPORT.md",
+        "docs/evidence/g3-04/check.log",
+        "docs/evidence/g3-04/unit.log",
+        "docs/evidence/g3-04/browser-results.json",
+        "docs/evidence/g3-04/stream-progress.json",
+        "docs/evidence/g3-04/consumer-result.json",
+        "docs/evidence/g3-04/result.json",
+        "docs/evidence/g3-04/performance.json",
+        "docs/evidence/g3-04/release-audit.json",
+        "docs/evidence/g3-04/dev-result.json",
+        "docs/evidence/g3-04/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "按v0.6资源身份/IntegrityEvidence扩展平台中立lease与Web流式adapter；以慢速分块真实HTTP证明未整轨下载即播放，区分目录预期摘要/已验证字节/版本化URL保障级别，验证取消隔离、断网/身份变化和恢复；现有Blob渐进解码不得冒充网络流。"
+      "next_action": "有限版本化HTTP element媒体/分级完整性/租约取消/恢复目录绑定验收完成；下一G4-01同切点图文存读档/槽位管理。URL等级依赖源站immutable契约，不冒充客户端密码验证或任意协议/规模认证。"
     },
     {
       "id": "G4-01",
@@ -1716,7 +1728,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定同一capture切点的正文+舞台缩略图、槽位元数据/自动快速槽/原子提交与故障回执ADR，再实现默认存读档管理、实际IndexedDB/刷新与独立tarball。"
     },
     {
       "id": "G4-02",
