@@ -1,0 +1,1 @@
+最终支持集、命令、失败与重验见 [REPORT](REPORT.md)。完整104浏览器与最后React key变更后的ui-recheck两设备共同覆盖最终UI；check/unit/consumer/cli/compat/performance/release及其JSON为最终门槛。flowchart-result、原生dev-result/截图及source-manifest为实际行为和源码绑定。check-first等、browser-first/second/third、dialog-debug为保留的过程证据。

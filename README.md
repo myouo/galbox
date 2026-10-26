@@ -100,3 +100,5 @@ G3-01 原创章节：[灯塔来信·光影回信](http://127.0.0.1:4173/?demo=st
 G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子回执、上一修订和手动/自动/快速槽；默认菜单可管理图片、命名和确认覆盖/删除。示例 `/?demo=layout&autoSave=1`，支持 `&renderer=canvas`；API/策略/故障边界见 [存档系统](docs/SAVES.md)。
 
 历史语音与有界受控回溯见 [HISTORY](docs/HISTORY.md)：原创 `/?demo=history` 使用正式SDK保存确认切点、独立回放与当前profile激活，默认界面提供回溯确认；支持Canvas。实际任务/验证状态见任务表。
+
+剧情流程图与声明章节入口见 [FLOWCHART](docs/FLOWCHART.md)：原创 `/?demo=flowchart` 提供访问/显式及条件解锁、章首重新初始化、当前profile校验与默认连线/筛选/确认界面，可加 `&renderer=canvas`。

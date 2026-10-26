@@ -39,3 +39,5 @@ G3-04保留v0.6网络流式媒体与分级IntegrityEvidence：现有G3-02的Blob
 G3-03影片/热点/限时交互有限集沿ADR0023同源Schema/工厂/Core/Host/默认UI，实例仅声明媒体、选项/矩形/分支/timeout和策略；固定画幅热点不扩张为完整GUI或任意命中系统。真正网络流仍保留G3-04。
 
 G4-01图文存档与G4-02历史语音/有界受控回溯的有限集已沿正式SDK/Storage/Host/默认UI验收，见SAVES/HISTORY与对应evidence。实例只给内容/策略，历史不会重建不存在的剧情切点。G5流程图/鉴赏、G6剧本UI与完整默认界面、G7集成规模仍未完成。
+
+G5-01有限流程图与章节入口已沿Schema/真实工厂/Core/进度批次/Player/默认DOM-SVG界面验收，见FLOWCHART与evidence/g5-01。重入从声明完整章首初始化并重验当前durable profile，不能任意赋PC；G5-02鉴赏、G6及G7尚未完成。

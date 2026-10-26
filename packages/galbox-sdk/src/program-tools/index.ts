@@ -28,3 +28,7 @@ export {streamRequest} from '../runtime/stream-ports.js';
 export type {Cancellation,MediaKind,MediaStreamLease,MediaStreamProvider,MediaStreamRequest} from '../runtime/stream-ports.js';
 
 export {historyPolicy} from '../runtime/history.js';
+
+export {flowChapter,flowNode,flowEdge,flowchart,visitNode,unlockNode} from './flow.js';
+export type {FlowNodeRef,FlowNodeOptions} from './flow.js';
+export {flowchartFingerprint,flowchartProgressFingerprint} from '../protocol/flow.js';

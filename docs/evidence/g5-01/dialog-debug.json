@@ -1,0 +1,164 @@
+[
+  {
+    "tag": "DIV",
+    "cls": "",
+    "rect": {
+      "x": 411,
+      "y": 498.390625,
+      "width": 722,
+      "height": 193.34375
+    },
+    "overflow": "visible",
+    "display": "grid",
+    "scrollTop": 0,
+    "clientHeight": 191,
+    "scrollHeight": 191,
+    "scrollLeft": 0,
+    "clientWidth": 720,
+    "scrollWidth": 720
+  },
+  {
+    "tag": "DETAILS",
+    "cls": "flowchart-panel",
+    "rect": {
+      "x": 411,
+      "y": -114.9375,
+      "width": 410,
+      "height": 822.671875
+    },
+    "overflow": "visible",
+    "display": "grid",
+    "scrollTop": 0,
+    "clientHeight": 822,
+    "scrollHeight": 822,
+    "scrollLeft": 0,
+    "clientWidth": 410,
+    "scrollWidth": 722
+  },
+  {
+    "tag": "SECTION",
+    "cls": "modal",
+    "rect": {
+      "x": 410,
+      "y": 117,
+      "width": 460,
+      "height": 576
+    },
+    "overflow": "auto",
+    "display": "grid",
+    "scrollTop": 643,
+    "clientHeight": 574,
+    "scrollHeight": 2901,
+    "scrollLeft": 24,
+    "clientWidth": 458,
+    "scrollWidth": 746
+  },
+  {
+    "tag": "DIV",
+    "cls": "scrim",
+    "rect": {
+      "x": 0,
+      "y": 45,
+      "width": 1280,
+      "height": 720
+    },
+    "overflow": "visible",
+    "display": "grid",
+    "scrollTop": 0,
+    "clientHeight": 720,
+    "scrollHeight": 720,
+    "scrollLeft": 0,
+    "clientWidth": 1280,
+    "scrollWidth": 1280
+  },
+  {
+    "tag": "DIV",
+    "cls": "galbox-ui",
+    "rect": {
+      "x": 0,
+      "y": 45,
+      "width": 1280,
+      "height": 720
+    },
+    "overflow": "visible",
+    "display": "block",
+    "scrollTop": 0,
+    "clientHeight": 720,
+    "scrollHeight": 754,
+    "scrollLeft": 0,
+    "clientWidth": 1280,
+    "scrollWidth": 1280
+  },
+  {
+    "tag": "MAIN",
+    "cls": "galbox-player",
+    "rect": {
+      "x": 0,
+      "y": 45,
+      "width": 1280,
+      "height": 720
+    },
+    "overflow": "visible",
+    "display": "block",
+    "scrollTop": 0,
+    "clientHeight": 720,
+    "scrollHeight": 808,
+    "scrollLeft": 0,
+    "clientWidth": 1280,
+    "scrollWidth": 1280
+  },
+  {
+    "tag": "DIV",
+    "cls": "",
+    "rect": {
+      "x": 0,
+      "y": 45,
+      "width": 1280,
+      "height": 720
+    },
+    "overflow": "visible",
+    "display": "block",
+    "scrollTop": 0,
+    "clientHeight": 720,
+    "scrollHeight": 808,
+    "scrollLeft": 0,
+    "clientWidth": 1280,
+    "scrollWidth": 1280
+  },
+  {
+    "tag": "BODY",
+    "cls": "",
+    "rect": {
+      "x": 0,
+      "y": 45,
+      "width": 1280,
+      "height": 900
+    },
+    "overflow": "visible",
+    "display": "block",
+    "scrollTop": 0,
+    "clientHeight": 900,
+    "scrollHeight": 900,
+    "scrollLeft": 0,
+    "clientWidth": 1280,
+    "scrollWidth": 1280
+  },
+  {
+    "tag": "HTML",
+    "cls": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 945
+    },
+    "overflow": "visible",
+    "display": "block",
+    "scrollTop": 0,
+    "clientHeight": 900,
+    "scrollHeight": 945,
+    "scrollLeft": 0,
+    "clientWidth": 1280,
+    "scrollWidth": 1280
+  }
+]

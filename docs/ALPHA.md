@@ -63,3 +63,5 @@ G3-04有限版本化HTTP串流通过：显式较弱等级/正式manifest、中�
 G4-01有限图文存档集已通过177单元/92浏览器/strict独立消费/65 CLI/性能/API/原生无WebGL回归，见 [报告](evidence/g4-01/REPORT.md) 与 [保存系统](SAVES.md)。同切点DOM正文+舞台、原子图文/回执/上一修订、手动/快速/自动管理不扩大为全部G任务或真实作品兼容；下一G4-02。
 
 G4-02有限历史语音与受控回溯通过186单元/98浏览器/strict独立消费/65 CLI/性能/API/原生无WebGL验证，见 [报告](evidence/g4-02/REPORT.md) 与 [HISTORY](HISTORY.md)。合法确认切点/有界持久journal/当前profile与原head、独立回放/默认确认UI不扩大为无限历史/流程图或真实两作兼容；API P95实际26.5ms（旧4.4ms）增幅由G7跟进。下一G5-01。
+
+G5-01有限流程图/节点访问解锁/声明章节根通过192单元、104完整浏览器+最终UI两设备重验、strict独立消费、65 CLI、性能/API与原生无WebGL开发实测；见 [报告](evidence/g5-01/REPORT.md) 和 [FLOWCHART](FLOWCHART.md)。普通进度与声明入口绑定已闭合，G5-02鉴赏和G6/G7仍未完成。

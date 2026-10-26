@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G5-01",
+  "current_task": "G5-02",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1792,9 +1792,9 @@
         "G0-02",
         "G4-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "story graph state/checkpoints/default UI"
       ],
@@ -1810,9 +1810,22 @@
         "node-visit-unlock",
         "graph-safe-restore"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g5-01/REPORT.md",
+        "docs/evidence/g5-01/check.log",
+        "docs/evidence/g5-01/unit.log",
+        "docs/evidence/g5-01/browser-results.json",
+        "docs/evidence/g5-01/ui-recheck/browser-results.json",
+        "docs/evidence/g5-01/flowchart-result.json",
+        "docs/evidence/g5-01/consumer-result.json",
+        "docs/evidence/g5-01/result.json",
+        "docs/evidence/g5-01/performance.json",
+        "docs/evidence/g5-01/release-audit.json",
+        "docs/evidence/g5-01/dev-result.json",
+        "docs/evidence/g5-01/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定版本化流程图/章节节点、profile访问/解锁与合法重入入口绑定的有限ADR；再Schema/真实工厂/Core/runtime/默认UI、坏配置/存档/刷新/独立consumer验收。不能把文本历史或任意PC跳转冒充合法重入。"
+      "next_action": "ADR0027有限流程图/访问解锁/声明新根与恢复绑定验收完成；下一G5-02鉴赏、成就/全局解锁及回放隔离。"
     },
     {
       "id": "G5-02",
@@ -1842,7 +1855,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定义版本化CG/音乐/场景鉴赏与成就条目、资源kind/解锁绑定及回放隔离ADR；再Schema/真实工厂/SDK系统/默认UI、主线PC/profile隔离、持久解锁/刷新/独立consumer验证。"
     },
     {
       "id": "G6-01",

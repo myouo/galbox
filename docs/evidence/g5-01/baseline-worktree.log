@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-cVcadN afe6018
+HEAD is now at afe6018 feat: add voiced history and controlled rollback
+Preparing worktree (detached HEAD afe6018)

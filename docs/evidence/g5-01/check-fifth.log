@@ -1,0 +1,8 @@
+$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
+$ node scripts/generate.mjs --check
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+packages/galbox-sdk/src/protocol/flow.ts(34,17): error TS7056: The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed.
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

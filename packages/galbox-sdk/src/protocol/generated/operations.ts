@@ -740,6 +740,28 @@ export const operationSpecs = {
       "skippable",
       "restore"
     ]
+  },
+  "flow.node": {
+    "opcode": "flow.node",
+    "parameters": [
+      "at",
+      "node"
+    ],
+    "required": [
+      "at",
+      "node"
+    ]
+  },
+  "flow.unlock": {
+    "opcode": "flow.unlock",
+    "parameters": [
+      "at",
+      "node"
+    ],
+    "required": [
+      "at",
+      "node"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke","profile.expression"] as const;

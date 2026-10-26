@@ -1,3 +1,4 @@
+import {flowProgress,flowEntry,initialFlow,validateFlowRun} from '../protocol/flow.js';
 import {streamCatalog} from '../protocol/streams.js';
 import {startVideo,videoReport,videoEnded,videoSaveReason,validateVideo} from './video.js';
 import {prepareInteraction,activateInteraction,pickInteraction,tickInteraction,restoreInteraction} from '../protocol/interaction.js';
@@ -5,7 +6,7 @@ import {initialAudioState,isAudioInstruction,audioExpressions,tickAudio,updateDu
 import {executeAudio,replayVoice,validateAudioSnapshot} from './audio.js';
 import {isStageInstruction,initialScene,applyStageTask,taskObject,taskLocks,validateStageGraph} from '../protocol/stage.js';
 import {executeStage,removeStageObject,validateStageSnapshot} from './stage.js';
-import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,parseInteractionEvent } from '../protocol/index.js';
+import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,parseInteractionEvent,parseFlowProgress } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume,InteractionEvent } from '../protocol/index.js';
 import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
 import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
@@ -16,7 +17,7 @@ import {sampleI32,initialRng} from './rng.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { emptyOperations, operationContext } from './operations.js';
 import type { OperationRegistry } from './operations.js';
-export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';readonly rngSeed?:number;}
+export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';readonly rngSeed?:number;readonly entryNode?:string;}
 export type CoreEvent =
  | {type:'history.session';id:string}
  | InteractionEvent
@@ -32,7 +33,7 @@ export type CoreEvent =
  | {type:'retry'; task:string}
  | {type:'flushAck'; revision:number};
 export type Effect = {type:'video';task:Task} | {type:'video-stop'} | {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
-export type ProgressChange = {seq:number; type:'read'; unit:string} | {seq:number; type:'set'; key:string; value:Value};
+export type ProgressChange = import('../protocol/index.js').ProgressChangeWire;
 export interface CoreView { readonly run: DeepReadonly<Snapshot>; readonly profile: DeepReadonly<Profile>; readonly dirty:number; readonly error:string|null; readonly canSave:boolean; readonly saveReason:string|null; }
 function positions(p: Position): Position { return {...p}; }
 function values(slots: readonly {id:string;initial:Value}[]): Record<string,Value> { return Object.fromEntries(slots.map(s=>[s.id,parseValue(s.initial)])); }
@@ -52,13 +53,13 @@ export class Core {
   private revoked=false;
   private recovering=false;
   private reducing=false;
-  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number) {
+  constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number,entryNode?:string) {
     ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
-    this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);
+    this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);flowProgress(this.program,this.profile);ensure(snapshot===undefined||entryNode===undefined,'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
-      const entry=this.fn(this.program.entry),rng=initialRng(this.program.rng,rngSeed);
-      const textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program);this.s={...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
+      const entry=this.fn(entryNode===undefined?this.program.entry:flowEntry(this.program,this.profile,entryNode)),rng=initialRng(this.program.rng,rngSeed);
+      const textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program),flow=initialFlow(this.program,entryNode??null);this.s={...(flow?{flow}:{}),...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
@@ -78,9 +79,10 @@ export class Core {
     ensure(map[id]?.kind===v.kind,'SLOT_KIND',id);map[id]=parseValue(v);
   }
   private setProfile(key:string,value:Value):void {ensure(!extendedValue(value)||this.program.capabilities.includes('values.extended'),'VALUE_CAPABILITY','Declare values.extended');this.profile.values[key]=parseValue(value);this.changes.push({seq:++this.progressSeq,type:'set',key,value:parseValue(value)});}
+  private markFlow(id:string,visited:boolean):void {const node=this.program.flowchart?.nodes.find(n=>n.id===id),state=flowProgress(this.program,this.profile);ensure(node&&state&&this.s.flow,'FLOW_NODE_UNKNOWN',id);const before=JSON.stringify(state);if(visited&&!state.visited.includes(id))state.visited.push(id);if(!state.unlocked.includes(id))state.unlocked.push(id);const next=parseFlowProgress(state);if(before!==JSON.stringify(next)){this.profile.flow=next;this.changes.push({seq:++this.progressSeq,type:'flow',value:parseFlowProgress(next)});}if(visited)this.s.flow.current=id;}
   private read():void { const text=this.s.text;ensure(text,'TEXT','No page');const unit=readUnit(text);if(!this.profile.read.includes(unit)){this.profile.read.push(unit);this.changes.push({seq:++this.progressSeq,type:'read',unit});} }
   view():CoreView {ensure(!this.reducing,'CORE_REENTRANT','Use the reducer context');return {run:parseSnapshot(this.s),profile:parseProfile(this.profile),dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()};}
-  pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:{...c});}
+  pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:c.type==='flow'?{...c,value:parseFlowProgress(c.value)}:{...c});}
   acknowledge(through:number,revision:number):void { ensure(!this.reducing,'CORE_REENTRANT','No receipt mutation inside a reducer');ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
   private operationSaveAllowed():boolean {const w=this.s.wait;if(w?.kind!=='operation')return true;const saved=this.s.invocations?.find(v=>v.id===w.invocation);if(!saved)return false;const op=this.operations.get(saved.operation,saved.version);return op.manifest.save==='safe'&&op.manifest.restore==='continue';}
   canSave():boolean {return this.operationSaveAllowed()&&!videoSaveReason(this.s)&&!mediaSaveReason(this.s)&&!this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
@@ -249,9 +251,12 @@ export class Core {
         frame.returnTo={callAt:i.at,returnAt:this.next(),...(i.dest?{dest:i.dest}:{})};this.s.frames.push(frame);return;
       }
       case 'control.return': {
+        if(this.s.frames.length===1&&this.s.flow?.entryNode){ensure(!i.value,'FLOW_RETURN','Chapter root must return void');this.s.status='ended';this.s.wait=null;return;}
         const result=i.value?this.get(i.value):undefined;const frame=this.top();ensure(frame.returnTo&&this.s.frames.length>1,'RETURN_FRAME',i.at);
         this.s.frames.pop();this.s.invocations=this.s.invocations?.filter(v=>v.frameDepth<=this.s.frames.length)??[];if(frame.returnTo.dest){ensure(result,'RETURN_VALUE',i.at);this.put(frame.returnTo.dest,result);}this.top().pc=frame.returnTo.returnAt;return;
       }
+      case 'flow.node':this.markFlow(i.node,true);break;
+      case 'flow.unlock':this.markFlow(i.node,false);break;
       case 'control.end':this.s.status='ended';this.s.wait=null;return;
       case 'extension.invoke':this.invokeOperation(i);return;
       case 'value.set':this.put(i.dest,this.get(i.value));break;
@@ -327,7 +332,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   if(s.text?.template){const text=s.text,origin=text.template,source=p.functions.flatMap(f=>f.code).find(i=>i.at===origin?.at);ensure(source?.op==='text.template'&&text.textId===source.textId&&text.revision===source.revision&&text.revealed<=length(text.content)&&origin?.signature===templateSignature(source.speaker,source.content),'RESTORE_TEMPLATE','Displayed template changed; explicit migration required');}
   validateWindowState(p,s);
   ensure(s.status==='waiting'||s.status==='ended','RESTORE_PHASE','Only semantic waits and end are restorable');
-  ensure(s.frames.length>0&&s.frames[0]?.functionId===p.entry&&!s.frames[0].returnTo,'RESTORE_FRAME','Invalid entry frame');
+  const root=validateFlowRun(p,s);ensure(s.frames.length>0&&s.frames[0]?.functionId===root&&!s.frames[0].returnTo,'RESTORE_FRAME','Invalid entry frame');
   const checkSlots=(actual:Record<string,Value>,expected:readonly {id:string;kind:string}[])=>{
     ensure(Object.keys(actual).length===expected.length,'RESTORE_SLOTS','Slot count');
     for(const def of expected)ensure(actual[def.id]?.kind===def.kind,'RESTORE_SLOT_KIND',def.id);
@@ -344,7 +349,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   }
   const top=s.frames.at(-1);const op=p.functions.find(f=>f.id===top?.functionId)?.code.find(i=>i.at===top?.pc);ensure(op,'RESTORE_PC','missing');
   const w=s.wait;
-  if(s.status==='ended')ensure(op.op==='control.end'&&!w,'RESTORE_PHASE','End mismatch');
+  if(s.status==='ended')ensure((op.op==='control.end'||op.op==='control.return'&&s.frames.length===1&&!!s.flow?.entryNode&&!op.value)&&!w,'RESTORE_PHASE','End mismatch');
   else {
     ensure(w&&w.at===op.at,'RESTORE_WAIT','PC/wait mismatch');
     ensure((w.kind==='text'&&(op.op==='text.page'||op.op==='text.template'||op.op==='text.rich'))||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke')||(w.kind==='media'&&op.op==='audio.wait')||(w.kind==='interaction'&&op.op==='interaction.prompt')||(w.kind==='video'&&op.op==='video.play'),'RESTORE_PHASE','Unsupported phase');
@@ -376,6 +381,6 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   for(const o of s.stage)ensure(p.assets.find(a=>a.id===o.asset)?.kind==='image','RESTORE_ASSET',o.asset);
   return s;
 }
-export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations,options.rngSeed);}
+export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations,options.rngSeed,options.entryNode);}
 
 export function validateRestore(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations):Snapshot {return validateSnapshot(input,snapshot,operations);}

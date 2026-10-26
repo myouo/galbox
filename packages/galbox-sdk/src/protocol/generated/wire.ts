@@ -398,6 +398,16 @@ export type Instruction =
       gain: number;
       skippable: boolean;
       restore: 'replay' | 'forbid';
+    }
+  | {
+      op: 'flow.node';
+      at: string;
+      node: string;
+    }
+  | {
+      op: 'flow.unlock';
+      at: string;
+      node: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1402,6 +1412,11 @@ export type ProgressChangeWire =
       type: 'set';
       key: string;
       value: Value;
+    }
+  | {
+      seq: number;
+      type: 'flow';
+      value: FlowProgress;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1568,6 +1583,7 @@ export interface Program {
   behaviorMappings?: BehaviorMapping[];
   rng?: RngConfig;
   textLayout?: TextLayout;
+  flowchart?: Flowchart;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1934,6 +1950,67 @@ export interface TextWindow {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "Flowchart".
+ */
+export interface Flowchart {
+  id: string;
+  revision: string;
+  /**
+   * @minItems 1
+   * @maxItems 16
+   */
+  chapters: [FlowChapter, ...FlowChapter[]];
+  /**
+   * @minItems 1
+   * @maxItems 128
+   */
+  nodes: [FlowNode, ...FlowNode[]];
+  /**
+   * @minItems 0
+   * @maxItems 256
+   */
+  edges: FlowEdge[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "FlowChapter".
+ */
+export interface FlowChapter {
+  id: string;
+  title: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "FlowNode".
+ */
+export interface FlowNode {
+  id: string;
+  chapter: string;
+  title: string;
+  description: string;
+  column: number;
+  row: number;
+  entry: string | null;
+  /**
+   * @minItems 0
+   * @maxItems 128
+   */
+  requires: string[];
+  unlock: BoolExpression;
+  gate: BoolExpression;
+  reveal: 'always' | 'unlocked';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "FlowEdge".
+ */
+export interface FlowEdge {
+  from: string;
+  to: string;
+  label: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Snapshot".
  */
 export interface Snapshot {
@@ -1979,6 +2056,7 @@ export interface Snapshot {
   audioState?: AudioState;
   streamCatalog?: string;
   historySession?: string;
+  flow?: FlowRun;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2305,6 +2383,15 @@ export interface AudioState {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "FlowRun".
+ */
+export interface FlowRun {
+  signature: string;
+  entryNode: string | null;
+  current: string | null;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Profile".
  */
 export interface Profile {
@@ -2316,6 +2403,26 @@ export interface Profile {
    * @maxItems 20000
    */
   read: string[];
+  flow?: FlowProgress;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "FlowProgress".
+ */
+export interface FlowProgress {
+  graphId: string;
+  revision: string;
+  signature: string;
+  /**
+   * @minItems 0
+   * @maxItems 128
+   */
+  visited: string[];
+  /**
+   * @minItems 0
+   * @maxItems 128
+   */
+  unlocked: string[];
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

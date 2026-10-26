@@ -2067,6 +2067,52 @@
             "restore"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "flow.node",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "node": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "node"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "flow.unlock",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "node": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "node"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -2206,6 +2252,9 @@
         },
         "textLayout": {
           "$ref": "#/definitions/TextLayout"
+        },
+        "flowchart": {
+          "$ref": "#/definitions/Flowchart"
         }
       },
       "required": [
@@ -2242,6 +2291,9 @@
             "pattern": "^[^\\x00]{1,4096}$"
           },
           "maxItems": 20000
+        },
+        "flow": {
+          "$ref": "#/definitions/FlowProgress"
         }
       },
       "required": [
@@ -2864,6 +2916,9 @@
         "historySession": {
           "type": "string",
           "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,191}$"
+        },
+        "flow": {
+          "$ref": "#/definitions/FlowRun"
         }
       },
       "required": [
@@ -3458,6 +3513,29 @@
             "seq",
             "type",
             "key",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "seq": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "type": {
+              "type": "string",
+              "const": "flow"
+            },
+            "value": {
+              "$ref": "#/definitions/FlowProgress"
+            }
+          },
+          "required": [
+            "seq",
+            "type",
             "value"
           ],
           "additionalProperties": false
@@ -10756,6 +10834,251 @@
         "authority",
         "revision",
         "signature"
+      ],
+      "additionalProperties": false
+    },
+    "FlowChapter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "title": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,128}$"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "FlowNode": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "chapter": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "title": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,128}$"
+        },
+        "description": {
+          "type": "string",
+          "pattern": "^[^\\x00]{0,1024}$"
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "entry": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+          },
+          "maxItems": 128,
+          "minItems": 0
+        },
+        "unlock": {
+          "$ref": "#/definitions/BoolExpression"
+        },
+        "gate": {
+          "$ref": "#/definitions/BoolExpression"
+        },
+        "reveal": {
+          "enum": [
+            "always",
+            "unlocked"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "chapter",
+        "title",
+        "description",
+        "column",
+        "row",
+        "entry",
+        "requires",
+        "unlock",
+        "gate",
+        "reveal"
+      ],
+      "additionalProperties": false
+    },
+    "FlowEdge": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[^\\x00]{0,128}$"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "Flowchart": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "chapters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FlowChapter"
+          },
+          "maxItems": 16,
+          "minItems": 1
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FlowNode"
+          },
+          "maxItems": 128,
+          "minItems": 1
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FlowEdge"
+          },
+          "maxItems": 256,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "chapters",
+        "nodes",
+        "edges"
+      ],
+      "additionalProperties": false
+    },
+    "FlowProgress": {
+      "type": "object",
+      "properties": {
+        "graphId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "visited": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "unlocked": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "graphId",
+        "revision",
+        "signature",
+        "visited",
+        "unlocked"
+      ],
+      "additionalProperties": false
+    },
+    "FlowRun": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "entryNode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "signature",
+        "entryNode",
+        "current"
       ],
       "additionalProperties": false
     }

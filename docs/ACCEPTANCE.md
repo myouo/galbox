@@ -102,3 +102,5 @@ G3-04：`versioned-media-stream` 以实际慢速HTTP记录发送区间去重，�
 G4-01：`same-cut-thumbnail` 用真实 PNG 像素和 DOM 字体/Ruby/NVL/揭示状态验证正文+舞台，延迟写入后剧情已变而图/摘要/快照仍一致；WebGL/Canvas 均实跑，自定义无 capture、禁存/abort 要拒绝。`atomic-slot-image` 检查事务失败不改旧槽/上一修订、完整 payload 摘要回执/失回执核验与 unknown 同 payload 重试、dispose 后已提交准确返回，备份携带成对图片且保当前进度。`slot-management` 检查默认 UI 命名/确认覆盖/删除/上一修订、expectedRevision 冲突、自动循环/读档不覆盖/profile 快速隔离、真实 IndexedDB 刷新和 strict 独立 tarball。
 
 G4-02：`backlog-voice` 要真实buffer/element/版本化HTTP语音，菜单暂停剧情仍可回放、当前master/voice偏好、其它暂停原因、blocked重试/迟到取消/双实例隔离；Core PC/等待/已读/语音门不因预览变更。`rollback-progress-authority` 要预算1/8/100真实确认切点、显完/旧输入不产点，嵌套帧/RNG/动画恢复且当前已读/解锁/偏好不被旧档覆盖；禁存/超限/旧档无点/坏点/失败/提交后pending、实际IndexedDB刷新、完整journal备份迁移/旧会话拒写、默认确认UI与strict独立消费。
+
+G5-01：`node-visit-unlock` 需真实工厂/Builder正反类型、坏边/位置/入口/slot条件拒绝，预算1/8/100相同访问/显式解锁、当前profile派生条件与只读投影隔离、单调幂等批次/旧档不抹新进度。`graph-safe-restore` 需声明新根/嵌套return与恢复、重置章内globals/RNG、只读节点/锁/gate/当前禁存/过期epoch、最终durable重验、准备失败/失回执pending/旧写者拒绝、定义漂移/完整备份迁移、真实IndexedDB刷新、两绘图设备的默认图/筛选/可见确认与strict独立tarball。

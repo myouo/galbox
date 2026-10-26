@@ -122,3 +122,5 @@ G3-04有限HTTP串流见ADR0024/STREAMING.md：element音频/现有影片格式�
 G4-01 实施集按 ADR0025/SAVES：新 saveGame/原子回执、同切点图文 PNG、上一修订与命名/删除、profile 隔离快速槽和 opt-in 自动循环槽，默认 UI 和真实 IndexedDB/跨刷新/独立 tarball 验收；旧 save 无图兼容。
 
 G4-02有限集按ADR0026/HISTORY：真实确认前快照/逻辑历史ID、有界持久journal/完整备份迁移、独立buffer/element/版本流语音、当前profile与原activation head回溯，默认UI、失败/刷新/独立tarball验证。
+
+G5-01有限集按ADR0027/FLOWCHART：16章节/128节点/256边、访问/显式及条件解锁、profile/read gate、零参数void声明入口和完整新根、定义绑定/存档迁移、默认连线/筛选/确认、IndexedDB/刷新/独立消费。

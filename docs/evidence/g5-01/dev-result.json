@@ -1,0 +1,62 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173/?demo=flowchart",
+  "browser": "156.0.8078.4",
+  "launchArgs": [
+    "--disable-webgl"
+  ],
+  "nativeContextAPI": true,
+  "device": {
+    "webgl": false,
+    "canvas": true
+  },
+  "renderer": "canvas",
+  "firstStamp": {
+    "kind": "i32",
+    "value": 63
+  },
+  "secondStamp": {
+    "kind": "i32",
+    "value": 63
+  },
+  "declaredRoot": "archive",
+  "rootDepth": 1,
+  "resetStamp": {
+    "kind": "i32",
+    "value": 0
+  },
+  "progress": {
+    "graphId": "lighthouse-map",
+    "revision": "v1",
+    "signature": "b217f93cfacf3679a13942a180069e88087f6be4cb5f0a570e012881124c244b",
+    "visited": [
+      "prologue",
+      "shore",
+      "beacon",
+      "tower",
+      "archive"
+    ],
+    "unlocked": [
+      "prologue",
+      "shore",
+      "beacon",
+      "radio",
+      "tower",
+      "archive"
+    ]
+  },
+  "values": {
+    "shoreDone": {
+      "kind": "bool",
+      "value": true
+    },
+    "towerDone": {
+      "kind": "bool",
+      "value": true
+    }
+  },
+  "oldSavePreservedCurrentProgress": true,
+  "chapterFilter": true,
+  "canvasCount": 1,
+  "pageErrors": []
+}

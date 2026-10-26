@@ -73,7 +73,7 @@ export class Coordinator {
     const next=this.flushTail.catch(()=>{}).then(async()=>{
       if(this.stopped)return;
       const changes=this.core.pending();
-      if(!this.batch&&changes.length)this.batch=Object.freeze({id:`${this.sessionId}:p${++this.commitCounter}`,baseRevision:this.core.view().profile.revision,through:changes.at(-1)?.seq??0,changes:Object.freeze(changes.map(c=>c.type==='set'?Object.freeze({...c,value:freezeJson(c.value)}):Object.freeze(c)))});
+      if(!this.batch&&changes.length)this.batch=Object.freeze({id:`${this.sessionId}:p${++this.commitCounter}`,baseRevision:this.core.view().profile.revision,through:changes.at(-1)?.seq??0,changes:Object.freeze(changes.map(c=>c.type==='read'?Object.freeze({...c}):c.type==='set'?Object.freeze({...c,value:freezeJson(c.value)}):Object.freeze({...c,value:freezeJson(c.value)})))});
       if(this.batch){
         try {
           const receipt=await this.store.progress(this.batch,this.authority);
