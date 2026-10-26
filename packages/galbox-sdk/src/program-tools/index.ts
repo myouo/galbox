@@ -32,3 +32,7 @@ export {historyPolicy} from '../runtime/history.js';
 export {flowChapter,flowNode,flowEdge,flowchart,visitNode,unlockNode} from './flow.js';
 export type {FlowNodeRef,FlowNodeOptions} from './flow.js';
 export {flowchartFingerprint,flowchartProgressFingerprint} from '../protocol/flow.js';
+
+export {cgExtra,musicExtra,sceneExtra,achievement,extrasCatalog,unlockExtra,sceneMarker} from './extras.js';
+export type {ExtraRef,ExtraOptions} from './extras.js';
+export {extrasFingerprint} from '../protocol/extras.js';

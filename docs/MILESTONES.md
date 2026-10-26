@@ -124,3 +124,5 @@ G4-01 实施集按 ADR0025/SAVES：新 saveGame/原子回执、同切点图文 P
 G4-02有限集按ADR0026/HISTORY：真实确认前快照/逻辑历史ID、有界持久journal/完整备份迁移、独立buffer/element/版本流语音、当前profile与原activation head回溯，默认UI、失败/刷新/独立tarball验证。
 
 G5-01有限集按ADR0027/FLOWCHART：16章节/128节点/256边、访问/显式及条件解锁、profile/read gate、零参数void声明入口和完整新根、定义绑定/存档迁移、默认连线/筛选/确认、IndexedDB/刷新/独立消费。
+
+G5-02有限集按ADR0028/EXTRAS：128条目录/16CG差分、类型关联/声明场景根、自动条件闩锁和显式解锁、图标/预览/隔离临时进度、取消迟到/失权关闭/旧档与备份完整迁移、默认UI/两设备/独立消费者。

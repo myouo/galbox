@@ -1,0 +1,9 @@
+$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
+$ node scripts/generate.mjs --check
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+packages/galbox-sdk/src/protocol/extras.ts(16,748): error TS2339: Property 'node' does not exist on type 'Extract<{ id: string; title: string; description: string; unlock: BoolExpression; reveal: "always" | "unlocked"; kind: "cg"; images: [string, ...string[]]; }, { kind: K; }> | Extract<...> | Extract<...> | Extract<...>'.
+  Property 'node' does not exist on type 'Extract<{ id: string; title: string; description: string; unlock: BoolExpression; reveal: "always" | "unlocked"; kind: "cg"; images: [string, ...string[]]; }, { kind: K; }>'.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

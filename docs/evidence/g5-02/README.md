@@ -1,0 +1,1 @@
+最终支持集、命令、过程失败与限制见 [REPORT](REPORT.md)。check/unit/browser/consumer/cli/compatibility/performance/release无序号日志及JSON为最终门槛；browser完整112项覆盖最终代码。extras-result、原生dev-result/截图与source-manifest绑定实际行为和源码。带序号日志为保留的过程证据，不替代最后验收。

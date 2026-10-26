@@ -65,3 +65,5 @@ G4-01有限图文存档集已通过177单元/92浏览器/strict独立消费/65 C
 G4-02有限历史语音与受控回溯通过186单元/98浏览器/strict独立消费/65 CLI/性能/API/原生无WebGL验证，见 [报告](evidence/g4-02/REPORT.md) 与 [HISTORY](HISTORY.md)。合法确认切点/有界持久journal/当前profile与原head、独立回放/默认确认UI不扩大为无限历史/流程图或真实两作兼容；API P95实际26.5ms（旧4.4ms）增幅由G7跟进。下一G5-01。
 
 G5-01有限流程图/节点访问解锁/声明章节根通过192单元、104完整浏览器+最终UI两设备重验、strict独立消费、65 CLI、性能/API与原生无WebGL开发实测；见 [报告](evidence/g5-01/REPORT.md) 和 [FLOWCHART](FLOWCHART.md)。普通进度与声明入口绑定已闭合，G5-02鉴赏和G6/G7仍未完成。
+
+G5-02有限鉴赏/成就与隔离场景回放通过199单元、112完整浏览器、strict独立消费、65 CLI、4 synthetic、性能/API与原生无WebGL开发实测，见 [报告](evidence/g5-02/REPORT.md) 和 [EXTRAS](EXTRAS.md)。SDK SHA=faed999eb8824e697a5ab51effeffbcbf3042b298b8ecaaf5fb1c186ee1c85d2，CLI SHA=c420c4df4801237f2ad53c27bb3230d77953275972cab0c356b1575049119c7e；24新增/16声明变化/0删除，wire仍1/新cap，仍仅本地alpha。原创/?demo=extras支持Canvas，回放只写临时profile，刷新/旧档保当前收藏。G6/G7和真实N/F/M6仍未完成，父子实例总内存/大目录/其它设备另验。

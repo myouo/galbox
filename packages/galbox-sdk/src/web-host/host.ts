@@ -1,3 +1,4 @@
+import {openGalleryImage} from './gallery-image.js';
 import {HistoryVoiceController} from './history-voice.js';
 export type {HistoryVoiceView} from './history-voice.js';
 import {composeThumbnail} from './capture.js';
@@ -27,6 +28,15 @@ interface Playing {source:AudioNode;buffer?:AudioBufferSourceNode;element?:HTMLA
 export interface MediaDiagnostics {state:'buffering'|'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;loops:number;elementStarts:number;}
 export interface ResourceDiagnostics {catalogEncodedBytes:number;streamDeclaredBytes:number;integrity:{id:string;factOrigin:'inspected'|'manifest';evidence:IntegrityEvidence}[];canvasBlur:'native'|'cpu'|null;canvasBytesEstimated:number;canvasPeakBytesEstimated:number;canvasSurfaces:number;renderer:'webgl'|'canvas'|null;graphicsFallback:string|null;graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
+  private gallerySource:{program:Program;provider:AssetProvider}|null=null;
+  private musicObserver:(()=>void)|null=null;
+  private readonly galleryMusic=new HistoryVoiceController(asset=>{const buffer=this.buffers.get(asset),media=this.mediaAssets.get(asset);if(buffer)return {kind:'buffer',buffer};ensure(media,'EXTRAS_MUSIC_ASSET','Music resource unavailable');return {kind:'media',media};},()=>this.musicObserver?.(),'bgm');
+  observeMusic(observer:(()=>void)|null):void {this.musicObserver=observer;}
+  musicView(){return this.galleryMusic.view();}
+  playMusic(input:unknown){return this.galleryMusic.music(input);}
+  stopMusic():void {this.galleryMusic.stop();}
+  pauseMusic(value:boolean):void {this.galleryMusic.pause(value);}
+  openCG(id:string,title:string,mount:HTMLElement,signal:AbortSignal):Promise<()=>void> {const source=this.gallerySource,fact=this.facts.find(f=>f.id===id);ensure(!this.disposed&&source&&fact?.kind==='image','EXTRAS_ASSET_KIND','Gallery image is not prepared');return openGalleryImage(source.program,source.provider,id,title,mount,signal,this.resources.limits.maxAssetBytes,fact);}
   private historyObserver:(()=>void)|null=null;
   private readonly historyVoice=new HistoryVoiceController(asset=>{const buffer=this.buffers.get(asset),media=this.mediaAssets.get(asset);if(buffer)return {kind:'buffer',buffer};ensure(media,'HISTORY_VOICE_ASSET','Voice resource unavailable');return {kind:'media',media};},()=>this.historyObserver?.());
   observeHistoryVoice(observer:(()=>void)|null):void {this.historyObserver=observer;}
@@ -41,6 +51,9 @@ export class WebHost implements HostPort {
   private readonly graphicsOptions:GraphicsOptions;
   private stage:ImageStage|null=null;
   private textures=new Map<string,Texture>();
+  private readonly galleryImages=new Map<string,HTMLImageElement>();
+  private readonly artwork=new Set<()=>void>();
+  achievementIcon(id:string,title:string,mount:HTMLElement):()=>void {const source=this.galleryImages.get(id);ensure(!this.disposed&&source,'EXTRAS_ICON','Image is not prepared');const canvas=document.createElement('canvas');canvas.width=96;canvas.height=96;const context=canvas.getContext('2d');ensure(context,'EXTRAS_ICON','Thumbnail drawing unavailable');const scale=Math.min(96/source.naturalWidth,96/source.naturalHeight);context.drawImage(source,(96-source.naturalWidth*scale)/2,(96-source.naturalHeight*scale)/2,source.naturalWidth*scale,source.naturalHeight*scale);const image=new Image();image.alt=title;image.className='achievement-icon';image.width=48;image.height=48;image.src=canvas.toDataURL('image/png');canvas.width=0;canvas.height=0;mount.append(image);let released=false;const release=()=>{if(released)return;released=true;image.remove();image.removeAttribute('src');this.artwork.delete(release);};this.artwork.add(release);return release;}
   private buffers=new Map<string,AudioBuffer>();
   private mediaAssets=new Map<string,PreparedMedia>();private mix:DeepReadonly<AudioState>|null=null;
   private playing=new Map<string,Playing>();
@@ -62,12 +75,12 @@ export class WebHost implements HostPort {
   constructor(private readonly mount:HTMLElement,private readonly fault?:(error:Error)=>void,graphics:unknown={renderer:'auto'}) {this.graphicsOptions=parseGraphicsOptions(graphics);}
   get disposalError():Error|null {return this.cleanupFailure;}
   resourceFacts():ResourceFact[]{return this.facts.map(parseResourceFact);}
-  applyAudioPreferences(input:unknown):void {const audio=parseAudioPreferences(input);this.historyVoice.preferences(audio);this.volume=audio.master;this.roleVolumes={bgm:audio.bgm,voice:audio.voice,sfx:audio.sfx};if(this.master)this.master.gain.value=this.volume;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.videoController?.preferences(this.roleVolumes.sfx*(this.mix?.gains.sfx??1));}
+  applyAudioPreferences(input:unknown):void {const audio=parseAudioPreferences(input);this.historyVoice.preferences(audio);this.galleryMusic.preferences(audio);this.volume=audio.master;this.roleVolumes={bgm:audio.bgm,voice:audio.voice,sfx:audio.sfx};if(this.master)this.master.gain.value=this.volume;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.videoController?.preferences(this.roleVolumes.sfx*(this.mix?.gains.sfx??1));}
   assertReady():void {if(this.streamFailure)throw this.streamFailure;this.videoController?.assertReady();ensure(!this.disposed&&this.resources.graphics==='available','GRAPHICS_UNAVAILABLE','Recreate the player to prepare the graphics device');ensure(!this.audioUnavailable&&this.context&&this.context.state!=='closed','AUDIO_UNAVAILABLE','Audio device closed');}
   private lost=(event:Event):void=>{event.preventDefault();this.resources.graphics='unavailable';this.stopAudio();this.fault?.(new GalboxError('WEBGL_CONTEXT_LOST','图像设备连接已丢失，请重新打开播放器后读档。'));};
   async init(program:Program,provider:AssetProvider,signal:AbortSignal,policy:unknown=defaultResourceBudget,expected?:readonly ResourceFact[],streaming?:unknown):Promise<void> {
     try {
-      const streamPolicy=streaming===undefined?null:parseStreamingOptions(streaming);this.resources.limits=parseResourceBudget(policy);if(expected)resourceUsage(expected,this.resources.limits);
+      this.gallerySource={program,provider};const streamPolicy=streaming===undefined?null:parseStreamingOptions(streaming);this.resources.limits=parseResourceBudget(policy);if(expected)resourceUsage(expected,this.resources.limits);
       if(typeof AudioContext==='undefined'){this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Web Audio is unavailable on this device');}
       try{this.context=new AudioContext();}catch{this.media.state='unavailable';throw new GalboxError('AUDIO_UNAVAILABLE','Audio context creation failed');}this.master=this.context.createGain();this.master.gain.value=this.volume;this.master.connect(this.context.destination);
       this.media.state=this.context.state==='running'?'available':'needs-user-action';
@@ -82,7 +95,7 @@ export class WebHost implements HostPort {
         if(asset.kind==='image'){
           const url=URL.createObjectURL(new Blob([new Uint8Array(bytes).buffer],{type:asset.mime}));
           try {
-            const img=new Image();img.src=url;try{await img.decode();}catch{throw new GalboxError('IMAGE_FORMAT',`${asset.id}: image decode unavailable`);}ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);ensure(fact.kind==='image'&&img.naturalWidth===fact.width&&img.naturalHeight===fact.height,'RESOURCE_IMAGE_SIZE',asset.id);this.textures.set(asset.id,Texture.from(img));
+            const img=new Image();img.src=url;try{await img.decode();}catch{throw new GalboxError('IMAGE_FORMAT',`${asset.id}: image decode unavailable`);}ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);ensure(fact.kind==='image'&&img.naturalWidth===fact.width&&img.naturalHeight===fact.height,'RESOURCE_IMAGE_SIZE',asset.id);this.textures.set(asset.id,Texture.from(img));this.galleryImages.set(asset.id,img);
           } finally {URL.revokeObjectURL(url);}
         }else if(asset.kind==='video'){const prepared=await prepareMedia(asset,bytes,fact,signal);if(this.disposed||signal.aborted){URL.revokeObjectURL(prepared.url);throw new GalboxError('HOST_DISPOSED',asset.id);}this.videoAssets.set(asset.id,prepared);this.resources.mediaElementBytes+=bytes.byteLength;this.video.state='available';
         }else if(asset.kind==='font'){
@@ -164,9 +177,9 @@ export class WebHost implements HostPort {
   private destroyApplication(app:GraphicsApplication|null):void {destroyGraphicsApplication(app);}
   dispose():void {
     for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();this.captureFonts.length=0;
-    if(this.disposed)return;this.historyObserver=null;this.historyVoice.dispose();this.disposed=true;this.videoController?.dispose();this.videoController=null;this.stopAudio();this.stage?.dispose();this.stage=null;
+    if(this.disposed)return;this.musicObserver=null;this.galleryMusic.dispose();this.gallerySource=null;this.historyObserver=null;this.historyVoice.dispose();this.disposed=true;this.videoController?.dispose();this.videoController=null;this.stopAudio();this.stage?.dispose();this.stage=null;
     this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.canvasBytesEstimated=0;this.resources.canvasSurfaces=0;this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
-    for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();for(const asset of this.mediaAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.mediaAssets.clear();for(const asset of this.videoAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.videoAssets.clear();this.resources.mediaElementBytes=0;for(const lease of this.streamLeases.splice(0))try{lease.release();}catch(error){this.cleanupFailure=new GalboxError('STREAM_LEASE',error instanceof Error?error.message:String(error));}this.resources.integrity=[];this.resources.streamDeclaredBytes=0;this.resources.catalogEncodedBytes=0;
+    for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.galleryImages.clear();for(const release of [...this.artwork])release();this.buffers.clear();for(const asset of this.mediaAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.mediaAssets.clear();for(const asset of this.videoAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.videoAssets.clear();this.resources.mediaElementBytes=0;for(const lease of this.streamLeases.splice(0))try{lease.release();}catch(error){this.cleanupFailure=new GalboxError('STREAM_LEASE',error instanceof Error?error.message:String(error));}this.resources.integrity=[];this.resources.streamDeclaredBytes=0;this.resources.catalogEncodedBytes=0;
     this.destroyApplication(this.app);this.app=null;
     if(this.context&&this.context.state!=='closed')void this.context.close().catch(()=>{});this.context=null;this.master=null;this.media.active=0;
   }

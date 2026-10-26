@@ -1,0 +1,89 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-collection",
+  "release": "collection-1",
+  "series": "1",
+  "programSha256": "04f5e89e20467d1154429fa29bacc9f0448fb0f463bdb480061d5e3d4e909212",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "6340838879f908de4dddd24a553fa691ce788a880d386b37cd80236ab19cf034",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "tower",
+      "bytes": 823,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "envelope",
+      "bytes": 340,
+      "kind": "image",
+      "width": 180,
+      "height": 130
+    },
+    {
+      "id": "lamp",
+      "bytes": 316,
+      "kind": "image",
+      "width": 320,
+      "height": 220
+    },
+    {
+      "id": "bgm-long",
+      "kind": "audio",
+      "bytes": 48603,
+      "playback": "element",
+      "encoding": "vorbis",
+      "channels": 1,
+      "sampleRate": 22050,
+      "frames": 771750
+    },
+    {
+      "id": "voice-opus",
+      "kind": "audio",
+      "bytes": 5574,
+      "playback": "element",
+      "encoding": "opus",
+      "channels": 1,
+      "sampleRate": 48000,
+      "frames": 57600
+    },
+    {
+      "id": "signal-mp3",
+      "kind": "audio",
+      "bytes": 3363,
+      "playback": "element",
+      "encoding": "mp3",
+      "sampleRate": 22050,
+      "channels": 1,
+      "frames": 9216
+    },
+    {
+      "id": "voice-buffer",
+      "bytes": 30912,
+      "kind": "audio",
+      "channels": 1,
+      "sampleRate": 22050,
+      "frames": 15434
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

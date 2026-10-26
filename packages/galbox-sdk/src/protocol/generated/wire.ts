@@ -408,6 +408,20 @@ export type Instruction =
       op: 'flow.unlock';
       at: string;
       node: string;
+    }
+  | {
+      op: 'extras.unlock';
+      at: string;
+      entry: string;
+    }
+  | {
+      op: 'extras.check';
+      at: string;
+    }
+  | {
+      op: 'extras.scene';
+      at: string;
+      entry: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1167,6 +1181,53 @@ export type TextFont =
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ExtraEntry".
+ */
+export type ExtraEntry =
+  | {
+      id: string;
+      title: string;
+      description: string;
+      unlock: BoolExpression;
+      reveal: 'always' | 'unlocked';
+      kind: 'cg';
+      /**
+       * @minItems 1
+       * @maxItems 16
+       */
+      images: [string, ...string[]];
+    }
+  | {
+      id: string;
+      title: string;
+      description: string;
+      unlock: BoolExpression;
+      reveal: 'always' | 'unlocked';
+      kind: 'music';
+      asset: string;
+      gain: number;
+      loop: boolean;
+    }
+  | {
+      id: string;
+      title: string;
+      description: string;
+      unlock: BoolExpression;
+      reveal: 'always' | 'unlocked';
+      kind: 'scene';
+      entry: string;
+    }
+  | {
+      id: string;
+      title: string;
+      description: string;
+      unlock: BoolExpression;
+      reveal: 'always' | 'unlocked';
+      kind: 'achievement';
+      icon: string | null;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "TextRun".
  */
 export type TextRun =
@@ -1417,6 +1478,11 @@ export type ProgressChangeWire =
       seq: number;
       type: 'flow';
       value: FlowProgress;
+    }
+  | {
+      seq: number;
+      type: 'extras';
+      value: ExtrasProgress;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1584,6 +1650,7 @@ export interface Program {
   rng?: RngConfig;
   textLayout?: TextLayout;
   flowchart?: Flowchart;
+  extras?: ExtrasCatalog;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2011,6 +2078,19 @@ export interface FlowEdge {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ExtrasCatalog".
+ */
+export interface ExtrasCatalog {
+  id: string;
+  revision: string;
+  /**
+   * @minItems 1
+   * @maxItems 128
+   */
+  entries: [ExtraEntry, ...ExtraEntry[]];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Snapshot".
  */
 export interface Snapshot {
@@ -2057,6 +2137,8 @@ export interface Snapshot {
   streamCatalog?: string;
   historySession?: string;
   flow?: FlowRun;
+  extrasSignature?: string;
+  replayScene?: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2404,6 +2486,7 @@ export interface Profile {
    */
   read: string[];
   flow?: FlowProgress;
+  extras?: ExtrasProgress;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2420,6 +2503,19 @@ export interface FlowProgress {
   visited: string[];
   /**
    * @minItems 0
+   * @maxItems 128
+   */
+  unlocked: string[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ExtrasProgress".
+ */
+export interface ExtrasProgress {
+  catalogId: string;
+  revision: string;
+  signature: string;
+  /**
    * @maxItems 128
    */
   unlocked: string[];

@@ -1,0 +1,51 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173/?demo=extras",
+  "browser": "156.0.8078.4",
+  "launchArgs": [
+    "--disable-webgl"
+  ],
+  "nativeContextAPI": true,
+  "device": {
+    "webgl": false,
+    "canvas": true
+  },
+  "renderer": "canvas",
+  "cgVariants": true,
+  "achievementIconWidth": 96,
+  "musicPlaying": true,
+  "sceneChoiceAndEnding": true,
+  "mainLogicalStateUnchanged": true,
+  "mainDurableStateUnchanged": true,
+  "sceneCanvasCount": 2,
+  "closedCanvasCount": 1,
+  "profile": {
+    "revision": 3,
+    "values": {
+      "collected": {
+        "kind": "bool",
+        "value": false
+      }
+    },
+    "read": [
+      "collection.welcome@zh-1",
+      "collection.reading@zh-1"
+    ],
+    "extras": {
+      "catalogId": "lighthouse-extras",
+      "revision": "v1",
+      "signature": "7407f9220993716bdbdcce2ab1fca7b9abaea5e407669a955e31844e44c92849",
+      "unlocked": [
+        "day",
+        "sea",
+        "small",
+        "memory",
+        "letter",
+        "collector",
+        "signal"
+      ]
+    }
+  },
+  "refreshAndOldSavePreservedUnlocks": true,
+  "pageErrors": []
+}

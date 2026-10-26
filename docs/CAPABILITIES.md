@@ -61,3 +61,5 @@ G4-01 图文存档有限集见 [SAVES](SAVES.md)：同切点 DOM 正文+舞台 P
 G4-02有限历史语音/受控回溯按 [HISTORY](HISTORY.md)：确认切点/有界journal/当前profile激活/独立声音预览和默认回溯确认。旧档无ID不制造过去切点；实际通过状态见任务表/evidence。
 
 G5-01流程图有限集见 [FLOWCHART](FLOWCHART.md)：版本节点、visited/unlocked/profile gate、声明新章首与原head接管、默认连线/筛选/确认和图定义恢复绑定；实际状态见tasks/evidence，不计入鉴赏或完整G6界面。
+
+G5-02鉴赏有限集见 [EXTRAS](EXTRAS.md)：CG差分/成就图标、buffer/element/版本流音乐、临时Store中的生产场景回放、单调解锁与主线冻结/恢复。每实例和目录/资源预算有界；状态以tasks/evidence为准，不扩张为G6/G7或真实作品认证。

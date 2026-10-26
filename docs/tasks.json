@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G5-02",
+  "current_task": "G6-01",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1327,7 +1327,7 @@
         "G0-02"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "checked i64/位模式f64/null/有界有序集合Schema与原生规范化",
@@ -1408,7 +1408,7 @@
         "G1-01"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "串行 Auto/已读快进与真实 voice ended 门控",
@@ -1452,7 +1452,7 @@
         "G0-02"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "text.rich Schema、richText/richPage 公开工厂与安全样式/Ruby/字素控制",
@@ -1495,7 +1495,7 @@
         "G1-01"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "textLayout/主题/字体真实工厂、Core ADV/NVL与窗口指令",
@@ -1539,7 +1539,7 @@
         "G0-03"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "有界二维pose/层级/clip/blend、相机/滤镜/转场/shake Schema与真实工厂",
@@ -1835,11 +1835,21 @@
         "G3-02",
         "G4-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
-        "extras/gallery systems and declarations"
+        "packages/galbox-sdk/schema/protocol.json",
+        "packages/galbox-sdk/src/protocol/extras.ts",
+        "packages/galbox-sdk/src/program-tools/extras.ts",
+        "packages/galbox-sdk/src/runtime/extras.ts",
+        "packages/galbox-sdk/src/runtime/memory-store.ts",
+        "packages/galbox-sdk/src/player/extras.ts",
+        "packages/galbox-sdk/src/react/extras.tsx",
+        "packages/galbox-sdk/src/web-host/gallery-image.ts",
+        "fixtures/extras-novel",
+        "docs/EXTRAS.md",
+        "docs/decisions/0028-extras-and-replay-isolation.md"
       ],
       "contracts": [
         "C01",
@@ -1853,9 +1863,22 @@
         "gallery-unlock-persistence",
         "replay-isolation"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g5-02/REPORT.md",
+        "docs/evidence/g5-02/check.log",
+        "docs/evidence/g5-02/unit.log",
+        "docs/evidence/g5-02/browser-results.json",
+        "docs/evidence/g5-02/extras-result.json",
+        "docs/evidence/g5-02/consumer-result.json",
+        "docs/evidence/g5-02/result.json",
+        "docs/evidence/g5-02/compatibility-result.json",
+        "docs/evidence/g5-02/performance.json",
+        "docs/evidence/g5-02/release-audit.json",
+        "docs/evidence/g5-02/dev-result.json",
+        "docs/evidence/g5-02/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定义版本化CG/音乐/场景鉴赏与成就条目、资源kind/解锁绑定及回放隔离ADR；再Schema/真实工厂/SDK系统/默认UI、主线PC/profile隔离、持久解锁/刷新/独立consumer验证。"
+      "next_action": "ADR0028有限目录/持久解锁/CG音乐/隔离场景回放验收完成；下一G6-01剧本驱动UI控件、事件身份及状态恢复。"
     },
     {
       "id": "G6-01",
@@ -1886,7 +1909,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定有限屏幕/控件声明、动作与事件身份、Snapshot状态所有权/保存恢复ADR；复用既有交互等待和渲染端口，沿Schema/真实工厂/Core/Host/默认UI实施，验证旧输入拒绝、恢复/取消/双实例和独立消费。"
     },
     {
       "id": "G6-02",

@@ -152,3 +152,5 @@ G4-01 按 ADR0025/SAVES.md 将保存捕获与激活共用串行屏障：Core 授
 G4-02按ADR0026/HISTORY把确认事件的真实Core快照写入独立有界journal，Snapshot历史ID关联、无递归快照；Store绑定profile/authority并携带备份闭包，Player回溯走原head激活而保当前profile。历史语音为Host独立设备预览，不向Core发送完成或重新解释剧情。
 
 G5-01按ADR0027增加Program.flowchart、Profile.flow、Snapshot.flow：Core执行node/unlock与声明根，普通进度端口提交单调节点数据，Player在原head屏障最终重验durable gate后创建候选。DOM/SVG默认图示只调用Player，不读取或修改PC。
+
+G5-02按ADR0028：Program.extras/Profile.extras/Snapshot.extrasSignature及专用replayScene根由Schema/工厂/Core/进度端口承接。Player冻结主线并管理单一鉴赏会话；CG/音乐为独立Host预览，场景为同一生产Player与独立内存Store实例。每Host仍单Pixi舞台，关闭验证原head/修订，回放数据不提交主线。

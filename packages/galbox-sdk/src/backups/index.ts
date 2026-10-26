@@ -1,3 +1,4 @@
+import {extrasProgress} from '../protocol/extras.js';
 import {flowProgress} from '../protocol/flow.js';
 import {validateVoiceRecipe} from '../core/audio.js';
 import {ensure,parsePortableBackup,GalboxError,canonicalWireJSON} from '../protocol/index.js';
@@ -37,11 +38,11 @@ function preserveClosure(before:PortableBackup,after:PortableBackup):void {
   ensure(before.slots.length===after.slots.length&&before.slots.every(s=>after.slots.some(t=>t.slot===s.slot&&t.revision===s.revision&&t.metadata.profileId===s.metadata.profileId&&(t.previous===null)===(s.previous===null)&&t.previousMetadata?.profileId===s.previousMetadata?.profileId)),'CONTENT_MIGRATION_CLOSURE','Preserve every slot, previous revision and profile relationship');
 }
 function validateCandidates(backup:PortableBackup,program:Program,operations:OperationRegistry):void {
-  for(const row of backup.profiles)flowProgress(program,row.profile);
-  for(const h of backup.histories??[])for(const entry of h.record.entries){ensure(entry.release===program.release,'BACKUP_RELEASE_UNAVAILABLE','Historical source release is unavailable');if(entry.snapshot)entry.snapshot=validateRestore(program,entry.snapshot,operations);if(entry.text.voice)validateVoiceRecipe(program,entry.text.voice);}
+  for(const row of backup.profiles){flowProgress(program,row.profile);extrasProgress(program,row.profile);}
+  for(const h of backup.histories??[])for(const entry of h.record.entries){ensure(!entry.snapshot?.replayScene,'BACKUP_REPLAY_ONLY','Gallery snapshots are temporary');ensure(entry.release===program.release,'BACKUP_RELEASE_UNAVAILABLE','Historical source release is unavailable');if(entry.snapshot)entry.snapshot=validateRestore(program,entry.snapshot,operations);if(entry.text.voice)validateVoiceRecipe(program,entry.text.voice);}
   for(const slot of backup.slots){
     for(const cut of [{snapshot:slot.snapshot,metadata:slot.metadata},...(slot.previous&&slot.previousMetadata?[{snapshot:slot.previous,metadata:slot.previousMetadata}]:[])]){
-      const snapshot=validateRestore(program,cut.snapshot,operations),profile=backup.profiles.find(p=>p.id===cut.metadata.profileId)?.profile;ensure(profile,'BACKUP_PROFILE_MISSING',cut.metadata.profileId);
+      ensure(!cut.snapshot.replayScene,'BACKUP_REPLAY_ONLY','Gallery snapshots are temporary');const snapshot=validateRestore(program,cut.snapshot,operations),profile=backup.profiles.find(p=>p.id===cut.metadata.profileId)?.profile;ensure(profile,'BACKUP_PROFILE_MISSING',cut.metadata.profileId);
       // Keep a before-recipe baseline; these isolated previews never persist hook effects.
       if(cut.metadata.recipe)prepareRestoreRecipe(program,profile,snapshot,cut.metadata.recipe,{operations});
       if(cut.metadata.onLoad)prepareRestoreRecipe(program,profile,snapshot,cut.metadata.onLoad,{operations});

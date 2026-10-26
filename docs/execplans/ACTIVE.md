@@ -1,7 +1,7 @@
 # 当前实施计划
 
-G5-01按ADR0027有限集完成，基线afe6018，分支feat/flowchart-node-entry，本地提交见git log。Schema/工厂/Core声明根/单调进度/定义绑定/原head接管/默认图UI/原创航路图→192单元/104完整浏览器+最后UI两设备重验/strict consumer/65 CLI/4 synthetic/性能/API/原生无WebGL dev通过。证据evidence/g5-01/REPORT.md，状态唯一来源tasks.json。
+G5-02已验收：ADR0028/EXTRAS、正式目录/单调解锁、独立CG音乐与场景根/生产内存Store、默认UI和原创extras-novel。最终check/199 unit/112 browser/strict consumer/65 CLI/4 synthetic/perf/API/原生无WebGL dev全部通过；日志和源码摘要在evidence/g5-02。当前分支feat/gallery-replay-isolation，本轮基线e8aa105，工作随后本地提交，无外部发布。
 
-下一G5-02：先定义版本化CG/音乐/场景鉴赏、成就与资源kind/解锁绑定、回放隔离ADR，然后正式Schema/工厂/SDK系统/默认UI、主线PC/profile保持、持久解锁/刷新/独立consumer。不能把主线enterNode跳转冒充隔离鉴赏回放。
+下一G6-01（尚未实施）：先记录有限screen/control声明、事件身份/动作、Snapshot状态所有权和恢复ADR；复用现有交互等待/renderer，Schema和真实工厂与Core/Host/默认UI共同落地。验证过期输入、恢复/取消/双实例及strict打包消费，之后G6-02完整默认界面/作品皮肤和G7集成。
 
-G5-02/G6/G7/N/F/M6未完成；G7性能/规模义务保持，标准无图基准API P9525.5ms不代表最大图/60FPS认证。dev已启动/?demo=flowchart，browser前停dev释放4173/4174；export TMPDIR=/dev/shm，无外部发布。
+export TMPDIR=/dev/shm。dev当前4173，/?demo=extras；全量browser前停止dev释放4173/4174。G6/G7及真实N/F/M6未完成；两作资料缺失继续blocked，不能用fixture冒充认证。每次改相关代码必须重验，不能沿用本次结果声称后续代码通过。

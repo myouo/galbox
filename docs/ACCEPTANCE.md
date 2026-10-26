@@ -104,3 +104,5 @@ G4-01：`same-cut-thumbnail` 用真实 PNG 像素和 DOM 字体/Ruby/NVL/揭示�
 G4-02：`backlog-voice` 要真实buffer/element/版本化HTTP语音，菜单暂停剧情仍可回放、当前master/voice偏好、其它暂停原因、blocked重试/迟到取消/双实例隔离；Core PC/等待/已读/语音门不因预览变更。`rollback-progress-authority` 要预算1/8/100真实确认切点、显完/旧输入不产点，嵌套帧/RNG/动画恢复且当前已读/解锁/偏好不被旧档覆盖；禁存/超限/旧档无点/坏点/失败/提交后pending、实际IndexedDB刷新、完整journal备份迁移/旧会话拒写、默认确认UI与strict独立消费。
 
 G5-01：`node-visit-unlock` 需真实工厂/Builder正反类型、坏边/位置/入口/slot条件拒绝，预算1/8/100相同访问/显式解锁、当前profile派生条件与只读投影隔离、单调幂等批次/旧档不抹新进度。`graph-safe-restore` 需声明新根/嵌套return与恢复、重置章内globals/RNG、只读节点/锁/gate/当前禁存/过期epoch、最终durable重验、准备失败/失回执pending/旧写者拒绝、定义漂移/完整备份迁移、真实IndexedDB刷新、两绘图设备的默认图/筛选/可见确认与strict独立tarball。
+
+G5-02：`gallery-unlock-persistence` 验证真实kind关联工厂/声明场景入口、纯profile/read条件/自动检查原子失败、预算一致/不可变单调批次、flag复位与旧档/刷新/备份迁移保解锁。`replay-isolation` 验证CG真实像素差分/图标、buffer循环与element自然完成/版本HTTP完整性等级、同一生产场景实际选择及写入仅落临时Store、主线PC/RNG/等待/head/profile保持、排队保存不thaw、资源迟到归还/双实例/准备失败/dispose、未知head冻结重试及失权/外部修订拒复活、默认UI与strict独立消费。

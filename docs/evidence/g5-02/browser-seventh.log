@@ -1,0 +1,68 @@
+$ pnpm build && pnpm build:harness && playwright test --grep 'CG variants and music|extras UI shows|late CG resources|closing cannot revive|scene preparation failure|versioned music preview|durable profile edit'
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 815 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-C6Fox1xP.css                       11.46 kB │ gzip:   3.22 kB
+apps/playground/dist/assets/webworkerAll-fdstc4oS.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-CNGKX-8G.js                         14.58 kB │ gzip:   4.66 kB
+apps/playground/dist/assets/browserAll-Dg7ebfWd.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-BFS-oFRc.js                     2,630.69 kB │ gzip: 370.22 kB
+
+✓ built in 1.14s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 810 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-DBYyt4m9.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/defaultFilter.vert-DBKfXOpv.js            0.78 kB │ gzip:   0.35 kB
+tests/browser/harness/dist/disposal-probe.js                         3.69 kB │ gzip:   1.44 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-0kpVo1g2.js                         18.08 kB │ gzip:   5.30 kB
+tests/browser/harness/dist/browserAll-CiSzCA5-.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/lib-pA3V24io.js                         317.61 kB │ gzip:  80.33 kB
+tests/browser/harness/dist/sdk.js                                6,514.20 kB │ gzip: 580.30 kB
+
+✓ built in 1.22s
+[WebServer] (node:4130381) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:4130401) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:4130542) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:4130580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/extras.spec.ts:4:1 › CG variants and music are real, while scene replay writes only to a production memory store and main progress survives refresh (4.6s)
+  ✓  2 tests/browser/extras.spec.ts:13:42 › default webgl extras UI shows variants, persistent achievements and playable isolated scenes (4.8s)
+  ✓  3 tests/browser/extras.spec.ts:13:42 › default canvas extras UI shows variants, persistent achievements and playable isolated scenes (8.6s)
+  ✓  4 tests/browser/extras.spec.ts:16:1 › late CG resources are returned after cancellation, and queued saves cannot thaw a gallery-owned main freeze (4.8s)
+  ✓  5 tests/browser/extras.spec.ts:19:1 › closing cannot revive a superseded main owner and an unknown head remains frozen until explicit close retry (1.3s)
+  ✓  6 tests/browser/extras.spec.ts:22:1 › scene preparation failure and closing a running preview leave another Player and all main-story slots intact (1.6s)
+  ✓  7 tests/browser/extras.spec.ts:25:1 › versioned music preview uses conditional HTTP validation and leaves only logical data in a saved story (1.1s)
+  ✓  8 tests/browser/extras.spec.ts:28:1 › a durable profile edit during preview cannot silently resume a stale working profile (1.2s)
+
+  8 passed (37.3s)

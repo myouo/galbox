@@ -102,3 +102,5 @@ G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子�
 历史语音与有界受控回溯见 [HISTORY](docs/HISTORY.md)：原创 `/?demo=history` 使用正式SDK保存确认切点、独立回放与当前profile激活，默认界面提供回溯确认；支持Canvas。实际任务/验证状态见任务表。
 
 剧情流程图与声明章节入口见 [FLOWCHART](docs/FLOWCHART.md)：原创 `/?demo=flowchart` 提供访问/显式及条件解锁、章首重新初始化、当前profile校验与默认连线/筛选/确认界面，可加 `&renderer=canvas`。
+
+鉴赏与成就见 [EXTRAS](docs/EXTRAS.md)：原创 `/?demo=extras` 使用正式目录/持久解锁、CG差分、音乐和隔离场景回放。回放的剧情与解锁只写临时进度，关闭后回到主线；支持Canvas。
