@@ -1,3 +1,5 @@
+import {HistoryPanel} from './history.js';
+export {HistoryPanel} from './history.js';
 import {SaveLibrary} from './saves.js';
 export {SaveLibrary} from './saves.js';
 import {InteractionPanel} from './interaction.js';
@@ -28,7 +30,7 @@ export function DefaultUI({player}:{player:Player}) {
     {run?.status==='ended'&&!view.menu&&<div className="ending"><p>阅读结束。</p><small>{view.core?.dirty?'正在提交阅读进度…':'阅读进度已提交'}</small><button onClick={()=>invoke(player.start())}>再次阅读</button></div>}
     {view.menu&&<div className="scrim" onPointerDown={e=>e.stopPropagation()} onPointerUp={e=>e.stopPropagation()}><section className="modal" role="dialog" aria-label={history?'阅读历史':'菜单'}>
       <header><h2>{history?'阅读历史':'阅读设置'}</h2><button onClick={()=>{setHistory(false);player.setMenu(false);}}>关闭</button></header>
-      {history?<div className="history">{run?.history.map((t,j)=><p key={`${t.textId}:${j}`}><strong>{t.speaker}</strong>{t.content}</p>)}</div>:<><button disabled={!view.core?.canSave} onClick={()=>invoke(player.quickSave(),'已保存到浏览器')}>快速保存</button><button onClick={()=>invoke(player.quickLoad(),'已读取存档')}>快速读档</button><button onClick={()=>invoke(player.discardAndLoad(),'已放弃未提交进度并读档')}>放弃未提交进度并读档</button><button onClick={()=>{player.setMenu(false);invoke(player.start());}}>重新开始</button><p>当前：{view.profileId==='main'?'网页进度':'独立导入进度'}</p><SaveLibrary player={player} view={view}/><SlotPicker player={player} view={view}/><ProfilePicker player={player} view={view}/><ImportPanel player={player} view={view}/><BackupPanel player={player}/><PreferencesPanel player={player} view={view}/></>}
+      {history?<HistoryPanel player={player} view={view}/>:<><button disabled={!view.core?.canSave} onClick={()=>invoke(player.quickSave(),'已保存到浏览器')}>快速保存</button><button onClick={()=>invoke(player.quickLoad(),'已读取存档')}>快速读档</button><button onClick={()=>invoke(player.discardAndLoad(),'已放弃未提交进度并读档')}>放弃未提交进度并读档</button><button onClick={()=>{player.setMenu(false);invoke(player.start());}}>重新开始</button><p>当前：{view.profileId==='main'?'网页进度':'独立导入进度'}</p><SaveLibrary player={player} view={view}/><SlotPicker player={player} view={view}/><ProfilePicker player={player} view={view}/><ImportPanel player={player} view={view}/><BackupPanel player={player}/><PreferencesPanel player={player} view={view}/></>}
       <p role="status">{notice}</p></section></div>}
     {(view.media.state==='needs-user-action'||run?.tasks.some(t=>(t.kind==='audio'||t.kind==='media')&&t.status==='blocked'))&&!view.paused&&view.lifecycle==='playing'&&<button className="audio-retry" onClick={()=>invoke(player.retryAudio())}>点击启用声音</button>}
     {(view.video.state==='buffering'||view.media.state==='buffering')&&!view.menu&&<p className="audio-retry" role="status">正在缓冲媒体…</p>}

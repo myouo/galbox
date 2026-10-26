@@ -57,3 +57,5 @@ G3-01舞台有限集见 [STAGE](STAGE.md)：一次解析表达式/相对参数�
 图像设备：H2-01 使用同一 Pixi 场景图提供 WebGL2→Canvas2D 自动后备、强制后端与诊断，基本舞台/DOM/媒体/存档跨后端；Canvas 提供有界组滤镜/相机滤镜/隔离 crossfade（ADR0022），预算超限明确拒绝。见 GRAPHICS.md，不能借此声称所有 GPU 效果已对等。
 
 G4-01 图文存档有限集见 [SAVES](SAVES.md)：同切点 DOM 正文+舞台 PNG、当前/上一修订同事务、固定摘要回执、手动/快速/循环自动槽、命名/确认覆盖/删除与管理 UI。自动默认关闭；自定义 renderer 缺 capture 需显式无图，不伪造图片。当前验收状态仅见任务表和证据。
+
+G4-02有限历史语音/受控回溯按 [HISTORY](HISTORY.md)：确认切点/有界journal/当前profile激活/独立声音预览和默认回溯确认。旧档无ID不制造过去切点；实际通过状态见任务表/evidence。

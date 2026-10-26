@@ -1,0 +1,33 @@
+$ pnpm build:sdk && vitest run
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+
+ RUN  v5.0.5 /home/myo/Desktop/galbox-sdk
+
+ ❯ tests/unit/history.test.ts (9 tests | 1 failed) 986ms
+   × a custom history port cannot mutate the immutable retry batch through its argument 51ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/history.test.ts > a custom history port cannot mutate the immutable retry batch through its argument
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected:
+Error {
+  "message": "rejected promise",
+}
+
++ Received:
+undefined
+
+ ❯ tests/unit/history.test.ts:40:461
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 25 passed (26)
+      Tests  1 failed | 185 passed (186)
+   Start at  14:05:59
+   Duration  4.02s (import 39%, tests 32%, transform 29%)
+
+[ELIFECYCLE] Test failed. See above for more details.

@@ -1,7 +1,7 @@
-import { ensure, parseStoreBackupRestore, parsePlayerPreferences,parseSaveCommit } from '../protocol/index.js';
-import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences,SaveCommit } from '../protocol/index.js';
+import { ensure, parseStoreBackupRestore, parsePlayerPreferences,parseSaveCommit,parseHistoryCommit } from '../protocol/index.js';
+import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences,SaveCommit,HistoryCommit } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
-import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,deleteSlot } from '../runtime/durable.js';
+import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,deleteSlot,readHistory,commitHistory,historyReceipt } from '../runtime/durable.js';
 import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
@@ -21,6 +21,9 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     });
   }
   return {
+    readHistory:(id:string)=>transact('readonly',s=>readHistory(s,id)),
+    historyReceipt:(id:string)=>transact('readonly',s=>historyReceipt(s,id)),
+    commitHistory:(input:HistoryCommit,authority:string|null)=>{const data=parseHistoryCommit(input);return transact('readwrite',s=>commitHistory(s,data,authority));},
     commitSave:(input:SaveCommit)=>{const data=parseSaveCommit(input);return transact('readwrite',s=>commitSave(s,data));},
     saveReceipt:(id:string)=>transact('readonly',s=>saveReceipt(s,id)),
     renameSlot:(slot:string,revision:number,label:string)=>transact('readwrite',s=>renameSlot(s,slot,revision,label)),

@@ -1,0 +1,312 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-echoes",
+  "title": "灯塔来信 · 回声书签",
+  "release": "echoes-1",
+  "entry": "main",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "expressions",
+    "values.extended",
+    "audio.extended",
+    "audio.media",
+    "rng.lcg32"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "voice-opus",
+      "path": "../media/assets/voice-opus.ogg",
+      "mime": "audio/ogg",
+      "sha256": "5a4823d9ca78fdd3f73823ed1d87366d1455457b1a767cbdbc4d9536790f3aba",
+      "kind": "audio"
+    },
+    {
+      "id": "voice-buffer",
+      "path": "../media/assets/voice-buffer.wav",
+      "mime": "audio/wav",
+      "sha256": "756a25bb86dc886696dec0863b30440c108899eaeec7034f6d4217c2517d6880",
+      "kind": "audio"
+    }
+  ],
+  "globals": [
+    {
+      "id": "roll",
+      "kind": "i32",
+      "initial": {
+        "kind": "i32",
+        "value": 0
+      }
+    },
+    {
+      "id": "answer",
+      "kind": "i32",
+      "initial": {
+        "kind": "i32",
+        "value": 0
+      }
+    },
+    {
+      "id": "route",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": ""
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "echo:stage",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "echo:stage",
+          "object": {
+            "id": "background",
+            "asset": "shore",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "echo:opening",
+          "textId": "echo.opening",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "回声书签只记下真正走过的地方。翻过这一页，听澪把信念给你。",
+          "op": "text.page"
+        },
+        {
+          "at": "echo:call",
+          "function": "remember",
+          "args": [
+            {
+              "literal": {
+                "kind": "i32",
+                "value": 12
+              }
+            }
+          ],
+          "dest": "answer",
+          "op": "control.call"
+        },
+        {
+          "at": "echo:choice",
+          "dest": "route",
+          "options": [
+            {
+              "id": "send",
+              "text": "把回信寄给海上的人",
+              "target": "echo:send"
+            },
+            {
+              "id": "keep",
+              "text": "把回信留给灯塔",
+              "target": "echo:keep"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "echo:send",
+          "key": "echoSent",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "echo:send-next",
+          "target": "echo:ending",
+          "op": "control.jump"
+        },
+        {
+          "at": "echo:keep",
+          "key": "echoKept",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "echo:ending",
+          "textId": "echo.ending",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "你可以从历史回到那句有声音的信。已经读过的文字和收好的回信，会留在这台设备上。",
+          "op": "text.page"
+        },
+        {
+          "at": "echo:end",
+          "op": "control.end"
+        }
+      ]
+    },
+    {
+      "id": "remember",
+      "entry": "memory:draw",
+      "layout": 1,
+      "params": [
+        {
+          "id": "base",
+          "kind": "i32",
+          "initial": {
+            "kind": "i32",
+            "value": 0
+          }
+        }
+      ],
+      "locals": [
+        {
+          "id": "answerLocal",
+          "kind": "i32",
+          "initial": {
+            "kind": "i32",
+            "value": 0
+          }
+        }
+      ],
+      "returns": "i32",
+      "code": [
+        {
+          "at": "memory:draw",
+          "dest": "roll",
+          "min": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1
+          },
+          "max": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 99
+          },
+          "op": "random.i32"
+        },
+        {
+          "at": "memory:add",
+          "dest": "answerLocal",
+          "left": {
+            "slot": "base"
+          },
+          "right": {
+            "slot": "roll"
+          },
+          "op": "i32.add.checked"
+        },
+        {
+          "at": "memory:drift",
+          "task": "drift",
+          "id": "background",
+          "to": {
+            "x": 40,
+            "y": 0,
+            "alpha": 1
+          },
+          "duration": 10000,
+          "policy": "reject",
+          "op": "stage.animate"
+        },
+        {
+          "at": "memory:voice",
+          "task": "voice",
+          "asset": "voice-opus",
+          "channel": "voice",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fe0000000000000"
+          },
+          "restore": "replay",
+          "loop": false,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "memory:letter",
+          "textId": "memory.letter",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "「如果想再听一次，就把这句话留在历史里。」海风穿过信纸，守灯的人没有催我翻页。",
+          "op": "text.page"
+        },
+        {
+          "at": "memory:lock",
+          "allow": false,
+          "op": "save.policy"
+        },
+        {
+          "at": "memory:short",
+          "task": "voice",
+          "asset": "voice-buffer",
+          "channel": "voice",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fe3333333333333"
+          },
+          "restore": "stop",
+          "loop": false,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "memory:sealed",
+          "textId": "memory.sealed",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "这句可以从历史重听，但没有可回溯切点。读完后，信封上的封蜡会重新打开。",
+          "op": "text.page"
+        },
+        {
+          "at": "memory:unlock",
+          "allow": true,
+          "op": "save.policy"
+        },
+        {
+          "at": "memory:return",
+          "value": {
+            "slot": "answerLocal"
+          },
+          "op": "control.return"
+        }
+      ]
+    }
+  ],
+  "rng": {
+    "algorithm": "lcg32@1",
+    "seed": 617
+  }
+}

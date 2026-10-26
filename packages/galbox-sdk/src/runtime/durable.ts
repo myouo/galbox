@@ -1,10 +1,10 @@
 import {wireDigest} from '../protocol/digest.js';
 import {normalizePreferencesRecord,normalizePreferences} from '../settings/index.js';
-import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt, parsePlayerPreferences, parsePreferencesRecord,parseSaveCommit,parseSaveReceipt,assertSaveCut } from '../protocol/index.js';
-import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt, BackupRestoreReceipt, PreferencesRecord, SaveCommit, SaveReceipt } from '../protocol/index.js';
+import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt, parsePlayerPreferences, parsePreferencesRecord,parseSaveCommit,parseSaveReceipt,assertSaveCut,parseHistoryRecord,parseHistoryCommit,parseHistoryReceipt } from '../protocol/index.js';
+import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt, BackupRestoreReceipt, PreferencesRecord, SaveCommit, SaveReceipt,HistoryRecord,HistoryReceipt,HistoryCommit } from '../protocol/index.js';
 import type { Durable, Activation, ProgressBatch, ProgressReceipt, SlotRecord, ActivationOptions } from './ports.js';
-export interface DatabaseState {saves:Record<string,SaveReceipt>;preferences:PreferencesRecord|null;backups:Record<string,BackupRestoreReceipt>;profile:Profile;branches:Record<string,Profile>;slots:Record<string,SlotRecord>;head:Activation|null;activations:Record<string,Activation>;receipts:Record<string,ProgressReceipt>;imports:Record<string,StoreImportReceipt>;}
-export function databaseState():DatabaseState {return {saves:{},preferences:null,backups:{},profile:emptyProfile(),branches:{},slots:{},head:null,activations:{},receipts:{},imports:{}};}
+export interface DatabaseState {histories:Record<string,HistoryRecord>;historyReceipts:Record<string,HistoryReceipt>;saves:Record<string,SaveReceipt>;preferences:PreferencesRecord|null;backups:Record<string,BackupRestoreReceipt>;profile:Profile;branches:Record<string,Profile>;slots:Record<string,SlotRecord>;head:Activation|null;activations:Record<string,Activation>;receipts:Record<string,ProgressReceipt>;imports:Record<string,StoreImportReceipt>;}
+export function databaseState():DatabaseState {return {histories:{},historyReceipts:{},saves:{},preferences:null,backups:{},profile:emptyProfile(),branches:{},slots:{},head:null,activations:{},receipts:{},imports:{}};}
 export function object(input:unknown):asserts input is Record<string,unknown> {ensure(typeof input==='object'&&input!==null&&!Array.isArray(input),'STORAGE_CORRUPT','Expected object');}
 function key(id:string):void {ensure(typeof id==='string'&&id.length>0&&id.length<=256&&!['__proto__','constructor','prototype'].includes(id)&&!id.includes('\0'),'STORAGE_KEY','Invalid storage identity');}
 function own<T>(map:Record<string,T>,id:string):T|undefined {return Object.hasOwn(map,id)?map[id]:undefined;}
@@ -29,7 +29,8 @@ export function parseDatabase(input:unknown):DatabaseState {
   const backups:Record<string,BackupRestoreReceipt>={};if(input.backups!==undefined){object(input.backups);for(const [id,r]of Object.entries(input.backups)){key(id);backups[id]=parseBackupRestoreReceipt(r);}}
   const slots:Record<string,SlotRecord>={},activations:Record<string,Activation>={};for(const [id,v]of Object.entries(input.slots)){key(id);slots[id]=slotRecord(v);}for(const [id,v]of Object.entries(input.activations)){key(id);activations[id]=activation(v);}
   const saves:Record<string,SaveReceipt>={};if(input.saves!==undefined){object(input.saves);for(const [id,r]of Object.entries(input.saves)){key(id);saves[id]=parseSaveReceipt(r);ensure(saves[id]?.id===id,'STORAGE_CORRUPT','Save receipt identity');}}
-  return {saves,preferences:input.preferences===undefined||input.preferences===null?null:normalizePreferencesRecord(input.preferences),backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
+  const histories:Record<string,HistoryRecord>={},historyReceipts:Record<string,HistoryReceipt>={};if(input.histories!==undefined){object(input.histories);for(const [id,v]of Object.entries(input.histories)){key(id);histories[id]=parseHistoryRecord(v);}}if(input.historyReceipts!==undefined){object(input.historyReceipts);for(const [id,v]of Object.entries(input.historyReceipts)){key(id);historyReceipts[id]=parseHistoryReceipt(v);ensure(historyReceipts[id]?.id===id,'STORAGE_CORRUPT','History receipt identity');}}
+  return {histories,historyReceipts,saves,preferences:input.preferences===undefined||input.preferences===null?null:normalizePreferencesRecord(input.preferences),backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
 }
 function applyBatch(state:DatabaseState,input:ProgressBatch,profileId:string,authority:string|null):ProgressReceipt {
   const batch=parseProgressBatch(input);
@@ -77,3 +78,13 @@ export function renameSlot(state:DatabaseState,slot:string,expected:number,label
  key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);ensure(typeof label==='string'&&label.length<=128&&!label.includes('\0'),'SLOT_LABEL','At most 128 characters');const record=slotRecord(old);record.metadata=parseSlotMetadata({...record.metadata,label});record.revision++;state.slots[slot]=record;return slotRecord(record);
 }
 export function deleteSlot(state:DatabaseState,slot:string,expected:number):void {key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);delete state.slots[slot];}
+
+export function readHistory(state:DatabaseState,profileId:string):HistoryRecord {selectProfile(state,profileId);return parseHistoryRecord(own(state.histories,profileId)??{revision:0,entries:[]});}
+export function historyReceipt(state:DatabaseState,id:string):HistoryReceipt|null {key(id);const r=own(state.historyReceipts,id);return r?parseHistoryReceipt(r):null;}
+export function commitHistory(state:DatabaseState,input:HistoryCommit,authority:string|null):HistoryReceipt {
+ const data=parseHistoryCommit(input);key(data.id);selectProfile(state,data.profileId);const signature=wireDigest(data),old=own(state.historyReceipts,data.id);
+ if(old){ensure(old.signature===signature&&old.authority===authority,'HISTORY_ID_REUSED',data.id);return parseHistoryReceipt(old);}
+ ensure((state.head?.owner??state.head?.id??null)===authority&&(state.head?.profileId??'main')===data.profileId,'SESSION_REVOKED','Journal writer no longer owns this profile');const prior=readHistory(state,data.profileId);ensure(prior.revision===data.baseRevision,'HISTORY_CONFLICT','Journal changed');
+ for(const entry of data.entries){const existing=prior.entries.find(e=>e.id===entry.id);if(existing)ensure(wireDigest(existing)===wireDigest(entry),'HISTORY_ENTRY_REUSED','A checkpoint identity cannot change payload');}
+ const next=parseHistoryRecord({revision:prior.revision+1,entries:data.entries}),receipt=parseHistoryReceipt({id:data.id,profileId:data.profileId,authority,revision:next.revision,signature});state.histories[data.profileId]=next;state.historyReceipts[data.id]=receipt;return parseHistoryReceipt(receipt);
+}

@@ -1,0 +1,103 @@
+$ pnpm build && pnpm build:harness && playwright test --grep 'real history voice|default history UI|history preview honors|invalid or failed rollback'
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 805 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-CkjcokRX.css                        8.29 kB │ gzip:   2.62 kB
+apps/playground/dist/assets/webworkerAll-CW-1_dPS.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-Dm51WBP6.js                         14.58 kB │ gzip:   4.66 kB
+apps/playground/dist/assets/browserAll-B_cTFiSn.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-BB0FLkdQ.js                     2,443.81 kB │ gzip: 349.80 kB
+
+✓ built in 1.13s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 802 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-DBYyt4m9.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/defaultFilter.vert-DBKfXOpv.js            0.78 kB │ gzip:   0.35 kB
+tests/browser/harness/dist/disposal-probe.js                         3.69 kB │ gzip:   1.44 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-0kpVo1g2.js                         18.08 kB │ gzip:   5.30 kB
+tests/browser/harness/dist/browserAll-CiSzCA5-.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/lib-pA3V24io.js                         317.61 kB │ gzip:  80.33 kB
+tests/browser/harness/dist/sdk.js                                5,953.20 kB │ gzip: 534.40 kB
+
+✓ built in 1.21s
+[WebServer] (node:3452749) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3452769) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3452889) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:3452909) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/history.spec.ts:4:1 › real history voice is isolated from narrative clocks; rollback restores nested frame/RNG/motion while durable unlocks survive refresh (3.0s)
+  ✓  2 tests/browser/history.spec.ts:13:1 › default history UI previews actual voice in a paused menu and requires confirmation for rollback (3.5s)
+  ✘  3 tests/browser/history.spec.ts:17:1 › history preview honors non-menu pause, rejects a blocked native start, cancels late play and keeps separate Players independent (2.4s)
+(node:3453285) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 tests/browser/history.spec.ts:26:1 › invalid or failed rollback preserves the live authority, while a committed reply loss stays pending and recovers once (1.6s)
+
+
+  1) tests/browser/history.spec.ts:17:1 › history preview honors non-menu pause, rejects a blocked native start, cancels late play and keeps separate Players independent 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "paused": true,
+    +   "paused": false,
+        "src": null,
+        "state": "idle",
+      }
+
+      22 |    const secondMount=document.createElement('div');secondMount.style.cssText='position:relative;width:640px;height:360px';document.body.append(secondMount);const second=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,new URL('/history/',location.href).href),mount:secondMount,store:new sdk.MemoryStore(),saveCompatibilitySeries:'preview-other'});try{await second.updatePreferences({text:{intervalMs:0}});await second.start();for(let i=0;i<3;i++){const w=second.getSnapshot().core?.run.wait;if(w?.kind!=='text')throw new Error('text');await second.input('advance',w.prompt,second.getSnapshot().epoch);}second.setMenu(true);const other=second.getSnapshot().backlog.entries.find(e=>e.text.textId==='memory.letter');if(!other)throw new Error('other');await player.replayHistory(row.id);await second.replayHistory(other.id);player.dispose();const independent=second.getSnapshot().backlog.voice.state;return {blocked,blockedView,playing,paused,resumed,menuStillPaused,late,independent,profile:second.getSnapshot().core?.profile,errors:second.getSnapshot().error};}finally{second.dispose();secondMount.remove();}
+      23 |   }finally{HTMLMediaElement.prototype.play=native;player.dispose();mount.remove();}
+    > 24 |  });expect(r.blocked).toContain('NotAllowedError');expect(r.blockedView).toBe('blocked');expect(r.playing).toBe('playing');expect(r.paused).toBe('paused');expect(r.resumed).toBe('playing');expect(r.menuStillPaused).toBe(true);expect(r.late).toMatchObject({state:'idle',paused:true,src:null});expect(r.independent).toBe('playing');expect(r.errors).toBeNull();
+         |                                                                                                                                                                                                                                                  ^
+      25 | });
+      26 | test('invalid or failed rollback preserves the live authority, while a committed reply loss stays pending and recovers once',async({page})=>{
+      27 |  await page.goto('/');await page.locator('body').click({position:{x:1,y:1}});const r=await page.evaluate(async()=>{
+        at /home/myo/Desktop/galbox-sdk/tests/browser/history.spec.ts:24:242
+
+    Error Context: test-results/history-history-preview-ho-67e69-eparate-Players-independent/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/history-history-preview-ho-67e69-eparate-Players-independent/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/history-history-preview-ho-67e69-eparate-Players-independent/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/history.spec.ts:17:1 › history preview honors non-menu pause, rejects a blocked native start, cancels late play and keeps separate Players independent 
+  3 passed (20.2s)
+[ELIFECYCLE] Command failed with exit code 1.

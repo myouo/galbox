@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G4-02",
+  "current_task": "G5-01",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1750,9 +1750,9 @@
         "G3-02",
         "G4-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "backlog/replay/rollback systems"
       ],
@@ -1768,9 +1768,21 @@
         "backlog-voice",
         "rollback-progress-authority"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g4-02/REPORT.md",
+        "docs/evidence/g4-02/check.log",
+        "docs/evidence/g4-02/unit.log",
+        "docs/evidence/g4-02/browser-results.json",
+        "docs/evidence/g4-02/history-result.json",
+        "docs/evidence/g4-02/consumer-result.json",
+        "docs/evidence/g4-02/result.json",
+        "docs/evidence/g4-02/performance.json",
+        "docs/evidence/g4-02/release-audit.json",
+        "docs/evidence/g4-02/dev-result.json",
+        "docs/evidence/g4-02/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定有界合法历史切点/语音身份与回放不改PC/已读的ADR；回溯走新activation并保当前持久profile，不能从文本历史猜快照。然后SDK/默认UI、失败/刷新/独立consumer验收。"
+      "next_action": "ADR0026有限历史语音/确认切点/有界journal/当前profile回溯验收通过；下一G5-01流程图节点访问/解锁/合法重入。G7须跟进本轮API P95 26.5ms较旧基准增幅与大规模成本。"
     },
     {
       "id": "G5-01",
@@ -1800,7 +1812,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定版本化流程图/章节节点、profile访问/解锁与合法重入入口绑定的有限ADR；再Schema/真实工厂/Core/runtime/默认UI、坏配置/存档/刷新/独立consumer验收。不能把文本历史或任意PC跳转冒充合法重入。"
     },
     {
       "id": "G5-02",
@@ -1928,7 +1940,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。；跟进g4-02性能实际API P95 26.5ms（G4-01为4.4ms）和两帧P95 66.7ms，分组测量历史投影/捕获/持久事务成本，复验Core文本历史10000条/4MB等规模边界，不将当前50ms门槛通过当60FPS或大作品认证。"
     },
     {
       "milestone": "H2",

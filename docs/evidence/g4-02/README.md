@@ -1,0 +1,1 @@
+最终支持集、实际命令/失败与重验见 [REPORT](REPORT.md)。当前门槛是check/unit/browser/consumer/cli/compatibility/performance/release及其JSON、history-result和原生dev-result/截图；source-manifest.json绑定最后源码。早期*-first/second等、browser-regression/browser-core-pass、unit-port-process/consumer-interrupted均为过程证据，不能替代最终文件。

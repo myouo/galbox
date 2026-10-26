@@ -1,0 +1,48 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-echoes",
+  "release": "echoes-1",
+  "series": "1",
+  "programSha256": "3a871a1eb1fe74613be08118e8a6b3388d4ce26cf2a559a0ca9d8dbf8226c2bb",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "28d5a7bc57a6d6272da795b83b65b99644c5510e7716d412d49fdc32a3d5f8d5",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "voice-opus",
+      "kind": "audio",
+      "bytes": 5574,
+      "playback": "element",
+      "encoding": "opus",
+      "channels": 1,
+      "sampleRate": 48000,
+      "frames": 57600
+    },
+    {
+      "id": "voice-buffer",
+      "bytes": 30912,
+      "kind": "audio",
+      "channels": 1,
+      "sampleRate": 22050,
+      "frames": 15434
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

@@ -120,3 +120,5 @@ G3-03有限支持集见ADR0023、VIDEO.md、INTERACTIONS.md：单opaque VP8 WebM
 G3-04有限HTTP串流见ADR0024/STREAMING.md：element音频/现有影片格式、正式release、显式versioned-url策略、强ETag/If-Match/Range/immutable协议、中立租约/取消、接管和每attempt重验、快照逻辑目录绑定。源站违背同版本不可变契约时不等于客户端已密码验证；现有资源预算/codec限制和其它平台门槛保留，不借渐进播放计为整个作品规模已认证。
 
 G4-01 实施集按 ADR0025/SAVES：新 saveGame/原子回执、同切点图文 PNG、上一修订与命名/删除、profile 隔离快速槽和 opt-in 自动循环槽，默认 UI 和真实 IndexedDB/跨刷新/独立 tarball 验收；旧 save 无图兼容。
+
+G4-02有限集按ADR0026/HISTORY：真实确认前快照/逻辑历史ID、有界持久journal/完整备份迁移、独立buffer/element/版本流语音、当前profile与原activation head回溯，默认UI、失败/刷新/独立tarball验证。

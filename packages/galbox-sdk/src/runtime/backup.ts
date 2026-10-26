@@ -1,4 +1,4 @@
-import {ensure, parsePortableBackup, parseStoreBackupRestore, parseBackupRestoreReceipt, parseProfile} from '../protocol/index.js';
+import {ensure, parsePortableBackup, parseStoreBackupRestore, parseBackupRestoreReceipt, parseProfile,parseHistoryRecord} from '../protocol/index.js';
 import type {PortableBackup, StoreBackupRestore, BackupRestoreReceipt, SlotMetadata} from '../protocol/index.js';
 import type {DatabaseState} from './durable.js';
 
@@ -16,10 +16,11 @@ export function backupClosure(input:unknown):PortableBackup {
     ensure(r.previous===null?!r.previousMetadata:!!r.previousMetadata,'BACKUP_PREVIOUS_METADATA','Previous snapshot and metadata must travel together');
     if(r.previousMetadata)ensure(profiles.has(r.previousMetadata.profileId),'BACKUP_PROFILE_MISSING',r.previousMetadata.profileId);
   }
+  const seen=new Set<string>();for(const h of data.histories??[]){ensure(profiles.has(h.profileId)&&!seen.has(h.profileId),'BACKUP_HISTORY_PROFILE',h.profileId);seen.add(h.profileId);parseHistoryRecord(h.record);}
   return data;
 }
 export function captureBackup(state:DatabaseState,gameId:string,series:string,release:string):PortableBackup {
-  return backupClosure({format:'galbox-backup',version:1,gameId,series,release,profiles:[{id:'main',profile:state.profile},...Object.entries(state.branches).map(([id,profile])=>({id,profile}))],slots:Object.entries(state.slots).map(([slot,r])=>({...r,slot,metadata:r.metadata??{profileId:'main',label:slot},...(r.previous?{previousMetadata:r.previousMetadata??r.metadata??{profileId:'main',label:slot}}:{})}))});
+  return backupClosure({...Object.keys(state.histories).length?{histories:Object.entries(state.histories).map(([profileId,record])=>({profileId,record}))}:{},format:'galbox-backup',version:1,gameId,series,release,profiles:[{id:'main',profile:state.profile},...Object.entries(state.branches).map(([id,profile])=>({id,profile}))],slots:Object.entries(state.slots).map(([slot,r])=>({...r,slot,metadata:r.metadata??{profileId:'main',label:slot},...(r.previous?{previousMetadata:r.previousMetadata??r.metadata??{profileId:'main',label:slot}}:{})}))});
 }
 export function commitBackupRestore(state:DatabaseState,input:StoreBackupRestore):BackupRestoreReceipt {
   const commit=parseStoreBackupRestore(input),backup=backupClosure(commit.backup);identity(commit.id);ensure(commit.id.length<=160,'BACKUP_COMMIT_ID','At most 160 characters');
@@ -33,5 +34,6 @@ export function commitBackupRestore(state:DatabaseState,input:StoreBackupRestore
   const receipt=parseBackupRestoreReceipt({id:commit.id,signature,profiles,slots});
   for(const p of backup.profiles){const mapped=profiles.find(m=>m.id===p.id);ensure(mapped,'BACKUP_PROFILE_MISSING',p.id);state.branches[mapped.restoredId]=parseProfile(p.profile);}
   for(const r of backup.slots){const mapped=slots.find(m=>m.slot===r.slot);ensure(mapped,'BACKUP_SLOT_MISSING',r.slot);state.slots[mapped.restoredSlot]={revision:r.revision,snapshot:r.snapshot,previous:r.previous,metadata:remap(r.metadata),...(r.previousMetadata?{previousMetadata:remap(r.previousMetadata)}:{})};}
+  for(const h of backup.histories??[]){const mapped=profiles.find(p=>p.id===h.profileId);ensure(mapped,'BACKUP_HISTORY_PROFILE',h.profileId);state.histories[mapped.restoredId]=parseHistoryRecord({revision:0,entries:h.record.entries});}
   state.backups[commit.id]=receipt;return parseBackupRestoreReceipt(receipt);
 }

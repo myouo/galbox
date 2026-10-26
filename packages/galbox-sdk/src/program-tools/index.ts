@@ -26,3 +26,5 @@ export type {InteractiveOption,InteractionTiming} from './interaction.js';
 
 export {streamRequest} from '../runtime/stream-ports.js';
 export type {Cancellation,MediaKind,MediaStreamLease,MediaStreamProvider,MediaStreamRequest} from '../runtime/stream-ports.js';
+
+export {historyPolicy} from '../runtime/history.js';

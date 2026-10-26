@@ -148,3 +148,5 @@ G3-03采用ADR0023：影片为同Pixi图像舞台上的独立平面，Host的私
 G3-04资源端口增加中立Cancellation/MediaStreamRequest/Lease，只有Web adapter使用AbortSignal/fetch/原生element URI。Core保存有界逻辑streamCatalog并验证恢复目录；Host核对正式catalog SHA与条件HTTP元数据、按实例拥有缓存租约。完整摘要和URL版本等级分开，见ADR0024/STREAMING.md。
 
 G4-01 按 ADR0025/SAVES.md 将保存捕获与激活共用串行屏障：Core 授权，Host/正文 renderer 同步复制该切点，Player 合成 PNG，Storage 事务同写快照/图/元数据/固定摘要回执。槽位策略/管理 UI 属 SDK systems，不让 React 改剧情或回写旧 profile。
+
+G4-02按ADR0026/HISTORY把确认事件的真实Core快照写入独立有界journal，Snapshot历史ID关联、无递归快照；Store绑定profile/authority并携带备份闭包，Player回溯走原head激活而保当前profile。历史语音为Host独立设备预览，不向Core发送完成或重新解释剧情。

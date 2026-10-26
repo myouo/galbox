@@ -100,3 +100,5 @@ G3-03：`video-save-policy` 检查实际VP8/Opus/Vorbis/无音轨的结构与浏
 G3-04：`versioned-media-stream` 以实际慢速HTTP记录发送区间去重，证明启动时audio/video已解码且未传完整文件，不能只看响应未关闭；保存/恢复/无WebGL/独立tarball与CLI公开HTTP服务都需实跑。`stream-integrity` 检查显式策略/正式release、catalog/kind/MIME/版本/长度/强ETag/Range/immutable与实际metadata，弱/错误头/redirect/伪造provider身份拒绝，诊断不能把expected升级digest，旧目录/版本槽保留并拒绝。`stream-cancel-isolation` 检查迟到租约恰好归还、两活动实例共享provider仍各自取消、断网不冒充end、release异常仍释放其它自有资源，候选版本失败保head/profile/槽。
 
 G4-01：`same-cut-thumbnail` 用真实 PNG 像素和 DOM 字体/Ruby/NVL/揭示状态验证正文+舞台，延迟写入后剧情已变而图/摘要/快照仍一致；WebGL/Canvas 均实跑，自定义无 capture、禁存/abort 要拒绝。`atomic-slot-image` 检查事务失败不改旧槽/上一修订、完整 payload 摘要回执/失回执核验与 unknown 同 payload 重试、dispose 后已提交准确返回，备份携带成对图片且保当前进度。`slot-management` 检查默认 UI 命名/确认覆盖/删除/上一修订、expectedRevision 冲突、自动循环/读档不覆盖/profile 快速隔离、真实 IndexedDB 刷新和 strict 独立 tarball。
+
+G4-02：`backlog-voice` 要真实buffer/element/版本化HTTP语音，菜单暂停剧情仍可回放、当前master/voice偏好、其它暂停原因、blocked重试/迟到取消/双实例隔离；Core PC/等待/已读/语音门不因预览变更。`rollback-progress-authority` 要预算1/8/100真实确认切点、显完/旧输入不产点，嵌套帧/RNG/动画恢复且当前已读/解锁/偏好不被旧档覆盖；禁存/超限/旧档无点/坏点/失败/提交后pending、实际IndexedDB刷新、完整journal备份迁移/旧会话拒写、默认确认UI与strict独立消费。

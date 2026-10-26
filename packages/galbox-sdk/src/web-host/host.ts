@@ -1,3 +1,5 @@
+import {HistoryVoiceController} from './history-voice.js';
+export type {HistoryVoiceView} from './history-voice.js';
 import {composeThumbnail} from './capture.js';
 import type {TextCapture} from './capture.js';
 import {openStream} from './streams.js';
@@ -25,6 +27,13 @@ interface Playing {source:AudioNode;buffer?:AudioBufferSourceNode;element?:HTMLA
 export interface MediaDiagnostics {state:'buffering'|'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;loops:number;elementStarts:number;}
 export interface ResourceDiagnostics {catalogEncodedBytes:number;streamDeclaredBytes:number;integrity:{id:string;factOrigin:'inspected'|'manifest';evidence:IntegrityEvidence}[];canvasBlur:'native'|'cpu'|null;canvasBytesEstimated:number;canvasPeakBytesEstimated:number;canvasSurfaces:number;renderer:'webgl'|'canvas'|null;graphicsFallback:string|null;graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
+  private historyObserver:(()=>void)|null=null;
+  private readonly historyVoice=new HistoryVoiceController(asset=>{const buffer=this.buffers.get(asset),media=this.mediaAssets.get(asset);if(buffer)return {kind:'buffer',buffer};ensure(media,'HISTORY_VOICE_ASSET','Voice resource unavailable');return {kind:'media',media};},()=>this.historyObserver?.());
+  observeHistoryVoice(observer:(()=>void)|null):void {this.historyObserver=observer;}
+  historyVoiceView(){return this.historyVoice.view();}
+  playHistoryVoice(id:string,recipe:import('../protocol/index.js').VoiceRecipe){return this.historyVoice.play(id,recipe);}
+  stopHistoryVoice():void {this.historyVoice.stop();}
+  pauseHistoryVoice(value:boolean):void {this.historyVoice.pause(value);}
   private readonly captureFonts:string[]=[];
   readonly video:VideoDiagnostics={state:'unverified',starts:0,ended:0,active:0,blocked:0};private videoController:VideoController|null=null;private videoAssets=new Map<string,PreparedMedia>();
   private readonly streamLeases:PreparedStream[]=[];private streamFailure:Error|null=null;private cleanupFailure:Error|null=null;
@@ -53,7 +62,7 @@ export class WebHost implements HostPort {
   constructor(private readonly mount:HTMLElement,private readonly fault?:(error:Error)=>void,graphics:unknown={renderer:'auto'}) {this.graphicsOptions=parseGraphicsOptions(graphics);}
   get disposalError():Error|null {return this.cleanupFailure;}
   resourceFacts():ResourceFact[]{return this.facts.map(parseResourceFact);}
-  applyAudioPreferences(input:unknown):void {const audio=parseAudioPreferences(input);this.volume=audio.master;this.roleVolumes={bgm:audio.bgm,voice:audio.voice,sfx:audio.sfx};if(this.master)this.master.gain.value=this.volume;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.videoController?.preferences(this.roleVolumes.sfx*(this.mix?.gains.sfx??1));}
+  applyAudioPreferences(input:unknown):void {const audio=parseAudioPreferences(input);this.historyVoice.preferences(audio);this.volume=audio.master;this.roleVolumes={bgm:audio.bgm,voice:audio.voice,sfx:audio.sfx};if(this.master)this.master.gain.value=this.volume;for(const p of this.playing.values())p.gain.gain.value=this.sourceGain(p);this.videoController?.preferences(this.roleVolumes.sfx*(this.mix?.gains.sfx??1));}
   assertReady():void {if(this.streamFailure)throw this.streamFailure;this.videoController?.assertReady();ensure(!this.disposed&&this.resources.graphics==='available','GRAPHICS_UNAVAILABLE','Recreate the player to prepare the graphics device');ensure(!this.audioUnavailable&&this.context&&this.context.state!=='closed','AUDIO_UNAVAILABLE','Audio device closed');}
   private lost=(event:Event):void=>{event.preventDefault();this.resources.graphics='unavailable';this.stopAudio();this.fault?.(new GalboxError('WEBGL_CONTEXT_LOST','图像设备连接已丢失，请重新打开播放器后读档。'));};
   async init(program:Program,provider:AssetProvider,signal:AbortSignal,policy:unknown=defaultResourceBudget,expected?:readonly ResourceFact[],streaming?:unknown):Promise<void> {
@@ -108,7 +117,7 @@ export class WebHost implements HostPort {
       this.media.state=context.state==='running'?'available':'needs-user-action';for(const p of this.playing.values())if(p.element){if(this.paused)p.element.pause();else if(p.element.paused&&!p.blocked)this.startElement(p);}
     });this.audioOperation=next;return next;
   }
-  setEpoch(epoch:number):void {this.stopAudio();this.videoController?.setEpoch(epoch);this.epoch=epoch;this.stage?.invalidate();}
+  setEpoch(epoch:number):void {this.historyVoice.stop();this.stopAudio();this.videoController?.setEpoch(epoch);this.epoch=epoch;this.stage?.invalidate();}
   private syncCanvasDiagnostics():void {const d=this.stage?.canvasDiagnostics();if(d){this.resources.canvasBlur=d.blur;this.resources.canvasBytesEstimated=d.bytesEstimated;this.resources.canvasPeakBytesEstimated=d.peakBytesEstimated;this.resources.canvasSurfaces=d.surfaces;}}
   validateGraphicsPlan(snapshot:DeepReadonly<Snapshot>):void {if(this.app?.renderer instanceof CanvasRenderer)validateCanvasSnapshot(snapshot,this.app.renderer.canvasContext.blendModes);this.stage?.validate(snapshot);}
   render(run:DeepReadonly<Snapshot>):void {
@@ -155,7 +164,7 @@ export class WebHost implements HostPort {
   private destroyApplication(app:GraphicsApplication|null):void {destroyGraphicsApplication(app);}
   dispose():void {
     for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();this.captureFonts.length=0;
-    if(this.disposed)return;this.disposed=true;this.videoController?.dispose();this.videoController=null;this.stopAudio();this.stage?.dispose();this.stage=null;
+    if(this.disposed)return;this.historyObserver=null;this.historyVoice.dispose();this.disposed=true;this.videoController?.dispose();this.videoController=null;this.stopAudio();this.stage?.dispose();this.stage=null;
     this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.canvasBytesEstimated=0;this.resources.canvasSurfaces=0;this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
     for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();for(const asset of this.mediaAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.mediaAssets.clear();for(const asset of this.videoAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.videoAssets.clear();this.resources.mediaElementBytes=0;for(const lease of this.streamLeases.splice(0))try{lease.release();}catch(error){this.cleanupFailure=new GalboxError('STREAM_LEASE',error instanceof Error?error.message:String(error));}this.resources.integrity=[];this.resources.streamDeclaredBytes=0;this.resources.catalogEncodedBytes=0;
     this.destroyApplication(this.app);this.app=null;

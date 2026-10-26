@@ -3,7 +3,7 @@ import {isAudioInstruction,audioExpressions} from './audio.js';
 import {isStageInstruction,stageExpressions} from './stage.js';
 import {normalizeNativeValue} from './values.js';
 import {expressionChildren} from './expressions.js';
-import {parseValue,GalboxError,parseSaveCapture,assertSaveCut} from './index.js';
+import {parseValue,GalboxError,parseSaveCapture,assertSaveCut,parseHistoryRecord} from './index.js';
 import type {Expression,Instruction,Operand,Program,Snapshot,Profile,SlotMetadata,PortableBackup,RestoreRecipe} from './index.js';
 export function normalizeExpression(e:Expression):Expression {for(const child of expressionChildren(e))normalizeExpression(child);if(e.op==='literal')Object.assign(e,{value:parseValue({kind:e.kind,value:e.value}).value});if(e.op==='profile')Object.assign(e,{fallback:parseValue({kind:e.kind,value:e.fallback}).value});return e;}
 function operand(o:Operand):void {if('literal'in o)normalizeNativeValue(o.literal);else if('expression'in o)normalizeExpression(o.expression);}
@@ -16,4 +16,4 @@ export function normalizeSnapshot(s:Snapshot):Snapshot {Object.values(s.globals)
 export function normalizeProfile(p:Profile):Profile {Object.values(p.values).forEach(normalizeNativeValue);return p;}
 export function normalizeRecipe(r:RestoreRecipe):RestoreRecipe {r.steps.forEach(normalizeInstruction);return r;}
 export function normalizeMetadata(m:SlotMetadata):SlotMetadata {if(m.capture)parseSaveCapture(m.capture);if(m.recipe)normalizeRecipe(m.recipe);if(m.onLoad)normalizeRecipe(m.onLoad);return m;}
-export function normalizeBackup(b:PortableBackup):PortableBackup {b.profiles.forEach(p=>normalizeProfile(p.profile));for(const s of b.slots){normalizeSnapshot(s.snapshot);normalizeMetadata(s.metadata);assertSaveCut(s.snapshot,s.metadata);if(s.previous)normalizeSnapshot(s.previous);if(s.previousMetadata){normalizeMetadata(s.previousMetadata);if(s.previous)assertSaveCut(s.previous,s.previousMetadata);}}return b;}
+export function normalizeBackup(b:PortableBackup):PortableBackup {for(const h of b.histories??[])h.record=parseHistoryRecord(h.record);b.profiles.forEach(p=>normalizeProfile(p.profile));for(const s of b.slots){normalizeSnapshot(s.snapshot);normalizeMetadata(s.metadata);assertSaveCut(s.snapshot,s.metadata);if(s.previous)normalizeSnapshot(s.previous);if(s.previousMetadata){normalizeMetadata(s.previousMetadata);if(s.previous)assertSaveCut(s.previous,s.previousMetadata);}}return b;}

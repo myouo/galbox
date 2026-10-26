@@ -18,6 +18,7 @@ import { emptyOperations, operationContext } from './operations.js';
 import type { OperationRegistry } from './operations.js';
 export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';readonly rngSeed?:number;}
 export type CoreEvent =
+ | {type:'history.session';id:string}
  | InteractionEvent
  | {type:'video.skip';prompt:number;inputId:string}
  | {type:'media.ended';task:string;attempt:number}
@@ -106,6 +107,7 @@ export class Core {
   accept(event:CoreEvent):void {
     ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');
     if(this.revoked||this.s.status==='failed')return;
+    if(event.type==='history.session'){const next=parseSnapshot({...this.s,historySession:event.id});ensure(next.historySession,'HISTORY_SESSION','Missing validated session scope');if(next.wait?.kind==='text'&&next.text)next.text.historyId=`${next.historySession}:${next.text.prompt}`;this.s=next;return;}
     if(event.type==='media.ended'){if(!videoEnded(this.s,event.task,event.attempt))mediaEnded(this.s,event.task,event.attempt);this.resolveWait();return;}
     if(event.type==='interaction.activate'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate')activateInteraction(this.s,input);return;}
     if(event.type==='interaction.choose'||event.type==='interaction.point'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate'||this.consumed.has(event.inputId))return;const branch=pickInteraction(this.s,input);if(branch){this.consumed.add(event.inputId);this.interactionBranch(branch);}return;}
@@ -254,15 +256,15 @@ export class Core {
       case 'extension.invoke':this.invokeOperation(i);return;
       case 'value.set':this.put(i.dest,this.get(i.value));break;
       case 'i32.add.checked': {const a=this.get(i.left),b=this.get(i.right);ensure(a.kind==='i32'&&b.kind==='i32','I32_OPERAND',i.at);this.put(i.dest,i32(a.value+b.value));break;}
-      case 'text.page': {const prompt=this.s.counter+1,text=parseTextState({textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt});prepareWindowText(this.program,this.s,text,i.at);this.richPlan=null;this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
-      case 'text.template': {this.richPlan=null;const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(speaker.value.length>0&&content.value.length>0,'TEMPLATE_EMPTY','Text and speaker must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.textInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}});prepareWindowText(this.program,this.s,text,i.at);this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.page': {const prompt=this.s.counter+1,text=parseTextState({textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt});prepareWindowText(this.program,this.s,text,i.at);this.richPlan=null;this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.template': {this.richPlan=null;const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(speaker.value.length>0&&content.value.length>0,'TEMPLATE_EMPTY','Text and speaker must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.textInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}});prepareWindowText(this.program,this.s,text,i.at);this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
       case 'text.rich': {
         const speaker=this.expression(i.speaker);ensure(speaker.kind==='string'&&speaker.value.length>0,'TEMPLATE_EMPTY','Speaker must not be empty');
         const textValue=(expression:import('../protocol/index.js').StringExpression)=>{const value=this.expression(expression);ensure(value.kind==='string'&&value.value.length>0,'TEMPLATE_EMPTY','Rich content/reading must not be empty');return value.value;};
         const runs=i.runs.map(run=>run.kind==='text'?{...run,content:textValue(run.content)}:run.kind==='ruby'?{...run,content:textValue(run.content),reading:textValue(run.reading)}:{...run});
         const plan=compileRichText(runs),signature=richTextSignature(i),prompt=this.s.counter+1;i32(prompt);
         const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:i.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:this.textInterval,revealedAt:[]}});
-        tickRichText(text,0,plan);validateRichText(text,i);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;bindVoice(this.s,text);this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});return;
+        tickRichText(text,0,plan);validateRichText(text,i);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});return;
       }
       case 'random.i32': {ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');const min=this.expression(i.min),max=this.expression(i.max);ensure(min.kind==='i32'&&max.kind==='i32','EXPRESSION_KIND','Random bounds require i32');const result=sampleI32(this.s.rng,min.value,max.value);this.put(i.dest,result.value);this.s.rng=result.rng;break;}
       case 'rng.seed': ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');this.s.rng={algorithm:'lcg32@1',state:i.seed,draws:0};break;
@@ -308,6 +310,7 @@ export class Core {
 }
 function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations,initial=false):Snapshot {
   const p=linkProgram(input,operations).copy(),s=parseSnapshot(snapshot);
+  const historyIds=s.history.flatMap(t=>t.historyId?[t.historyId]:[]);ensure(new Set(historyIds).size===historyIds.length&&!(s.wait?.kind==='text'&&s.text?.historyId&&historyIds.includes(s.text.historyId)),'RESTORE_HISTORY_ID','History identities must remain unique');
   ensure(s.streamCatalog===streamCatalog(p),'RESTORE_STREAM_CATALOG','Streaming catalog/version changed; explicit migration required');s.invocations=s.invocations??[];
   for(let index=0;index<s.invocations.length;index++){
     const old=s.invocations[index];ensure(old,'RESTORE_INVOCATION','Missing invocation');

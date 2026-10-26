@@ -1,4 +1,5 @@
-import {ensure,parsePortableBackup,GalboxError} from '../protocol/index.js';
+import {validateVoiceRecipe} from '../core/audio.js';
+import {ensure,parsePortableBackup,GalboxError,canonicalWireJSON} from '../protocol/index.js';
 import type {PortableBackup,DeepReadonly,Program} from '../protocol/index.js';
 import {linkProgram} from '../program-tools/linker.js';
 import {validateRestore} from '../core/index.js';
@@ -14,7 +15,7 @@ export interface ContentMigration {readonly [migrationToken]:true;readonly id:st
 export interface ContentMigrationDefinition {id:string;gameId:string;series:string;fromReleases:readonly string[];toRelease:string;migrate:(input:DeepReadonly<PortableBackup>)=>unknown;}
 const migrations=new WeakMap<ContentMigration,ContentMigrationDefinition>();
 function freeze(value:unknown):void {if(value&&typeof value==='object'){Object.freeze(value);for(const child of Object.values(value))freeze(child);}}
-function releases(backup:PortableBackup):string[] {return [...new Set([backup.release,...backup.slots.flatMap(s=>[s.snapshot.release,...(s.previous?[s.previous.release]:[])])])].sort();}
+function releases(backup:PortableBackup):string[] {return [...new Set([backup.release,...(backup.histories??[]).flatMap(h=>h.record.entries.map(e=>e.release)),...backup.slots.flatMap(s=>[s.snapshot.release,...(s.previous?[s.previous.release]:[])])])].sort();}
 function canonical(value:unknown):string {return JSON.stringify(value,(_key:string,v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,Reflect.get(v,k)])):v);}
 export function defineContentMigration(definition:ContentMigrationDefinition):ContentMigration {
   ensure(typeof definition.id==='string'&&typeof definition.toRelease==='string'&&Array.isArray(definition.fromReleases)&&definition.fromReleases.every(r=>typeof r==='string'),'CONTENT_MIGRATION','Expected string identities and an explicit source release array');
@@ -31,9 +32,11 @@ export interface BackupRestoreOptions {program:unknown;series:string;operations?
 function preserveClosure(before:PortableBackup,after:PortableBackup):void {
   ensure(storageNamespace(before.gameId,before.series)===storageNamespace(after.gameId,after.series),'CONTENT_MIGRATION_IDENTITY','Migration cannot change game/series');
   ensure(before.profiles.length===after.profiles.length&&before.profiles.every(p=>after.profiles.some(q=>q.id===p.id&&q.profile.revision===p.profile.revision)),'CONTENT_MIGRATION_CLOSURE','Preserve profile identities and revisions');
+  ensure((before.histories??[]).length===(after.histories??[]).length&&(before.histories??[]).every(h=>(after.histories??[]).some(k=>k.profileId===h.profileId&&h.record.entries.length===k.record.entries.length&&h.record.entries.every(e=>k.record.entries.some(f=>e.id===f.id&&(e.snapshot===null)===(f.snapshot===null))))),'CONTENT_MIGRATION_CLOSURE','Preserve all journal identities/checkpoint presence and profile relationships');
   ensure(before.slots.length===after.slots.length&&before.slots.every(s=>after.slots.some(t=>t.slot===s.slot&&t.revision===s.revision&&t.metadata.profileId===s.metadata.profileId&&(t.previous===null)===(s.previous===null)&&t.previousMetadata?.profileId===s.previousMetadata?.profileId)),'CONTENT_MIGRATION_CLOSURE','Preserve every slot, previous revision and profile relationship');
 }
 function validateCandidates(backup:PortableBackup,program:Program,operations:OperationRegistry):void {
+  for(const h of backup.histories??[])for(const entry of h.record.entries){ensure(entry.release===program.release,'BACKUP_RELEASE_UNAVAILABLE','Historical source release is unavailable');if(entry.snapshot)entry.snapshot=validateRestore(program,entry.snapshot,operations);if(entry.text.voice)validateVoiceRecipe(program,entry.text.voice);}
   for(const slot of backup.slots){
     for(const cut of [{snapshot:slot.snapshot,metadata:slot.metadata},...(slot.previous&&slot.previousMetadata?[{snapshot:slot.previous,metadata:slot.previousMetadata}]:[])]){
       const snapshot=validateRestore(program,cut.snapshot,operations),profile=backup.profiles.find(p=>p.id===cut.metadata.profileId)?.profile;ensure(profile,'BACKUP_PROFILE_MISSING',cut.metadata.profileId);

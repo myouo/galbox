@@ -1978,6 +1978,7 @@ export interface Snapshot {
   scene?: StageScene;
   audioState?: AudioState;
   streamCatalog?: string;
+  historySession?: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2017,6 +2018,7 @@ export interface TextState {
     at: string;
   };
   voice?: VoiceRecipe;
+  historyId?: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2478,6 +2480,35 @@ export interface PortableBackup {
    */
   slots: BackupSlot[];
   release: string;
+  /**
+   * @maxItems 128
+   */
+  histories?: {
+    profileId: string;
+    record: HistoryRecord;
+  }[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "HistoryRecord".
+ */
+export interface HistoryRecord {
+  revision: number;
+  /**
+   * @maxItems 64
+   */
+  entries: HistoryEntry[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "HistoryEntry".
+ */
+export interface HistoryEntry {
+  id: string;
+  release: string;
+  text: TextState;
+  snapshot: Snapshot | null;
+  reason: string | null;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -3461,6 +3492,39 @@ export interface SaveCommit {
 export interface SaveReceipt {
   id: string;
   slot: string;
+  revision: number;
+  signature: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "HistoryPolicy".
+ */
+export interface HistoryPolicy {
+  maxEntries: number;
+  maxCharacters: number;
+  rollback: boolean;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "HistoryCommit".
+ */
+export interface HistoryCommit {
+  id: string;
+  profileId: string;
+  baseRevision: number;
+  /**
+   * @maxItems 64
+   */
+  entries: HistoryEntry[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "HistoryReceipt".
+ */
+export interface HistoryReceipt {
+  id: string;
+  profileId: string;
+  authority: string | null;
   revision: number;
   signature: string;
 }
