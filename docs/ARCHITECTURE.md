@@ -146,3 +146,5 @@ M0 实现构建期生成和只读漂移检查，明确哪些生成文件进入�
 G3-03采用ADR0023：影片为同Pixi图像舞台上的独立平面，Host的私有HTMLVideoElement/VideoSource负责设备，Core保存待播/播放/结束/跳过及恢复意图；interaction.prompt由Core保存已解析选项/期限和prepared/active阶段，UI仅报告readiness。影片/互动的普通保存与初始激活资格分开，不将注册能力等同任意编码或设备可用。
 
 G3-04资源端口增加中立Cancellation/MediaStreamRequest/Lease，只有Web adapter使用AbortSignal/fetch/原生element URI。Core保存有界逻辑streamCatalog并验证恢复目录；Host核对正式catalog SHA与条件HTTP元数据、按实例拥有缓存租约。完整摘要和URL版本等级分开，见ADR0024/STREAMING.md。
+
+G4-01 按 ADR0025/SAVES.md 将保存捕获与激活共用串行屏障：Core 授权，Host/正文 renderer 同步复制该切点，Player 合成 PNG，Storage 事务同写快照/图/元数据/固定摘要回执。槽位策略/管理 UI 属 SDK systems，不让 React 改剧情或回写旧 profile。

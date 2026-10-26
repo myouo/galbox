@@ -59,3 +59,5 @@ H2-02有限Canvas滤镜/隔离合成通过：同Pixi场景图、组/相机滤镜
 G3-03有限影片/互动集通过：opaque VP8 WebM/Opus或Vorbis、同Pixi影片平面、end/skip/replay-forbid、矩形热点/键盘、prepared激活/活动期限与恢复。证据[G3-03](evidence/g3-03/REPORT.md)：164单元、79浏览器、strict独立consumer、62 CLI、4 synthetic、性能/API/dry-run与原生--disable-webgl保存刷新。SDK SHA=ba41bd16ea1daea0e462ffcb3da937287b89891f5e73cbb0b1aa98e844b3ad67；CLI SHA=cbd2e69f36b4139d06fca5091122dd4e8760f73c089948d3675dc21b27fca9b7。13新增/16声明变化/0删除，Snapshot=1新cap扩展；未知编码/seek/网络流不计支持。下一G3-04，完整G4–G7/N/F/M6未完成。
 
 G3-04有限版本化HTTP串流通过：显式较弱等级/正式manifest、中立租约/取消、条件HEAD、目录恢复绑定、通用CLI/Vite Range服务，详见[STREAMING](STREAMING.md)与[证据](evidence/g3-04/REPORT.md)。171单元、84浏览器、strict独立consumer、65 CLI、4 synthetic、性能/API/dry-run及原生--disable-webgl保存刷新通过。启动时实际去重发送audio 40960/1280646、video 40960/584795字节，未传全即播；不能把URL等级当整文件密码校验。SDK SHA=cd6c7f91070fc4738e5789ce8f9ef88b01c945ad3b1538963900dfd038673d97；CLI SHA=c420c4df4801237f2ad53c27bb3230d77953275972cab0c356b1575049119c7e。28新增/7声明变化/0删除，Snapshot=1新增cap目录token。下一G4-01，完整G4–G7/N/F/M6未完成。
+
+G4-01有限图文存档集已通过177单元/92浏览器/strict独立消费/65 CLI/性能/API/原生无WebGL回归，见 [报告](evidence/g4-01/REPORT.md) 与 [保存系统](SAVES.md)。同切点DOM正文+舞台、原子图文/回执/上一修订、手动/快速/自动管理不扩大为全部G任务或真实作品兼容；下一G4-02。

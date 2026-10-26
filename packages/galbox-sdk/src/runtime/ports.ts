@@ -1,13 +1,17 @@
-import type { Profile, Snapshot, DeepReadonly, SlotMetadata, StoreImport, StoreImportReceipt, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, PlayerPreferences, PreferencesRecord } from '../protocol/index.js';
+import type { Profile, Snapshot, DeepReadonly, SlotMetadata, StoreImport, StoreImportReceipt, PortableBackup, StoreBackupRestore, BackupRestoreReceipt, PlayerPreferences, PreferencesRecord, SaveCommit, SaveReceipt } from '../protocol/index.js';
 import type { ProgressChange, Effect } from '../core/index.js';
 export interface ProgressBatch {readonly id:string;readonly baseRevision:number;readonly through:number;readonly changes:readonly DeepReadonly<ProgressChange>[];}
 export interface ProgressReceipt {id:string;revision:number;through:number;signature:string;profileId?:string;authority?:string|null;}
 export interface Activation {id:string;sequence:number;status:'committed-pending'|'activated'|'superseded';snapshot:Snapshot;profileId?:string;mode?:'initial'|'restore';provenance?:import('../protocol/index.js').JsonValue;owner?:string;initialCommitId?:string|null;onLoad?:import('../protocol/index.js').RestoreRecipe;slot?:string;}
 export interface Durable {profile:Profile;head:Activation|null;}
 export interface SlotRecord {revision:number;snapshot:Snapshot;previous:Snapshot|null;metadata?:SlotMetadata;previousMetadata?:SlotMetadata;}
-export interface SlotSummary {slot:string;revision:number;metadata:SlotMetadata;}
+export interface SlotSummary {slot:string;revision:number;metadata:SlotMetadata;hasPrevious?:boolean;}
 export interface ActivationOptions {profileId?:string;mode?:'initial'|'restore';provenance?:import('../protocol/index.js').JsonValue;owner?:string;onLoad?:import('../protocol/index.js').RestoreRecipe;slot?:string;}
 export interface Store {
+  commitSave?(commit:SaveCommit):Promise<SaveReceipt>;
+  saveReceipt?(id:string):Promise<SaveReceipt|null>;
+  renameSlot?(slot:string,expectedRevision:number,label:string):Promise<SlotRecord>;
+  deleteSlot?(slot:string,expectedRevision:number):Promise<void>;
   readPreferences?():Promise<PreferencesRecord|null>;
   writePreferences?(value:PlayerPreferences,expectedRevision:number):Promise<PreferencesRecord>;
   backup?(gameId:string,series:string,release:string):Promise<PortableBackup>;

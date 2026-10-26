@@ -1,7 +1,11 @@
+import {defaultSavePolicy,selectSaveSlot,profileSlot,submitSave,parseSaveGameOptions,parseSavePolicy,SaveOutcomeError} from './saves.js';
+import type {SaveGameOptions,SavePolicy,SaveCommit} from './saves.js';
+export {SaveOutcomeError,defaultSavePolicy} from './saves.js';
+export type {SaveGameOptions,SavePolicy} from './saves.js';
 import {freezeJson} from '../protocol/codecs.js';
 import { Core, validateRestore } from '../core/index.js';
 import type { CoreView, CoreEvent, ProgressChange } from '../core/index.js';
-import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError,parseResourceBudget,parseReleaseManifest, parsePlayerPreferences, parsePreferencesRecord, parsePreferencesPatch,parseInteractionEvent,parseIntegrityEvidence } from '../protocol/index.js';
+import { parseProgram, parseSnapshot, parseJsonValue, ensure, readUnit, GalboxError,parseResourceBudget,parseReleaseManifest, parsePlayerPreferences, parsePreferencesRecord, parsePreferencesPatch,parseInteractionEvent,parseIntegrityEvidence,parseSlotMetadata,parseSaveCommit,parseSaveCapture } from '../protocol/index.js';
 import type { Program, Snapshot, DeepReadonly, Profile, RestoreRecipe, SlotMetadata, StoreImport, JsonValue } from '../protocol/index.js';
 import { linkProgram } from '../program-tools/linker.js';
 import { Coordinator } from '../runtime/coordinator.js';
@@ -26,27 +30,35 @@ import type {PlaybackView} from '../runtime/playback.js';
 import {createDomTextRenderer} from '../web-host/renderer.js';
 import type {TextRenderer,TextRendererFactory} from '../web-host/renderer.js';
 export {createDomTextRenderer} from '../web-host/renderer.js';
-export type {TextRenderer,TextRendererFactory,TextRendererContext} from '../web-host/renderer.js';
+export type {TextRenderer,TextRendererFactory,TextRendererContext,TextCapture} from '../web-host/renderer.js';
 import {prepareBackupRestore,materializeBackupRestore,storageNamespace} from '../backups/index.js';
 import type {PreparedBackupRestore,ContentMigration,PortableBackup,BackupRestoreReceipt} from '../backups/index.js';
 import type { AssetProvider } from '../web-host/assets.js';
 export { createHttpProvider } from '../web-host/assets.js';
 export type { AssetProvider, AssetLease, AssetRequest } from '../web-host/assets.js';
 export type { Store } from '../runtime/ports.js';
-export interface PlayerOptions {program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;streaming?:import('../protocol/index.js').StreamingOptions;graphics?:import('../protocol/index.js').GraphicsOptions;preferencesDefaults?:unknown;textRenderer?:TextRendererFactory;}
+export interface PlayerOptions {saves?:SavePolicy;program:unknown;provider:AssetProvider;mount:HTMLElement;saveCompatibilitySeries:string;database?:string;store?:Store;budget?:number;operations?:OperationRegistry;bindings?:SaveBindingRegistry;release?:unknown;resourceBudget?:unknown;signal?:AbortSignal;streaming?:import('../protocol/index.js').StreamingOptions;graphics?:import('../protocol/index.js').GraphicsOptions;preferencesDefaults?:unknown;textRenderer?:TextRendererFactory;}
 export interface ReleaseView {readonly origin:'manifest'|'derived';readonly sha256:string;readonly manifest:DeepReadonly<ReleaseManifest>;}
 export interface PreferencesResult {readonly record:DeepReadonly<PreferencesRecord>;readonly committed:true;readonly disposed:boolean;}
+export interface SaveLibraryEntry {readonly slot:string;readonly revision:number;readonly profileId:string;readonly label:string;readonly kind:'manual'|'quick'|'auto'|'legacy';readonly capture:DeepReadonly<import('../protocol/index.js').SaveCapture>|null;readonly hasPrevious:boolean;}
 export interface PlayerView {
+  readonly saveSystem:{readonly supported:boolean;readonly policy:DeepReadonly<SavePolicy>;readonly pending:readonly {id:string;slot:string}[]};
   readonly video:Readonly<import('../web-host/video-types.js').VideoDiagnostics>;readonly canReplayVoice:boolean;readonly playback:PlaybackView;readonly preferences:DeepReadonly<PreferencesRecord>;readonly preferencesSupported:boolean;
   readonly release:ReleaseView|null;readonly resources:DeepReadonly<ResourceDiagnostics>;
   readonly title:string;readonly epoch:number;readonly lifecycle:'ready'|'playing'|'preparing'|'committed-pending'|'commit-unknown'|'disposed';readonly core:CoreView|null;readonly error:string|null;
-  readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profiles:readonly {profileId:string;revision:number}[];readonly profileId:string;readonly slots:readonly {slot:string;revision:number;profileId:string;label:string}[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
+  readonly media:Readonly<MediaDiagnostics>;readonly menu:boolean;readonly paused:boolean;readonly fast:boolean;readonly namespace:string;readonly profiles:readonly {profileId:string;revision:number}[];readonly profileId:string;readonly slots:readonly SaveLibraryEntry[];readonly importSources:readonly {sourceKey:string;schema:string;version:number;label:string}[];readonly importReport:ConversionReport|null;readonly lastImport:{slot:string;profileId:string}|null;
 }
 export interface ImportResult {readonly id:string;readonly slot:string;readonly profileId:string;readonly revision:number;readonly committed:true;readonly disposed:boolean;}
 interface LoadPolicy {profileId:string;recipe?:RestoreRecipe;onLoad?:RestoreRecipe;provenance?:JsonValue;slot?:string;start?:boolean;}
 export interface SaveResult {readonly slot:string;readonly revision:number;readonly disposed:boolean;}
 export interface BackupRestoreResult {readonly id:string;readonly profiles:BackupRestoreReceipt['profiles'];readonly slots:BackupRestoreReceipt['slots'];readonly committed:true;readonly disposed:boolean;}
+export interface IllustratedSaveResult extends SaveResult {readonly id:string;readonly committed:true;readonly reconciled:boolean;}
 export class Player {
+  private readonly savePolicy:SavePolicy;
+  private captureSequence=0;private saveFailure:string|null=null;
+  private saveTail:Promise<void>=Promise.resolve();
+  private readonly pendingSaves=new Map<string,SaveCommit>();
+  private autoSaving=false;private lastAutoCut='';
   private readonly backupCommits=new WeakMap<PreparedBackupRestore,string>();
   private runtime:Coordinator|null=null;
   private preferences:PreferencesRecord;
@@ -61,7 +73,7 @@ export class Player {
   private profiles:{profileId:string;revision:number}[]=[];
   private onLoad:RestoreRecipe|undefined;
   private provenance:JsonValue|undefined;
-  private slots:{slot:string;revision:number;profileId:string;label:string}[]=[];
+  private slots:SaveLibraryEntry[]=[];
   private importGeneration=0;
   private importCounter=0;
   private pendingImport:PreparedImport|null=null;
@@ -95,12 +107,12 @@ export class Player {
   readonly namespace:string;
   private readonly instance=crypto.randomUUID();
   private constructor(private readonly options:PlayerOptions){
-    this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
+    this.savePolicy=parseSavePolicy(options.saves??defaultSavePolicy);this.operations=options.operations??emptyOperations;this.program=linkProgram(options.program,this.operations).copy();
     this.namespace=storageNamespace(this.program.gameId,options.saveCompatibilitySeries);this.requestedRelease=options.release===undefined?null:parseReleaseManifest(options.release);this.resourceBudget=parseResourceBudget(options.resourceBudget??this.requestedRelease?.limits??defaultResourceBudget);ensure(!this.requestedRelease||canonicalReleaseJSON(this.resourceBudget)===canonicalReleaseJSON(this.requestedRelease.limits),'RELEASE_BUDGET','Player budget differs from manifest');
     this.preferencesDefaults=normalizePreferences(options.preferencesDefaults??defaultPreferences());this.preferences={revision:0,value:parsePlayerPreferences(this.preferencesDefaults)};
     this.host=new WebHost(options.mount,error=>{this.setPause('device',true);this.fail(error);},options.graphics);this.host.applyAudioPreferences(this.preferences.value.audio);
-    this.inputController=new InputController({state:()=>{const v=this.getSnapshot(),w=v.core?.run.wait;return {epoch:v.epoch,prompt:w&&'prompt'in w?w.prompt:null,text:w?.kind==='text',playing:v.lifecycle==='playing',paused:v.paused,menu:v.menu};},advance:(prompt,epoch)=>{void this.step(prompt,epoch).catch(e=>this.fail(e));},menu:()=>this.setMenu(!this.menu),auto:()=>{void this.setAuto(this.runtime?.playbackView().mode!=='auto').catch(e=>this.fail(e));},skip:value=>this.setFast(value),quickSave:()=>{void this.save().catch(e=>this.fail(e));},quickLoad:()=>{void this.load().catch(e=>this.fail(e));}},this.preferences.value.input);this.inputController.attach(options.mount);
-    this.cached={video:{...this.host.video},canReplayVoice:false,playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits},integrity:this.host.resources.integrity.map(row=>({id:row.id,factOrigin:row.factOrigin,evidence:parseIntegrityEvidence(row.evidence)}))},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.inputController=new InputController({state:()=>{const v=this.getSnapshot(),w=v.core?.run.wait;return {epoch:v.epoch,prompt:w&&'prompt'in w?w.prompt:null,text:w?.kind==='text',playing:v.lifecycle==='playing',paused:v.paused,menu:v.menu};},advance:(prompt,epoch)=>{void this.step(prompt,epoch).catch(e=>this.fail(e));},menu:()=>this.setMenu(!this.menu),auto:()=>{void this.setAuto(this.runtime?.playbackView().mode!=='auto').catch(e=>this.fail(e));},skip:value=>this.setFast(value),quickSave:()=>{void this.quickSave().catch(e=>this.fail(e));},quickLoad:()=>{void this.quickLoad().catch(e=>this.fail(e));}},this.preferences.value.input);this.inputController.attach(options.mount);
+    this.cached={saveSystem:{supported:!!this.store?.commitSave&&!!this.store?.saveReceipt&&!!this.store?.listSlots,policy:parseSavePolicy(this.savePolicy),pending:[...this.pendingSaves.values()].map(c=>({id:c.id,slot:c.slot}))},video:{...this.host.video},canReplayVoice:false,playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits},integrity:this.host.resources.integrity.map(row=>({id:row.id,factOrigin:row.factOrigin,evidence:parseIntegrityEvidence(row.evidence)}))},title:this.program.title,epoch:0,lifecycle:'ready',core:null,error:null,media:{...this.host.media},menu:false,paused:false,fast:false,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s,capture:s.capture?parseSaveCapture(s.capture):null})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
   }
   static async create(options:PlayerOptions):Promise<Player> {
     ensure(!options.signal?.aborted,'PLAYER_CANCELLED','Creation cancelled');const player=new Player(Object.freeze({...options}));player.options.signal?.addEventListener('abort',player.abortRequested,{once:true});
@@ -121,7 +133,8 @@ export class Player {
   private publish():void {
     const core=this.runtime?.view()??null;this.fast=this.runtime?.playbackView().mode==='skip';
     if(core&&!this.disposed){this.host.render(core.run);this.text?.render(parseSnapshot(core.run));}
-    this.cached={video:{...this.host.video},canReplayVoice:!!(core?.run.wait?.kind==='text'&&core.run.text?.voice)&&this.lifecycle==='playing'&&!this.pauses.size,playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits},integrity:this.host.resources.integrity.map(row=>({id:row.id,factOrigin:row.factOrigin,evidence:parseIntegrityEvidence(row.evidence)}))},title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.cached={saveSystem:{supported:!!this.store?.commitSave&&!!this.store?.saveReceipt&&!!this.store?.listSlots,policy:parseSavePolicy(this.savePolicy),pending:[...this.pendingSaves.values()].map(c=>({id:c.id,slot:c.slot}))},video:{...this.host.video},canReplayVoice:!!(core?.run.wait?.kind==='text'&&core.run.text?.voice)&&this.lifecycle==='playing'&&!this.pauses.size,playback:this.runtime?.playbackView()??{mode:'manual',reason:'manual',elapsedMs:0,voice:'none'},preferences:parsePreferencesRecord(this.preferences),preferencesSupported:this.preferencesSupported,release:this.release?{...this.release,manifest:parseReleaseManifest(this.release.manifest)}:null,resources:{...this.host.resources,limits:{...this.host.resources.limits},integrity:this.host.resources.integrity.map(row=>({id:row.id,factOrigin:row.factOrigin,evidence:parseIntegrityEvidence(row.evidence)}))},title:this.program.title,epoch:this.epoch,lifecycle:this.lifecycle,core,error:this.error??this.runtime?.storageError??this.runtime?.subscriberError??null,media:{...this.host.media},menu:this.menu,paused:this.pauses.size>0,fast:this.fast,namespace:this.namespace,profiles:this.profiles.map(p=>({...p})),profileId:this.profileId,slots:this.slots.map(s=>({...s,capture:s.capture?parseSaveCapture(s.capture):null})),importSources:this.options.bindings?.list()??[],importReport:this.pendingImport?.report()??null,lastImport:this.lastImport?{...this.lastImport}:null};
+    this.maybeAutoSave();
     for(const listener of [...this.listeners]){try{listener();}catch(error){this.error=error instanceof Error?error.message:String(error);}}
   }
   private frame=(now:number):void=>{
@@ -144,7 +157,7 @@ export class Player {
   private requireStore():Store {ensure(this.store&&!this.disposed,'PLAYER_DISPOSED','Player unavailable');return this.store;}
   private stopRuntime():void {const runtime=this.runtime;this.runtime=null;this.unsubscribe?.();this.unsubscribe=null;runtime?.stop();}
   private async refreshSlots():Promise<void> {
-    if(this.disposed)return;const records=await this.requireStore().listSlots?.();const profiles=await this.requireStore().listProfiles?.();if(profiles)this.profiles=profiles.map(p=>({...p}));if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot}));this.publish();
+    if(this.disposed)return;const records=await this.requireStore().listSlots?.();const profiles=await this.requireStore().listProfiles?.();if(profiles)this.profiles=profiles.map(p=>({...p}));if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot,kind:r.metadata.kind??'legacy',capture:r.metadata.capture?parseSaveCapture(r.metadata.capture):null,hasPrevious:r.hasPrevious??false}));this.publish();
   }
   private async initialCandidate(profile:Profile):Promise<Core> {
     const candidate=new Core(this.program,profile,undefined,'initial',this.operations,this.program.rng&&'seedSource'in this.program.rng?crypto.getRandomValues(new Uint32Array(1))[0]:undefined);candidate.accept({type:'text.preferences',value:this.preferences.value.text});let operations=0;
@@ -154,9 +167,9 @@ export class Player {
     this.requireStore();const gen=++this.generation;this.lifecycle='preparing';this.publish();await this.host.unlock();
     try {await this.activate(null,gen,{profileId,start:true});}catch(error){this.precommitFailure(gen,error);throw error;}
   }
-  async load(slot='quick'):Promise<void> {
+  async load(slot=profileSlot(this.profileId,'quick'),revision:'current'|'previous'='current'):Promise<void> {
     const store=this.requireStore(),gen=++this.generation;this.lifecycle='preparing';this.publish();
-    try {const record=await store.readSlot(slot);ensure(record,'SLOT_EMPTY',slot);const snapshot=validateRestore(this.program,record.snapshot,this.operations),metadata=record.metadata??{profileId:'main',label:slot};await this.activate(snapshot,gen,{profileId:metadata.profileId,slot,...(metadata.recipe?{recipe:metadata.recipe}:{}),...(metadata.onLoad?{onLoad:metadata.onLoad}:{}),...(metadata.provenance!==undefined?{provenance:metadata.provenance}:{})});}
+    try {const record=await store.readSlot(slot);ensure(record,'SLOT_EMPTY',slot);ensure(revision==='current'||revision==='previous','SLOT_REVISION','Unknown slot revision');const selected=revision==='previous'?record.previous:record.snapshot;ensure(selected,'SLOT_PREVIOUS_EMPTY',slot);const snapshot=validateRestore(this.program,selected,this.operations),metadata=(revision==='previous'?record.previousMetadata:record.metadata)??{profileId:'main',label:slot};await this.activate(snapshot,gen,{profileId:metadata.profileId,slot,...(metadata.recipe?{recipe:metadata.recipe}:{}),...(metadata.onLoad?{onLoad:metadata.onLoad}:{}),...(metadata.provenance!==undefined?{provenance:metadata.provenance}:{})});}
     catch(error){this.precommitFailure(gen,error);throw error;}
   }
   private precommitFailure(gen:number,error:unknown):void {if(gen===this.generation&&!this.disposed&&!['committed-pending','commit-unknown'].includes(this.lifecycle)){this.lifecycle=this.runtime?'playing':'ready';this.fail(error);}}
@@ -167,7 +180,7 @@ export class Player {
     const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100);this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
     await runtime.configurePlayback(this.preferences.value.playback);await runtime.pausePlayback(this.pauses.size>0);await runtime.start();await this.host.awaitAudioStarts();this.host.assertReady();ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Takeover was superseded');
     await store.confirm(activation.id,owner);const confirmed=await store.read(this.profileId);ensure(confirmed.head?.id===activation.id&&(confirmed.head.owner??confirmed.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Head changed during takeover');
-    this.lifecycle='playing';this.error=null;this.publish();
+    this.lifecycle='playing';this.error=null;if(activation.slot||activation.mode!=='initial')this.lastAutoCut=this.autoCut();this.publish();
   }
   private async activate(baseline:Snapshot|null,gen:number,policy:LoadPolicy):Promise<void> {
     const work=this.activationTail.catch(()=>{}).then(async()=>{
@@ -200,6 +213,41 @@ export class Player {
     const store=this.requireStore(),runtime=this.runtime;ensure(runtime,'PLAYER_NOT_STARTED','Start first');const profileId=this.profileId,slot=requestedSlot??(profileId==='main'?'quick':`${profileId}:quick`),metadata:SlotMetadata={profileId,label:profileId==='main'?'快速存档':'快速存档（独立导入进度）',...(this.onLoad?{recipe:this.onLoad,onLoad:this.onLoad}:{}),...(this.provenance!==undefined?{provenance:this.provenance}:{})};const captured=runtime.core.capture();
     const previous=expectedRevision===undefined?await store.readSlot(slot):null;await runtime.flushAll();const result=await store.save(slot,captured,expectedRevision??previous?.revision??0,metadata);if(!this.disposed){try{await this.refreshSlots();}catch(error){this.fail(error);}}return {slot,revision:result.revision,disposed:this.disposed};
   }
+  private autoCut():string {const run=this.runtime?.view().run,w=run?.wait;return w&&(w.kind==='text'||w.kind==='choice')?`${this.epoch}:${w.kind}:${w.prompt}`:'';}
+  private maybeAutoSave():void {
+    if(this.savePolicy.auto!=='on-prompt'||this.autoSaving||this.disposed||this.lifecycle!=='playing'||!this.cached.saveSystem.supported||!this.runtime?.view().canSave)return;
+    const cut=this.autoCut();if(!cut||cut===this.lastAutoCut)return;this.lastAutoCut=cut;this.autoSaving=true;
+    void this.saveGameAt({kind:'auto'},cut).catch(e=>{if(!(e instanceof GalboxError&&e.code==='SAVE_CUT_CHANGED'))this.fail(e);}).finally(()=>{this.autoSaving=false;if(!this.disposed)this.publish();});
+  }
+  quickSave():Promise<IllustratedSaveResult> {return this.saveGame({kind:'quick'});}
+  quickLoad():Promise<void> {return this.load(profileSlot(this.profileId,'quick'));}
+  saveGame(input:SaveGameOptions={}):Promise<IllustratedSaveResult> {return this.saveGameAt(parseSaveGameOptions(input));}
+  private saveGameAt(input:SaveGameOptions,expectedCut?:string):Promise<IllustratedSaveResult> {
+    const options=parseSaveGameOptions(input),work=this.saveTail.catch(()=>{}).then(async()=>{
+      const store=this.requireStore();ensure(store.commitSave&&store.saveReceipt&&store.listSlots,'SAVE_SYSTEM_UNSUPPORTED','Store lacks the save system ports');const requestedRuntime=this.runtime;ensure(requestedRuntime,'PLAYER_NOT_STARTED','Start first');const profileId=this.profileId,gen=this.generation;
+      const rows=await store.listSlots(),selected=selectSaveSlot(rows,profileId,this.savePolicy,options),id=crypto.randomUUID();let payload:SaveCommit|undefined;
+      const capture=this.activationTail.catch(()=>{}).then(async()=>{
+        ensure(!this.disposed&&this.runtime===requestedRuntime&&this.generation===gen,'SAVE_CAPTURE_CANCELLED','Session changed before capture');const runtime=requestedRuntime;await runtime.freeze();
+        try{
+          ensure(!this.disposed&&this.runtime===runtime,'SAVE_CAPTURE_CANCELLED','Player closed');ensure(!expectedCut||expectedCut===this.autoCut(),'SAVE_CUT_CHANGED','Automatic capture superseded');
+          const snapshot=runtime.core.capture(),text=this.text,capture=parseSaveCapture({id,sequence:++this.captureSequence,logicalTime:snapshot.logicalTime,createdAt:Date.now(),speaker:(snapshot.text?.speaker??'').slice(0,512),text:(snapshot.text?.content??'').slice(0,4096),textId:snapshot.text?.textId??null});
+          if(options.image!=='none'){ensure(text?.capture,'SAVE_CAPTURE_UNSUPPORTED','Text renderer must implement synchronous capture');const drawing=text.capture(parseSnapshot(snapshot),this.host.captureFontCSS());capture.thumbnail=await this.host.captureThumbnail(snapshot,drawing,this.abort.signal);}
+          ensure(!this.disposed,'SAVE_CAPTURE_CANCELLED','Player closed during capture');
+          const metadata:SlotMetadata={profileId,label:options.label??(selected.kind==='quick'?(profileId==='main'?'快速存档':'快速存档（独立导入进度）'):selected.kind==='auto'?'自动存档':`手动存档 ${selected.slot}`),kind:selected.kind,capture,...(this.onLoad?{recipe:this.onLoad,onLoad:this.onLoad}:{}),...(this.provenance!==undefined?{provenance:this.provenance}:{})};
+          payload=parseSaveCommit({id,slot:selected.slot,expectedRevision:selected.revision,snapshot,metadata});await runtime.flushAll();
+        }finally{runtime.thaw();this.lastTime=this.pauses.size?null:performance.now();}
+      });this.activationTail=capture;await capture;ensure(payload,'SAVE_CAPTURE','No save captured');this.pendingSaves.set(id,payload);this.publish();return this.commitCaptured(store,payload);
+    });this.saveTail=work.then(()=>{},()=>{});return work;
+  }
+  private async commitCaptured(store:Store,payload:SaveCommit):Promise<IllustratedSaveResult> {
+    try{const result=await submitSave(store,payload);this.pendingSaves.delete(payload.id);if(this.saveFailure&&this.error===this.saveFailure)this.error=null;this.saveFailure=null;if(!this.disposed){try{await this.refreshSlots();}catch(e){this.fail(e);}}return {id:result.receipt.id,slot:result.receipt.slot,revision:result.receipt.revision,committed:true,reconciled:result.reconciled,disposed:this.disposed};}
+    catch(e){if(!(e instanceof SaveOutcomeError&&e.outcome==='unknown'))this.pendingSaves.delete(payload.id);if(!this.disposed){this.saveFailure=e instanceof Error?e.message:String(e);this.fail(e);}throw e;}
+  }
+  retrySave(id:string):Promise<IllustratedSaveResult> {const store=this.requireStore(),data=this.pendingSaves.get(id);ensure(data,'SAVE_RETRY_MISSING','Unknown pending save ID');const work=this.saveTail.catch(()=>{}).then(()=>this.commitCaptured(store,data));this.saveTail=work.then(()=>{},()=>{});return work;}
+  async inspectSave(id:string):Promise<DeepReadonly<import('../protocol/index.js').SaveReceipt>|null> {const store=this.requireStore();ensure(store.saveReceipt,'SAVE_SYSTEM_UNSUPPORTED','No durable receipt port');return store.saveReceipt(id);}
+  async refreshSaveLibrary():Promise<void> {this.requireStore();await this.refreshSlots();}
+  async renameSave(slot:string,expectedRevision:number,label:string):Promise<void> {const store=this.requireStore();ensure(store.renameSlot,'SAVE_SYSTEM_UNSUPPORTED','No rename port');await store.renameSlot(slot,expectedRevision,label);if(!this.disposed)await this.refreshSlots();}
+  async deleteSave(slot:string,expectedRevision:number):Promise<void> {const store=this.requireStore();ensure(store.deleteSlot,'SAVE_SYSTEM_UNSUPPORTED','No delete port');await store.deleteSlot(slot,expectedRevision);if(!this.disposed)await this.refreshSlots();}
   async prepareImport(source:{sourceKey:string;schema:string;version:number},files:readonly OriginalSaveFile[]):Promise<PrepareResult> {return this.prepareImportAt(source,files,++this.importGeneration);}
   async prepareImportFiles(source:{sourceKey:string;schema:string;version:number},files:readonly File[]):Promise<PrepareResult> {
     const gen=++this.importGeneration;ensure(files.length<=16&&files.every(f=>f.size<=4_000_000)&&files.reduce((n,f)=>n+f.size,0)<=8_000_000,'SAVE_PACKAGE_SIZE','Too many or oversized files');const bytes=await Promise.all(files.map(async f=>({name:f.name,bytes:new Uint8Array(await f.arrayBuffer())})));return this.prepareImportAt(source,bytes,gen);

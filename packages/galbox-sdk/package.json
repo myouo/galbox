@@ -60,6 +60,7 @@
     }
   },
   "dependencies": {
+    "@noble/hashes": "2.4.0",
     "pixi.js": "8.22.0",
     "unicode-segmenter": "0.17.3"
   },

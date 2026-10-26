@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G4-01",
+  "current_task": "G4-02",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1707,9 +1707,9 @@
         "G0-01",
         "G2-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "save capture/thumbnail/metadata/library UI"
       ],
@@ -1726,9 +1726,21 @@
         "atomic-slot-image",
         "slot-management"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g4-01/REPORT.md",
+        "docs/evidence/g4-01/check.log",
+        "docs/evidence/g4-01/unit.log",
+        "docs/evidence/g4-01/browser-results.json",
+        "docs/evidence/g4-01/same-cut.json",
+        "docs/evidence/g4-01/consumer-result.json",
+        "docs/evidence/g4-01/result.json",
+        "docs/evidence/g4-01/performance.json",
+        "docs/evidence/g4-01/release-audit.json",
+        "docs/evidence/g4-01/dev-result.json",
+        "docs/evidence/g4-01/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定同一capture切点的正文+舞台缩略图、槽位元数据/自动快速槽/原子提交与故障回执ADR，再实现默认存读档管理、实际IndexedDB/刷新与独立tarball。"
+      "next_action": "ADR0025有限图文保存/回执/槽位管理验收通过；下一G4-02有界历史语音/受控回溯，当前profile权威和新activation不回写旧进度。"
     },
     {
       "id": "G4-02",
@@ -1758,7 +1770,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定有界合法历史切点/语音身份与回放不改PC/已读的ADR；回溯走新activation并保当前持久profile，不能从文本历史猜快照。然后SDK/默认UI、失败/刷新/独立consumer验收。"
     },
     {
       "id": "G5-01",

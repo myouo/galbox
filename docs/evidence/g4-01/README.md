@@ -1,0 +1,1 @@
+最终当前源码门槛与过程失败说明见 [REPORT](REPORT.md)。check/unit/browser/consumer/cli/compatibility/performance/release及对应JSON为最终门槛；same-cut.json和实际PNG、dev-probe/dev-result为同切点与原生无WebGL实测。source-manifest.json绑定本次源码。*-first/second/third/fourth/eighth、browser-regression等是保留的过程记录，不能代表最后源码验收。

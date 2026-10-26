@@ -3318,6 +3318,16 @@
         },
         "provenance": {
           "$ref": "#/definitions/JsonValue"
+        },
+        "kind": {
+          "enum": [
+            "manual",
+            "quick",
+            "auto"
+          ]
+        },
+        "capture": {
+          "$ref": "#/definitions/SaveCapture"
         }
       },
       "required": [
@@ -10367,6 +10377,200 @@
       },
       "required": [
         "integrity"
+      ],
+      "additionalProperties": false
+    },
+    "SaveThumbnail": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "const": 320
+        },
+        "height": {
+          "const": 180
+        },
+        "dataURL": {
+          "type": "string",
+          "pattern": "^(?=[\\s\\S]{0,349550}$)data:image/png;base64,[A-Za-z0-9+/]+={0,2}$"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "dataURL"
+      ],
+      "additionalProperties": false
+    },
+    "SaveCapture": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "logicalTime": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "createdAt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 253402300799999
+        },
+        "speaker": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{0,512}$"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{0,4096}$"
+        },
+        "textId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[\\s\\S]{0,128}$"
+        },
+        "thumbnail": {
+          "$ref": "#/definitions/SaveThumbnail"
+        }
+      },
+      "required": [
+        "id",
+        "sequence",
+        "logicalTime",
+        "createdAt",
+        "speaker",
+        "text",
+        "textId"
+      ],
+      "additionalProperties": false
+    },
+    "SavePolicy": {
+      "type": "object",
+      "properties": {
+        "manualSlots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24
+        },
+        "autoSlots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "auto": {
+          "enum": [
+            "off",
+            "on-prompt"
+          ]
+        }
+      },
+      "required": [
+        "manualSlots",
+        "autoSlots",
+        "auto"
+      ],
+      "additionalProperties": false
+    },
+    "SaveGameOptions": {
+      "type": "object",
+      "properties": {
+        "slot": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{0,128}$"
+        },
+        "kind": {
+          "enum": [
+            "manual",
+            "quick",
+            "auto"
+          ]
+        },
+        "image": {
+          "enum": [
+            "required",
+            "none"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "SaveCommit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "slot": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "snapshot": {
+          "$ref": "#/definitions/Snapshot"
+        },
+        "metadata": {
+          "$ref": "#/definitions/SlotMetadata"
+        }
+      },
+      "required": [
+        "id",
+        "slot",
+        "expectedRevision",
+        "snapshot",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "SaveReceipt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "slot": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,255}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "slot",
+        "revision",
+        "signature"
       ],
       "additionalProperties": false
     }

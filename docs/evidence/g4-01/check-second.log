@@ -1,0 +1,13 @@
+$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
+$ node scripts/generate.mjs --check
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+packages/galbox-sdk/src/storage/indexeddb.ts(1,66): error TS1484: 'SaveCommit' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+packages/galbox-sdk/src/storage/indexeddb.ts(1,66): error TS2300: Duplicate identifier 'SaveCommit'.
+packages/galbox-sdk/src/storage/indexeddb.ts(2,90): error TS2300: Duplicate identifier 'SaveCommit'.
+packages/galbox-sdk/src/web-host/host.ts(80,427): error TS2551: Property 'captureFonts' does not exist on type 'WebHost'. Did you mean 'captureFontCSS'?
+packages/galbox-sdk/src/web-host/host.ts(91,40): error TS2551: Property 'captureFonts' does not exist on type 'WebHost'. Did you mean 'captureFontCSS'?
+packages/galbox-sdk/src/web-host/host.ts(156,95): error TS2551: Property 'captureFonts' does not exist on type 'WebHost'. Did you mean 'captureFontCSS'?
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

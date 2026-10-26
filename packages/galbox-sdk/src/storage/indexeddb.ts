@@ -1,7 +1,7 @@
-import { ensure, parseStoreBackupRestore, parsePlayerPreferences } from '../protocol/index.js';
-import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences } from '../protocol/index.js';
+import { ensure, parseStoreBackupRestore, parsePlayerPreferences,parseSaveCommit } from '../protocol/index.js';
+import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences,SaveCommit } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
-import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences } from '../runtime/durable.js';
+import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,deleteSlot } from '../runtime/durable.js';
 import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
@@ -14,13 +14,17 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     return new Promise((resolve,reject)=>{
       const tx=db.transaction('namespaces',mode),store=tx.objectStore('namespaces');let result:T;let failure:unknown;
       const request=store.get(namespace);request.onsuccess=()=>{
-        try {const state=parseDatabase(request.result);result=run(state);if(mode==='readwrite')store.put(state,namespace);}
+        try {const state=parseDatabase(request.result);result=run(state);if(mode==='readwrite'){ensure(JSON.stringify(state).length<=4_000_000,'STORAGE_SIZE','Namespace exceeds 4 MB JSON budget');store.put(state,namespace);}}
         catch(error){failure=error;tx.abort();}
       };
       tx.oncomplete=()=>resolve(result);tx.onabort=()=>reject(failure??tx.error??new Error('IDB_ABORT'));tx.onerror=()=>reject(failure??tx.error);
     });
   }
   return {
+    commitSave:(input:SaveCommit)=>{const data=parseSaveCommit(input);return transact('readwrite',s=>commitSave(s,data));},
+    saveReceipt:(id:string)=>transact('readonly',s=>saveReceipt(s,id)),
+    renameSlot:(slot:string,revision:number,label:string)=>transact('readwrite',s=>renameSlot(s,slot,revision,label)),
+    deleteSlot:(slot:string,revision:number)=>transact('readwrite',s=>deleteSlot(s,slot,revision)),
     readPreferences:()=>transact('readonly',s=>s.preferences),
     writePreferences:(input:PlayerPreferences,revision:number)=>{const value=parsePlayerPreferences(input);return transact('readwrite',s=>commitPreferences(s,value,revision));},
     backup:(gameId:string,series:string,release:string)=>{ensure(namespace===storageNamespace(gameId,series),'BACKUP_NAMESPACE','Backup identity must match storage');return transact('readonly',s=>captureBackup(s,gameId,series,release));},
@@ -28,7 +32,7 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     read:(profileId?:string)=>transact<Durable>('readonly',s=>({profile:selectProfile(s,profileId),head:s.head})),
     readSlot:(slot:string)=>transact<SlotRecord|null>('readonly',s=>Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null),
     listProfiles:()=>transact('readonly',s=>[{profileId:'main',revision:s.profile.revision},...Object.entries(s.branches).map(([profileId,p])=>({profileId,revision:p.revision}))]),
-    listSlots:()=>transact('readonly',s=>Object.entries(s.slots).map(([slot,r])=>({slot,revision:r.revision,metadata:r.metadata??{profileId:'main',label:slot}}))),
+    listSlots:()=>transact('readonly',s=>Object.entries(s.slots).map(([slot,r])=>({slot,revision:r.revision,hasPrevious:r.previous!==null,metadata:r.metadata??{profileId:'main',label:slot}}))),
     import:(commit:StoreImport)=>transact('readwrite',s=>commitImport(s,commit)),
     save:(slot:string,snapshot:Snapshot,revision:number,metadata?:SlotMetadata)=>transact('readwrite',s=>saveSlot(s,slot,snapshot,revision,metadata)),
     progress:(batch:ProgressBatch,authority:string|null)=>transact('readwrite',s=>commitProgress(s,batch,authority)),

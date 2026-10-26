@@ -2379,6 +2379,31 @@ export interface SlotMetadata {
   recipe?: RestoreRecipe;
   onLoad?: RestoreRecipe;
   provenance?: JsonValue;
+  kind?: 'manual' | 'quick' | 'auto';
+  capture?: SaveCapture;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SaveCapture".
+ */
+export interface SaveCapture {
+  id: string;
+  sequence: number;
+  logicalTime: number;
+  createdAt: number;
+  speaker: string;
+  text: string;
+  textId: string | null;
+  thumbnail?: SaveThumbnail;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SaveThumbnail".
+ */
+export interface SaveThumbnail {
+  width: 320;
+  height: 180;
+  dataURL: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -3397,4 +3422,45 @@ export interface StreamDescriptor {
  */
 export interface StreamingOptions {
   integrity: 'versioned-url';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SavePolicy".
+ */
+export interface SavePolicy {
+  manualSlots: number;
+  autoSlots: number;
+  auto: 'off' | 'on-prompt';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SaveGameOptions".
+ */
+export interface SaveGameOptions {
+  slot?: string;
+  expectedRevision?: number;
+  label?: string;
+  kind?: 'manual' | 'quick' | 'auto';
+  image?: 'required' | 'none';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SaveCommit".
+ */
+export interface SaveCommit {
+  id: string;
+  slot: string;
+  expectedRevision: number;
+  snapshot: Snapshot;
+  metadata: SlotMetadata;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SaveReceipt".
+ */
+export interface SaveReceipt {
+  id: string;
+  slot: string;
+  revision: number;
+  signature: string;
 }

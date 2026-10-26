@@ -1,3 +1,5 @@
+import {composeThumbnail} from './capture.js';
+import type {TextCapture} from './capture.js';
 import {openStream} from './streams.js';
 import type {PreparedStream} from './streams.js';
 import {streamRequest} from '../runtime/stream-ports.js';
@@ -23,6 +25,7 @@ interface Playing {source:AudioNode;buffer?:AudioBufferSourceNode;element?:HTMLA
 export interface MediaDiagnostics {state:'buffering'|'available'|'needs-user-action'|'unavailable'|'unverified';starts:number;ended:number;blocked:number;decoded:number;active:number;loops:number;elementStarts:number;}
 export interface ResourceDiagnostics {catalogEncodedBytes:number;streamDeclaredBytes:number;integrity:{id:string;factOrigin:'inspected'|'manifest';evidence:IntegrityEvidence}[];canvasBlur:'native'|'cpu'|null;canvasBytesEstimated:number;canvasPeakBytesEstimated:number;canvasSurfaces:number;renderer:'webgl'|'canvas'|null;graphicsFallback:string|null;graphics:'available'|'unavailable'|'unverified';assets:number;encodedBytes:number;textureBytesEstimated:number;decodedAudioBytes:number;mediaElementBytes:number;limits:ResourceBudget;}
 export class WebHost implements HostPort {
+  private readonly captureFonts:string[]=[];
   readonly video:VideoDiagnostics={state:'unverified',starts:0,ended:0,active:0,blocked:0};private videoController:VideoController|null=null;private videoAssets=new Map<string,PreparedMedia>();
   private readonly streamLeases:PreparedStream[]=[];private streamFailure:Error|null=null;private cleanupFailure:Error|null=null;
   private app:GraphicsApplication|null=null;
@@ -75,7 +78,7 @@ export class WebHost implements HostPort {
         }else if(asset.kind==='video'){const prepared=await prepareMedia(asset,bytes,fact,signal);if(this.disposed||signal.aborted){URL.revokeObjectURL(prepared.url);throw new GalboxError('HOST_DISPOSED',asset.id);}this.videoAssets.set(asset.id,prepared);this.resources.mediaElementBytes+=bytes.byteLength;this.video.state='available';
         }else if(asset.kind==='font'){
           ensure(typeof FontFace!=='undefined'&&document.fonts,'FONT_UNAVAILABLE','Font loading is unavailable');const face=new FontFace(`${this.fontPrefix}-${this.fonts.size}`,new Uint8Array(bytes).buffer);let abort:(()=>void)|undefined;
-          try{await Promise.race([face.load(),new Promise<never>((_resolve,reject)=>{abort=()=>reject(new GalboxError('ASSET_CANCELLED',asset.id));signal.addEventListener('abort',abort,{once:true});if(signal.aborted)abort();})]);ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);document.fonts.add(face);this.fonts.set(asset.id,face);}catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('FONT_FORMAT',`${asset.id}: font decode unavailable`);}finally{if(abort)signal.removeEventListener('abort',abort);}
+          try{await Promise.race([face.load(),new Promise<never>((_resolve,reject)=>{abort=()=>reject(new GalboxError('ASSET_CANCELLED',asset.id));signal.addEventListener('abort',abort,{once:true});if(signal.aborted)abort();})]);ensure(!signal.aborted&&!this.disposed,'HOST_DISPOSED',asset.id);document.fonts.add(face);this.fonts.set(asset.id,face);let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);this.captureFonts.push(`@font-face{font-family:'${face.family}';src:url(data:${asset.mime};base64,${btoa(binary)})}`);}catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('FONT_FORMAT',`${asset.id}: font decode unavailable`);}finally{if(abort)signal.removeEventListener('abort',abort);}
         }else if(audioPlayback(asset)==='element'){const prepared=await prepareMedia(asset,bytes,fact,signal);if(this.disposed||signal.aborted){URL.revokeObjectURL(prepared.url);throw new GalboxError('HOST_DISPOSED',asset.id);}this.mediaAssets.set(asset.id,prepared);this.resources.mediaElementBytes+=bytes.byteLength;
         }else {
           ensure(this.context,'AUDIO_UNAVAILABLE','Audio context absent');
@@ -86,6 +89,8 @@ export class WebHost implements HostPort {
       this.videoController=new VideoController(this.context,this.master,this.videoAssets,this.video,(texture,rect)=>this.stage?.setVideo(texture,rect),()=>this.stage?.invalidate(),error=>this.fault?.(error));this.videoController.preferences(this.roleVolumes.sfx);
     }catch(error){this.dispose();throw error;}
   }
+  captureFontCSS():string {return this.captureFonts.join('\n');}
+  captureThumbnail(snapshot:DeepReadonly<Snapshot>,text:TextCapture,signal:AbortSignal){this.assertReady();ensure(this.canvas&&this.stage,'SAVE_CAPTURE_UNAVAILABLE','Graphics not ready');this.stage.invalidate();this.render(snapshot);return composeThumbnail(this.canvas,text,signal);}
   async revalidateStreams():Promise<void> {for(const lease of this.streamLeases)await lease.validate();}
   async unlock():Promise<void> {
     ensure(this.context&&!this.disposed,'AUDIO_UNAVAILABLE','Host is not ready');
@@ -149,7 +154,7 @@ export class WebHost implements HostPort {
   private stopAudio():void {for(const channel of [...this.playing.keys()])this.stopChannel(channel);}
   private destroyApplication(app:GraphicsApplication|null):void {destroyGraphicsApplication(app);}
   dispose():void {
-    for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();
+    for(const face of this.fonts.values())document.fonts.delete(face);this.fonts.clear();this.captureFonts.length=0;
     if(this.disposed)return;this.disposed=true;this.videoController?.dispose();this.videoController=null;this.stopAudio();this.stage?.dispose();this.stage=null;
     this.canvas?.removeEventListener('webglcontextlost',this.lost);this.canvas=null;this.resources.graphics='unavailable';this.resources.canvasBytesEstimated=0;this.resources.canvasSurfaces=0;this.resources.textureBytesEstimated=0;this.resources.decodedAudioBytes=0;this.resources.encodedBytes=0;this.resources.assets=0;this.facts=[];
     for(const texture of this.textures.values())texture.destroy(true);this.textures.clear();this.buffers.clear();for(const asset of this.mediaAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.mediaAssets.clear();for(const asset of this.videoAssets.values())if(asset.kind==='blob')URL.revokeObjectURL(asset.url);this.videoAssets.clear();this.resources.mediaElementBytes=0;for(const lease of this.streamLeases.splice(0))try{lease.release();}catch(error){this.cleanupFailure=new GalboxError('STREAM_LEASE',error instanceof Error?error.message:String(error));}this.resources.integrity=[];this.resources.streamDeclaredBytes=0;this.resources.catalogEncodedBytes=0;

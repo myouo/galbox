@@ -1,7 +1,10 @@
+import {captureText} from './capture.js';
+import type {TextCapture} from './capture.js';
+export type {TextCapture} from './capture.js';
 import {parseDisplayPreferences,ensure} from '../protocol/index.js';
 import type {DeepReadonly,Program,Snapshot,DisplayPreferences,TextState} from '../protocol/index.js';
 import {TextController} from './text.js';
-export interface TextRenderer {render(snapshot:DeepReadonly<Snapshot>):void;applyDisplayPreferences(preferences:DeepReadonly<DisplayPreferences>):void;dispose():void;}
+export interface TextRenderer {capture?(snapshot:DeepReadonly<Snapshot>,fontCSS:string):TextCapture;render(snapshot:DeepReadonly<Snapshot>):void;applyDisplayPreferences(preferences:DeepReadonly<DisplayPreferences>):void;dispose():void;}
 export interface TextRendererContext {readonly mount:HTMLElement;readonly program:DeepReadonly<Program>;readonly fontFamily:(asset:string)=>string;}
 export type TextRendererFactory=(context:TextRendererContext)=>TextRenderer;
 class DomTextRenderer implements TextRenderer {
@@ -19,6 +22,7 @@ class DomTextRenderer implements TextRenderer {
    if(key!==window.key){window.key=key;window.root.scrollTop=window.root.scrollHeight;}
   }
  }
+ capture(snapshot:DeepReadonly<Snapshot>,fontCSS:string):TextCapture {ensure(!this.disposed,'SAVE_CAPTURE_TEXT','Text renderer disposed');this.render(snapshot);return captureText(this.legacy?[this.legacy.captureRoot()]:this.layer?[this.layer]:[],this.context.mount,fontCSS);}
  dispose():void {if(this.disposed)return;this.disposed=true;this.last=null;this.observer?.disconnect();this.legacy?.dispose();for(const w of this.windows.values()){for(const entry of w.entries.values())entry.dispose();w.root.remove();}this.windows.clear();this.layer?.remove();this.layer=null;}
 }
 export function createDomTextRenderer(context:TextRendererContext):TextRenderer {return new DomTextRenderer(context);}

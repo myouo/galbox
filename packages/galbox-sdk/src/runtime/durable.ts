@@ -1,9 +1,10 @@
+import {wireDigest} from '../protocol/digest.js';
 import {normalizePreferencesRecord,normalizePreferences} from '../settings/index.js';
-import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt, parsePlayerPreferences, parsePreferencesRecord } from '../protocol/index.js';
-import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt, BackupRestoreReceipt, PreferencesRecord } from '../protocol/index.js';
+import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt, parsePlayerPreferences, parsePreferencesRecord,parseSaveCommit,parseSaveReceipt,assertSaveCut } from '../protocol/index.js';
+import type { Profile,SlotMetadata,StoreImport,StoreImportReceipt, BackupRestoreReceipt, PreferencesRecord, SaveCommit, SaveReceipt } from '../protocol/index.js';
 import type { Durable, Activation, ProgressBatch, ProgressReceipt, SlotRecord, ActivationOptions } from './ports.js';
-export interface DatabaseState {preferences:PreferencesRecord|null;backups:Record<string,BackupRestoreReceipt>;profile:Profile;branches:Record<string,Profile>;slots:Record<string,SlotRecord>;head:Activation|null;activations:Record<string,Activation>;receipts:Record<string,ProgressReceipt>;imports:Record<string,StoreImportReceipt>;}
-export function databaseState():DatabaseState {return {preferences:null,backups:{},profile:emptyProfile(),branches:{},slots:{},head:null,activations:{},receipts:{},imports:{}};}
+export interface DatabaseState {saves:Record<string,SaveReceipt>;preferences:PreferencesRecord|null;backups:Record<string,BackupRestoreReceipt>;profile:Profile;branches:Record<string,Profile>;slots:Record<string,SlotRecord>;head:Activation|null;activations:Record<string,Activation>;receipts:Record<string,ProgressReceipt>;imports:Record<string,StoreImportReceipt>;}
+export function databaseState():DatabaseState {return {saves:{},preferences:null,backups:{},profile:emptyProfile(),branches:{},slots:{},head:null,activations:{},receipts:{},imports:{}};}
 export function object(input:unknown):asserts input is Record<string,unknown> {ensure(typeof input==='object'&&input!==null&&!Array.isArray(input),'STORAGE_CORRUPT','Expected object');}
 function key(id:string):void {ensure(typeof id==='string'&&id.length>0&&id.length<=256&&!['__proto__','constructor','prototype'].includes(id)&&!id.includes('\0'),'STORAGE_KEY','Invalid storage identity');}
 function own<T>(map:Record<string,T>,id:string):T|undefined {return Object.hasOwn(map,id)?map[id]:undefined;}
@@ -15,7 +16,7 @@ function activation(input:unknown):Activation {
   return {id:input.id,sequence:input.sequence,status,snapshot:parseSnapshot(input.snapshot),profileId,mode,owner:typeof input.owner==='string'?input.owner:input.id,initialCommitId:typeof input.initialCommitId==='string'?input.initialCommitId:null,...(input.provenance!==undefined?{provenance:parseJsonValue(input.provenance)}:{}),...(input.onLoad?{onLoad:parseRestoreRecipe(input.onLoad)}:{}),...(typeof input.slot==='string'?{slot:input.slot}:{})};
 }
 export function slotRecord(input:unknown):SlotRecord {
-  object(input);ensure(Number.isInteger(input.revision)&&typeof input.revision==='number','STORAGE_CORRUPT','Slot revision');return {revision:input.revision,snapshot:parseSnapshot(input.snapshot),previous:input.previous===null?null:parseSnapshot(input.previous),metadata:parseSlotMetadata(input.metadata??{profileId:'main',label:''}),...(input.previousMetadata?{previousMetadata:parseSlotMetadata(input.previousMetadata)}:{})};
+  object(input);ensure(Number.isInteger(input.revision)&&typeof input.revision==='number'&&input.revision>0,'STORAGE_CORRUPT','Slot revision');const r={revision:input.revision,snapshot:parseSnapshot(input.snapshot),previous:input.previous===null?null:parseSnapshot(input.previous),metadata:parseSlotMetadata(input.metadata??{profileId:'main',label:''}),...(input.previousMetadata?{previousMetadata:parseSlotMetadata(input.previousMetadata)}:{})};assertSaveCut(r.snapshot,r.metadata);if(r.previous&&r.previousMetadata)assertSaveCut(r.previous,r.previousMetadata);return r;
 }
 function importReceipt(input:unknown):StoreImportReceipt {object(input);ensure(typeof input.id==='string'&&typeof input.slot==='string'&&typeof input.profileId==='string'&&typeof input.signature==='string'&&typeof input.revision==='number','STORAGE_CORRUPT','Import receipt');return {id:input.id,slot:input.slot,profileId:input.profileId,signature:input.signature,revision:input.revision};}
 export function parseDatabase(input:unknown):DatabaseState {
@@ -27,7 +28,8 @@ export function parseDatabase(input:unknown):DatabaseState {
   if(input.imports!==undefined){object(input.imports);for(const [id,r]of Object.entries(input.imports)){key(id);imports[id]=importReceipt(r);}}
   const backups:Record<string,BackupRestoreReceipt>={};if(input.backups!==undefined){object(input.backups);for(const [id,r]of Object.entries(input.backups)){key(id);backups[id]=parseBackupRestoreReceipt(r);}}
   const slots:Record<string,SlotRecord>={},activations:Record<string,Activation>={};for(const [id,v]of Object.entries(input.slots)){key(id);slots[id]=slotRecord(v);}for(const [id,v]of Object.entries(input.activations)){key(id);activations[id]=activation(v);}
-  return {preferences:input.preferences===undefined||input.preferences===null?null:normalizePreferencesRecord(input.preferences),backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
+  const saves:Record<string,SaveReceipt>={};if(input.saves!==undefined){object(input.saves);for(const [id,r]of Object.entries(input.saves)){key(id);saves[id]=parseSaveReceipt(r);ensure(saves[id]?.id===id,'STORAGE_CORRUPT','Save receipt identity');}}
+  return {saves,preferences:input.preferences===undefined||input.preferences===null?null:normalizePreferencesRecord(input.preferences),backups,profile:parseProfile(input.profile),branches,imports,head:input.head===null?null:activation(input.head),slots,activations,receipts};
 }
 function applyBatch(state:DatabaseState,input:ProgressBatch,profileId:string,authority:string|null):ProgressReceipt {
   const batch=parseProgressBatch(input);
@@ -64,3 +66,14 @@ export function claimActivation(state:DatabaseState,id:string,owner:string):Acti
 export function confirmActivation(state:DatabaseState,id:string,owner=id):Activation {ensure(state.head?.id===id&&(state.head.owner??state.head.id)===owner&&state.head.status!=='superseded','ACTIVATION_SUPERSEDED',id);state.head.status='activated';state.activations[id]=activation(state.head);return activation(state.head);}
 
 export function commitPreferences(state:DatabaseState,input:unknown,expectedRevision:number):PreferencesRecord {const value=normalizePreferences(input);ensure(Number.isInteger(expectedRevision)&&expectedRevision>=0&&expectedRevision===(state.preferences?.revision??0),'PREFERENCES_CONFLICT','Refresh preferences before retrying');const record=parsePreferencesRecord({revision:expectedRevision+1,value});state.preferences=record;return parsePreferencesRecord(record);}
+
+export function commitSave(state:DatabaseState,input:SaveCommit):SaveReceipt {
+ const data=parseSaveCommit(input);key(data.id);const signature=wireDigest(data),prior=own(state.saves,data.id);
+ if(prior){ensure(prior.signature===signature,'SAVE_ID_REUSED',data.id);return parseSaveReceipt(prior);}
+ const saved=saveSlot(state,data.slot,data.snapshot,data.expectedRevision,data.metadata),receipt=parseSaveReceipt({id:data.id,slot:data.slot,revision:saved.revision,signature});state.saves[data.id]=receipt;return parseSaveReceipt(receipt);
+}
+export function saveReceipt(state:DatabaseState,id:string):SaveReceipt|null {key(id);const r=own(state.saves,id);return r?parseSaveReceipt(r):null;}
+export function renameSlot(state:DatabaseState,slot:string,expected:number,label:string):SlotRecord {
+ key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);ensure(typeof label==='string'&&label.length<=128&&!label.includes('\0'),'SLOT_LABEL','At most 128 characters');const record=slotRecord(old);record.metadata=parseSlotMetadata({...record.metadata,label});record.revision++;state.slots[slot]=record;return slotRecord(record);
+}
+export function deleteSlot(state:DatabaseState,slot:string,expected:number):void {key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);delete state.slots[slot];}
