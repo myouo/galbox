@@ -1,3 +1,6 @@
+import {PressButton} from './press.js';
+import {GameUI} from './game-ui.js';
+export {GameUI} from './game-ui.js';
 import {ExtrasPanel,ReplayUI} from './extras.js';
 export {ExtrasPanel,ReplayUI} from './extras.js';
 import {FlowchartPanel} from './flowchart.js';
@@ -13,23 +16,19 @@ import {BackupPanel} from './backup.js';
 import {ImportPanel,SlotPicker,ProfilePicker} from './import.js';
 import type { Player } from '../player/index.js';
 export function usePlayer(player:Player){return useSyncExternalStore(player.subscribe,player.getSnapshot,player.getSnapshot);}
-export function DefaultUI({player}:{player:Player}) {const view=usePlayer(player);return view.context==='gallery'?<ReplayUI player={player}/>:<StoryUI player={player}/>;}
+export function DefaultUI({player}:{player:Player}) {const view=usePlayer(player);return view.context==='gallery'?<ReplayUI player={player}/>:view.presentation?<GameUI player={player}/>:<StoryUI player={player}/>;}
 function StoryUI({player}:{player:Player}) {
   const view=usePlayer(player),run=view.core?.run,wait=run?.wait;const [notice,setNotice]=useState('');const [history,setHistory]=useState(false);
   const inputRoot=useRef<HTMLDivElement>(null);useEffect(()=>{if(inputRoot.current)return player.attachInput(inputRoot.current);},[player]);
-  const held=useRef<{source:'pointer'|'keyboard';epoch:number;prompt:number;action:'step'|'choice';option?:string}|null>(null);
   const invoke=(work:Promise<unknown>,success='')=>{void work.then(()=>setNotice(success),e=>setNotice(e instanceof Error?e.message:String(e)));};
-  useEffect(()=>{const blur=()=>{held.current=null;player.setFast(false);};window.addEventListener('blur',blur);return ()=>window.removeEventListener('blur',blur);},[player]);
-  useEffect(()=>{if(view.menu||view.paused)held.current=null;},[view.menu,view.paused,view.epoch]);
-  const down=(action:'step'|'choice',option?:string,source:'pointer'|'keyboard'='pointer')=>{if(wait&&'prompt'in wait)held.current={source,epoch:view.epoch,prompt:wait.prompt,action,...(option?{option}:{})};};
-  const up=(action:'step'|'choice',option?:string,source:'pointer'|'keyboard'='pointer')=>{const previous=held.current;held.current=null;if(previous&&previous.source===source&&previous.epoch===view.epoch&&previous.action===action&&previous.option===option&&wait&&'prompt'in wait&&wait.prompt===previous.prompt)invoke(action==='step'?player.step(previous.prompt,previous.epoch):player.input('choose',previous.prompt,previous.epoch,option));};
+  useEffect(()=>{const blur=()=>player.setFast(false);window.addEventListener('blur',blur);return()=>window.removeEventListener('blur',blur);},[player]);
   return <div className="galbox-ui" ref={inputRoot} tabIndex={0}>
     <nav className="toolbar" aria-label="播放器菜单"><span className="brand">GALBOX <small>{view.title}</small></span><button onClick={()=>player.setMenu(!view.menu)}>菜单</button><button onClick={()=>{setHistory(!history);player.setMenu(!history);}}>历史</button><button onClick={()=>player.setPaused(!view.paused)}>{view.paused?'继续':'暂停'}</button><button aria-pressed={view.playback.mode==='auto'} onClick={()=>invoke(player.setAuto(view.playback.mode!=='auto'))}>自动阅读</button><button disabled={!view.canReplayVoice} onClick={()=>invoke(player.replayVoice())}>重播语音</button><button aria-pressed={view.fast} onPointerDown={()=>player.setFast(true)} onPointerUp={()=>player.setFast(false)} onPointerLeave={()=>player.setFast(false)}>已读快进</button></nav>
     {view.lifecycle==='ready'&&<div className="welcome"><p className="eyebrow">VISUAL NOVEL PLAYER</p>{view.resources.renderer==='canvas'&&<small data-testid="graphics-mode">兼容绘图模式已启用</small>}<h1>{view.title}</h1><p>开始一个新的故事。<br/>阅读进度会保存在这台设备上。</p><button className="primary" onClick={()=>invoke(player.start())}>开始阅读</button><button onClick={()=>invoke(player.quickLoad())}>读取快速存档</button></div>}
     {view.lifecycle==='preparing'&&<div className="busy" role="status">准备故事…</div>}
     {(view.lifecycle==='committed-pending'||view.lifecycle==='commit-unknown')&&<div className="modal"><p>{view.lifecycle==='commit-unknown'?'提交结果尚未确认，请先核验持久记录。':'存储已提交，等待接管。'}</p><button onClick={()=>invoke(player.resumeCommitted())}>恢复当前激活</button><button onClick={()=>invoke(player.start())}>开始新游戏</button></div>}
-    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='text'&&<button className="advance" data-testid="advance" aria-label="显完或下一页" onPointerDown={()=>down('step')} onPointerUp={()=>up('step')} onPointerCancel={()=>{held.current=null;}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(!e.repeat)down('step',undefined,'keyboard');}}} onKeyUp={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();up('step',undefined,'keyboard');}}} onClick={e=>{if(e.detail===0)invoke(player.step(wait.prompt,view.epoch));}}>下一页 <span>◇</span></button>}
-    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='choice'&&<div className="choices">{wait.options.map(o=><button key={`${wait.prompt}:${o.id}`} onPointerDown={()=>down('choice',o.id)} onPointerUp={()=>up('choice',o.id)} onPointerCancel={()=>{held.current=null;}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(!e.repeat)down('choice',o.id,'keyboard');}}} onKeyUp={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();up('choice',o.id,'keyboard');}}} onClick={e=>{if(e.detail===0)invoke(player.input('choose',wait.prompt,view.epoch,o.id));}}>{o.text}</button>)}</div>}
+    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='text'&&<PressButton className="advance" data-testid="advance" aria-label="显完或下一页" identity={`${view.epoch}:${wait.prompt}:${view.paused}:${view.menu}`} activate={()=>invoke(player.step(wait.prompt,view.epoch))}>下一页 <span>◇</span></PressButton>}
+    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='choice'&&<div className="choices">{wait.options.map(o=><PressButton key={`${wait.prompt}:${o.id}`} identity={`${view.epoch}:${wait.prompt}:${o.id}:${view.paused}:${view.menu}`} activate={()=>invoke(player.input('choose',wait.prompt,view.epoch,o.id))}>{o.text}</PressButton>)}</div>}
     <InteractionPanel player={player} view={view}/>
     {view.lifecycle==='playing'&&wait?.kind==='video'&&!view.menu&&!view.paused&&<div className="video-controls">{run?.tasks.find(t=>t.id===wait.task)?.videoTask?.skippable&&<button key={`${view.epoch}:${wait.prompt}`} onClick={()=>invoke(player.skipVideo(wait.prompt,view.epoch))}>跳過影片</button>}{run?.tasks.find(t=>t.id===wait.task)?.status==='blocked'&&<button onClick={()=>invoke(player.retryVideo())}>重試影片播放</button>}</div>}
     {run?.status==='ended'&&!view.menu&&<div className="ending"><p>阅读结束。</p><small>{view.core?.dirty?'正在提交阅读进度…':'阅读进度已提交'}</small><button onClick={()=>invoke(player.start())}>再次阅读</button></div>}

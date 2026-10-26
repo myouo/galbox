@@ -1,3 +1,4 @@
+import {validatePresentation} from '../protocol/presentation.js';
 import {validateUICatalog,validateUIInstruction,isUIInstruction,uiExpressions} from '../protocol/ui.js';
 import {validateExtras} from '../protocol/extras.js';
 import {validateFlowchart} from '../protocol/flow.js';
@@ -6,7 +7,7 @@ import {interactionExpressions} from '../protocol/interaction.js';
 import {isAudioInstruction,audioExpressions} from '../protocol/audio.js';
 import { emptyOperations } from '../core/operations.js';
 import type { OperationRegistry } from '../core/operations.js';
-import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig,parseTextLayout,parseFlowchart,parseExtrasCatalog,parseUICatalog } from '../protocol/index.js';
+import { parseProgram, parseInstruction, parseValue, ensure, capabilities, GalboxError, parseSourceMap, parsePortObligation, parseBehaviorMapping, readUnit,parseRngConfig,parseTextLayout,parseFlowchart,parseExtrasCatalog,parseUICatalog,parseGamePresentation } from '../protocol/index.js';
 import {validateTextLayout} from '../protocol/layout.js';
 import {richTextSignature,compileRichText} from '../protocol/text.js';
 import {isStageInstruction,stageExpressions} from '../protocol/stage.js';
@@ -55,6 +56,7 @@ export class ProgramBuilder {
   source(at:string,source:SourceLocation):this {const entries=parseSourceMap([{at,source}]);this.data.sourceMap=[...(this.data.sourceMap??[]),...entries];return this;}
   obligation(value:PortObligation):this {this.data.obligations=[...(this.data.obligations??[]),parsePortObligation(value)];return this;}
   mapping(value:BehaviorMapping):this {this.data.behaviorMappings=[...(this.data.behaviorMappings??[]),parseBehaviorMapping(value)];return this;}
+  presentation(input:import('../protocol/index.js').GamePresentation):this {this.data.presentation=parseGamePresentation(input);return this;}
   ui(input:import('../protocol/index.js').UICatalog):this {this.data.ui=parseUICatalog(input);return this;}
   extras(input:import('../protocol/index.js').ExtrasCatalog):this {this.data.extras=parseExtrasCatalog(input);return this;}
   flowchart(input:import('../protocol/index.js').Flowchart):this {this.data.flowchart=parseFlowchart(input);return this;}
@@ -84,7 +86,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
   ensure(!programNeedsExtended(p)||p.capabilities.includes('values.extended'),'VALUE_CAPABILITY','Declare values.extended');
   if(p.rng)ensure(p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng.lcg32');
   const richIds=new Set(p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich').map(i=>readUnit(i)));for(const op of p.functions.flatMap(f=>f.code))if(op.op==='text.page'||op.op==='text.template')ensure(!richIds.has(readUnit(op)),'TEXT_FORMAT_IDENTITY','Rich and legacy text cannot share textId/revision');
-  validateUICatalog(p);validateFlowchart(p);validateExtras(p);validateTextLayout(p);streamCatalog(p);ensure(!p.assets.some(a=>a.transport)||p.capabilities.includes('media.stream'),'STREAM_CAPABILITY','Declare media.stream');for(const a of p.assets)if(a.transport)ensure(a.kind==='video'||a.kind==='audio'&&(a.playback==='element'||a.playback===undefined&&a.mime!=='audio/wav'),'STREAM_PLAYBACK','Streaming requires media element playback');
+  validatePresentation(p);validateUICatalog(p);validateFlowchart(p);validateExtras(p);validateTextLayout(p);streamCatalog(p);ensure(!p.assets.some(a=>a.transport)||p.capabilities.includes('media.stream'),'STREAM_CAPABILITY','Declare media.stream');for(const a of p.assets)if(a.transport)ensure(a.kind==='video'||a.kind==='audio'&&(a.playback==='element'||a.playback===undefined&&a.mime!=='audio/wav'),'STREAM_PLAYBACK','Streaming requires media element playback');
   const main=p.functions.find(f=>f.id === p.entry); ensure(main && !main.params.length && main.returns==='void','ENTRY','Entry must take no parameters and return void');
   for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&['audio/wav','audio/mpeg','audio/ogg'].includes(a.mime))||(a.kind==='font'&&a.mime==='font/ttf')||(a.kind==='video'&&a.mime==='video/webm'),'ASSET_KIND',a.id);
   for(const a of p.assets){if(a.kind==='video')ensure(p.capabilities.includes('video.webm'),'VIDEO_CAPABILITY','Declare video.webm');ensure(a.kind==='audio'||a.playback===undefined,'ASSET_PLAYBACK','Playback mode only applies to audio');if(a.kind==='audio'&&(a.mime!=='audio/wav'||a.playback==='element'))ensure(p.capabilities.includes('audio.media'),'MEDIA_CAPABILITY','Declare audio.media');}

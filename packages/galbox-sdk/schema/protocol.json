@@ -2604,6 +2604,9 @@
         },
         "ui": {
           "$ref": "#/definitions/UICatalog"
+        },
+        "presentation": {
+          "$ref": "#/definitions/GamePresentation"
         }
       },
       "required": [
@@ -12568,6 +12571,291 @@
           "additionalProperties": false
         }
       ]
+    },
+    "SystemScreen": {
+      "type": "string",
+      "enum": [
+        "story",
+        "title",
+        "menu",
+        "save",
+        "load",
+        "history",
+        "settings",
+        "flowchart",
+        "extras",
+        "data"
+      ]
+    },
+    "ToolbarAction": {
+      "type": "string",
+      "enum": [
+        "menu",
+        "history",
+        "auto",
+        "quick-save",
+        "voice",
+        "skip"
+      ]
+    },
+    "GamePalette": {
+      "type": "object",
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "surface": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "muted": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "border": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        }
+      },
+      "required": [
+        "background",
+        "surface",
+        "text",
+        "muted",
+        "accent",
+        "border"
+      ],
+      "additionalProperties": false
+    },
+    "GameLabels": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "continue": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "menu": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "save": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "load": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "history": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "settings": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "flowchart": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "extras": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "data": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "back": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "title": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "auto": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "quickSave": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "voice": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        },
+        "skip": {
+          "type": "string",
+          "pattern": "^[^\\x00]{1,32}$"
+        }
+      },
+      "required": [
+        "start",
+        "continue",
+        "menu",
+        "save",
+        "load",
+        "history",
+        "settings",
+        "flowchart",
+        "extras",
+        "data",
+        "back",
+        "title",
+        "auto",
+        "quickSave",
+        "voice",
+        "skip"
+      ],
+      "additionalProperties": false
+    },
+    "GamePresentation": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "palette": {
+          "$ref": "#/definitions/GamePalette"
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "fontSize": {
+          "type": "integer",
+          "minimum": 14,
+          "maximum": 22
+        },
+        "font": {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "string",
+              "enum": [
+                "serif",
+                "sans"
+              ]
+            },
+            "asset": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "family",
+            "asset"
+          ],
+          "additionalProperties": false
+        },
+        "title": {
+          "type": "object",
+          "properties": {
+            "subtitle": {
+              "type": "string",
+              "pattern": "^[^\\x00]{0,256}$"
+            },
+            "credit": {
+              "type": "string",
+              "pattern": "^[^\\x00]{0,256}$"
+            },
+            "background": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "logo": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "subtitle",
+            "credit",
+            "background",
+            "logo"
+          ],
+          "additionalProperties": false
+        },
+        "labels": {
+          "$ref": "#/definitions/GameLabels"
+        },
+        "toolbar": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "menu",
+              "history",
+              "auto",
+              "quick-save",
+              "voice",
+              "skip"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "version",
+        "id",
+        "revision",
+        "palette",
+        "radius",
+        "fontSize",
+        "font",
+        "title",
+        "labels",
+        "toolbar"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

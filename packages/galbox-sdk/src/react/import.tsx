@@ -2,12 +2,12 @@ import {useState} from 'react';
 import type {Player,PlayerView} from '../player/index.js';
 export function ProfilePicker({player,view}:{player:Player;view:PlayerView}){
  const [selected,setSelected]=useState('main'),[notice,setNotice]=useState('');const current=view.profiles.some(p=>p.profileId===selected)?selected:'main';
- return view.profiles.length>1?<div className="slot-picker"><label>开始时使用的进度<select aria-label="开始时使用的进度" value={current} onChange={e=>setSelected(e.target.value)}>{view.profiles.map((p,i)=><option key={p.profileId} value={p.profileId}>{p.profileId==='main'?'网页进度':`独立进度 ${i}`}</option>)}</select></label><button onClick={()=>{player.setMenu(false);void player.start(current).catch(e=>setNotice(String(e)));}}>使用所选进度从头开始</button>{notice&&<p>{notice}</p>}</div>:null;
+ return view.profiles.length>1?<div className="slot-picker"><label>开始时使用的进度<select aria-label="开始时使用的进度" value={current} onChange={e=>setSelected(e.target.value)}>{view.profiles.map((p,i)=><option key={p.profileId} value={p.profileId}>{p.profileId==='main'?'网页进度':`独立进度 ${i}`}</option>)}</select></label><button onClick={()=>{if(!view.presentation)player.setMenu(false);void player.start(current).catch(e=>setNotice(String(e)));}}>使用所选进度从头开始</button>{notice&&<p>{notice}</p>}</div>:null;
 }
 export function SlotPicker({player,view}:{player:Player;view:PlayerView}){
  const [selected,setSelected]=useState('quick'),[notice,setNotice]=useState('');
  const current=view.slots.some(s=>s.slot===selected)?selected:view.slots[0]?.slot??'';
- return view.slots.length?<div className="slot-picker"><label>存档槽位<select aria-label="存档槽位" value={current} onChange={e=>setSelected(e.target.value)}>{view.slots.map(s=><option key={s.slot} value={s.slot}>{s.label} · {s.profileId==='main'?'网页进度':'独立导入进度'}</option>)}</select></label><button onClick={()=>{player.setMenu(false);void player.load(current).catch(e=>setNotice(String(e)));}}>读取所选槽位</button>{notice&&<p>{notice}</p>}</div>:null;
+ return view.slots.length?<div className="slot-picker"><label>存档槽位<select aria-label="存档槽位" value={current} onChange={e=>setSelected(e.target.value)}>{view.slots.map(s=><option key={s.slot} value={s.slot}>{s.label} · {s.profileId==='main'?'网页进度':'独立导入进度'}</option>)}</select></label><button onClick={()=>{if(!view.presentation)player.setMenu(false);void player.load(current).catch(e=>setNotice(String(e)));}}>读取所选槽位</button>{notice&&<p>{notice}</p>}</div>:null;
 }
 export function ImportPanel({player,view}:{player:Player;view:PlayerView}){
  const [source,setSource]=useState('0'),[files,setFiles]=useState<File[]>([]),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
@@ -19,7 +19,7 @@ export function ImportPanel({player,view}:{player:Player;view:PlayerView}){
   <label>来源文件<input aria-label="原档文件（可多选）" data-testid="import-files" type="file" multiple onChange={e=>setFiles(Array.from(e.target.files??[]))}/></label>
   <button disabled={busy||!files.length} onClick={()=>{void prepare();}}>准备导入</button>
   {view.importReport&&<div className="conversion-report"><strong>{view.importReport.label}</strong><p>转换等级：{view.importReport.grade}</p><ul>{view.importReport.warnings.map((w,j)=><li key={j}>{w}</li>)}</ul><button disabled={busy||!!view.lastImport} onClick={()=>{void commit();}}>提交导入</button></div>}
-  {view.lastImport&&<button data-testid="load-import" data-slot={view.lastImport.slot} onClick={()=>{const slot=view.lastImport?.slot;if(slot){player.setMenu(false);void player.load(slot).catch(e=>setNotice(String(e)));}}}>载入导入槽位</button>}
+  {view.lastImport&&<button data-testid="load-import" data-slot={view.lastImport.slot} onClick={()=>{const slot=view.lastImport?.slot;if(slot){if(!view.presentation)player.setMenu(false);void player.load(slot).catch(e=>setNotice(String(e)));}}}>载入导入槽位</button>}
   <p data-testid="import-notice">{notice}</p>
  </details>;
 }

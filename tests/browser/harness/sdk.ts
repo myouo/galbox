@@ -14,3 +14,7 @@ export * from 'galbox-sdk/backups';
 export * from 'galbox-sdk/release';
 
 export * from 'galbox-sdk/settings';
+
+export {DefaultUI,GameUI} from 'galbox-sdk/react';
+export {createElement} from 'react';
+export {createRoot} from 'react-dom/client';

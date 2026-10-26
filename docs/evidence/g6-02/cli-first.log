@@ -1,0 +1,19 @@
+$ node scripts/test-cli.mjs --full
+Failed project retained at /dev/shm/galbox-cli-jqiUxf/Story Project
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.textContent: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByTestId('diagnostics')[22m
+
+    at data (/home/myo/Desktop/galbox-sdk/scripts/test-cli-full.mjs:23:188)
+    at developerTask (/home/myo/Desktop/galbox-sdk/scripts/test-cli-full.mjs:24:205)
+    at async file:///home/myo/Desktop/galbox-sdk/scripts/test-cli.mjs:46:45 {
+  log: [ "  - waiting for getByTestId('diagnostics')" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.15.0
+[ELIFECYCLE] Command failed with exit code 1.

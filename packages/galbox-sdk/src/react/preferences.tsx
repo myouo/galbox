@@ -7,8 +7,8 @@ function preferenceError(error:unknown):string {
  return error instanceof SyntaxError?'设置文件不是有效 JSON。':error instanceof Error?error.message:String(error);
 }
 export function PreferencesPanel({player,view}:{player:Player;view:PlayerView}){
- const [busy,setBusy]=useState(false),[notice,setNotice]=useState(''),settings=view.preferences.value;const intervals=[0,8,16,32,64,100,200];
- function change(patch:PreferencesPatch){setBusy(true);void player.updatePreferences(patch).then(()=>setNotice('设置已保存'),e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}
+ const [busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[pending,setPending]=useState(0),settings=view.preferences.value;const intervals=[0,8,16,32,64,100,200];
+ function change(patch:PreferencesPatch){setPending(n=>n+1);void player.updatePreferences(patch).then(()=>setNotice('设置已保存'),e=>setNotice(preferenceError(e))).finally(()=>setPending(n=>n-1));}
  if(!view.preferencesSupported)return <label>音量<input aria-label="主音量" type="range" min="0" max="1" step="0.05" defaultValue={settings.audio.master} onChange={e=>player.setVolume(Number(e.target.value))}/></label>;
  return <fieldset disabled={busy} className="preferences"><legend>系统设置</legend>
   {(['master','bgm','voice','sfx'] as const).map(role=><label key={role}>{({master:'主音量',bgm:'背景音乐音量',voice:'语音音量',sfx:'音效音量'})[role]}<input aria-label={({master:'主音量',bgm:'背景音乐音量',voice:'语音音量',sfx:'音效音量'})[role]} type="range" min="0" max="1" step="0.05" value={settings.audio[role]} onChange={e=>change({audio:{[role]:Number(e.target.value)}})}/></label>)}
@@ -21,6 +21,6 @@ export function PreferencesPanel({player,view}:{player:Player;view:PlayerView}){
   <button onClick={()=>{setBusy(true);void player.resetPreferences().then(()=>setNotice('已恢复默认设置'),e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}>恢复默认设置</button>
   <button onClick={()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(player.exportPreferences())],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='galbox-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setNotice('已导出系统设置');}}>导出系统设置</button>
   <label>导入系统设置<input aria-label="导入系统设置" type="file" accept=".json,application/json" onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;setBusy(true);void(async()=>{if(file.size>32768)throw new Error('设置文件过大');await player.importPreferences(JSON.parse(await file.text()));setNotice('已导入系统设置');})().catch(e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}/></label>
-  <button onClick={()=>{setBusy(true);void player.reloadPreferences().then(()=>setNotice('已重新读取设置'),e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}>重新读取设置</button><p aria-live="polite" data-testid="preferences-notice">{notice}</p>
+  <button onClick={()=>{setBusy(true);void player.reloadPreferences().then(()=>setNotice('已重新读取设置'),e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}>重新读取设置</button><p aria-live="polite" data-testid="preferences-notice">{pending?'正在保存设置…':notice}</p>
  </fieldset>;
 }

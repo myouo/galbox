@@ -14,9 +14,9 @@
     "G7",
     "H2"
   ],
-  "current_task": "G6-02",
+  "current_task": "G7-01",
   "engine_status": "general_vn_expansion",
-  "last_updated": "2026-10-26",
+  "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -1945,11 +1945,23 @@
         "G5-02",
         "G6-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
-        "title/menu/settings/save/load/history/extras UI"
+        "packages/galbox-sdk/schema/protocol.json",
+        "packages/galbox-sdk/src/protocol/presentation.ts",
+        "packages/galbox-sdk/src/program-tools/presentation.ts",
+        "packages/galbox-sdk/src/player/index.ts",
+        "packages/galbox-sdk/src/react/game-ui.tsx",
+        "packages/galbox-sdk/src/react/system-dialog.tsx",
+        "packages/galbox-sdk/src/react/press.tsx",
+        "packages/galbox-sdk/src/runtime/press.ts",
+        "packages/galbox-sdk/src/web-host/script-ui.ts",
+        "packages/cli/templates/standard",
+        "fixtures/presentation-novel",
+        "docs/INTERFACE.md",
+        "docs/decisions/0030-game-interface-and-skins.md"
       ],
       "contracts": [
         "C01",
@@ -1964,9 +1976,24 @@
         "theme-only-instance",
         "touch-keyboard"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g6-02/REPORT.md",
+        "docs/evidence/g6-02/check.log",
+        "docs/evidence/g6-02/unit.log",
+        "docs/evidence/g6-02/browser-results.json",
+        "docs/evidence/g6-02/ui-recheck/browser-results.json",
+        "docs/evidence/g6-02/ui-recheck/interface-result.json",
+        "docs/evidence/g6-02/ui-recheck/mobile-capture.json",
+        "docs/evidence/g6-02/consumer-result.json",
+        "docs/evidence/g6-02/result.json",
+        "docs/evidence/g6-02/compatibility-result.json",
+        "docs/evidence/g6-02/performance.json",
+        "docs/evidence/g6-02/release-audit.json",
+        "docs/evidence/g6-02/dev-result.json",
+        "docs/evidence/g6-02/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定义版本化作品皮肤/默认屏幕配置和系统动作路由边界；基于现有Player完成标题、菜单、设置、存读档、历史、流程图与鉴赏组件，实例仅提供内容/皮肤；用原创皮肤及移动触控/键盘、焦点/滚动/跨控件松手与独立消费验证。"
+      "next_action": "ADR0030有限默认页面/版本化皮肤/移动布局和输入隔离验收完成；下一G7-01综合原创功能、声明规模、性能归因与独立消费。"
     },
     {
       "id": "G7-01",
@@ -1999,7 +2026,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。；跟进g4-02性能实际API P95 26.5ms（G4-01为4.4ms）和两帧P95 66.7ms，分组测量历史投影/捕获/持久事务成本，复验Core文本历史10000条/4MB等规模边界，不将当前50ms门槛通过当60FPS或大作品认证。"
+      "next_action": "先定义综合原创验收切片与可测规模矩阵，组合正文/多窗口/舞台/音视频/版本化网络流/表单/设置/图文保存/回溯/流程图/鉴赏及两皮肤，复验WebGL与原生无WebGL Canvas、自动/快进/输入与UI交错和严格独立包；分组测量历史投影/捕获/持久事务/UI成本，核验10000历史条目/4MB等声明边界，跟进G4-02以来API P95增幅，不以50ms门槛代替60FPS/移动真机/大作品认证。"
     },
     {
       "milestone": "H2",

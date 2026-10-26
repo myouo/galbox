@@ -40,3 +40,6 @@ export {extrasFingerprint} from '../protocol/extras.js';
 export {uiLabel,uiImage,uiButton,uiToggle,uiRange,uiInput,uiScreen,uiCatalog,uiField,showUI,hideUI,setUIText,setUIVisible,setUIEnabled,setUIToggle,setUIRange,setUIInput,waitUI} from './ui.js';
 export type {UIControlRef,UIScreenRef,UIFieldRef,UIControlOptions} from './ui.js';
 export {uiFingerprint} from '../protocol/ui.js';
+
+export {gamePresentation} from './presentation.js';
+export type {GamePresentationOptions} from './presentation.js';

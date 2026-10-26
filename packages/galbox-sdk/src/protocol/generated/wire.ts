@@ -1811,6 +1811,17 @@ export type UIEvent =
       generation: number;
       inputId: string;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "SystemScreen".
+ */
+export type SystemScreen =
+  'story' | 'title' | 'menu' | 'save' | 'load' | 'history' | 'settings' | 'flowchart' | 'extras' | 'data';
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ToolbarAction".
+ */
+export type ToolbarAction = 'menu' | 'history' | 'auto' | 'quick-save' | 'voice' | 'skip';
 
 export interface Wire {
   program: Program;
@@ -1857,6 +1868,7 @@ export interface Program {
   flowchart?: Flowchart;
   extras?: ExtrasCatalog;
   ui?: UICatalog;
+  presentation?: GamePresentation;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2347,6 +2359,71 @@ export interface UIStyle {
   background: string;
   border: string;
   fontSize: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "GamePresentation".
+ */
+export interface GamePresentation {
+  version: 1;
+  id: string;
+  revision: string;
+  palette: GamePalette;
+  radius: number;
+  fontSize: number;
+  font: {
+    family: 'serif' | 'sans';
+    asset: string | null;
+  };
+  title: {
+    subtitle: string;
+    credit: string;
+    background: string | null;
+    logo: string | null;
+  };
+  labels: GameLabels;
+  /**
+   * @minItems 1
+   * @maxItems 6
+   */
+  toolbar: [
+    'menu' | 'history' | 'auto' | 'quick-save' | 'voice' | 'skip',
+    ...('menu' | 'history' | 'auto' | 'quick-save' | 'voice' | 'skip')[]
+  ];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "GamePalette".
+ */
+export interface GamePalette {
+  background: string;
+  surface: string;
+  text: string;
+  muted: string;
+  accent: string;
+  border: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "GameLabels".
+ */
+export interface GameLabels {
+  start: string;
+  continue: string;
+  menu: string;
+  save: string;
+  load: string;
+  history: string;
+  settings: string;
+  flowchart: string;
+  extras: string;
+  data: string;
+  back: string;
+  title: string;
+  auto: string;
+  quickSave: string;
+  voice: string;
+  skip: string;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

@@ -1,0 +1,1082 @@
+{
+  "version": 1,
+  "gameId": "lighthouse-interface",
+  "release": "interface-1",
+  "entry": "main",
+  "title": "灯塔来信 · 远航",
+  "capabilities": [
+    "adv",
+    "stage.linear",
+    "audio.wav",
+    "tasks.all",
+    "profile",
+    "ui.controls",
+    "expressions",
+    "extras",
+    "flowchart",
+    "values.extended",
+    "audio.extended",
+    "audio.media",
+    "rng.lcg32"
+  ],
+  "assets": [
+    {
+      "id": "shore",
+      "path": "../assets/shore.svg",
+      "mime": "image/svg+xml",
+      "sha256": "50ced6a1205a9593b48688aea0cd345270f9f120fe52de0b8e1acbd0cbf37638",
+      "kind": "image"
+    },
+    {
+      "id": "tower",
+      "path": "../assets/tower.svg",
+      "mime": "image/svg+xml",
+      "sha256": "45364cd01d4e1698b834b374fb5bbdd8bfb1928e1392922c0471bd50fc334f0e",
+      "kind": "image"
+    },
+    {
+      "id": "envelope",
+      "path": "../assets/envelope.svg",
+      "mime": "image/svg+xml",
+      "sha256": "cdadd9384b517a41cdd57b5fcf6065775ed109c14e9622ce272101fb63aa4f78",
+      "kind": "image"
+    },
+    {
+      "id": "lamp",
+      "path": "../assets/lamp.svg",
+      "mime": "image/svg+xml",
+      "sha256": "848b19ac94254585543a492795637e2e826b956e0f1ae16a19e63cfd9775c0b7",
+      "kind": "image"
+    },
+    {
+      "id": "bgm-long",
+      "path": "../media/assets/bgm-long.ogg",
+      "mime": "audio/ogg",
+      "sha256": "9edbbb97412863a8dc7ad0b2774d5bbdc32d6ca6371b9ea92093d280e00b696d",
+      "kind": "audio"
+    },
+    {
+      "id": "voice-opus",
+      "path": "../media/assets/voice-opus.ogg",
+      "mime": "audio/ogg",
+      "sha256": "5a4823d9ca78fdd3f73823ed1d87366d1455457b1a767cbdbc4d9536790f3aba",
+      "kind": "audio"
+    },
+    {
+      "id": "signal-mp3",
+      "path": "../media/assets/signal-mp3.mp3",
+      "mime": "audio/mpeg",
+      "sha256": "efc7836a8807f6a478c74fc149bc941d62dab11537cc48e6be0b25fc42acd58b",
+      "kind": "audio"
+    },
+    {
+      "id": "voice-buffer",
+      "path": "../media/assets/voice-buffer.wav",
+      "mime": "audio/wav",
+      "sha256": "756a25bb86dc886696dec0863b30440c108899eaeec7034f6d4217c2517d6880",
+      "kind": "audio"
+    },
+    {
+      "id": "lighthouse-grid",
+      "path": "../layout/lighthouse-grid.ttf",
+      "mime": "font/ttf",
+      "sha256": "8d051282b8ef7af73f7a12cbb668066211b1966460623ebbc5f4e34ac81e626c",
+      "kind": "font"
+    }
+  ],
+  "globals": [
+    {
+      "id": "token",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": "default"
+      }
+    },
+    {
+      "id": "answer",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": "untouched"
+      }
+    },
+    {
+      "id": "roll",
+      "kind": "i32",
+      "initial": {
+        "kind": "i32",
+        "value": 0
+      }
+    },
+    {
+      "id": "button",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": "none"
+      }
+    },
+    {
+      "id": "author",
+      "kind": "string",
+      "initial": {
+        "kind": "string",
+        "value": "未署名"
+      }
+    },
+    {
+      "id": "lampOn",
+      "kind": "bool",
+      "initial": {
+        "kind": "bool",
+        "value": false
+      }
+    },
+    {
+      "id": "power",
+      "kind": "i32",
+      "initial": {
+        "kind": "i32",
+        "value": 0
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "main",
+      "entry": "main:node",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "main:node",
+          "node": "arrival",
+          "op": "flow.node"
+        },
+        {
+          "at": "main:stage",
+          "object": {
+            "id": "background",
+            "asset": "shore",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "main:music",
+          "task": "bgm",
+          "asset": "bgm-long",
+          "channel": "bgm",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fb999999999999a"
+          },
+          "loop": true,
+          "restore": "replay",
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "main:token",
+          "dest": "token",
+          "value": {
+            "literal": {
+              "kind": "string",
+              "value": "main-run"
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "main:welcome",
+          "textId": "collection.welcome",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "收藏室里装着灯塔收到的声音、风景和故事。翻过这一页，再看看菜单里新亮起的收藏。",
+          "op": "text.page"
+        },
+        {
+          "at": "main:collect",
+          "key": "collected",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "main:signal",
+          "entry": "signal",
+          "op": "extras.unlock"
+        },
+        {
+          "at": "main:reading",
+          "textId": "collection.reading",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "你可以打开CG、试听音乐，或走进信里的小场景。关闭鉴赏后，我们仍在这里继续读信。",
+          "op": "text.page"
+        },
+        {
+          "at": "main:reset",
+          "key": "collected",
+          "value": {
+            "kind": "bool",
+            "value": false
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "main:closing",
+          "textId": "collection.closing",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "收集标记已经复位，但风景与成就仍会保留。只有回放里点亮的那盏灯，不会偷偷进入主线收藏。",
+          "op": "text.page"
+        },
+        {
+          "at": "main:end",
+          "op": "control.end"
+        }
+      ]
+    },
+    {
+      "id": "memory",
+      "entry": "memory:scene",
+      "layout": 1,
+      "params": [],
+      "locals": [
+        {
+          "id": "local",
+          "kind": "i32",
+          "initial": {
+            "kind": "i32",
+            "value": 9
+          }
+        }
+      ],
+      "returns": "void",
+      "code": [
+        {
+          "at": "memory:scene",
+          "entry": "memory",
+          "op": "extras.scene"
+        },
+        {
+          "at": "memory:stage",
+          "object": {
+            "id": "background",
+            "asset": "tower",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "alpha": 1
+            },
+            "z": 0
+          },
+          "op": "stage.put"
+        },
+        {
+          "at": "memory:token",
+          "dest": "token",
+          "value": {
+            "literal": {
+              "kind": "string",
+              "value": "replay-run"
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "memory:roll",
+          "dest": "roll",
+          "min": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 1
+          },
+          "max": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 99
+          },
+          "op": "random.i32"
+        },
+        {
+          "at": "memory:leak",
+          "key": "replayLeak",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "memory:secret",
+          "entry": "secret",
+          "op": "extras.unlock"
+        },
+        {
+          "at": "memory:voice",
+          "task": "voice",
+          "asset": "voice-opus",
+          "channel": "voice",
+          "gain": {
+            "kind": "f64",
+            "op": "literal",
+            "value": "3fd999999999999a"
+          },
+          "restore": "replay",
+          "loop": false,
+          "loopStartMs": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 0
+          },
+          "loopEndMs": null,
+          "op": "audio.track"
+        },
+        {
+          "at": "memory:first",
+          "textId": "collection.memory",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "这是收藏室里的独立回放。这里的变量、已读和新收藏都只属于这一次回放。",
+          "op": "text.page"
+        },
+        {
+          "at": "memory:choice",
+          "dest": "answer",
+          "options": [
+            {
+              "id": "left",
+              "text": "把回声留在窗边",
+              "target": "memory:ending"
+            },
+            {
+              "id": "right",
+              "text": "把回声写在纸上",
+              "target": "memory:ending"
+            }
+          ],
+          "op": "choice"
+        },
+        {
+          "at": "memory:ending",
+          "key": "replayEnding",
+          "value": {
+            "kind": "bool",
+            "value": true
+          },
+          "op": "profile.set"
+        },
+        {
+          "at": "memory:last",
+          "textId": "collection.memory-end",
+          "revision": "zh-1",
+          "speaker": "澪",
+          "content": "小场景结束了。关闭鉴赏，就能回到原来那封尚未读完的信。",
+          "op": "text.page"
+        },
+        {
+          "at": "memory:return",
+          "op": "control.return"
+        }
+      ]
+    },
+    {
+      "id": "form",
+      "entry": "form:show",
+      "layout": 1,
+      "params": [],
+      "locals": [
+        {
+          "id": "draft",
+          "kind": "string",
+          "initial": {
+            "kind": "string",
+            "value": ""
+          }
+        }
+      ],
+      "returns": "void",
+      "code": [
+        {
+          "at": "form:show",
+          "screen": "panel",
+          "op": "ui.show"
+        },
+        {
+          "at": "form:title",
+          "screen": "panel",
+          "control": "heading",
+          "value": {
+            "kind": "string",
+            "op": "literal",
+            "value": "请填写今晚的值班记录"
+          },
+          "op": "ui.text"
+        },
+        {
+          "at": "form:name",
+          "screen": "panel",
+          "control": "name",
+          "value": {
+            "kind": "string",
+            "op": "literal",
+            "value": "灯塔旅人"
+          },
+          "op": "ui.input"
+        },
+        {
+          "at": "form:power",
+          "screen": "panel",
+          "control": "power",
+          "value": {
+            "kind": "i32",
+            "op": "literal",
+            "value": 35
+          },
+          "op": "ui.range"
+        },
+        {
+          "at": "form:locked",
+          "screen": "panel",
+          "control": "locked",
+          "value": {
+            "kind": "bool",
+            "op": "literal",
+            "value": false
+          },
+          "op": "ui.enabled"
+        },
+        {
+          "at": "form:hidden",
+          "screen": "panel",
+          "control": "hidden",
+          "value": {
+            "kind": "bool",
+            "op": "literal",
+            "value": false
+          },
+          "op": "ui.visible"
+        },
+        {
+          "at": "form:wait",
+          "screen": "panel",
+          "dest": "button",
+          "buttons": [
+            {
+              "control": "submit",
+              "target": "form:save"
+            },
+            {
+              "control": "cancel",
+              "target": "form:cancel"
+            }
+          ],
+          "fields": [
+            {
+              "control": "name",
+              "dest": "draft"
+            },
+            {
+              "control": "lampOn",
+              "dest": "lampOn"
+            },
+            {
+              "control": "power",
+              "dest": "power"
+            }
+          ],
+          "op": "ui.wait"
+        },
+        {
+          "at": "form:save",
+          "dest": "author",
+          "value": {
+            "expression": {
+              "kind": "string",
+              "op": "slot",
+              "id": "draft"
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "form:profile",
+          "key": "lastAuthor",
+          "value": {
+            "kind": "string",
+            "op": "slot",
+            "id": "author"
+          },
+          "op": "profile.expression"
+        },
+        {
+          "at": "form:done",
+          "target": "form:hide",
+          "op": "control.jump"
+        },
+        {
+          "at": "form:cancel",
+          "dest": "author",
+          "value": {
+            "literal": {
+              "kind": "string",
+              "value": "暂不值班"
+            }
+          },
+          "op": "value.set"
+        },
+        {
+          "at": "form:hide",
+          "op": "ui.hide"
+        },
+        {
+          "at": "form:return",
+          "op": "control.return"
+        }
+      ]
+    },
+    {
+      "id": "station",
+      "entry": "station:node",
+      "layout": 1,
+      "params": [],
+      "locals": [],
+      "returns": "void",
+      "code": [
+        {
+          "at": "station:node",
+          "node": "station",
+          "op": "flow.node"
+        },
+        {
+          "at": "station:clear",
+          "op": "text.clear"
+        },
+        {
+          "at": "station:form",
+          "function": "form",
+          "args": [],
+          "op": "control.call"
+        },
+        {
+          "at": "station:summary",
+          "textId": "controls.summary",
+          "revision": "zh-1",
+          "speaker": {
+            "kind": "string",
+            "op": "literal",
+            "value": "澪"
+          },
+          "content": {
+            "kind": "string",
+            "op": "concat",
+            "parts": [
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "收到署名「"
+              },
+              {
+                "kind": "string",
+                "op": "slot",
+                "id": "author"
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "」，灯光 "
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "i32",
+                "value": {
+                  "kind": "i32",
+                  "op": "slot",
+                  "id": "power"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "，点亮 "
+              },
+              {
+                "kind": "string",
+                "op": "format",
+                "operandKind": "bool",
+                "value": {
+                  "kind": "bool",
+                  "op": "slot",
+                  "id": "lampOn"
+                }
+              },
+              {
+                "kind": "string",
+                "op": "literal",
+                "value": "。这是剧本读取控件提交值后的正文。"
+              }
+            ]
+          },
+          "op": "text.template"
+        },
+        {
+          "at": "station:return",
+          "op": "control.return"
+        }
+      ]
+    }
+  ],
+  "rng": {
+    "algorithm": "lcg32@1",
+    "seed": 71
+  },
+  "presentation": {
+    "version": 1,
+    "id": "letter-paper",
+    "revision": "v1",
+    "palette": {
+      "background": "#f3eee2",
+      "surface": "#fffaf0",
+      "text": "#253f46",
+      "muted": "#50666b",
+      "accent": "#b0673d",
+      "border": "#9aaca8"
+    },
+    "radius": 4,
+    "fontSize": 16,
+    "font": {
+      "family": "serif",
+      "asset": "lighthouse-grid"
+    },
+    "title": {
+      "subtitle": "把远方折进信纸，把此刻留给你。",
+      "credit": "原创《灯塔来信》",
+      "background": "tower",
+      "logo": "envelope"
+    },
+    "labels": {
+      "start": "开始阅读",
+      "continue": "继续阅读",
+      "menu": "菜单",
+      "save": "保存",
+      "load": "读取",
+      "history": "历史",
+      "settings": "设置",
+      "flowchart": "流程图",
+      "extras": "鉴赏",
+      "data": "数据管理",
+      "back": "返回故事",
+      "title": "返回标题",
+      "auto": "自动",
+      "quickSave": "快存",
+      "voice": "语音",
+      "skip": "快进"
+    },
+    "toolbar": [
+      "menu",
+      "history",
+      "auto",
+      "quick-save",
+      "skip"
+    ]
+  },
+  "extras": {
+    "id": "lighthouse-extras",
+    "revision": "v1",
+    "entries": [
+      {
+        "id": "day",
+        "kind": "cg",
+        "title": "两面的风景",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "literal",
+          "value": true
+        },
+        "reveal": "unlocked",
+        "images": [
+          "shore",
+          "tower"
+        ]
+      },
+      {
+        "id": "letter",
+        "kind": "cg",
+        "title": "被收好的信",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "profile",
+          "key": "collected",
+          "fallback": false
+        },
+        "reveal": "unlocked",
+        "images": [
+          "envelope"
+        ]
+      },
+      {
+        "id": "secret",
+        "kind": "cg",
+        "title": "回放里的灯",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "literal",
+          "value": false
+        },
+        "reveal": "unlocked",
+        "images": [
+          "lamp"
+        ]
+      },
+      {
+        "id": "sea",
+        "kind": "music",
+        "title": "海风的旋律",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "literal",
+          "value": true
+        },
+        "reveal": "unlocked",
+        "asset": "bgm-long",
+        "gain": 0.3,
+        "loop": true
+      },
+      {
+        "id": "signal",
+        "kind": "music",
+        "title": "短波信号",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "literal",
+          "value": false
+        },
+        "reveal": "unlocked",
+        "asset": "signal-mp3",
+        "gain": 0.4,
+        "loop": false
+      },
+      {
+        "id": "small",
+        "kind": "music",
+        "title": "桌边的小调",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "literal",
+          "value": true
+        },
+        "reveal": "unlocked",
+        "asset": "voice-buffer",
+        "gain": 0.5,
+        "loop": true
+      },
+      {
+        "id": "memory",
+        "kind": "scene",
+        "title": "信中的小小场景",
+        "description": "",
+        "unlock": {
+          "kind": "bool",
+          "op": "read",
+          "textId": "collection.welcome",
+          "revision": "zh-1"
+        },
+        "reveal": "unlocked",
+        "entry": "memory"
+      },
+      {
+        "id": "collector",
+        "kind": "achievement",
+        "title": "第一封收藏",
+        "description": "收好一封回信。",
+        "unlock": {
+          "kind": "bool",
+          "op": "profile",
+          "key": "collected",
+          "fallback": false
+        },
+        "reveal": "unlocked",
+        "icon": "envelope"
+      }
+    ]
+  },
+  "ui": {
+    "id": "lighthouse-ui",
+    "revision": "v1",
+    "screens": [
+      {
+        "id": "panel",
+        "title": "灯塔值班面板",
+        "background": "#102938",
+        "controls": [
+          {
+            "id": "heading",
+            "kind": "label",
+            "rect": {
+              "x": 80,
+              "y": 95,
+              "width": 1120,
+              "height": 70
+            },
+            "text": "灯塔值班面板",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            }
+          },
+          {
+            "id": "art",
+            "kind": "image",
+            "rect": {
+              "x": 940,
+              "y": 190,
+              "width": 230,
+              "height": 220
+            },
+            "text": "值班灯",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            },
+            "asset": "lamp"
+          },
+          {
+            "id": "name",
+            "kind": "input",
+            "rect": {
+              "x": 100,
+              "y": 205,
+              "width": 780,
+              "height": 75
+            },
+            "text": "回信署名",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            },
+            "value": "旅人",
+            "maxLength": 24
+          },
+          {
+            "id": "lampOn",
+            "kind": "toggle",
+            "rect": {
+              "x": 100,
+              "y": 305,
+              "width": 780,
+              "height": 65
+            },
+            "text": "点亮回信灯",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            },
+            "value": true
+          },
+          {
+            "id": "power",
+            "kind": "range",
+            "rect": {
+              "x": 100,
+              "y": 395,
+              "width": 780,
+              "height": 75
+            },
+            "text": "灯光强度",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            },
+            "value": 25,
+            "min": 0,
+            "max": 100,
+            "step": 5
+          },
+          {
+            "id": "submit",
+            "kind": "button",
+            "rect": {
+              "x": 100,
+              "y": 520,
+              "width": 350,
+              "height": 80
+            },
+            "text": "确认值班",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            }
+          },
+          {
+            "id": "cancel",
+            "kind": "button",
+            "rect": {
+              "x": 500,
+              "y": 520,
+              "width": 350,
+              "height": 80
+            },
+            "text": "暂不值班",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            }
+          },
+          {
+            "id": "locked",
+            "kind": "button",
+            "rect": {
+              "x": 930,
+              "y": 520,
+              "width": 250,
+              "height": 80
+            },
+            "text": "封存按钮",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            }
+          },
+          {
+            "id": "hidden",
+            "kind": "label",
+            "rect": {
+              "x": 930,
+              "y": 625,
+              "width": 250,
+              "height": 40
+            },
+            "text": "未公开记录",
+            "visible": true,
+            "enabled": true,
+            "style": {
+              "foreground": "#f4efe2",
+              "background": "#163647",
+              "border": "#bfa774",
+              "fontSize": 24
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "flowchart": {
+    "id": "interface-map",
+    "revision": "v1",
+    "chapters": [
+      {
+        "id": "letters",
+        "title": "来信与值班"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "arrival",
+        "chapter": "letters",
+        "title": "灯塔收藏室",
+        "entry": null,
+        "description": "",
+        "column": 0,
+        "row": 0,
+        "requires": [],
+        "unlock": {
+          "kind": "bool",
+          "op": "literal",
+          "value": true
+        },
+        "gate": {
+          "kind": "bool",
+          "op": "literal",
+          "value": true
+        },
+        "reveal": "unlocked"
+      },
+      {
+        "id": "station",
+        "chapter": "letters",
+        "title": "今晚的值班",
+        "entry": "station",
+        "description": "到值班面板署名。",
+        "column": 1,
+        "row": 1,
+        "requires": [],
+        "unlock": {
+          "kind": "bool",
+          "op": "read",
+          "textId": "collection.welcome",
+          "revision": "zh-1"
+        },
+        "gate": {
+          "kind": "bool",
+          "op": "literal",
+          "value": true
+        },
+        "reveal": "unlocked"
+      }
+    ],
+    "edges": [
+      {
+        "from": "arrival",
+        "to": "station",
+        "label": "读完欢迎来信"
+      }
+    ]
+  }
+}

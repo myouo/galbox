@@ -65,3 +65,5 @@ G5-01流程图有限集见 [FLOWCHART](FLOWCHART.md)：版本节点、visited/un
 G5-02鉴赏有限集见 [EXTRAS](EXTRAS.md)：CG差分/成就图标、buffer/element/版本流音乐、临时Store中的生产场景回放、单调解锁与主线冻结/恢复。每实例和目录/资源预算有界；状态以tasks/evidence为准，不扩张为G6/G7或真实作品认证。
 
 G6-01剧本UI有限集见 [SCRIPT_UI](SCRIPT_UI.md)：ui.controls目录、六种真实控件、强类型字段提交/纯表达式更新、Core权威与恢复身份、DOM/IME/图文捕获与设备失败。状态以tasks/evidence为准；不扩张为G6-02完整皮肤/移动布局或G7规模认证。
+
+G6-02有限完整界面见 [INTERFACE](INTERFACE.md)：安全presentation配置、默认系统页面/导航与暂停、分页/焦点、移动主表单与纵向捕获、共用按压。旧未配置作品保留经典布局；状态以tasks/evidence为准，不扩大为真机/任意皮肤脚本或G7规模认证。

@@ -1,6 +1,6 @@
 import {ensure,GalboxError,parseSaveThumbnail} from '../protocol/index.js';
 import type {SaveThumbnail} from '../protocol/index.js';
-export interface TextCapture {readonly svg:string;}
+export interface TextCapture {readonly svg:string;readonly fit?:'contain';}
 // Capture is synchronous: all computed values and scrolling belong to this cut.
 export function captureText(roots:readonly HTMLElement[],mount:HTMLElement,fontCSS:string):TextCapture {
  const rect=mount.getBoundingClientRect();ensure(rect.width>0&&rect.height>0,'SAVE_CAPTURE_LAYOUT','Visible mount size is required');
@@ -26,7 +26,7 @@ export async function composeThumbnail(stage:HTMLCanvasElement,text:TextCapture,
   const context=canvas.getContext('2d');ensure(context,'SAVE_CAPTURE_UNAVAILABLE','2D capture unavailable');context.drawImage(stage,0,0,320,180);
   for(const layer of [text,...(overlay?[overlay]:[])]){ensure(layer.svg.length<=4_000_000,'SAVE_CAPTURE_SIZE','UI capture exceeds 4 MB');
   await new Promise<void>((resolve,reject)=>{abort=()=>reject(new GalboxError('SAVE_CAPTURE_CANCELLED','Capture cancelled'));signal.addEventListener('abort',abort,{once:true});image.onload=()=>resolve();image.onerror=()=>reject(new GalboxError('SAVE_CAPTURE_TEXT','Text rasterization failed'));timer=setTimeout(()=>reject(new GalboxError('SAVE_CAPTURE_TIMEOUT','Text rasterization timed out')),5000);image.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(layer.svg);if(signal.aborted)abort();});
-  ensure(!signal.aborted,'SAVE_CAPTURE_CANCELLED','Capture cancelled');context.drawImage(image,0,0,320,180);if(timer)clearTimeout(timer);signal.removeEventListener('abort',abort);}
+  ensure(!signal.aborted,'SAVE_CAPTURE_CANCELLED','Capture cancelled');ensure(layer.fit===undefined||layer.fit==='contain','SAVE_CAPTURE_TEXT','Unknown capture fit');if(layer.fit==='contain'){context.fillStyle='#000';context.fillRect(0,0,320,180);const scale=Math.min(320/image.naturalWidth,180/image.naturalHeight),width=image.naturalWidth*scale,height=image.naturalHeight*scale;context.drawImage(image,(320-width)/2,(180-height)/2,width,height);}else context.drawImage(image,0,0,320,180);if(timer)clearTimeout(timer);signal.removeEventListener('abort',abort);}
   return parseSaveThumbnail({width:320,height:180,dataURL:canvas.toDataURL('image/png')});
  }catch(e){if(e instanceof GalboxError)throw e;throw new GalboxError('SAVE_CAPTURE_FAILED',e instanceof Error?e.message:String(e));}
  finally{if(timer)clearTimeout(timer);signal.removeEventListener('abort',abort);image.onload=null;image.onerror=null;image.src='';canvas.width=0;canvas.height=0;}

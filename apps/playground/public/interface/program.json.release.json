@@ -1,0 +1,96 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-interface",
+  "release": "interface-1",
+  "series": "1",
+  "programSha256": "34fe0957cf517dc34b3fcf6aad212b6119a2db23cee48b340ce66776da870f78",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "fea19850aa207e9e407ede673312c646bd474d5987ab907800c93a2edb34af50",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "tower",
+      "bytes": 823,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "envelope",
+      "bytes": 340,
+      "kind": "image",
+      "width": 180,
+      "height": 130
+    },
+    {
+      "id": "lamp",
+      "bytes": 316,
+      "kind": "image",
+      "width": 320,
+      "height": 220
+    },
+    {
+      "id": "bgm-long",
+      "kind": "audio",
+      "bytes": 48603,
+      "playback": "element",
+      "encoding": "vorbis",
+      "channels": 1,
+      "sampleRate": 22050,
+      "frames": 771750
+    },
+    {
+      "id": "voice-opus",
+      "kind": "audio",
+      "bytes": 5574,
+      "playback": "element",
+      "encoding": "opus",
+      "channels": 1,
+      "sampleRate": 48000,
+      "frames": 57600
+    },
+    {
+      "id": "signal-mp3",
+      "kind": "audio",
+      "bytes": 3363,
+      "playback": "element",
+      "encoding": "mp3",
+      "sampleRate": 22050,
+      "channels": 1,
+      "frames": 9216
+    },
+    {
+      "id": "voice-buffer",
+      "bytes": 30912,
+      "kind": "audio",
+      "channels": 1,
+      "sampleRate": 22050,
+      "frames": 15434
+    },
+    {
+      "id": "lighthouse-grid",
+      "bytes": 19912,
+      "kind": "font",
+      "format": "truetype",
+      "glyphs": 96
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

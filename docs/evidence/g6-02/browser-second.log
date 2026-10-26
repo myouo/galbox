@@ -1,0 +1,64 @@
+$ pnpm build && pnpm build:harness && playwright test --grep 'authored .* interface|skin replacement|mobile Canvas pages'
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 824 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-COwV4Zzu.css                       20.63 kB │ gzip:   5.01 kB
+apps/playground/dist/assets/webworkerAll-CPOn3psB.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-Dydyy0So.js                         14.58 kB │ gzip:   4.66 kB
+apps/playground/dist/assets/browserAll-DbuesZRI.js                   43.48 kB │ gzip:  11.27 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-BrQqzmOg.js                     3,012.25 kB │ gzip: 399.52 kB
+
+✓ built in 1.43s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 817 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-DBYyt4m9.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-xLHQqVcR.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/defaultFilter.vert-DBKfXOpv.js            0.78 kB │ gzip:   0.35 kB
+tests/browser/harness/dist/disposal-probe.js                         3.69 kB │ gzip:   1.44 kB
+tests/browser/harness/dist/canvasUtils-CSkita4Z.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-CycOfNNX.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-0kpVo1g2.js                         18.08 kB │ gzip:   5.30 kB
+tests/browser/harness/dist/browserAll-CiSzCA5-.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-DKUlb5sI.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-DhtkWaDO.js                  146.15 kB │ gzip:  38.40 kB
+tests/browser/harness/dist/lib-pA3V24io.js                         317.61 kB │ gzip:  80.33 kB
+tests/browser/harness/dist/sdk.js                                7,743.16 kB │ gzip: 658.49 kB
+
+✓ built in 1.43s
+[WebServer] (node:235143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:235163) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:235277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:235298) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/presentation.spec.ts:5:42 › authored webgl interface routes title, settings, saves, history, gallery and form without bespoke UI (5.7s)
+  ✓  2 tests/browser/presentation.spec.ts:5:42 › authored canvas interface routes title, settings, saves, history, gallery and form without bespoke UI (4.5s)
+  ✓  3 tests/browser/presentation.spec.ts:8:1 › skin replacement preserves saved story and preferences; navigation cleans previews and rejects late route completion (2.4s)
+  ✓  4 tests/browser/presentation.spec.ts:13:2 › responsive interface › mobile Canvas pages, focus, touch scroll and authored form stay usable without losing saved values (4.4s)
+
+  4 passed (25.8s)

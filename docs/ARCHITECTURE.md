@@ -156,3 +156,5 @@ G5-01按ADR0027增加Program.flowchart、Profile.flow、Snapshot.flow：Core执�
 G5-02按ADR0028：Program.extras/Profile.extras/Snapshot.extrasSignature及专用replayScene根由Schema/工厂/Core/进度端口承接。Player冻结主线并管理单一鉴赏会话；CG/音乐为独立Host预览，场景为同一生产Player与独立内存Store实例。每Host仍单Pixi舞台，关闭验证原head/修订，回放数据不提交主线。
 
 G6-01按ADR0029：Program.ui为版本定义，Snapshot.ui/UIWait由Core管理，所有UIEvent进入原Coordinator。Player组装生产DOM ScriptUIRenderer，WebHost提供验证后图像，React保留默认系统菜单；DOM未提交IME/焦点不是剧情状态。捕获屏障同步复制正文、舞台和UI后合成，不省略失败层。
+
+G6-02按ADR0030：Program.presentation是静态作品配置，Player持有临时systemScreen和导航代次，菜单暂停只影响自身；React GameUI调用既有系统API，不推进PC。Host准备图像/字体，PressGesture裁决物理按压，窄视口表单重排与按比例截图仅属Web设备表现。

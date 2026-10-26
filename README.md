@@ -106,3 +106,5 @@ G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子�
 鉴赏与成就见 [EXTRAS](docs/EXTRAS.md)：原创 `/?demo=extras` 使用正式目录/持久解锁、CG差分、音乐和隔离场景回放。回放的剧情与解锁只写临时进度，关闭后回到主线；支持Canvas。
 
 剧本驱动控件见 [SCRIPT_UI](docs/SCRIPT_UI.md)：原创 `/?demo=ui` 提供声明式文字/图片/按钮/开关/滑条/单行输入，编辑中可保存并刷新恢复，提交由Core统一写入剧情槽；支持Canvas。
+
+完整游戏界面与皮肤见 [INTERFACE](docs/INTERFACE.md)：原创 `/?demo=interface` 和 `&skin=paper` 仅变配置，使用同一SDK标题/菜单/存读档/设置/历史/流程图/鉴赏；支持Canvas、移动页面与表单、触控/键盘。

@@ -108,3 +108,5 @@ G5-01：`node-visit-unlock` 需真实工厂/Builder正反类型、坏边/位置/
 G5-02：`gallery-unlock-persistence` 验证真实kind关联工厂/声明场景入口、纯profile/read条件/自动检查原子失败、预算一致/不可变单调批次、flag复位与旧档/刷新/备份迁移保解锁。`replay-isolation` 验证CG真实像素差分/图标、buffer循环与element自然完成/版本HTTP完整性等级、同一生产场景实际选择及写入仅落临时Store、主线PC/RNG/等待/head/profile保持、排队保存不thaw、资源迟到归还/双实例/准备失败/dispose、未知head冻结重试及失权/外部修订拒复活、默认UI与strict独立消费。
 
 G6-01：`script-ui-state`需真实工厂/屏幕成员/资源kind/字段dest类型关联，预算1/8/100、编辑与剧情变量分离、统一按钮提交到嵌套帧、错误值/格点/隐藏禁用控件不改状态；`ui-event-generation`需prepared/active、新show/读档/暂停的输入身份隔离、旧DOM/按住键/IME迟到不污染新屏、双实例/dispose；`ui-restore`需保存全部字段/等待、源身份及上一修订完整迁移、图文包含实际UI像素、IndexedDB刷新与旧档保当前profile、设备失败不产不完整缩略图且新Player能恢复、WebGL/Canvas/strict打包消费者。
+
+G6-02：`default-game-ui`需标题/继续/新开始、系统菜单、保存读取分页/确认、历史/流程图/鉴赏及备份/独立进度实际工作；`theme-only-instance`需真实皮肤工厂/资源kind/未知动作拒绝，双配置共用执行定义、旧档保当前皮肤/偏好、只读所有权/多实例和迟到导航拒绝；`touch-keyboard`需窄/矮视口内容可达、44px主要目标、实际触控滚动/拖出取消、按键身份/Tab/Escape/确认焦点、连续设置写入、移动表单完整图文保存/刷新、WebGL/Canvas及strict独立包。

@@ -20,7 +20,7 @@ export class InputController {
  }
  private editable(target:EventTarget|null):boolean{return target instanceof Element&&!!target.closest('input,textarea,select,[contenteditable="true"]');}
  private down(event:KeyboardEvent):void {
-  if(this.editable(event.target)||event.defaultPrevented)return;const state=this.actions.state(),action=(Object.keys(this.bindings) as Action[]).find(k=>this.bindings[k].some(code=>code===event.code));if(!action)return;
+  if(this.editable(event.target)||event.defaultPrevented||event.target instanceof Element&&event.target.closest('[data-galbox-system-dialog]'))return;if(event.target instanceof Element&&event.target.closest('button,a,[role=button]')&&(event.key==='Enter'||event.key===' '))return;const state=this.actions.state(),action=(Object.keys(this.bindings) as Action[]).find(k=>this.bindings[k].some(code=>code===event.code));if(!action)return;
   if(action==='skip'){if(!state.playing||state.paused||state.menu)return;event.preventDefault();if(event.repeat)return;this.skips.add(event.code);this.actions.skip(true);return;}
   if(event.ctrlKey||event.altKey||event.metaKey)return;
   if(action==='advance'&&(event.target instanceof Element&&!!event.target.closest('button,a,[role="button"]')||!state.text||state.paused||state.menu||!state.playing))return;

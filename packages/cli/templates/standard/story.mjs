@@ -1,11 +1,11 @@
-import {ProgramBuilder,instruction as op,imagePut} from 'galbox-sdk/port-kit';
+import {ProgramBuilder,instruction as op,imagePut,gamePresentation} from 'galbox-sdk/port-kit';
 import {string,bool} from 'galbox-sdk/protocol';
 /** @param {readonly import('galbox-sdk/protocol').Asset[]} assets
  * @param {import('galbox-sdk/port-kit').PortRegistration} port */
 export default function buildProgram(assets,port){
  const coast=assets.find(a=>a.id==='coast'),music=assets.find(a=>a.id==='music');if(!coast||!music)throw new Error('Missing declared assets');
  const b=new ProgramBuilder({gameId:'my-lighthouse-novel',release:'story-1',title:'海风的回信',entry:'main'});
- const background=b.asset('image',coast);b.asset('audio',music);b.global({id:'route',kind:'string',initial:string('none')});
+ const background=b.asset('image',coast);b.presentation(gamePresentation({title:{background,subtitle:'沿着海风，读完这封信。'}}));b.asset('audio',music);b.global({id:'route',kind:'string',initial:string('none')});
  b.function({id:'main',layout:1,entry:'main:start',params:[],locals:[],returns:'void',code:[
   imagePut('main:start','background',background,{x:0,y:0,alpha:1}),
   op('audio.play',{at:'main:music',task:'music',asset:'music',channel:'bgm',gain:.2,loop:true,restore:'replay'}),

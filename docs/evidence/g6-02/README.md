@@ -1,0 +1,1 @@
+最终支持集、实际命令、缺陷修复与边界见 [REPORT](REPORT.md)。根目录check/unit、完整122 browser、最后ui-recheck的8项、consumer/65 CLI/compat/performance/release及原生dev覆盖最终实现；source-manifest绑定源码。最后配置前置/菜单键/恢复入口在完整browser后补入，由UI复验与新包验收覆盖。带序号失败、consumer-before-shortcuts和before-final-menu仅为过程记录，不能代替最新包结果。

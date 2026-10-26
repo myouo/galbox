@@ -1,0 +1,66 @@
+$ pnpm build && pnpm build:harness && playwright test --grep 'authored .* interface|skin replacement|mobile Canvas pages|full save and data|rendered interface ownership'
+$ pnpm build:cli && vite build --config apps/playground/vite.config.ts
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 824 modules transformed.
+rendering chunks...
+computing gzip size...
+apps/playground/dist/index.html                                       0.84 kB │ gzip:   0.43 kB
+apps/playground/dist/assets/index-COwV4Zzu.css                       20.63 kB │ gzip:   5.01 kB
+apps/playground/dist/assets/webworkerAll-9aGipDN5.js                  0.05 kB │ gzip:   0.06 kB
+apps/playground/dist/assets/getTextureBatchBindGroup-Dq48Ekmq.js      0.34 kB │ gzip:   0.27 kB
+apps/playground/dist/assets/canvasUtils-NtBMPAwi.js                   6.01 kB │ gzip:   2.05 kB
+apps/playground/dist/assets/getTexelRangeRects-BCNTv58m.js           11.31 kB │ gzip:   2.97 kB
+apps/playground/dist/assets/init-DTUDGDGh.js                         14.58 kB │ gzip:   4.66 kB
+apps/playground/dist/assets/browserAll-U8nubMdU.js                   43.48 kB │ gzip:  11.28 kB
+apps/playground/dist/assets/RenderTargetSystem-B5CBYAMS.js           78.07 kB │ gzip:  22.11 kB
+apps/playground/dist/assets/CanvasPool-B3ruGZ_X.js                  112.98 kB │ gzip:  34.44 kB
+apps/playground/dist/assets/index-Dlp3j4ze.js                     3,012.28 kB │ gzip: 399.54 kB
+
+✓ built in 1.47s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+$ vite build --config tests/browser/harness/vite.config.ts
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 839 modules transformed.
+rendering chunks...
+computing gzip size...
+tests/browser/harness/dist/webworkerAll-BMhw1hCI.js                  0.05 kB │ gzip:   0.06 kB
+tests/browser/harness/dist/getTextureBatchBindGroup-C7ZFWcwN.js      0.56 kB │ gzip:   0.38 kB
+tests/browser/harness/dist/defaultFilter.vert-DBKfXOpv.js            0.78 kB │ gzip:   0.35 kB
+tests/browser/harness/dist/disposal-probe.js                         3.69 kB │ gzip:   1.44 kB
+tests/browser/harness/dist/canvasUtils-Ddz9g-C_.js                   7.77 kB │ gzip:   2.39 kB
+tests/browser/harness/dist/getTexelRangeRects-1sqbBd9W.js           13.63 kB │ gzip:   3.41 kB
+tests/browser/harness/dist/init-CucNVqbz.js                         18.08 kB │ gzip:   5.31 kB
+tests/browser/harness/dist/browserAll-Dvu1hono.js                   50.95 kB │ gzip:  12.22 kB
+tests/browser/harness/dist/RenderTargetSystem-BlMc1owh.js           98.28 kB │ gzip:  24.82 kB
+tests/browser/harness/dist/CanvasPool-BXNd_x1C.js                  146.16 kB │ gzip:  38.41 kB
+tests/browser/harness/dist/lib-D7KIA1ST.js                         317.61 kB │ gzip:  80.33 kB
+tests/browser/harness/dist/sdk.js                                8,104.99 kB │ gzip: 751.12 kB
+
+✓ built in 1.59s
+[WebServer] (node:278520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:278540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:278629) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:278649) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/presentation.spec.ts:5:42 › authored webgl interface routes title, settings, saves, history, gallery and form without bespoke UI (5.5s)
+  ✓  2 tests/browser/presentation.spec.ts:5:42 › authored canvas interface routes title, settings, saves, history, gallery and form without bespoke UI (4.3s)
+  ✓  3 tests/browser/presentation.spec.ts:8:1 › skin replacement preserves saved story and preferences; navigation cleans previews and rejects late route completion (2.3s)
+  ✓  4 tests/browser/presentation.spec.ts:13:2 › responsive interface › mobile Canvas pages, focus, touch scroll and authored form stay usable without losing saved values (5.6s)
+  ✓  5 tests/browser/presentation.spec.ts:17:1 › full save and data pages paginate, contain confirmation focus and restore a portable profile (4.0s)
+  ✓  6 tests/browser/presentation.spec.ts:20:1 › rendered interface ownership resets on Player replacement and pending preference writes keep sliders usable (1.6s)
+
+  6 passed (30.6s)
