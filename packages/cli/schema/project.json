@@ -36,7 +36,8 @@
             "enum": [
               "image",
               "audio",
-              "font"
+              "font",
+              "video"
             ]
           },
           "path": {
@@ -50,7 +51,8 @@
               "audio/wav",
               "font/ttf",
               "audio/mpeg",
-              "audio/ogg"
+              "audio/ogg",
+              "video/webm"
             ]
           },
           "playback": {

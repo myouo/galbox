@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G3-03",
+  "current_task": "G3-04",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1623,9 +1623,9 @@
         "G3-01",
         "G3-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "video and typed interaction tasks"
       ],
@@ -1642,9 +1642,20 @@
         "hotspot-input",
         "deadline-activation"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g3-03/REPORT.md",
+        "docs/evidence/g3-03/check.log",
+        "docs/evidence/g3-03/unit.log",
+        "docs/evidence/g3-03/browser-results.json",
+        "docs/evidence/g3-03/consumer-result.json",
+        "docs/evidence/g3-03/result.json",
+        "docs/evidence/g3-03/performance.json",
+        "docs/evidence/g3-03/release-audit.json",
+        "docs/evidence/g3-03/dev-result.json",
+        "docs/evidence/g3-03/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先记录有限视频编码/资源身份、热点输入/期限/激活/保存恢复策略ADR，再沿Schema/真实工厂/Core/Host/失败反例/原创浏览器与独立消费实现，不把启动确认当自然结束或猜用户选择。"
+      "next_action": "有限WebM/VP8影片、矩形热点/键盘与启用后活动期限验收完成；下一G3-04版本化网络流/分级完整性。不把Blob播放当网络streaming，不扩大成任意编码/seek/GUI或真实作品兼容。"
     },
     {
       "id": "G3-04",

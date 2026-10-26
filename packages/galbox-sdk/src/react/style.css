@@ -9,3 +9,5 @@
 .galbox-text-unit[data-effect=wave],.galbox-text-unit[data-effect=shake]{display:inline-block}.galbox-text ruby{ruby-position:over}.galbox-text rt{font-size:.55em;letter-spacing:normal}@media(prefers-reduced-motion:reduce){.galbox-text-unit[data-effect]{transform:none!important;opacity:1!important}}
 
 .galbox-text-window{pointer-events:auto;box-sizing:border-box}.galbox-text-window .galbox-text-entry{position:static;margin:0 0 .75em}.galbox-text-window .galbox-text-entry:last-child{margin-bottom:0}.galbox-text-window p{white-space:pre-wrap}
+
+.interaction-layer,.interaction-choices{position:absolute;inset:0;pointer-events:none}.interaction-label{position:absolute;top:17%;left:15%;width:70%;text-align:center;background:#102b3de6;padding:.75rem}.interaction-label span{display:block;font-size:.8em}.interaction-choices>button:not([data-hotspot]){position:relative;display:block;margin:.6rem auto;top:32%;min-width:38%}.interaction-choices>button[data-hotspot]{padding:.25rem;border:2px solid #e8ca85;background:#17384f99}.video-controls{position:absolute;right:5%;bottom:5%;display:flex;gap:.5rem}

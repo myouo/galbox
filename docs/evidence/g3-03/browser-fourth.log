@@ -1,0 +1,55 @@
+[WebServer] (node:3163010) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3163030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3163209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:3163229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh (14.1s)
+(node:3163853) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/interactive.spec.ts:12:1 › WebGL default UI distinguishes movie skip from completion, keyboard hotspots and an authored timeout (20.9s)
+  ✓  3 tests/browser/interactive.spec.ts:17:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities (2.7s)
+  ✓  4 tests/browser/interactive.spec.ts:25:1 › blocked video retries one logical clip, restore renews attempts and old native end callbacks stay inert (2.0s)
+  ✓  5 tests/browser/interactive.spec.ts:31:1 › decoder rejection precedes activation; permanent initial forbid-video failure recovers the same durable head without duplicate profile writes (3.1s)
+  ✓  6 tests/browser/interactive.spec.ts:37:1 › disposing a pending video play promptly releases takeover and its late promise cannot resurrect the old source (1.5s)
+  ✓  7 tests/browser/interactive.spec.ts:43:1 › readiness excludes a long unrendered preparation interval and a late input loses even when no RAF timeout callback runs (8.3s)
+
+
+  1) tests/browser/interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "signal:movie"
+    Received: "signal:after"
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      3 | import type * as Harness from './harness/sdk.js';
+      4 | async function data(page:Page){return JSON.parse((await page.getByTestId('diagnostics').textContent())??'{}');}
+    > 5 | async function at(page:Page,address:string){await expect.poll(async()=>(await data(page)).wait?.at,{timeout:10000}).toBe(address);}
+        |                                                                                                                     ^
+      6 | async function advance(page:Page){const prompt=(await data(page)).wait?.prompt;await page.getByTestId('advance').click();if((await data(page)).wait?.prompt===prompt)await page.getByTestId('advance').click();await expect.poll(async()=>(await data(page)).wait?.prompt).not.toBe(prompt);}
+      7 | test('no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh',async({page})=>{
+      8 |  await page.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;Object.defineProperty(HTMLCanvasElement.prototype,'getContext',{configurable:true,writable:true,value:function(this:HTMLCanvasElement,id:string,...args:unknown[]){return id==='webgl'||id==='webgl2'?null:Reflect.apply(original,this,[id,...args]);}});const play=HTMLMediaElement.prototype.play;window.interactiveVideos=[];HTMLMediaElement.prototype.play=function(){if(this instanceof HTMLVideoElement&&!window.interactiveVideos?.includes(this))window.interactiveVideos?.push(this);return play.call(this);};});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/?demo=interactive');await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByLabel('文字显示间隔').selectOption('0');await page.getByRole('button',{name:'关闭',exact:true}).click();await page.getByRole('button',{name:'开始阅读',exact:true}).click();await at(page,'signal:welcome');await advance(page);await at(page,'signal:movie');await page.waitForFunction(()=>window.interactiveVideos?.some(v=>v.currentTime>.55&&!v.paused));expect((await data(page)).tasks.find((t:{kind:string})=>t.kind==='video').status).toBe('running');const pixel=await page.locator('canvas').evaluate(c=>{if(!(c instanceof HTMLCanvasElement))throw new Error('canvas');return [...c.getContext('2d')!.getImageData(600,200,1,1).data];});expect(pixel[0]).toBeGreaterThan(200);expect(pixel[1]).toBeGreaterThan(150);await expect(page.getByTestId('story-text')).toBeHidden();await page.getByRole('button',{name:'菜单',exact:true}).click();const paused=await page.evaluate(()=>window.interactiveVideos?.find(v=>!!v.getAttribute('src'))?.currentTime);await page.waitForTimeout(140);expect(await page.evaluate(()=>window.interactiveVideos?.find(v=>!!v.getAttribute('src'))?.currentTime)).toBe(paused);await page.getByRole('button',{name:'快速保存',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存到浏览器');const movie=await data(page),attempt=movie.tasks.find((t:{kind:string})=>t.kind==='video').attempt;
+        at at (/home/myo/Desktop/galbox-sdk/tests/browser/interactive.spec.ts:5:117)
+        at /home/myo/Desktop/galbox-sdk/tests/browser/interactive.spec.ts:9:94
+
+    Error Context: test-results/interactive-no-WebGL-movie-7b244-ve-deadline-survive-refresh/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interactive-no-WebGL-movie-7b244-ve-deadline-survive-refresh/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/interactive-no-WebGL-movie-7b244-ve-deadline-survive-refresh/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh 
+  6 passed (1.1m)

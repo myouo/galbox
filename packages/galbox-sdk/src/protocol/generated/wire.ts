@@ -372,6 +372,32 @@ export type Instruction =
       op: 'audio.wait';
       at: string;
       task: string;
+    }
+  | {
+      at: string;
+      op: 'interaction.prompt';
+      dest: string;
+      label: string;
+      /**
+       * @minItems 1
+       * @maxItems 16
+       */
+      options: [InteractionOption, ...InteractionOption[]];
+      deadlineMs: null | I32Expression;
+      timeout: null | {
+        id: string;
+        target: string;
+      };
+    }
+  | {
+      at: string;
+      op: 'video.play';
+      task: string;
+      asset: string;
+      rect: InteractionRect;
+      gain: number;
+      skippable: boolean;
+      restore: 'replay' | 'forbid';
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1305,6 +1331,13 @@ export type Wait =
       kind: 'media';
       at: string;
       task: string;
+    }
+  | InteractionWait
+  | {
+      kind: 'video';
+      at: string;
+      prompt: number;
+      task: string;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1398,6 +1431,17 @@ export type ResourceFact =
       bytes: number;
       format: 'truetype';
       glyphs: number;
+    }
+  | {
+      kind: 'video';
+      id: string;
+      bytes: number;
+      format: 'webm';
+      codec: 'vp8';
+      width: number;
+      height: number;
+      durationMs: number;
+      audio: 'none' | 'opus' | 'vorbis';
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1409,6 +1453,31 @@ export type PreferencesValue = LegacyPlayerPreferences | PlayerPreferences;
  * via the `definition` "StoredPreferencesRecord".
  */
 export type StoredPreferencesRecord = LegacyPreferencesRecord | PreferencesRecord;
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "InteractionEvent".
+ */
+export type InteractionEvent =
+  | {
+      type: 'interaction.activate';
+      prompt: number;
+      attempt: number;
+    }
+  | {
+      type: 'interaction.choose';
+      prompt: number;
+      attempt: number;
+      inputId: string;
+      option: string;
+    }
+  | {
+      type: 'interaction.point';
+      prompt: number;
+      attempt: number;
+      inputId: string;
+      x: number;
+      y: number;
+    };
 
 export interface Wire {
   program: Program;
@@ -1459,10 +1528,10 @@ export interface Program {
  */
 export interface Asset {
   id: string;
-  kind: 'image' | 'audio' | 'font';
+  kind: 'image' | 'audio' | 'font' | 'video';
   path: string;
   sha256: string;
-  mime: 'image/svg+xml' | 'image/png' | 'audio/wav' | 'font/ttf' | 'audio/mpeg' | 'audio/ogg';
+  mime: 'image/svg+xml' | 'image/png' | 'audio/wav' | 'font/ttf' | 'audio/mpeg' | 'audio/ogg' | 'video/webm';
   playback?: 'buffer' | 'element';
 }
 /**
@@ -1705,6 +1774,27 @@ export interface StageCameraExpressions {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "InteractionOption".
+ */
+export interface InteractionOption {
+  id: string;
+  label: string;
+  target: string;
+  enabled: BoolExpression;
+  rect?: InteractionRect;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "InteractionRect".
+ */
+export interface InteractionRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "SourceLocation".
  */
 export interface SourceLocation {
@@ -1918,7 +2008,7 @@ export interface VoiceRecipe {
 export interface Task {
   id: string;
   status: TaskStatus;
-  kind: 'animation' | 'delay' | 'audio' | 'stage' | 'media' | 'audio-fade';
+  kind: 'animation' | 'delay' | 'audio' | 'stage' | 'media' | 'audio-fade' | 'video';
   elapsed: number;
   duration: number;
   attempt: number;
@@ -1935,6 +2025,7 @@ export interface Task {
   stageTask?: StageTaskState;
   mediaTask?: MediaTaskState;
   audioFade?: AudioFadeState;
+  videoTask?: VideoTaskState;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1989,6 +2080,18 @@ export interface AudioFadeState {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "VideoTaskState".
+ */
+export interface VideoTaskState {
+  version: 1;
+  signature: string;
+  phase: 'pending' | 'playing' | 'ended' | 'skipped' | 'blocked' | 'failed';
+  rect: InteractionRect;
+  skippable: boolean;
+  restore: 'replay' | 'forbid';
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "TaskGroup".
  */
 export interface TaskGroup {
@@ -1998,6 +2101,43 @@ export interface TaskGroup {
    */
   members: string[];
   consumed: boolean;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "InteractionWait".
+ */
+export interface InteractionWait {
+  kind: 'interaction';
+  at: string;
+  prompt: number;
+  attempt: number;
+  phase: 'prepared' | 'active';
+  dest: string;
+  label: string;
+  /**
+   * @minItems 1
+   * @maxItems 16
+   */
+  options: [ResolvedInteractionOption, ...ResolvedInteractionOption[]];
+  signature: string;
+  deadlineMs: null | number;
+  elapsedMs: number;
+  activeAt: null | number;
+  timeout: null | {
+    id: string;
+    target: string;
+  };
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "ResolvedInteractionOption".
+ */
+export interface ResolvedInteractionOption {
+  id: string;
+  label: string;
+  target: string;
+  enabled: boolean;
+  rect?: InteractionRect;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2304,6 +2444,7 @@ export interface ResourceBudget {
   maxImageSide: number;
   maxAudioMs: number;
   maxMediaMs?: number;
+  maxVideoMs?: number;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

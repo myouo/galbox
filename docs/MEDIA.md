@@ -31,3 +31,5 @@ loop=true 从 0 播放 intro，区间终点后回到 loopStartMs；null 终点�
 版本化网络流与分级 IntegrityEvidence 明确保留在 G3-04，并为 G7 依赖；不能要求所有未来长音轨整轨下载后才能播放。当前支持集尚未提供 AAC/MP4、链式/多流 Ogg、精确 seek/采样点续接、外部任意 URL、网络流、视频或全平台兼容声明。真实验证平台以 evidence/g3-02 为准，合成音轨不是人耳音质或原作兼容证据。
 
 媒体启动和自然事件依据 [HTML media](https://html.spec.whatwg.org/multipage/media.html#dom-media-play)，buffer loop 依据 [Web Audio](https://www.w3.org/TR/webaudio/#AudioBufferSourceNode)。语义决策见 decisions/0020-audio-tracks-and-long-media.md。
+
+G3-03已单独建设有限影片任务与设备路径，见VIDEO.md；本页旧audio.play ABI保持启动确认含义，不用影片功能改变旧音频存档语义。

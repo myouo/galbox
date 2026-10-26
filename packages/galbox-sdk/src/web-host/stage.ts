@@ -4,7 +4,7 @@ import {WebGLRenderer,CanvasRenderer} from 'pixi.js';
 import type {Texture,Filter} from 'pixi.js';
 import type {GraphicsApplication} from './graphics.js';
 import {ensure} from '../protocol/index.js';
-import type {Snapshot,DeepReadonly,StageFilters} from '../protocol/index.js';
+import type {Snapshot,DeepReadonly,StageFilters,InteractionRect} from '../protocol/index.js';
 import {objectPose,identityFilters,initialScene} from '../protocol/stage.js';
 class Filters {
  private blur:BlurFilter|null=null;private color:ColorMatrixFilter|null=null;private key='';
@@ -17,10 +17,11 @@ class Filters {
 }
 interface Display {root:Container;image:Container;compositor:AlphaFilter|null;sprites:Sprite[];mask:Graphics|null;clipKey:string;filters:Filters;}
 export class ImageStage {
- private readonly world=new Container();private readonly overlay=new Graphics();private readonly filters=new Filters();private readonly displays=new Map<string,Display>();private key:string|null=null;private disposed=false;private readonly effects:CanvasEffects|undefined;
+ private video:Sprite|null=null;private readonly world=new Container();private readonly overlay=new Graphics();private readonly filters=new Filters();private readonly displays=new Map<string,Display>();private key:string|null=null;private disposed=false;private readonly effects:CanvasEffects|undefined;
  constructor(private readonly app:GraphicsApplication,private readonly textures:ReadonlyMap<string,Texture>,maxCanvasBytes?:number){this.effects=app.renderer instanceof CanvasRenderer?new CanvasEffects(app.renderer,maxCanvasBytes):undefined;this.world.sortableChildren=true;this.world.zIndex=0;this.overlay.zIndex=1;app.stage.addChild(this.world,this.overlay);}
  canvasDiagnostics(){return this.effects?.diagnostics;}
  validate(snapshot:DeepReadonly<Snapshot>):void {this.effects?.validate(snapshot);}
+ setVideo(texture:Texture|null,rect:InteractionRect|null):void {if(this.video){this.video.destroy();this.video=null;}if(texture&&rect){this.video=new Sprite(texture);this.video.label='galbox-video';this.video.position.set(rect.x,rect.y);this.video.width=rect.width;this.video.height=rect.height;this.video.zIndex=2;this.app.stage.addChild(this.video);}this.invalidate();}
  invalidate():void {this.key=null;}
  render(snapshot:DeepReadonly<Snapshot>):void {
   if(this.disposed)return;const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene});if(key===this.key)return;
@@ -37,5 +38,5 @@ export class ImageStage {
   const scene=snapshot.scene??initialScene(),camera=scene.camera;this.world.position.set(640+(scene.shake?.x??0),360+(scene.shake?.y??0));this.world.pivot.set(camera.x,camera.y);this.world.scale.set(camera.zoom);this.world.rotation=-camera.rotation*Math.PI/180;this.filters.apply(this.world,scene.filters);this.overlay.clear();if(scene.overlay.alpha>0)this.overlay.rect(0,0,1280,720).fill({color:scene.overlay.color,alpha:scene.overlay.alpha});
   if(this.effects)this.effects.draw(snapshot,()=>this.app.render());else this.app.render();if(this.app.renderer instanceof WebGLRenderer)this.app.renderer.gl.flush();this.key=key;
  }
- dispose():void {if(this.disposed)return;this.disposed=true;this.effects?.dispose();for(const d of this.displays.values())d.root.removeFromParent();for(const d of this.displays.values()){d.filters.dispose();d.compositor?.destroy(false);d.root.destroy({children:true});}this.displays.clear();this.filters.dispose();this.world.removeFromParent();this.world.destroy({children:true});this.overlay.removeFromParent();this.overlay.destroy();this.key=null;}
+ dispose():void {if(this.disposed)return;this.disposed=true;this.video?.destroy();this.video=null;this.effects?.dispose();for(const d of this.displays.values())d.root.removeFromParent();for(const d of this.displays.values()){d.filters.dispose();d.compositor?.destroy(false);d.root.destroy({children:true});}this.displays.clear();this.filters.dispose();this.world.removeFromParent();this.world.destroy({children:true});this.overlay.removeFromParent();this.overlay.destroy();this.key=null;}
 }

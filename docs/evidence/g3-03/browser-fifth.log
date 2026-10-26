@@ -1,0 +1,20 @@
+[WebServer] (node:3178387) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3178409) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3178596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:3178616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh (15.5s)
+  ✓  2 tests/browser/interactive.spec.ts:12:1 › WebGL default UI distinguishes movie skip from completion, keyboard hotspots and an authored timeout (20.5s)
+  ✓  3 tests/browser/interactive.spec.ts:17:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities (2.5s)
+  ✓  4 tests/browser/interactive.spec.ts:25:1 › blocked video retries one logical clip, restore renews attempts and old native end callbacks stay inert (1.9s)
+  ✓  5 tests/browser/interactive.spec.ts:31:1 › decoder rejection precedes activation; permanent initial forbid-video failure recovers the same durable head without duplicate profile writes (3.4s)
+  ✓  6 tests/browser/interactive.spec.ts:37:1 › disposing a pending video play promptly releases takeover and its late promise cannot resurrect the old source (1.7s)
+  ✓  7 tests/browser/interactive.spec.ts:43:1 › readiness excludes a long unrendered preparation interval and a late input loses even when no RAF timeout callback runs (2.9s)
+
+  7 passed (57.5s)

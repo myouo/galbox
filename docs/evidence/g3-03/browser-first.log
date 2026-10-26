@@ -1,0 +1,51 @@
+[WebServer] (node:3131170) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3131190) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3131365) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:3131385) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh (11.8s)
+  ✓  2 tests/browser/interactive.spec.ts:12:1 › WebGL default UI distinguishes movie skip from completion, keyboard hotspots and an authored timeout (11.3s)
+  ✘  3 tests/browser/interactive.spec.ts:16:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities (2.8s)
+
+
+  1) tests/browser/interactive.spec.ts:16:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "attempt": 2,
+    +   "attempt": 3,
+        "phase": "prepared",
+      }
+
+      17 |  await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();await page.locator('body').click({position:{x:1,y:1}});const result=await page.evaluate(async()=>{
+      18 |   const url='http://127.0.0.1:4174/sdk.js',sdk:typeof Harness=await import(url),b=new sdk.ProgramBuilder({gameId:'activation-browser',release:'activation-1',entry:'main'}),dest=sdk.variable('route','string');b.global({...dest,initial:sdk.string('')});b.function({id:'main',entry:'prompt',layout:1,params:[],locals:[],returns:'void',code:[sdk.interactionPrompt('prompt',dest,'ready',[{id:'choose',label:'choose',target:'chosen'}],{deadlineMs:400,timeout:{id:'timeout',target:'timed'}}),sdk.instruction('text.page',{at:'chosen',textId:'chosen',revision:'v1',speaker:'澪',content:'chosen'}),sdk.instruction('control.jump',{at:'join',target:'end'}),sdk.instruction('text.page',{at:'timed',textId:'timed',revision:'v1',speaker:'澪',content:'timed'}),sdk.instruction('control.end',{at:'end'})]});const p=b.build(),mount=document.createElement('div');document.body.append(mount);const player=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,location.href),mount,store:new sdk.MemoryStore(),saveCompatibilitySeries:'activation'}),sleep=(ms:number)=>new Promise<void>(r=>setTimeout(r,ms));try{await player.start();await sleep(550);const prepared=player.capture().wait;if(prepared?.kind!=='interaction')throw new Error('prepared');await player.chooseInteraction('choose',prepared.prompt,prepared.attempt,player.getSnapshot().epoch);const ignored=player.capture().globals.route?.value;await player.activateInteraction(prepared.prompt,prepared.attempt,player.getSnapshot().epoch);await sleep(90);player.setMenu(true);const oldEpoch=player.getSnapshot().epoch;await player.save('active');const saved=player.capture().wait;await sleep(200);const paused=player.capture().wait;await player.load('active');const restored=player.capture().wait;if(restored?.kind!=='interaction')throw new Error('restored');player.setMenu(false);await player.activateInteraction(restored.prompt,restored.attempt,oldEpoch);await player.chooseInteraction('choose',restored.prompt,prepared.attempt,player.getSnapshot().epoch);const stale=player.capture().wait;await player.activateInteraction(restored.prompt,restored.attempt,player.getSnapshot().epoch);await sleep(500);return {prepared,ignored,saved,paused,restored,stale,final:player.capture().text?.textId,route:player.capture().globals.route?.value};}finally{player.dispose();mount.remove();}
+    > 19 |  });expect(result.prepared).toMatchObject({phase:'prepared',elapsedMs:0});expect(result.ignored).toBe('');expect(result.paused).toEqual(result.saved);expect(result.restored).toMatchObject({phase:'prepared',attempt:2});expect(result.stale).toEqual(result.restored);expect(result.final).toBe('timed');expect(result.route).toBe('timeout');
+         |                                                                                                                                                                               ^
+      20 | });
+      21 |
+      22 | declare global {interface Window {interactiveVideos?:HTMLVideoElement[];}}
+        at /home/myo/Desktop/galbox-sdk/tests/browser/interactive.spec.ts:19:175
+
+    Error Context: test-results/interactive-public-embeddi-5872c-ejects-old-input-identities/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interactive-public-embeddi-5872c-ejects-old-input-identities/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/interactive-public-embeddi-5872c-ejects-old-input-identities/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/interactive.spec.ts:16:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities 
+  2 passed (34.4s)

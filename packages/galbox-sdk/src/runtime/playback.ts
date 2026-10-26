@@ -21,7 +21,7 @@ export class PlaybackController {
  ended(task:string,attempt:number):void{if(this.voice?.task!==task||this.voice.attempt!==attempt||this.voice.state!=='playing'||this.voice.loop)return;this.voice.state='ended';this.eligible=false;}
  settle(view:CoreView):void {
   if(this.mode==='manual')return;const run=view.run,w=run.wait;
-  if(run.status==='ended'||run.status==='failed'||w?.kind==='choice'){this.mode='manual';this.reason=w?.kind==='choice'?'choice':run.status;this.reset();}
+  if(run.status==='ended'||run.status==='failed'||(w?.kind==='choice'||w?.kind==='interaction')){this.mode='manual';this.reason=w?.kind==='choice'||w?.kind==='interaction'?'choice':run.status;this.reset();}
  }
  tick(view:CoreView,ms:number):CoreEvent|null {
   this.settle(view);

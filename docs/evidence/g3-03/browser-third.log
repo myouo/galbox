@@ -1,0 +1,18 @@
+[WebServer] (node:3148882) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3148910) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3149052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:3149064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh (11.3s)
+  ✓  2 tests/browser/interactive.spec.ts:12:1 › WebGL default UI distinguishes movie skip from completion, keyboard hotspots and an authored timeout (20.3s)
+  ✓  3 tests/browser/interactive.spec.ts:17:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities (2.6s)
+  ✓  4 tests/browser/interactive.spec.ts:25:1 › blocked video retries one logical clip, restore renews attempts and old native end callbacks stay inert (1.9s)
+  ✓  5 tests/browser/interactive.spec.ts:31:1 › decoder rejection precedes activation; permanent initial forbid-video failure recovers the same durable head without duplicate profile writes (3.3s)
+
+  5 passed (47.8s)

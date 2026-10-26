@@ -11,9 +11,9 @@ export interface ProjectConfig {
    */
   assets: {
     id: string;
-    kind: "image" | "audio" | "font";
+    kind: "image" | "audio" | "font" | "video";
     path: string;
-    mime: "image/svg+xml" | "image/png" | "audio/wav" | "font/ttf" | "audio/mpeg" | "audio/ogg";
+    mime: "image/svg+xml" | "image/png" | "audio/wav" | "font/ttf" | "audio/mpeg" | "audio/ogg" | "video/webm";
     playback?: "buffer" | "element";
   }[];
   series?: string;

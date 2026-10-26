@@ -1,0 +1,63 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-interactive",
+  "release": "interactive-1",
+  "series": "1",
+  "programSha256": "2790671e9dd8d4093eda2ab49a078f41bbc0d144645281da494d26c15ab78c16",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "53ec5f07cb7ddc53403f4269cc3e88c7f1561ce37ae2410529761126b9b20a74",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "beacon",
+      "kind": "video",
+      "bytes": 12331,
+      "format": "webm",
+      "codec": "vp8",
+      "width": 320,
+      "height": 180,
+      "durationMs": 1608,
+      "audio": "opus"
+    },
+    {
+      "id": "vorbis",
+      "kind": "video",
+      "bytes": 9835,
+      "format": "webm",
+      "codec": "vp8",
+      "width": 320,
+      "height": 180,
+      "durationMs": 1605,
+      "audio": "vorbis"
+    },
+    {
+      "id": "silent",
+      "kind": "video",
+      "bytes": 4109,
+      "format": "webm",
+      "codec": "vp8",
+      "width": 320,
+      "height": 180,
+      "durationMs": 1600,
+      "audio": "none"
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

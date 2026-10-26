@@ -1,9 +1,11 @@
+import {startVideo,videoReport,videoEnded,videoSaveReason,validateVideo} from './video.js';
+import {prepareInteraction,activateInteraction,pickInteraction,tickInteraction,restoreInteraction} from '../protocol/interaction.js';
 import {initialAudioState,isAudioInstruction,audioExpressions,tickAudio,updateDuck,stopAudioTasks,bindVoice,mediaReport,mediaEnded,mediaSaveReason} from '../protocol/audio.js';
 import {executeAudio,replayVoice,validateAudioSnapshot} from './audio.js';
 import {isStageInstruction,initialScene,applyStageTask,taskObject,taskLocks,validateStageGraph} from '../protocol/stage.js';
 import {executeStage,removeStageObject,validateStageSnapshot} from './stage.js';
-import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask } from '../protocol/index.js';
-import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume } from '../protocol/index.js';
+import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,parseInteractionEvent } from '../protocol/index.js';
+import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume,InteractionEvent } from '../protocol/index.js';
 import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
 import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
 import {compileRichText,richTextSignature,textSegmentation,tickRichText,revealRichText,isTextComplete,validateRichText} from '../protocol/text.js';
@@ -15,6 +17,8 @@ import { emptyOperations, operationContext } from './operations.js';
 import type { OperationRegistry } from './operations.js';
 export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';readonly rngSeed?:number;}
 export type CoreEvent =
+ | InteractionEvent
+ | {type:'video.skip';prompt:number;inputId:string}
  | {type:'media.ended';task:string;attempt:number}
  | {type:'voice.replay';prompt:number;inputId:string}
  | OperationResume
@@ -25,7 +29,7 @@ export type CoreEvent =
  | {type:'task'; task:string; attempt:number; result:'completed'|'blocked'|'failed'}
  | {type:'retry'; task:string}
  | {type:'flushAck'; revision:number};
-export type Effect = {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
+export type Effect = {type:'video';task:Task} | {type:'video-stop'} | {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
 export type ProgressChange = {seq:number; type:'read'; unit:string} | {seq:number; type:'set'; key:string; value:Value};
 export interface CoreView { readonly run: DeepReadonly<Snapshot>; readonly profile: DeepReadonly<Profile>; readonly dirty:number; readonly error:string|null; readonly canSave:boolean; readonly saveReason:string|null; }
 function positions(p: Position): Position { return {...p}; }
@@ -49,7 +53,7 @@ export class Core {
   constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number) {
     ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
     this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);
-    if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateRestore(this.program,snapshot,operations); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
+    if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(this.program.entry),rng=initialRng(this.program.rng,rngSeed);
       const textLayout=initialTextLayout(this.program);this.s={...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
@@ -77,8 +81,8 @@ export class Core {
   pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:{...c});}
   acknowledge(through:number,revision:number):void { ensure(!this.reducing,'CORE_REENTRANT','No receipt mutation inside a reducer');ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
   private operationSaveAllowed():boolean {const w=this.s.wait;if(w?.kind!=='operation')return true;const saved=this.s.invocations?.find(v=>v.id===w.invocation);if(!saved)return false;const op=this.operations.get(saved.operation,saved.version);return op.manifest.save==='safe'&&op.manifest.restore==='continue';}
-  canSave():boolean {return this.operationSaveAllowed()&&!mediaSaveReason(this.s)&&!this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
-  private saveReason():string|null {return !this.operationSaveAllowed()?'OPERATION_UNRESTORABLE':mediaSaveReason(this.s)??(this.revoked?'SESSION_REVOKED':!this.s.saveAllowed?'SAVE_POLICY':this.s.status==='running'?'BUDGET_CONTINUATION':this.s.status==='failed'?'CORE_FAILED':this.s.wait?.kind==='flush'?'PROFILE_BARRIER':null);}
+  canSave():boolean {return this.operationSaveAllowed()&&!videoSaveReason(this.s)&&!mediaSaveReason(this.s)&&!this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
+  private saveReason():string|null {return !this.operationSaveAllowed()?'OPERATION_UNRESTORABLE':videoSaveReason(this.s)??mediaSaveReason(this.s)??(this.revoked?'SESSION_REVOKED':!this.s.saveAllowed?'SAVE_POLICY':this.s.status==='running'?'BUDGET_CONTINUATION':this.s.status==='failed'?'CORE_FAILED':this.s.wait?.kind==='flush'?'PROFILE_BARRIER':null);}
   capture():Snapshot {ensure(!this.reducing,'CORE_REENTRANT','No capture inside a reducer');ensure(this.canSave(),'SAVE_UNAVAILABLE',this.saveReason()??'unknown');return parseSnapshot(this.s);}
   drainEffects():Effect[] {ensure(!this.reducing,'CORE_REENTRANT','No effect drain inside a reducer');const effects=this.effects;this.effects=[];return effects;}
   revoke():void {ensure(!this.reducing,'CORE_REENTRANT','No authority mutation inside a reducer');this.revoked=true;this.effects=[];}
@@ -94,11 +98,17 @@ export class Core {
       t.attempt++;this.effects.push({type:'audio',task:parseTask(t)});
     }
     for(const t of this.s.tasks)if(t.kind==='media'&&['running','blocked'].includes(t.status)){ensure(t.mediaTask,'MEDIA_TASK','Missing media state');t.attempt++;if(t.restore==='stop'){t.status='cancelled';t.mediaTask.phase='cancelled';}else {t.status='running';t.mediaTask.phase='pending';this.effects.push({type:'audio',task:parseTask(t)});}}updateDuck(this.s);
+    for(const t of this.s.tasks)if(t.kind==='video'&&['running','blocked'].includes(t.status)){ensure(t.videoTask,'VIDEO_TASK','Missing video state');t.attempt++;t.status='running';t.videoTask.phase='pending';this.effects.push({type:'video',task:parseTask(t)});}
+    if(this.s.wait?.kind==='interaction'){this.s.wait.attempt++;this.s.wait.phase='prepared';this.s.wait.activeAt=null;}
   }
+  private interactionBranch(branch:import('../protocol/interaction.js').InteractionBranch):void {this.put(branch.dest,{kind:'string',value:branch.id});this.top().pc=branch.target;this.s.wait=null;this.s.status='running';}
   accept(event:CoreEvent):void {
     ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');
     if(this.revoked||this.s.status==='failed')return;
-    if(event.type==='media.ended'){mediaEnded(this.s,event.task,event.attempt);this.resolveWait();return;}
+    if(event.type==='media.ended'){if(!videoEnded(this.s,event.task,event.attempt))mediaEnded(this.s,event.task,event.attempt);this.resolveWait();return;}
+    if(event.type==='interaction.activate'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate')activateInteraction(this.s,input);return;}
+    if(event.type==='interaction.choose'||event.type==='interaction.point'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate'||this.consumed.has(event.inputId))return;const branch=pickInteraction(this.s,input);if(branch){this.consumed.add(event.inputId);this.interactionBranch(branch);}return;}
+    if(event.type==='video.skip'){const w=this.s.wait;if(w?.kind!=='video'||w.prompt!==event.prompt||this.consumed.has(event.inputId))return;const t=this.s.tasks.find(t=>t.id===w.task);if(!t?.videoTask?.skippable||!['running','blocked'].includes(t.status))return;this.consumed.add(event.inputId);t.status='cancelled';t.videoTask.phase='skipped';this.effects.push({type:'video-stop'});this.resolveWait();return;}
     if(event.type==='voice.replay'){if(this.consumed.has(event.inputId)||this.s.wait?.kind!=='text'||event.prompt!==this.s.wait.prompt||!this.s.text?.voice)return;this.consumed.add(event.inputId);this.effects.push(...replayVoice(this.program,this.s));return;}
     if(event.type==='text.preferences'){const value=parseTextPreferences(event.value);this.textInterval=value.intervalMs;this.textRemainder=0;if(this.s.wait?.kind==='text'&&this.s.text?.rich){if(this.s.text.rich.baseIntervalMs!==value.intervalMs)this.s.text.rich.remainderMs=0;this.s.text.rich.baseIntervalMs=value.intervalMs;}return;}
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
@@ -119,7 +129,7 @@ export class Core {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
       this.s.logicalTime+=event.ms;
       if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich)tickRichText(this.s.text,event.ms,this.textPlan());else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
-      tickAudio(this.s,event.ms);
+      tickAudio(this.s,event.ms);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
         if(t.kind==='animation') {
@@ -131,12 +141,12 @@ export class Core {
         if(t.elapsed===t.duration)t.status='completed';
       }
     } else if(event.type==='task') {
-      if(mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
+      if(videoReport(this.s,event.task,event.attempt,event.result)||mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
       const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.kind!=='audio'||t.attempt!==event.attempt||t.status!=='running')return;
       t.status=event.result;
     } else if(event.type==='retry') {
-      const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.status!=='blocked'||t.kind!=='audio'&&t.kind!=='media')return;
-      t.status='running';if(t.mediaTask)t.mediaTask.phase='pending';t.attempt++;updateDuck(this.s);this.effects.push({type:'audio',task:parseTask(t)});
+      const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.status!=='blocked'||t.kind!=='audio'&&t.kind!=='media'&&t.kind!=='video')return;
+      if(t.kind==='video'&&t.videoTask){t.status='running';t.videoTask.phase='pending';t.attempt++;this.effects.push({type:'video',task:parseTask(t)});return;}t.status='running';if(t.mediaTask)t.mediaTask.phase='pending';t.attempt++;updateDuck(this.s);this.effects.push({type:'audio',task:parseTask(t)});
     } else if(event.type==='flushAck') {
       if(this.s.wait?.kind==='flush'){this.top().pc=this.next();this.s.wait=null;this.s.status='running';}
     }
@@ -149,6 +159,7 @@ export class Core {
       const tasks=g.members.map(id=>{const t=this.s.tasks.find(t=>t.id===id);ensure(t,'TASK',id);return t;});
       if(tasks.some(t=>['superseded','cancelled','failed'].includes(t.status))){this.error='TASK_GROUP_TERMINAL';this.s.status='failed';return;}
       if(!tasks.every(t=>t.status==='completed'))return;g.consumed=true;
+    } else if(w.kind==='video'){const t=this.s.tasks.find(t=>t.id===w.task);ensure(t?.videoTask,'VIDEO_WAIT','Missing video task');if(t.status==='failed'){this.s.status='failed';this.error='VIDEO_WAIT_FAILED';return;}if(t.videoTask.phase!=='ended'&&t.videoTask.phase!=='skipped')return;
     } else if(w.kind==='media'){const task=this.s.tasks.find(t=>t.id===w.task);ensure(task?.kind==='media','MEDIA_WAIT','Track missing');if(['failed','cancelled','superseded'].includes(task.status)){this.error='MEDIA_WAIT_TERMINAL';this.s.status='failed';return;}if(task.status!=='completed')return;
     } else if(w.kind==='delay') {if(this.s.tasks.find(t=>t.id===w.task)?.status!=='completed')return;}
     else return;
@@ -218,6 +229,8 @@ export class Core {
     }catch(error){this.s=before.s;this.profile=before.profile;this.changes=before.changes;this.effects=before.effects;this.progressSeq=before.seq;this.error=error instanceof GalboxError?error.code:'OPERATION_FAILURE';throw error;}
   }
   private execute(i:Instruction):void {
+    if(i.op==='interaction.prompt'){ensure(!this.recovering,'RECIPE_OPCODE','Interaction cannot be guessed');const w=prepareInteraction(i,this.s.counter+1,e=>this.expression(e));this.s.counter=w.prompt;this.s.wait=w;this.s.status='waiting';return;}
+    if(i.op==='video.play'){ensure(!this.recovering,'RECIPE_OPCODE','Video cannot be guessed');this.effects.push(startVideo(this.program,this.s,i));return;}
     if(isAudioInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Media tasks are not recovery guesses');this.effects.push(...executeAudio(this.program,this.s,i,e=>this.expression(e)));if(i.op==='audio.wait'){this.resolveWait();return;}this.top().pc=this.next();return;}
     if(isStageInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Stage tasks are not recovery guesses');try{executeStage(this.program,this.s,i,e=>this.expression(e));}catch(error){if(error instanceof GalboxError)throw new GalboxError(error.code,error.reason,{...error.location,address:i.at});throw error;}this.top().pc=this.next();return;}
     const wait=(w:NonNullable<Snapshot['wait']>)=>{this.s.wait=w;this.s.status='waiting';};
@@ -292,7 +305,7 @@ export class Core {
     if(!this.recovering)this.top().pc=this.next();
   }
 }
-export function validateRestore(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations):Snapshot {
+function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations,initial=false):Snapshot {
   const p=linkProgram(input,operations).copy(),s=parseSnapshot(snapshot);
   s.invocations=s.invocations??[];
   for(let index=0;index<s.invocations.length;index++){
@@ -330,17 +343,17 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
   if(s.status==='ended')ensure(op.op==='control.end'&&!w,'RESTORE_PHASE','End mismatch');
   else {
     ensure(w&&w.at===op.at,'RESTORE_WAIT','PC/wait mismatch');
-    ensure((w.kind==='text'&&(op.op==='text.page'||op.op==='text.template'||op.op==='text.rich'))||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke')||(w.kind==='media'&&op.op==='audio.wait'),'RESTORE_PHASE','Unsupported phase');
+    ensure((w.kind==='text'&&(op.op==='text.page'||op.op==='text.template'||op.op==='text.rich'))||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke')||(w.kind==='media'&&op.op==='audio.wait')||(w.kind==='interaction'&&op.op==='interaction.prompt')||(w.kind==='video'&&op.op==='video.play'),'RESTORE_PHASE','Unsupported phase');
     if(w.kind==='text'){ensure((op.op==='text.page'||op.op==='text.template'||op.op==='text.rich')&&s.text&&s.text.prompt===w.prompt&&s.text.textId===op.textId&&s.text.revision===op.revision&&(s.text.rich||s.text.revealed<=length(s.text.content)),'RESTORE_TEXT','Text identity mismatch');if(op.op!=='text.rich')ensure(!s.text.rich,'RESTORE_RICH_SOURCE','Unexpected structured text');if(op.op==='text.page')ensure(!s.text.template&&s.text.content===op.content&&s.text.speaker===op.speaker,'RESTORE_TEXT','Text content mismatch');else if(op.op==='text.template')ensure(s.text.template?.signature===templateSignature(op.speaker,op.content),'RESTORE_TEMPLATE','Template changed; explicit migration required');}
     if(w.kind==='choice')ensure(op.op==='choice'&&w.dest===op.dest&&JSON.stringify(w.options)===JSON.stringify(op.options),'RESTORE_CHOICE','Choice mismatch');
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
-  validateStageSnapshot(p,s);validateAudioSnapshot(p,s);
+  validateStageSnapshot(p,s);validateAudioSnapshot(p,s);restoreInteraction(p,s);validateVideo(p,s,initial);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);
-    if(t.kind!=='audio'&&t.kind!=='media')ensure(t.duration>0&&t.status!=='blocked'&&(t.status!=='running'||t.elapsed<t.duration)&&(t.status!=='completed'||t.elapsed===t.duration),'RESTORE_TASK_PHASE',t.id);
+    if(t.kind!=='audio'&&t.kind!=='media'&&t.kind!=='video')ensure(t.duration>0&&t.status!=='blocked'&&(t.status!=='running'||t.elapsed<t.duration)&&(t.status!=='completed'||t.elapsed===t.duration),'RESTORE_TASK_PHASE',t.id);
     if(t.kind==='animation') {
       const object=s.stage.find(o=>o.id===t.target);ensure(t.from&&t.to&&(t.status!=='running'||object),'RESTORE_TASK_TARGET',t.id);
       if(t.status==='running'&&object){const ratio=t.elapsed/t.duration;for(const key of ['x','y','alpha'] as const)ensure(Math.abs(object.position[key]-(t.from[key]+(t.to[key]-t.from[key])*ratio))<0.000001,'RESTORE_ANIMATION',t.id);}
@@ -360,3 +373,5 @@ export function validateRestore(input:unknown,snapshot:unknown,operations:Operat
   return s;
 }
 export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations,options.rngSeed);}
+
+export function validateRestore(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations):Snapshot {return validateSnapshot(input,snapshot,operations);}

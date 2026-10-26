@@ -114,3 +114,5 @@ G3-02有限集见ADR0020、MEDIA.md：WAV/MP3/单流Vorbis/Opus、已验证Blob�
 H2 图像设备兼容性因用户实际故障插入：H2-01 支持 auto(WebGL2→Canvas)/强制设备，基础画面与存档跨后端，具体边界见 ADR0021/GRAPHICS.md。H2-02 继续 Canvas 滤镜/隔离转场及预算/像素对等，并加入 G7。G3-03 视频/热点/限时交互仍待实现。
 
 H2-02有限合成集见ADR0022/GRAPHICS.md：实例级Pixi Canvas离屏filter栈、组/相机滤镜、透明权重合成、native/CPU近似blur、可选64MiB默认合成预算及私有back buffer成功提交。原G3-01解析任务/快照不变，病态叠层超限和未知效果仍明确拒绝；完整G7/其它平台与作品规模不借此计为完成。
+
+G3-03有限支持集见ADR0023、VIDEO.md、INTERACTIONS.md：单opaque VP8 WebM/可选Opus或Vorbis音轨、同Pixi平面/明确skip/replay或forbid；静态viewport矩形热点/键盘/一次求值enabled、prepared激活屏障/活动毫秒/明确timeout与剩余时间恢复。无任意编码、seek、视频并发或角色跟随/非矩形热点；完整G7/真实作品范围另验。

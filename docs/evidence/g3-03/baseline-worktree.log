@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-r4SWMB 9eeb102
+HEAD is now at 9eeb102 feat: add bounded Canvas filters and isolated composition
+Preparing worktree (detached HEAD 9eeb102)

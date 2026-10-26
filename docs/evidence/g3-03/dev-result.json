@@ -1,0 +1,252 @@
+{
+  "result": "passed",
+  "url": "http://127.0.0.1:4173/?demo=interactive",
+  "http": 200,
+  "browser": "156.0.8078.4",
+  "launchArgs": [
+    "--disable-webgl"
+  ],
+  "nativeContextAPI": true,
+  "testPlaybackRate": 0.5,
+  "device": {
+    "nativeWebGL": false,
+    "twoD": true
+  },
+  "pixels": [
+    255,
+    213,
+    133,
+    255
+  ],
+  "movie": {
+    "wait": {
+      "kind": "video",
+      "at": "signal:movie",
+      "task": "task:2",
+      "prompt": 3
+    },
+    "task": {
+      "id": "task:2",
+      "name": "opening",
+      "at": "signal:movie",
+      "kind": "video",
+      "status": "running",
+      "elapsed": 0,
+      "duration": 0,
+      "attempt": 1,
+      "asset": "beacon",
+      "gain": 0.35,
+      "videoTask": {
+        "version": 1,
+        "signature": "{\"asset\":\"beacon\",\"at\":\"signal:movie\",\"gain\":0.35,\"op\":\"video.play\",\"rect\":{\"height\":720,\"width\":1280,\"x\":0,\"y\":0},\"restore\":\"replay\",\"skippable\":true,\"task\":\"opening\"}",
+        "phase": "playing",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720
+        },
+        "skippable": true,
+        "restore": "replay"
+      }
+    },
+    "time": 0.590021
+  },
+  "replay": {
+    "wait": {
+      "kind": "video",
+      "at": "signal:movie",
+      "task": "task:2",
+      "prompt": 3
+    },
+    "task": {
+      "id": "task:2",
+      "name": "opening",
+      "at": "signal:movie",
+      "kind": "video",
+      "status": "running",
+      "elapsed": 0,
+      "duration": 0,
+      "attempt": 2,
+      "asset": "beacon",
+      "gain": 0.35,
+      "videoTask": {
+        "version": 1,
+        "signature": "{\"asset\":\"beacon\",\"at\":\"signal:movie\",\"gain\":0.35,\"op\":\"video.play\",\"rect\":{\"height\":720,\"width\":1280,\"x\":0,\"y\":0},\"restore\":\"replay\",\"skippable\":true,\"task\":\"opening\"}",
+        "phase": "playing",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720
+        },
+        "skippable": true,
+        "restore": "replay"
+      }
+    }
+  },
+  "deadlineSaved": {
+    "kind": "interaction",
+    "at": "signal:timed",
+    "prompt": 7,
+    "attempt": 1,
+    "phase": "active",
+    "dest": "route",
+    "label": "潮聲到來以前，要把信寄出去嗎？",
+    "options": [
+      {
+        "id": "send",
+        "label": "現在寄出",
+        "target": "signal:send",
+        "enabled": true
+      },
+      {
+        "id": "keep",
+        "label": "再等一會",
+        "target": "signal:wait",
+        "enabled": true
+      }
+    ],
+    "signature": "{\"at\":\"signal:timed\",\"deadlineMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":6000},\"dest\":\"route\",\"label\":\"潮聲到來以前，要把信寄出去嗎？\",\"op\":\"interaction.prompt\",\"options\":[{\"enabled\":{\"kind\":\"bool\",\"op\":\"literal\",\"value\":true},\"id\":\"send\",\"label\":\"現在寄出\",\"target\":\"signal:send\"},{\"enabled\":{\"kind\":\"bool\",\"op\":\"literal\",\"value\":true},\"id\":\"keep\",\"label\":\"再等一會\",\"target\":\"signal:wait\"}],\"timeout\":{\"id\":\"tide\",\"target\":\"signal:timeout\"}}",
+    "deadlineMs": 6000,
+    "elapsedMs": 47,
+    "activeAt": 5381,
+    "timeout": {
+      "id": "tide",
+      "target": "signal:timeout"
+    }
+  },
+  "deadlineRestored": {
+    "kind": "interaction",
+    "at": "signal:timed",
+    "prompt": 7,
+    "attempt": 2,
+    "phase": "active",
+    "dest": "route",
+    "label": "潮聲到來以前，要把信寄出去嗎？",
+    "options": [
+      {
+        "id": "send",
+        "label": "現在寄出",
+        "target": "signal:send",
+        "enabled": true
+      },
+      {
+        "id": "keep",
+        "label": "再等一會",
+        "target": "signal:wait",
+        "enabled": true
+      }
+    ],
+    "signature": "{\"at\":\"signal:timed\",\"deadlineMs\":{\"kind\":\"i32\",\"op\":\"literal\",\"value\":6000},\"dest\":\"route\",\"label\":\"潮聲到來以前，要把信寄出去嗎？\",\"op\":\"interaction.prompt\",\"options\":[{\"enabled\":{\"kind\":\"bool\",\"op\":\"literal\",\"value\":true},\"id\":\"send\",\"label\":\"現在寄出\",\"target\":\"signal:send\"},{\"enabled\":{\"kind\":\"bool\",\"op\":\"literal\",\"value\":true},\"id\":\"keep\",\"label\":\"再等一會\",\"target\":\"signal:wait\"}],\"timeout\":{\"id\":\"tide\",\"target\":\"signal:timeout\"}}",
+    "deadlineMs": 6000,
+    "elapsedMs": 92,
+    "activeAt": 5382,
+    "timeout": {
+      "id": "tide",
+      "target": "signal:timeout"
+    }
+  },
+  "forbid": {
+    "wait": {
+      "kind": "video",
+      "at": "signal:final-movie",
+      "task": "task:9",
+      "prompt": 10
+    },
+    "canSave": false,
+    "reason": "VIDEO_ACTIVE_UNRESTORABLE"
+  },
+  "completedVideo": {
+    "state": "available",
+    "starts": 1,
+    "ended": 1,
+    "active": 0,
+    "blocked": 0
+  },
+  "profile": {
+    "revision": 5,
+    "values": {
+      "interactiveComplete": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "signal.welcome@zh-1",
+      "signal.after@zh-1",
+      "signal.shore@zh-1",
+      "signal.send@zh-1",
+      "signal.ending@zh-1"
+    ]
+  },
+  "preferences": {
+    "revision": 1,
+    "value": {
+      "version": 2,
+      "audio": {
+        "master": 0.6,
+        "bgm": 1,
+        "voice": 1,
+        "sfx": 1
+      },
+      "text": {
+        "intervalMs": 0
+      },
+      "playback": {
+        "autoDelayMs": 1500,
+        "skipUnread": false
+      },
+      "input": {
+        "advance": [
+          "Enter",
+          "Space"
+        ],
+        "menu": [
+          "Escape"
+        ],
+        "auto": [
+          "KeyA"
+        ],
+        "skip": [
+          "ControlLeft",
+          "ControlRight"
+        ],
+        "quickSave": [
+          "F5"
+        ],
+        "quickLoad": [
+          "F9"
+        ]
+      },
+      "display": {
+        "fontScale": 1,
+        "windowOpacity": 1
+      }
+    }
+  },
+  "resources": {
+    "canvasBlur": "native",
+    "canvasBytesEstimated": 3686400,
+    "canvasPeakBytesEstimated": 3686400,
+    "canvasSurfaces": 1,
+    "renderer": "canvas",
+    "graphicsFallback": "WebGL context unavailable",
+    "graphics": "available",
+    "assets": 4,
+    "encodedBytes": 27175,
+    "textureBytesEstimated": 4377600,
+    "decodedAudioBytes": 0,
+    "mediaElementBytes": 26275,
+    "limits": {
+      "maxAssetBytes": 16777216,
+      "maxEncodedBytes": 33554432,
+      "maxTextureBytes": 134217728,
+      "maxAudioBytes": 33554432,
+      "maxImageSide": 4096,
+      "maxAudioMs": 30000
+    }
+  },
+  "canvas": 1,
+  "pageErrors": []
+}

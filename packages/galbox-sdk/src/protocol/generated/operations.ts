@@ -700,6 +700,46 @@ export const operationSpecs = {
       "at",
       "task"
     ]
+  },
+  "interaction.prompt": {
+    "opcode": "interaction.prompt",
+    "parameters": [
+      "at",
+      "dest",
+      "label",
+      "options",
+      "deadlineMs",
+      "timeout"
+    ],
+    "required": [
+      "at",
+      "dest",
+      "label",
+      "options",
+      "deadlineMs",
+      "timeout"
+    ]
+  },
+  "video.play": {
+    "opcode": "video.play",
+    "parameters": [
+      "at",
+      "task",
+      "asset",
+      "rect",
+      "gain",
+      "skippable",
+      "restore"
+    ],
+    "required": [
+      "at",
+      "task",
+      "asset",
+      "rect",
+      "gain",
+      "skippable",
+      "restore"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke","profile.expression"] as const;

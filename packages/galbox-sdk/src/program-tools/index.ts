@@ -20,3 +20,6 @@ export type {StageNumber,StagePoseInput,StageFilterInput,StageCameraInput,StageS
 
 export {audioTrack,audioFade,audioDuck} from './audio.js';
 export type {AudioTrackOptions} from './audio.js';
+
+export {interactionPrompt,videoPlay} from './interaction.js';
+export type {InteractiveOption,InteractionTiming} from './interaction.js';

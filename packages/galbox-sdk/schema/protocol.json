@@ -163,7 +163,8 @@
           "enum": [
             "image",
             "audio",
-            "font"
+            "font",
+            "video"
           ]
         },
         "path": {
@@ -182,7 +183,8 @@
             "audio/wav",
             "font/ttf",
             "audio/mpeg",
-            "audio/ogg"
+            "audio/ogg",
+            "video/webm"
           ]
         },
         "playback": {
@@ -1923,6 +1925,130 @@
             "task"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "interaction.prompt",
+              "type": "string"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "label": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,2048}$"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/InteractionOption"
+              },
+              "minItems": 1,
+              "maxItems": 16
+            },
+            "deadlineMs": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/I32Expression"
+                }
+              ]
+            },
+            "timeout": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                    },
+                    "target": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "target"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "dest",
+            "label",
+            "options",
+            "deadlineMs",
+            "timeout"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "op": {
+              "const": "video.play",
+              "type": "string"
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "gain": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "skippable": {
+              "type": "boolean"
+            },
+            "restore": {
+              "enum": [
+                "replay",
+                "forbid"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "at",
+            "op",
+            "task",
+            "asset",
+            "rect",
+            "gain",
+            "skippable",
+            "restore"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -2270,7 +2396,8 @@
             "audio",
             "stage",
             "media",
-            "audio-fade"
+            "audio-fade",
+            "video"
           ]
         },
         "elapsed": {
@@ -2341,6 +2468,9 @@
         },
         "audioFade": {
           "$ref": "#/definitions/AudioFadeState"
+        },
+        "videoTask": {
+          "$ref": "#/definitions/VideoTaskState"
         }
       },
       "required": [
@@ -2549,6 +2679,38 @@
           "required": [
             "kind",
             "at",
+            "task"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/definitions/InteractionWait"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "video",
+              "type": "string"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "task": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "prompt",
             "task"
           ],
           "additionalProperties": false
@@ -3624,6 +3786,11 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 7200000
+        },
+        "maxVideoMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7200000
         }
       },
       "required": [
@@ -3764,6 +3931,67 @@
             "bytes",
             "format",
             "glyphs"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "video",
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 67108864
+            },
+            "format": {
+              "const": "webm",
+              "type": "string"
+            },
+            "codec": {
+              "const": "vp8",
+              "type": "string"
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            },
+            "durationMs": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 7200000
+            },
+            "audio": {
+              "enum": [
+                "none",
+                "opus",
+                "vorbis"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "bytes",
+            "format",
+            "codec",
+            "width",
+            "height",
+            "durationMs",
+            "audio"
           ],
           "additionalProperties": false
         }
@@ -9534,6 +9762,370 @@
           "maximum": 536870912
         }
       }
+    },
+    "InteractionRect": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1280
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 720
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1280
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 720
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "additionalProperties": false
+    },
+    "InteractionOption": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,2048}$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "enabled": {
+          "$ref": "#/definitions/BoolExpression"
+        },
+        "rect": {
+          "$ref": "#/definitions/InteractionRect"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "target",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "ResolvedInteractionOption": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,2048}$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "rect": {
+          "$ref": "#/definitions/InteractionRect"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "target",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "InteractionWait": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "interaction",
+          "type": "string"
+        },
+        "at": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "prompt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "phase": {
+          "enum": [
+            "prepared",
+            "active"
+          ],
+          "type": "string"
+        },
+        "dest": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "label": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,2048}$"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResolvedInteractionOption"
+          },
+          "minItems": 1,
+          "maxItems": 16
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,65536}$"
+        },
+        "deadlineMs": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3600000
+            }
+          ]
+        },
+        "elapsedMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600000
+        },
+        "activeAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "timeout": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                },
+                "target": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                }
+              },
+              "required": [
+                "id",
+                "target"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "at",
+        "prompt",
+        "attempt",
+        "phase",
+        "dest",
+        "label",
+        "options",
+        "signature",
+        "deadlineMs",
+        "elapsedMs",
+        "activeAt",
+        "timeout"
+      ],
+      "additionalProperties": false
+    },
+    "VideoTaskState": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{1,65536}$"
+        },
+        "phase": {
+          "enum": [
+            "pending",
+            "playing",
+            "ended",
+            "skipped",
+            "blocked",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "rect": {
+          "$ref": "#/definitions/InteractionRect"
+        },
+        "skippable": {
+          "type": "boolean"
+        },
+        "restore": {
+          "enum": [
+            "replay",
+            "forbid"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "signature",
+        "phase",
+        "rect",
+        "skippable",
+        "restore"
+      ],
+      "additionalProperties": false
+    },
+    "InteractionEvent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "interaction.activate"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "type",
+            "prompt",
+            "attempt"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "interaction.choose"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "inputId": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,256}$"
+            },
+            "option": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "type",
+            "prompt",
+            "attempt",
+            "inputId",
+            "option"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "interaction.point"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "inputId": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,256}$"
+            },
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1280
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 720
+            }
+          },
+          "required": [
+            "type",
+            "prompt",
+            "attempt",
+            "inputId",
+            "x",
+            "y"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "type": "object",

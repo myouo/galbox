@@ -1,7 +1,9 @@
+import {inspectVideo} from './video.js';
 import {inspectCompressedAudio,audioPlayback} from './audio.js';
 import {ensure,parseResourceFact} from '../protocol/index.js';
 import type {Asset,ResourceFact} from '../protocol/index.js';
 export function inspectResource(asset:Pick<Asset,'id'|'kind'|'mime'|'playback'>,bytes:Uint8Array,decodeUtf8:(bytes:Uint8Array)=>string):ResourceFact {
+ if(asset.kind==='video'){ensure(asset.mime==='video/webm','RESOURCE_VIDEO_CODEC','Only WebM video supported');return inspectVideo(asset.id,bytes);}
  const base={id:asset.id,bytes:bytes.byteLength};const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
  if(asset.kind==='font'){
   ensure(asset.mime==='font/ttf'&&bytes.length>=12&&view.getUint32(0)===0x00010000,'RESOURCE_FONT','Expected TrueType SFNT');const count=view.getUint16(4);ensure(count>0&&count<=64&&bytes.length>=12+count*16,'RESOURCE_FONT','Invalid font table directory');const tables=new Map<number,{offset:number;length:number}>();

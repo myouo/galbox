@@ -9,6 +9,7 @@
 | 图像 / 正文 | 单 Pixi（WebGL2 优先、Canvas 基础兼容，效果差异见 GRAPHICS）；有界二维pose/层级/裁切/混合、相机/基础滤镜/fade/crossfade/shake与独立属性任务；DOM ADV/NVL/多窗口、旧码点/新字素揭示、结构化 runs/Ruby/安全样式/段内速度停顿/fade-wave-shake、显完/advance、历史 |
 | 任务 / 快照 | 固定 all-success 组，活动任务/引用结果/等待闭包；终态区分；部分任务恢复 |
 | 媒体 | WAV/MP3/单流 Ogg Vorbis/Opus；验证 Blob 的长媒体 element 与 buffer、自然完成/等待、循环点、bus 淡化/语音 duck、当前正文重播；replay 从零/stop，不含网络流与精确 seek，见 MEDIA.md |
+| 影片 / 互动 | opaque WebM/VP8及单Opus/Vorbis音轨，同Pixi canvas/WebGL与Canvas；startup/自然end/skip分离，replay/forbid；矩形热点/键盘、一次求值enabled、prepared启用屏障、活动期限/明示timeout和剩余时间恢复，见VIDEO/INTERACTIONS |
 | 资源 | release 清单/注册表/Program/资源事实绑定，SHA-256 核验，有界流、取消后租约归还；预算内整包预加载；TrueType目录/真实字体准备与独有FontFace释放 |
 | 工作 / 持久进度 | 同步工作 profile、冻结提交批次、幂等回执、修订冲突、普通已读/解锁自动提交 |
 | 有状态操作 | 真实 codec/操作工厂、冻结表、每调用 State、signal wait、隔离和失败原子性、禁止重入 |
@@ -20,7 +21,7 @@
 | 默认 UI | React 菜单/选择/历史、导入报告/显式载入、跨刷新槽位选择；暂停原因与输入 epoch 隔离 |
 | 打包嵌入 | protocol/core/port-kit/player/react/testing/save-bridge/diagnostics/backups/CSS 显式入口；独立 tarball 消费 |
 | 便携备份/内容迁移 | 有界完整持久闭包；原子新分支恢复、上一修订、幂等回执；显式完整 release 迁移，缺映射保留旧档并拒绝 |
-| 未实现 | timed-choice、视频/热点、stored void/undefined/引用heap、原档导出、跨系列迁移、自动旧 release 获取 |
+| 未实现 | 任意影片编码/seek/多片并发、角色跟随/非矩形热点、stored void/undefined/引用heap、原档导出、跨系列迁移、自动旧 release 获取 |
 
 OperationSpec 与 recipe opcode 从 schema 生成。类型工厂由真实运行时校验支撑，readonly 不代替所有权。扩展为受信任同步 TS，不被称作同 realm 安全沙箱。
 
