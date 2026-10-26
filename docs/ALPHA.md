@@ -67,3 +67,5 @@ G4-02有限历史语音与受控回溯通过186单元/98浏览器/strict独立�
 G5-01有限流程图/节点访问解锁/声明章节根通过192单元、104完整浏览器+最终UI两设备重验、strict独立消费、65 CLI、性能/API与原生无WebGL开发实测；见 [报告](evidence/g5-01/REPORT.md) 和 [FLOWCHART](FLOWCHART.md)。普通进度与声明入口绑定已闭合，G5-02鉴赏和G6/G7仍未完成。
 
 G5-02有限鉴赏/成就与隔离场景回放通过199单元、112完整浏览器、strict独立消费、65 CLI、4 synthetic、性能/API与原生无WebGL开发实测，见 [报告](evidence/g5-02/REPORT.md) 和 [EXTRAS](EXTRAS.md)。SDK SHA=faed999eb8824e697a5ab51effeffbcbf3042b298b8ecaaf5fb1c186ee1c85d2，CLI SHA=c420c4df4801237f2ad53c27bb3230d77953275972cab0c356b1575049119c7e；24新增/16声明变化/0删除，wire仍1/新cap，仍仅本地alpha。原创/?demo=extras支持Canvas，回放只写临时profile，刷新/旧档保当前收藏。G6/G7和真实N/F/M6仍未完成，父子实例总内存/大目录/其它设备另验。
+
+G6-01有限剧本控件/事件/状态恢复通过206单元、116完整浏览器+最后4项UI复验、strict独立消费、65 CLI、4 synthetic、性能/API和原生无WebGL实测，见 [报告](evidence/g6-01/REPORT.md) 和 [SCRIPT_UI](SCRIPT_UI.md)。SDK SHA=c71262d22a8936f3f7f46c0618c301e4b7b71dc0a2ce7104bcf8f28b274f3621，CLI SHA=c420c4df4801237f2ad53c27bb3230d77953275972cab0c356b1575049119c7e；42新增/10声明变化/0删除，wire仍1/新ui.controls，仍本地alpha。/?demo=ui支持Canvas，表单保存/刷新恢复保当前profile；原生实测发现的内部焦点问题已修复。G6-02/G7和真实N/F/M6未完成，移动真机/大控件目录仍另验。

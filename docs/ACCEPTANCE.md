@@ -106,3 +106,5 @@ G4-02：`backlog-voice` 要真实buffer/element/版本化HTTP语音，菜单暂�
 G5-01：`node-visit-unlock` 需真实工厂/Builder正反类型、坏边/位置/入口/slot条件拒绝，预算1/8/100相同访问/显式解锁、当前profile派生条件与只读投影隔离、单调幂等批次/旧档不抹新进度。`graph-safe-restore` 需声明新根/嵌套return与恢复、重置章内globals/RNG、只读节点/锁/gate/当前禁存/过期epoch、最终durable重验、准备失败/失回执pending/旧写者拒绝、定义漂移/完整备份迁移、真实IndexedDB刷新、两绘图设备的默认图/筛选/可见确认与strict独立tarball。
 
 G5-02：`gallery-unlock-persistence` 验证真实kind关联工厂/声明场景入口、纯profile/read条件/自动检查原子失败、预算一致/不可变单调批次、flag复位与旧档/刷新/备份迁移保解锁。`replay-isolation` 验证CG真实像素差分/图标、buffer循环与element自然完成/版本HTTP完整性等级、同一生产场景实际选择及写入仅落临时Store、主线PC/RNG/等待/head/profile保持、排队保存不thaw、资源迟到归还/双实例/准备失败/dispose、未知head冻结重试及失权/外部修订拒复活、默认UI与strict独立消费。
+
+G6-01：`script-ui-state`需真实工厂/屏幕成员/资源kind/字段dest类型关联，预算1/8/100、编辑与剧情变量分离、统一按钮提交到嵌套帧、错误值/格点/隐藏禁用控件不改状态；`ui-event-generation`需prepared/active、新show/读档/暂停的输入身份隔离、旧DOM/按住键/IME迟到不污染新屏、双实例/dispose；`ui-restore`需保存全部字段/等待、源身份及上一修订完整迁移、图文包含实际UI像素、IndexedDB刷新与旧档保当前profile、设备失败不产不完整缩略图且新Player能恢复、WebGL/Canvas/strict打包消费者。

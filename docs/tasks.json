@@ -14,7 +14,7 @@
     "G7",
     "H2"
   ],
-  "current_task": "G6-01",
+  "current_task": "G6-02",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-26",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1888,11 +1888,20 @@
         "G2-02",
         "G3-03"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
-        "typed screen/control declarations and input"
+        "packages/galbox-sdk/schema/protocol.json",
+        "packages/galbox-sdk/src/protocol/ui.ts",
+        "packages/galbox-sdk/src/program-tools/ui.ts",
+        "packages/galbox-sdk/src/web-host/script-ui.ts",
+        "packages/galbox-sdk/src/core/index.ts",
+        "packages/galbox-sdk/src/player/index.ts",
+        "packages/galbox-sdk/src/web-host/capture.ts",
+        "fixtures/ui-novel",
+        "docs/SCRIPT_UI.md",
+        "docs/decisions/0029-script-ui-state.md"
       ],
       "contracts": [
         "C01",
@@ -1907,9 +1916,23 @@
         "ui-event-generation",
         "ui-restore"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g6-01/REPORT.md",
+        "docs/evidence/g6-01/check.log",
+        "docs/evidence/g6-01/unit.log",
+        "docs/evidence/g6-01/browser-results.json",
+        "docs/evidence/g6-01/ui-recheck/browser-results.json",
+        "docs/evidence/g6-01/ui-recheck/script-ui-result.json",
+        "docs/evidence/g6-01/consumer-result.json",
+        "docs/evidence/g6-01/result.json",
+        "docs/evidence/g6-01/compatibility-result.json",
+        "docs/evidence/g6-01/performance.json",
+        "docs/evidence/g6-01/release-audit.json",
+        "docs/evidence/g6-01/dev-result.json",
+        "docs/evidence/g6-01/source-manifest.json"
+      ],
       "blocker": null,
-      "next_action": "先定有限屏幕/控件声明、动作与事件身份、Snapshot状态所有权/保存恢复ADR；复用既有交互等待和渲染端口，沿Schema/真实工厂/Core/Host/默认UI实施，验证旧输入拒绝、恢复/取消/双实例和独立消费。"
+      "next_action": "ADR0029有限控件/事件/状态恢复、图文捕获和真实DOM验收完成；下一G6-02完整默认界面、作品皮肤与移动布局。"
     },
     {
       "id": "G6-02",
@@ -1943,7 +1966,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按 COMMON_VN.md 的职责/支持集实现正式 SDK，并通过相关行为/恢复/失败验证。"
+      "next_action": "先定义版本化作品皮肤/默认屏幕配置和系统动作路由边界；基于现有Player完成标题、菜单、设置、存读档、历史、流程图与鉴赏组件，实例仅提供内容/皮肤；用原创皮肤及移动触控/键盘、焦点/滚动/跨控件松手与独立消费验证。"
     },
     {
       "id": "G7-01",

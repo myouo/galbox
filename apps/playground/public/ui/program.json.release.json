@@ -1,0 +1,37 @@
+{
+  "format": "galbox-release",
+  "version": 1,
+  "sdk": "0.1.0",
+  "protocol": 1,
+  "semantics": "galbox-core@1",
+  "gameId": "lighthouse-controls",
+  "release": "controls-1",
+  "series": "1",
+  "programSha256": "0b05413465a54223b3ef1004c4775aa1cbac43bf8b9fc898a4541640a8cd8c43",
+  "registrySha256": "8294d00294d6ad5436171e963b08377d2925cdcbeee05e2c5b3d4f1b7d9e1749",
+  "assetsSha256": "464e950fc95e9a1fcae969ffa2c60b6abfec0e23ce8c9a98323ea6157668fd3d",
+  "resources": [
+    {
+      "id": "shore",
+      "bytes": 900,
+      "kind": "image",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "lamp",
+      "bytes": 316,
+      "kind": "image",
+      "width": 320,
+      "height": 220
+    }
+  ],
+  "limits": {
+    "maxAssetBytes": 16777216,
+    "maxEncodedBytes": 33554432,
+    "maxTextureBytes": 134217728,
+    "maxAudioBytes": 33554432,
+    "maxImageSide": 4096,
+    "maxAudioMs": 30000
+  }
+}

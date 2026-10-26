@@ -1,0 +1,31 @@
+{
+  "result": "passed",
+  "project": "/dev/shm/galbox-cli-rs5URq/Story Project",
+  "sdkInstalled": "/dev/shm/galbox-cli-rs5URq/Story Project/node_modules/.pnpm/galbox-sdk@file+vendor+galbox-sdk.tgz_react-dom@19.3.1_react@19.3.1__react@19.3.1/node_modules/galbox-sdk",
+  "cliInstalled": "/dev/shm/galbox-cli-rs5URq/Story Project/node_modules/.pnpm/@galbox+cli@file+vendor+galbox-cli.tgz_react-dom@19.3.1_react@19.3.1__react@19.3.1/node_modules/@galbox/cli",
+  "browser": "Chromium",
+  "strict": true,
+  "playSaveRestore": true,
+  "fontAssetWorkflow": true,
+  "compressedMediaWorkflow": true,
+  "videoAssetWorkflow": true,
+  "versionedStreamHTTP": true,
+  "streamingBrowser": true,
+  "streamDevURL": "http://127.0.0.1:42233/",
+  "devURL": "http://127.0.0.1:34019/",
+  "commands": 65,
+  "developerTask": {
+    "result": "passed",
+    "addedRoute": true,
+    "statefulOperation": true,
+    "fullInvocationMigration": true,
+    "missingMigrationRejected": true,
+    "sourceDiagnostics": true,
+    "syntheticBinding": true,
+    "browserSaveRestore": true,
+    "browserImport": true,
+    "originalReference": "not-verified"
+  },
+  "sdkSha256": "d3ab7d20f74731fa015ec4eda2d9fac08dba8a91e124409d0b0dcd8c247105d2",
+  "cliSha256": "c420c4df4801237f2ad53c27bb3230d77953275972cab0c356b1575049119c7e"
+}

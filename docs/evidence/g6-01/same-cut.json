@@ -1,0 +1,35 @@
+{
+  "first": {
+    "id": "d52ad913-108f-4f88-8753-19de0527b8cc",
+    "slot": "manual:1",
+    "revision": 1,
+    "committed": true,
+    "reconciled": false,
+    "disposed": false
+  },
+  "saved": {
+    "id": "84dddb4b-cea7-4238-9cc7-196268dbb709",
+    "slot": "manual:1",
+    "revision": 2,
+    "committed": true,
+    "reconciled": false,
+    "disposed": false
+  },
+  "difference": 17464,
+  "topDifference": 0,
+  "laterCanSave": false,
+  "initial": "opening.1",
+  "later": "opening.2",
+  "stored": "opening.1",
+  "caption": "opening.1",
+  "thumbnailSame": true,
+  "previousText": "opening.1",
+  "previousId": "d52ad913-108f-4f88-8753-19de0527b8cc",
+  "renamed": "海风",
+  "revision": 3,
+  "read": [
+    "opening.1@zh-1"
+  ],
+  "conflict": "GalboxError: SLOT_CONFLICT: manual:1",
+  "renderer": "canvas"
+}

@@ -1,3 +1,4 @@
+import {initialUI,isUIInstruction,executeUI,acceptUI,validateUIRestore} from '../protocol/ui.js';
 import {extrasSignature,extrasProgress,evaluateExtras,sceneRoot,validateSceneRoot} from '../protocol/extras.js';
 import {flowProgress,flowEntry,initialFlow,validateFlowRun} from '../protocol/flow.js';
 import {streamCatalog} from '../protocol/streams.js';
@@ -21,6 +22,7 @@ import type { OperationRegistry } from './operations.js';
 export interface CoreOptions {readonly operations?:OperationRegistry;readonly mode?:'restore'|'initial'|'candidate';readonly rngSeed?:number;readonly entryNode?:string;readonly entryScene?:string;}
 export type CoreEvent =
  | {type:'history.session';id:string}
+ | import('../protocol/index.js').UIEvent
  | InteractionEvent
  | {type:'video.skip';prompt:number;inputId:string}
  | {type:'media.ended';task:string;attempt:number}
@@ -61,7 +63,7 @@ export class Core {
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(entryScene!==undefined?sceneRoot(this.program,this.profile,entryScene):entryNode===undefined?this.program.entry:flowEntry(this.program,this.profile,entryNode)),rng=initialRng(this.program.rng,rngSeed);
-      const textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program),flow=initialFlow(this.program,entryNode??null);this.s={...(entryScene!==undefined?{replayScene:entryScene}:{}),...(this.extrasIdentity?{extrasSignature:this.extrasIdentity}:{}),...(flow?{flow}:{}),...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
+      const ui=initialUI(this.program),textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program),flow=initialFlow(this.program,entryNode??null);this.s={...(ui?{ui}:{}),...(entryScene!==undefined?{replayScene:entryScene}:{}),...(this.extrasIdentity?{extrasSignature:this.extrasIdentity}:{}),...(flow?{flow}:{}),...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
     if(snapshot===undefined)this.checkExtras();
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
@@ -107,6 +109,7 @@ export class Core {
     }
     for(const t of this.s.tasks)if(t.kind==='media'&&['running','blocked'].includes(t.status)){ensure(t.mediaTask,'MEDIA_TASK','Missing media state');t.attempt++;if(t.restore==='stop'){t.status='cancelled';t.mediaTask.phase='cancelled';}else {t.status='running';t.mediaTask.phase='pending';this.effects.push({type:'audio',task:parseTask(t)});}}updateDuck(this.s);
     for(const t of this.s.tasks)if(t.kind==='video'&&['running','blocked'].includes(t.status)){ensure(t.videoTask,'VIDEO_TASK','Missing video state');t.attempt++;t.status='running';t.videoTask.phase='pending';this.effects.push({type:'video',task:parseTask(t)});}
+    if(this.s.wait?.kind==='ui'){ensure(this.s.wait.attempt<2147483647,'RESTORE_UI_ATTEMPT','UI attempts exhausted');this.s.wait.attempt++;this.s.wait.phase='prepared';}
     if(this.s.wait?.kind==='interaction'){this.s.wait.attempt++;this.s.wait.phase='prepared';this.s.wait.activeAt=null;}
   }
   private interactionBranch(branch:import('../protocol/interaction.js').InteractionBranch):void {this.put(branch.dest,{kind:'string',value:branch.id});this.top().pc=branch.target;this.s.wait=null;this.s.status='running';}
@@ -115,6 +118,9 @@ export class Core {
     if(this.revoked||this.s.status==='failed')return;
     if(event.type==='history.session'){const next=parseSnapshot({...this.s,historySession:event.id});ensure(next.historySession,'HISTORY_SESSION','Missing validated session scope');if(next.wait?.kind==='text'&&next.text)next.text.historyId=`${next.historySession}:${next.text.prompt}`;this.s=next;return;}
     if(event.type==='media.ended'){if(!videoEnded(this.s,event.task,event.attempt))mediaEnded(this.s,event.task,event.attempt);this.resolveWait();return;}
+    if(event.type==='ui.activate'||event.type==='ui.click'||event.type==='ui.toggle'||event.type==='ui.range'||event.type==='ui.input'){
+      if('inputId'in event&&this.consumed.has(event.inputId))return;const result=acceptUI(this.s,event);if(result.submission){for(const write of result.submission.writes){const value=Object.hasOwn(this.top().locals,write.dest)?this.top().locals[write.dest]:this.s.globals[write.dest];ensure(value?.kind===write.value.kind,'UI_SLOT_KIND','Invalid submit destination');}for(const write of result.submission.writes)this.put(write.dest,write.value);this.top().pc=result.submission.target;this.s.wait=null;this.s.status='running';}if(result.accepted&&'inputId'in event)this.consumed.add(event.inputId);return;
+    }
     if(event.type==='interaction.activate'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate')activateInteraction(this.s,input);return;}
     if(event.type==='interaction.choose'||event.type==='interaction.point'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate'||this.consumed.has(event.inputId))return;const branch=pickInteraction(this.s,input);if(branch){this.consumed.add(event.inputId);this.interactionBranch(branch);}return;}
     if(event.type==='video.skip'){const w=this.s.wait;if(w?.kind!=='video'||w.prompt!==event.prompt||this.consumed.has(event.inputId))return;const t=this.s.tasks.find(t=>t.id===w.task);if(!t?.videoTask?.skippable||!['running','blocked'].includes(t.status))return;this.consumed.add(event.inputId);t.status='cancelled';t.videoTask.phase='skipped';this.effects.push({type:'video-stop'});this.resolveWait();return;}
@@ -239,6 +245,7 @@ export class Core {
     }catch(error){this.s=before.s;this.profile=before.profile;this.changes=before.changes;this.effects=before.effects;this.progressSeq=before.seq;this.error=error instanceof GalboxError?error.code:'OPERATION_FAILURE';throw error;}
   }
   private execute(i:Instruction):void {
+    if(isUIInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','UI input cannot be guessed');if(!executeUI(this.program,this.s,i,e=>this.expression(e)))this.top().pc=this.next();return;}
     if(i.op==='interaction.prompt'){ensure(!this.recovering,'RECIPE_OPCODE','Interaction cannot be guessed');const w=prepareInteraction(i,this.s.counter+1,e=>this.expression(e));this.s.counter=w.prompt;this.s.wait=w;this.s.status='waiting';return;}
     if(i.op==='video.play'){ensure(!this.recovering,'RECIPE_OPCODE','Video cannot be guessed');this.effects.push(startVideo(this.program,this.s,i));return;}
     if(isAudioInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Media tasks are not recovery guesses');this.effects.push(...executeAudio(this.program,this.s,i,e=>this.expression(e)));if(i.op==='audio.wait'){this.resolveWait();return;}this.top().pc=this.next();return;}
@@ -338,7 +345,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   const richSources=p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich');
   for(const text of [...(s.text?[s.text]:[]),...s.history,...(s.textLayout?.windows.flatMap(w=>w.entries)??[])]){if(text.rich){const source=richSources.find(i=>i.at===text.rich?.at);ensure(source,'RESTORE_RICH_SOURCE','Rich source unavailable; explicit migration required');validateRichText(text,source);}else ensure(!richSources.some(i=>i.textId===text.textId&&i.revision===text.revision),'RESTORE_RICH_SOURCE','Missing structured text continuation');}
   if(s.text?.template){const text=s.text,origin=text.template,source=p.functions.flatMap(f=>f.code).find(i=>i.at===origin?.at);ensure(source?.op==='text.template'&&text.textId===source.textId&&text.revision===source.revision&&text.revealed<=length(text.content)&&origin?.signature===templateSignature(source.speaker,source.content),'RESTORE_TEMPLATE','Displayed template changed; explicit migration required');}
-  validateWindowState(p,s);
+  validateUIRestore(p,s);validateWindowState(p,s);
   ensure(s.status==='waiting'||s.status==='ended','RESTORE_PHASE','Only semantic waits and end are restorable');
   const flowRoot=validateFlowRun(p,s),root=validateSceneRoot(p,s)??flowRoot;ensure(s.frames.length>0&&s.frames[0]?.functionId===root&&!s.frames[0].returnTo,'RESTORE_FRAME','Invalid entry frame');
   const checkSlots=(actual:Record<string,Value>,expected:readonly {id:string;kind:string}[])=>{
@@ -360,7 +367,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   if(s.status==='ended')ensure((op.op==='control.end'||op.op==='control.return'&&s.frames.length===1&&!!(s.flow?.entryNode||s.replayScene)&&!op.value)&&!w,'RESTORE_PHASE','End mismatch');
   else {
     ensure(w&&w.at===op.at,'RESTORE_WAIT','PC/wait mismatch');
-    ensure((w.kind==='text'&&(op.op==='text.page'||op.op==='text.template'||op.op==='text.rich'))||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke')||(w.kind==='media'&&op.op==='audio.wait')||(w.kind==='interaction'&&op.op==='interaction.prompt')||(w.kind==='video'&&op.op==='video.play'),'RESTORE_PHASE','Unsupported phase');
+    ensure((w.kind==='text'&&(op.op==='text.page'||op.op==='text.template'||op.op==='text.rich'))||(w.kind==='choice'&&op.op==='choice')||(w.kind==='group'&&op.op==='task.join')||(w.kind==='delay'&&op.op==='wait.delay')||(w.kind==='operation'&&op.op==='extension.invoke')||(w.kind==='media'&&op.op==='audio.wait')||(w.kind==='ui'&&op.op==='ui.wait')||(w.kind==='interaction'&&op.op==='interaction.prompt')||(w.kind==='video'&&op.op==='video.play'),'RESTORE_PHASE','Unsupported phase');
     if(w.kind==='text'){ensure((op.op==='text.page'||op.op==='text.template'||op.op==='text.rich')&&s.text&&s.text.prompt===w.prompt&&s.text.textId===op.textId&&s.text.revision===op.revision&&(s.text.rich||s.text.revealed<=length(s.text.content)),'RESTORE_TEXT','Text identity mismatch');if(op.op!=='text.rich')ensure(!s.text.rich,'RESTORE_RICH_SOURCE','Unexpected structured text');if(op.op==='text.page')ensure(!s.text.template&&s.text.content===op.content&&s.text.speaker===op.speaker,'RESTORE_TEXT','Text content mismatch');else if(op.op==='text.template')ensure(s.text.template?.signature===templateSignature(op.speaker,op.content),'RESTORE_TEMPLATE','Template changed; explicit migration required');}
     if(w.kind==='choice')ensure(op.op==='choice'&&w.dest===op.dest&&JSON.stringify(w.options)===JSON.stringify(op.options),'RESTORE_CHOICE','Choice mismatch');
   }

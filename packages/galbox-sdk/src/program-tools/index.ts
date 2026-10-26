@@ -36,3 +36,7 @@ export {flowchartFingerprint,flowchartProgressFingerprint} from '../protocol/flo
 export {cgExtra,musicExtra,sceneExtra,achievement,extrasCatalog,unlockExtra,sceneMarker} from './extras.js';
 export type {ExtraRef,ExtraOptions} from './extras.js';
 export {extrasFingerprint} from '../protocol/extras.js';
+
+export {uiLabel,uiImage,uiButton,uiToggle,uiRange,uiInput,uiScreen,uiCatalog,uiField,showUI,hideUI,setUIText,setUIVisible,setUIEnabled,setUIToggle,setUIRange,setUIInput,waitUI} from './ui.js';
+export type {UIControlRef,UIScreenRef,UIFieldRef,UIControlOptions} from './ui.js';
+export {uiFingerprint} from '../protocol/ui.js';

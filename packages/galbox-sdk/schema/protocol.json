@@ -2177,6 +2177,285 @@
             "entry"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.show"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.hide"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "op",
+            "at"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.wait"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "dest": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "buttons": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UIButtonBinding"
+              },
+              "minItems": 1,
+              "maxItems": 64
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UIFieldBinding"
+              },
+              "minItems": 0,
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "dest",
+            "buttons",
+            "fields"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.text"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.visible"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.enabled"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.toggle"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/BoolExpression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.range"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/I32Expression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "ui.input"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "screen": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "$ref": "#/definitions/StringExpression"
+            }
+          },
+          "required": [
+            "op",
+            "at",
+            "screen",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
         }
       ]
     },
@@ -2322,6 +2601,9 @@
         },
         "extras": {
           "$ref": "#/definitions/ExtrasCatalog"
+        },
+        "ui": {
+          "$ref": "#/definitions/UICatalog"
         }
       },
       "required": [
@@ -2858,6 +3140,9 @@
             "task"
           ],
           "additionalProperties": false
+        },
+        {
+          "$ref": "#/definitions/UIWait"
         }
       ]
     },
@@ -2997,6 +3282,9 @@
         "replayScene": {
           "type": "string",
           "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "ui": {
+          "$ref": "#/definitions/UIState"
         }
       },
       "required": [
@@ -11445,6 +11733,841 @@
         "unlocked"
       ],
       "additionalProperties": false
+    },
+    "UIStyle": {
+      "type": "object",
+      "properties": {
+        "foreground": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "border": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "fontSize": {
+          "type": "integer",
+          "minimum": 12,
+          "maximum": 48
+        }
+      },
+      "required": [
+        "foreground",
+        "background",
+        "border",
+        "fontSize"
+      ],
+      "additionalProperties": false
+    },
+    "UIControl": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,1024}$"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/UIStyle"
+            },
+            "kind": {
+              "type": "string",
+              "const": "label"
+            }
+          },
+          "required": [
+            "id",
+            "rect",
+            "text",
+            "visible",
+            "enabled",
+            "style",
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,1024}$"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/UIStyle"
+            },
+            "kind": {
+              "type": "string",
+              "const": "image"
+            },
+            "asset": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "id",
+            "rect",
+            "text",
+            "visible",
+            "enabled",
+            "style",
+            "kind",
+            "asset"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,1024}$"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/UIStyle"
+            },
+            "kind": {
+              "type": "string",
+              "const": "button"
+            }
+          },
+          "required": [
+            "id",
+            "rect",
+            "text",
+            "visible",
+            "enabled",
+            "style",
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,1024}$"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/UIStyle"
+            },
+            "kind": {
+              "type": "string",
+              "const": "toggle"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "rect",
+            "text",
+            "visible",
+            "enabled",
+            "style",
+            "kind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,1024}$"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/UIStyle"
+            },
+            "kind": {
+              "type": "string",
+              "const": "range"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "min": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "max": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "step": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            }
+          },
+          "required": [
+            "id",
+            "rect",
+            "text",
+            "visible",
+            "enabled",
+            "style",
+            "kind",
+            "value",
+            "min",
+            "max",
+            "step"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "rect": {
+              "$ref": "#/definitions/InteractionRect"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,1024}$"
+            },
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "style": {
+              "$ref": "#/definitions/UIStyle"
+            },
+            "kind": {
+              "type": "string",
+              "const": "input"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,256}$"
+            },
+            "maxLength": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 256
+            }
+          },
+          "required": [
+            "id",
+            "rect",
+            "text",
+            "visible",
+            "enabled",
+            "style",
+            "kind",
+            "value",
+            "maxLength"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "UIScreen": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "title": {
+          "type": "string",
+          "pattern": "^[\\s\\S]{0,256}$"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UIControl"
+          },
+          "minItems": 1,
+          "maxItems": 64
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "background",
+        "controls"
+      ],
+      "additionalProperties": false
+    },
+    "UICatalog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "screens": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UIScreen"
+          },
+          "minItems": 1,
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "screens"
+      ],
+      "additionalProperties": false
+    },
+    "UIActive": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "screen": {
+          "$ref": "#/definitions/UIScreen"
+        }
+      },
+      "required": [
+        "at",
+        "generation",
+        "screen"
+      ],
+      "additionalProperties": false
+    },
+    "UIState": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/UIActive"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "signature",
+        "active"
+      ],
+      "additionalProperties": false
+    },
+    "UIButtonBinding": {
+      "type": "object",
+      "properties": {
+        "control": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        }
+      },
+      "required": [
+        "control",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "UIFieldBinding": {
+      "type": "object",
+      "properties": {
+        "control": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "dest": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        }
+      },
+      "required": [
+        "control",
+        "dest"
+      ],
+      "additionalProperties": false
+    },
+    "UIWait": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "ui"
+        },
+        "at": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "prompt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "prepared",
+            "active"
+          ]
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "screen": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "dest": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UIButtonBinding"
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UIFieldBinding"
+          },
+          "minItems": 0,
+          "maxItems": 64
+        }
+      },
+      "required": [
+        "kind",
+        "at",
+        "prompt",
+        "attempt",
+        "generation",
+        "phase",
+        "signature",
+        "screen",
+        "dest",
+        "buttons",
+        "fields"
+      ],
+      "additionalProperties": false
+    },
+    "UIAction": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.click"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            }
+          },
+          "required": [
+            "type",
+            "control"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.toggle"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.range"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.input"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,256}$"
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "UIEvent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.activate"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "type",
+            "prompt",
+            "attempt",
+            "generation"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.click"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "inputId": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,256}$"
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "prompt",
+            "attempt",
+            "generation",
+            "inputId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.toggle"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "type": "boolean"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "inputId": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,256}$"
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "value",
+            "prompt",
+            "attempt",
+            "generation",
+            "inputId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.range"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "inputId": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,256}$"
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "value",
+            "prompt",
+            "attempt",
+            "generation",
+            "inputId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ui.input"
+            },
+            "control": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{0,256}$"
+            },
+            "prompt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "inputId": {
+              "type": "string",
+              "pattern": "^[\\s\\S]{1,256}$"
+            }
+          },
+          "required": [
+            "type",
+            "control",
+            "value",
+            "prompt",
+            "attempt",
+            "generation",
+            "inputId"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   },
   "type": "object",

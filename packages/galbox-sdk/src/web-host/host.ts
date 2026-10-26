@@ -53,6 +53,7 @@ export class WebHost implements HostPort {
   private textures=new Map<string,Texture>();
   private readonly galleryImages=new Map<string,HTMLImageElement>();
   private readonly artwork=new Set<()=>void>();
+  uiImageURL(id:string,width:number,height:number):string {const source=this.galleryImages.get(id);ensure(!this.disposed&&source,'UI_IMAGE','Image is not prepared');const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.min(1280,Math.ceil(width)));canvas.height=Math.max(1,Math.min(720,Math.ceil(height)));try{const context=canvas.getContext('2d');ensure(context,'UI_IMAGE','Image drawing unavailable');const scale=Math.min(canvas.width/source.naturalWidth,canvas.height/source.naturalHeight);context.drawImage(source,(canvas.width-source.naturalWidth*scale)/2,(canvas.height-source.naturalHeight*scale)/2,source.naturalWidth*scale,source.naturalHeight*scale);return canvas.toDataURL('image/png');}finally{canvas.width=0;canvas.height=0;}}
   achievementIcon(id:string,title:string,mount:HTMLElement):()=>void {const source=this.galleryImages.get(id);ensure(!this.disposed&&source,'EXTRAS_ICON','Image is not prepared');const canvas=document.createElement('canvas');canvas.width=96;canvas.height=96;const context=canvas.getContext('2d');ensure(context,'EXTRAS_ICON','Thumbnail drawing unavailable');const scale=Math.min(96/source.naturalWidth,96/source.naturalHeight);context.drawImage(source,(96-source.naturalWidth*scale)/2,(96-source.naturalHeight*scale)/2,source.naturalWidth*scale,source.naturalHeight*scale);const image=new Image();image.alt=title;image.className='achievement-icon';image.width=48;image.height=48;image.src=canvas.toDataURL('image/png');canvas.width=0;canvas.height=0;mount.append(image);let released=false;const release=()=>{if(released)return;released=true;image.remove();image.removeAttribute('src');this.artwork.delete(release);};this.artwork.add(release);return release;}
   private buffers=new Map<string,AudioBuffer>();
   private mediaAssets=new Map<string,PreparedMedia>();private mix:DeepReadonly<AudioState>|null=null;
@@ -112,7 +113,7 @@ export class WebHost implements HostPort {
     }catch(error){this.dispose();throw error;}
   }
   captureFontCSS():string {return this.captureFonts.join('\n');}
-  captureThumbnail(snapshot:DeepReadonly<Snapshot>,text:TextCapture,signal:AbortSignal){this.assertReady();ensure(this.canvas&&this.stage,'SAVE_CAPTURE_UNAVAILABLE','Graphics not ready');this.stage.invalidate();this.render(snapshot);return composeThumbnail(this.canvas,text,signal);}
+  captureThumbnail(snapshot:DeepReadonly<Snapshot>,text:TextCapture,signal:AbortSignal,overlay?:TextCapture){this.assertReady();ensure(this.canvas&&this.stage,'SAVE_CAPTURE_UNAVAILABLE','Graphics not ready');this.stage.invalidate();this.render(snapshot);return composeThumbnail(this.canvas,text,signal,overlay);}
   async revalidateStreams():Promise<void> {for(const lease of this.streamLeases)await lease.validate();}
   async unlock():Promise<void> {
     ensure(this.context&&!this.disposed,'AUDIO_UNAVAILABLE','Host is not ready');

@@ -793,6 +793,133 @@ export const operationSpecs = {
       "at",
       "entry"
     ]
+  },
+  "ui.show": {
+    "opcode": "ui.show",
+    "parameters": [
+      "at",
+      "screen"
+    ],
+    "required": [
+      "at",
+      "screen"
+    ]
+  },
+  "ui.hide": {
+    "opcode": "ui.hide",
+    "parameters": [
+      "at"
+    ],
+    "required": [
+      "at"
+    ]
+  },
+  "ui.wait": {
+    "opcode": "ui.wait",
+    "parameters": [
+      "at",
+      "screen",
+      "dest",
+      "buttons",
+      "fields"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "dest",
+      "buttons",
+      "fields"
+    ]
+  },
+  "ui.text": {
+    "opcode": "ui.text",
+    "parameters": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ]
+  },
+  "ui.visible": {
+    "opcode": "ui.visible",
+    "parameters": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ]
+  },
+  "ui.enabled": {
+    "opcode": "ui.enabled",
+    "parameters": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ]
+  },
+  "ui.toggle": {
+    "opcode": "ui.toggle",
+    "parameters": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ]
+  },
+  "ui.range": {
+    "opcode": "ui.range",
+    "parameters": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ]
+  },
+  "ui.input": {
+    "opcode": "ui.input",
+    "parameters": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ],
+    "required": [
+      "at",
+      "screen",
+      "control",
+      "value"
+    ]
   }
 } as const;
 export const recoveryOpcodes = ["value.set","i32.add.checked","stage.put","stage.remove","text.clear","audio.play","audio.stop","audio.gain","profile.set","profile.i32.add.checked","extension.invoke","profile.expression"] as const;

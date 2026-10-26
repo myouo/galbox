@@ -1,0 +1,1 @@
+最终支持集、命令、过程失败与限制见 [REPORT](REPORT.md)。根目录check/unit、完整116 browser、最终ui-recheck的4项、consumer/CLI/compat/performance/release与原生dev共同覆盖最后源码。最后UIAction身份前置检查有ui-recheck和重新打包验证。before-focus-fix为焦点修复前归档，不能作为最后通过证据；dev-probe-first保留实际缺陷，focus-fix.patch说明修复。source-manifest绑定最终源码，任务状态见tasks.json。

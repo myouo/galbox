@@ -1,0 +1,9 @@
+$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
+$ node scripts/generate.mjs --check
+$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+packages/galbox-sdk/src/web-host/script-ui.ts(25,324): error TS2339: Property 'oncompositionstart' does not exist on type 'HTMLInputElement'.
+packages/galbox-sdk/src/web-host/script-ui.ts(25,381): error TS2339: Property 'oncompositionend' does not exist on type 'HTMLInputElement'.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

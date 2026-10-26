@@ -422,6 +422,73 @@ export type Instruction =
       op: 'extras.scene';
       at: string;
       entry: string;
+    }
+  | {
+      op: 'ui.show';
+      at: string;
+      screen: string;
+    }
+  | {
+      op: 'ui.hide';
+      at: string;
+    }
+  | {
+      op: 'ui.wait';
+      at: string;
+      screen: string;
+      dest: string;
+      /**
+       * @minItems 1
+       * @maxItems 64
+       */
+      buttons: [UIButtonBinding, ...UIButtonBinding[]];
+      /**
+       * @minItems 0
+       * @maxItems 64
+       */
+      fields: UIFieldBinding[];
+    }
+  | {
+      op: 'ui.text';
+      at: string;
+      screen: string;
+      control: string;
+      value: StringExpression;
+    }
+  | {
+      op: 'ui.visible';
+      at: string;
+      screen: string;
+      control: string;
+      value: BoolExpression;
+    }
+  | {
+      op: 'ui.enabled';
+      at: string;
+      screen: string;
+      control: string;
+      value: BoolExpression;
+    }
+  | {
+      op: 'ui.toggle';
+      at: string;
+      screen: string;
+      control: string;
+      value: BoolExpression;
+    }
+  | {
+      op: 'ui.range';
+      at: string;
+      screen: string;
+      control: string;
+      value: I32Expression;
+    }
+  | {
+      op: 'ui.input';
+      at: string;
+      screen: string;
+      control: string;
+      value: StringExpression;
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1228,6 +1295,73 @@ export type ExtraEntry =
     };
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIControl".
+ */
+export type UIControl =
+  | {
+      id: string;
+      rect: InteractionRect;
+      text: string;
+      visible: boolean;
+      enabled: boolean;
+      style: UIStyle;
+      kind: 'label';
+    }
+  | {
+      id: string;
+      rect: InteractionRect;
+      text: string;
+      visible: boolean;
+      enabled: boolean;
+      style: UIStyle;
+      kind: 'image';
+      asset: string;
+    }
+  | {
+      id: string;
+      rect: InteractionRect;
+      text: string;
+      visible: boolean;
+      enabled: boolean;
+      style: UIStyle;
+      kind: 'button';
+    }
+  | {
+      id: string;
+      rect: InteractionRect;
+      text: string;
+      visible: boolean;
+      enabled: boolean;
+      style: UIStyle;
+      kind: 'toggle';
+      value: boolean;
+    }
+  | {
+      id: string;
+      rect: InteractionRect;
+      text: string;
+      visible: boolean;
+      enabled: boolean;
+      style: UIStyle;
+      kind: 'range';
+      value: number;
+      min: number;
+      max: number;
+      step: number;
+    }
+  | {
+      id: string;
+      rect: InteractionRect;
+      text: string;
+      visible: boolean;
+      enabled: boolean;
+      style: UIStyle;
+      kind: 'input';
+      value: string;
+      maxLength: number;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "TextRun".
  */
 export type TextRun =
@@ -1409,7 +1543,8 @@ export type Wait =
       at: string;
       prompt: number;
       task: string;
-    };
+    }
+  | UIWait;
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "OperationAction".
@@ -1606,6 +1741,76 @@ export type IntegrityEvidence =
       etag: string;
       bytes: number;
     };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIAction".
+ */
+export type UIAction =
+  | {
+      type: 'ui.click';
+      control: string;
+    }
+  | {
+      type: 'ui.toggle';
+      control: string;
+      value: boolean;
+    }
+  | {
+      type: 'ui.range';
+      control: string;
+      value: number;
+    }
+  | {
+      type: 'ui.input';
+      control: string;
+      value: string;
+    };
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIEvent".
+ */
+export type UIEvent =
+  | {
+      type: 'ui.activate';
+      prompt: number;
+      attempt: number;
+      generation: number;
+    }
+  | {
+      type: 'ui.click';
+      control: string;
+      prompt: number;
+      attempt: number;
+      generation: number;
+      inputId: string;
+    }
+  | {
+      type: 'ui.toggle';
+      control: string;
+      value: boolean;
+      prompt: number;
+      attempt: number;
+      generation: number;
+      inputId: string;
+    }
+  | {
+      type: 'ui.range';
+      control: string;
+      value: number;
+      prompt: number;
+      attempt: number;
+      generation: number;
+      inputId: string;
+    }
+  | {
+      type: 'ui.input';
+      control: string;
+      value: string;
+      prompt: number;
+      attempt: number;
+      generation: number;
+      inputId: string;
+    };
 
 export interface Wire {
   program: Program;
@@ -1651,6 +1856,7 @@ export interface Program {
   textLayout?: TextLayout;
   flowchart?: Flowchart;
   extras?: ExtrasCatalog;
+  ui?: UICatalog;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -1929,6 +2135,22 @@ export interface InteractionRect {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIButtonBinding".
+ */
+export interface UIButtonBinding {
+  control: string;
+  target: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIFieldBinding".
+ */
+export interface UIFieldBinding {
+  control: string;
+  dest: string;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "SourceLocation".
  */
 export interface SourceLocation {
@@ -2091,6 +2313,43 @@ export interface ExtrasCatalog {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UICatalog".
+ */
+export interface UICatalog {
+  id: string;
+  revision: string;
+  /**
+   * @minItems 1
+   * @maxItems 16
+   */
+  screens: [UIScreen, ...UIScreen[]];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIScreen".
+ */
+export interface UIScreen {
+  id: string;
+  title: string;
+  background: string;
+  /**
+   * @minItems 1
+   * @maxItems 64
+   */
+  controls: [UIControl, ...UIControl[]];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIStyle".
+ */
+export interface UIStyle {
+  foreground: string;
+  background: string;
+  border: string;
+  fontSize: number;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "Snapshot".
  */
 export interface Snapshot {
@@ -2139,6 +2398,7 @@ export interface Snapshot {
   flow?: FlowRun;
   extrasSignature?: string;
   replayScene?: string;
+  ui?: UIState;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
@@ -2355,6 +2615,31 @@ export interface ResolvedInteractionOption {
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIWait".
+ */
+export interface UIWait {
+  kind: 'ui';
+  at: string;
+  prompt: number;
+  attempt: number;
+  generation: number;
+  phase: 'prepared' | 'active';
+  signature: string;
+  screen: string;
+  dest: string;
+  /**
+   * @minItems 1
+   * @maxItems 64
+   */
+  buttons: [UIButtonBinding, ...UIButtonBinding[]];
+  /**
+   * @minItems 0
+   * @maxItems 64
+   */
+  fields: UIFieldBinding[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
  * via the `definition` "SavedInvocation".
  */
 export interface SavedInvocation {
@@ -2471,6 +2756,23 @@ export interface FlowRun {
   signature: string;
   entryNode: string | null;
   current: string | null;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIState".
+ */
+export interface UIState {
+  signature: string;
+  active: UIActive | null;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "UIActive".
+ */
+export interface UIActive {
+  at: string;
+  generation: number;
+  screen: UIScreen;
 }
 /**
  * This interface was referenced by `Wire`'s JSON-Schema

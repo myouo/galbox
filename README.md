@@ -104,3 +104,5 @@ G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子�
 剧情流程图与声明章节入口见 [FLOWCHART](docs/FLOWCHART.md)：原创 `/?demo=flowchart` 提供访问/显式及条件解锁、章首重新初始化、当前profile校验与默认连线/筛选/确认界面，可加 `&renderer=canvas`。
 
 鉴赏与成就见 [EXTRAS](docs/EXTRAS.md)：原创 `/?demo=extras` 使用正式目录/持久解锁、CG差分、音乐和隔离场景回放。回放的剧情与解锁只写临时进度，关闭后回到主线；支持Canvas。
+
+剧本驱动控件见 [SCRIPT_UI](docs/SCRIPT_UI.md)：原创 `/?demo=ui` 提供声明式文字/图片/按钮/开关/滑条/单行输入，编辑中可保存并刷新恢复，提交由Core统一写入剧情槽；支持Canvas。

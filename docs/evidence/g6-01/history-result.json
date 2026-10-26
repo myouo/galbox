@@ -1,0 +1,135 @@
+{
+  "id": "history:e573f9c3-1a08-4d6a-8c89-696276236a8d:4",
+  "forbidden": "GalboxError: HISTORY_ROLLBACK_UNAVAILABLE: SAVE_POLICY",
+  "playing": "playing",
+  "firstGain": 0.10000000149011612,
+  "liveGain": 0.05000000074505806,
+  "same": true,
+  "startsUnchanged": true,
+  "replaced": "history:e573f9c3-1a08-4d6a-8c89-696276236a8d:6",
+  "sealedId": "history:e573f9c3-1a08-4d6a-8c89-696276236a8d:6",
+  "endedStable": "idle",
+  "restored": {
+    "text": "memory.letter",
+    "frames": 2,
+    "rng": {
+      "algorithm": "lcg32@1",
+      "state": 2040916148,
+      "draws": 1
+    },
+    "locals": {
+      "base": {
+        "kind": "i32",
+        "value": 12
+      },
+      "answerLocal": {
+        "kind": "i32",
+        "value": 75
+      }
+    },
+    "elapsed": 23
+  },
+  "cut": {
+    "rng": {
+      "algorithm": "lcg32@1",
+      "state": 2040916148,
+      "draws": 1
+    },
+    "locals": {
+      "base": {
+        "kind": "i32",
+        "value": 12
+      },
+      "answerLocal": {
+        "kind": "i32",
+        "value": 75
+      }
+    },
+    "elapsed": 23
+  },
+  "stale": "GalboxError: HISTORY_STALE: History session changed",
+  "restoredProfile": {
+    "revision": 2,
+    "values": {
+      "echoSent": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "echo.opening@zh-1",
+      "memory.letter@zh-1",
+      "memory.sealed@zh-1",
+      "echo.ending@zh-1"
+    ]
+  },
+  "later": {
+    "revision": 3,
+    "values": {
+      "echoSent": {
+        "kind": "bool",
+        "value": true
+      },
+      "echoKept": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "echo.opening@zh-1",
+      "memory.letter@zh-1",
+      "memory.sealed@zh-1",
+      "echo.ending@zh-1"
+    ]
+  },
+  "answer": {
+    "kind": "i32",
+    "value": 75
+  },
+  "answerAgain": {
+    "kind": "i32",
+    "value": 75
+  },
+  "settings": {
+    "version": 2,
+    "audio": {
+      "master": 0.4,
+      "bgm": 1,
+      "voice": 0.25,
+      "sfx": 1
+    },
+    "text": {
+      "intervalMs": 0
+    },
+    "playback": {
+      "autoDelayMs": 1500,
+      "skipUnread": false
+    },
+    "input": {
+      "advance": [
+        "Enter",
+        "Space"
+      ],
+      "menu": [
+        "Escape"
+      ],
+      "auto": [
+        "KeyA"
+      ],
+      "skip": [
+        "ControlLeft",
+        "ControlRight"
+      ],
+      "quickSave": [
+        "F5"
+      ],
+      "quickLoad": [
+        "F9"
+      ]
+    },
+    "display": {
+      "fontScale": 1,
+      "windowOpacity": 1
+    }
+  }
+}
