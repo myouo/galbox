@@ -1,0 +1,254 @@
+{
+  "result": "measured",
+  "capturedAt": "2026-10-27T01:55:46.545Z",
+  "revision": "c71537b3c3bf3d7e55baa5a8128679fef7da1ab6",
+  "nodeVersion": "v24.15.0",
+  "browser": "156.0.8078.4",
+  "nativeWebGLDisabled": true,
+  "driverSha256": "fa95d66f91f98081775319babe98468a75c3cea838e43c893d78b6586024dc3a",
+  "node": [
+    {
+      "size": 1000,
+      "budget": 1,
+      "construction": {
+        "samples": 6,
+        "medianMs": 28.334193000000027,
+        "p95Ms": 41.53715,
+        "maxMs": 41.53715
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 8.829278999999815,
+        "p95Ms": 9.218649999999911,
+        "maxMs": 9.218649999999911
+      },
+      "slice": {
+        "samples": 6006,
+        "medianMs": 0.0061460000000579385,
+        "p95Ms": 0.01040699999998651,
+        "maxMs": 0.13528500000006716
+      },
+      "traceSha256": "e9c831ebde78732d64e8ccb015f14a4f6deb630f7c5c47e3d9045384f6efa22a"
+    },
+    {
+      "size": 1000,
+      "budget": 8,
+      "construction": {
+        "samples": 6,
+        "medianMs": 12.78131600000006,
+        "p95Ms": 17.92144600000006,
+        "maxMs": 17.92144600000006
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 5.79462199999989,
+        "p95Ms": 8.242672000000084,
+        "maxMs": 8.242672000000084
+      },
+      "slice": {
+        "samples": 756,
+        "medianMs": 0.03247700000019904,
+        "p95Ms": 0.07389299999999821,
+        "maxMs": 0.9086509999999635
+      },
+      "traceSha256": "e9c831ebde78732d64e8ccb015f14a4f6deb630f7c5c47e3d9045384f6efa22a"
+    },
+    {
+      "size": 1000,
+      "budget": 100,
+      "construction": {
+        "samples": 6,
+        "medianMs": 13.137374000000136,
+        "p95Ms": 15.824912999999924,
+        "maxMs": 15.824912999999924
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 3.6372579999999743,
+        "p95Ms": 5.400221999999985,
+        "maxMs": 5.400221999999985
+      },
+      "slice": {
+        "samples": 66,
+        "medianMs": 0.3464890000000196,
+        "p95Ms": 0.573406999999861,
+        "maxMs": 0.6441569999999501
+      },
+      "traceSha256": "e9c831ebde78732d64e8ccb015f14a4f6deb630f7c5c47e3d9045384f6efa22a"
+    },
+    {
+      "size": 6000,
+      "budget": 1,
+      "construction": {
+        "samples": 6,
+        "medianMs": 86.47961000000032,
+        "p95Ms": 94.11101999999983,
+        "maxMs": 94.11101999999983
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 50.69706300000007,
+        "p95Ms": 57.32427800000005,
+        "maxMs": 57.32427800000005
+      },
+      "slice": {
+        "samples": 36006,
+        "medianMs": 0.005726999999978943,
+        "p95Ms": 0.010337000000163243,
+        "maxMs": 1.7270650000000387
+      },
+      "traceSha256": "e2207ed4a004d76057aa846cfd55cb577daa05e710bc30fa888d595a4404809a"
+    },
+    {
+      "size": 6000,
+      "budget": 8,
+      "construction": {
+        "samples": 6,
+        "medianMs": 68.34954500000003,
+        "p95Ms": 71.36366799999996,
+        "maxMs": 71.36366799999996
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 27.438462999999956,
+        "p95Ms": 29.327283999999963,
+        "maxMs": 29.327283999999963
+      },
+      "slice": {
+        "samples": 4506,
+        "medianMs": 0.029054999999971187,
+        "p95Ms": 0.053638999999748194,
+        "maxMs": 1.7735099999999875
+      },
+      "traceSha256": "e2207ed4a004d76057aa846cfd55cb577daa05e710bc30fa888d595a4404809a"
+    },
+    {
+      "size": 6000,
+      "budget": 100,
+      "construction": {
+        "samples": 6,
+        "medianMs": 66.74568100000033,
+        "p95Ms": 78.664444,
+        "maxMs": 78.664444
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 23.823554999999942,
+        "p95Ms": 35.09215399999994,
+        "maxMs": 35.09215399999994
+      },
+      "slice": {
+        "samples": 366,
+        "medianMs": 0.3672320000000582,
+        "p95Ms": 0.6247410000000855,
+        "maxMs": 2.6832789999998568
+      },
+      "traceSha256": "e2207ed4a004d76057aa846cfd55cb577daa05e710bc30fa888d595a4404809a"
+    }
+  ],
+  "cases": [
+    {
+      "kind": "startup",
+      "repeat": 0,
+      "size": 6000,
+      "preparationMs": 298,
+      "executionMs": 254,
+      "timerBeforeCompletion": true,
+      "rafBeforeCompletion": true,
+      "timerWhileComputing": true,
+      "rafWhileComputing": true,
+      "timerLagMs": 8,
+      "yieldCount": 60,
+      "maxSliceMs": 2,
+      "finalValue": 5999,
+      "history": 0,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "startup",
+      "repeat": 1,
+      "size": 6000,
+      "preparationMs": 148.5,
+      "executionMs": 245.89999997615814,
+      "timerBeforeCompletion": true,
+      "rafBeforeCompletion": true,
+      "timerWhileComputing": true,
+      "rafWhileComputing": true,
+      "timerLagMs": 2,
+      "yieldCount": 60,
+      "maxSliceMs": 1.2999999523162842,
+      "finalValue": 5999,
+      "history": 0,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "startup",
+      "repeat": 2,
+      "size": 6000,
+      "preparationMs": 160.80000007152557,
+      "executionMs": 183.89999997615814,
+      "timerBeforeCompletion": true,
+      "rafBeforeCompletion": true,
+      "timerWhileComputing": true,
+      "rafWhileComputing": true,
+      "timerLagMs": 1.7000000476837158,
+      "yieldCount": 60,
+      "maxSliceMs": 0.6000000238418579,
+      "finalValue": 5999,
+      "history": 0,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "runtime",
+      "repeat": 0,
+      "size": 6000,
+      "preparationMs": 156.39999997615814,
+      "executionMs": 48.199999928474426,
+      "timerBeforeCompletion": true,
+      "rafBeforeCompletion": true,
+      "timerWhileComputing": true,
+      "rafWhileComputing": true,
+      "timerLagMs": 11.199999928474426,
+      "yieldCount": 60,
+      "maxSliceMs": 2,
+      "finalValue": 5999,
+      "history": 1,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "runtime",
+      "repeat": 1,
+      "size": 6000,
+      "preparationMs": 182.10000002384186,
+      "executionMs": 28.299999952316284,
+      "timerBeforeCompletion": true,
+      "rafBeforeCompletion": true,
+      "timerWhileComputing": true,
+      "rafWhileComputing": true,
+      "timerLagMs": 6.200000047683716,
+      "yieldCount": 60,
+      "maxSliceMs": 0.6000000238418579,
+      "finalValue": 5999,
+      "history": 1,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "runtime",
+      "repeat": 2,
+      "size": 6000,
+      "preparationMs": 143.5,
+      "executionMs": 29,
+      "timerBeforeCompletion": true,
+      "rafBeforeCompletion": true,
+      "timerWhileComputing": true,
+      "rafWhileComputing": true,
+      "timerLagMs": 7.299999952316284,
+      "yieldCount": 60,
+      "maxSliceMs": 0.5,
+      "finalValue": 5999,
+      "history": 1,
+      "renderer": "canvas"
+    }
+  ],
+  "pageErrors": []
+}

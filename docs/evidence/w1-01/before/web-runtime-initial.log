@@ -1,0 +1,242 @@
+{
+  "result": "measured",
+  "capturedAt": "2026-10-27T01:49:14.317Z",
+  "revision": "c71537b3c3bf3d7e55baa5a8128679fef7da1ab6",
+  "nodeVersion": "v24.15.0",
+  "browser": "156.0.8078.4",
+  "nativeWebGLDisabled": true,
+  "driverSha256": "05ebcc8f5650f650272f0d9da5040e0fd2d61413136efe09ee3fb1cfe9761b13",
+  "node": [
+    {
+      "size": 1000,
+      "budget": 1,
+      "construction": {
+        "samples": 6,
+        "medianMs": 18.233610999999996,
+        "p95Ms": 30.906932000000097,
+        "maxMs": 30.906932000000097
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 17.02345200000002,
+        "p95Ms": 17.20434499999999,
+        "maxMs": 17.20434499999999
+      },
+      "slice": {
+        "samples": 6006,
+        "medianMs": 0.014805999999907726,
+        "p95Ms": 0.023816000000010717,
+        "maxMs": 0.08702399999992849
+      },
+      "traceSha256": "e9c831ebde78732d64e8ccb015f14a4f6deb630f7c5c47e3d9045384f6efa22a"
+    },
+    {
+      "size": 1000,
+      "budget": 8,
+      "construction": {
+        "samples": 6,
+        "medianMs": 9.802238999999872,
+        "p95Ms": 10.356788000000051,
+        "maxMs": 10.356788000000051
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 12.136021999999912,
+        "p95Ms": 15.037832999999864,
+        "maxMs": 15.037832999999864
+      },
+      "slice": {
+        "samples": 756,
+        "medianMs": 0.08409000000006017,
+        "p95Ms": 0.17593299999998635,
+        "maxMs": 0.6602210000000923
+      },
+      "traceSha256": "e9c831ebde78732d64e8ccb015f14a4f6deb630f7c5c47e3d9045384f6efa22a"
+    },
+    {
+      "size": 1000,
+      "budget": 100,
+      "construction": {
+        "samples": 6,
+        "medianMs": 9.491858999999977,
+        "p95Ms": 9.65675699999997,
+        "maxMs": 9.65675699999997
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 7.939822000000049,
+        "p95Ms": 8.017765999999938,
+        "maxMs": 8.017765999999938
+      },
+      "slice": {
+        "samples": 66,
+        "medianMs": 0.7282470000000103,
+        "p95Ms": 1.149466000000075,
+        "maxMs": 1.2839819999999236
+      },
+      "traceSha256": "e9c831ebde78732d64e8ccb015f14a4f6deb630f7c5c47e3d9045384f6efa22a"
+    },
+    {
+      "size": 6000,
+      "budget": 1,
+      "construction": {
+        "samples": 6,
+        "medianMs": 59.199873000000025,
+        "p95Ms": 74.17973700000016,
+        "maxMs": 74.17973700000016
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 209.40570100000014,
+        "p95Ms": 224.33269500000006,
+        "maxMs": 224.33269500000006
+      },
+      "slice": {
+        "samples": 36006,
+        "medianMs": 0.031011000000034983,
+        "p95Ms": 0.06160099999988233,
+        "maxMs": 1.153515999999854
+      },
+      "traceSha256": "e2207ed4a004d76057aa846cfd55cb577daa05e710bc30fa888d595a4404809a"
+    },
+    {
+      "size": 6000,
+      "budget": 8,
+      "construction": {
+        "samples": 6,
+        "medianMs": 58.92113300000074,
+        "p95Ms": 86.8575979999996,
+        "maxMs": 86.8575979999996
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 193.23083399999996,
+        "p95Ms": 198.61868700000014,
+        "maxMs": 198.61868700000014
+      },
+      "slice": {
+        "samples": 4506,
+        "medianMs": 0.23704499999985273,
+        "p95Ms": 0.49043299999993906,
+        "maxMs": 1.6731440000003204
+      },
+      "traceSha256": "e2207ed4a004d76057aa846cfd55cb577daa05e710bc30fa888d595a4404809a"
+    },
+    {
+      "size": 6000,
+      "budget": 100,
+      "construction": {
+        "samples": 6,
+        "medianMs": 53.91881199999989,
+        "p95Ms": 57.15761300000031,
+        "maxMs": 57.15761300000031
+      },
+      "execution": {
+        "samples": 6,
+        "medianMs": 177.2043139999996,
+        "p95Ms": 179.72415700000056,
+        "maxMs": 179.72415700000056
+      },
+      "slice": {
+        "samples": 366,
+        "medianMs": 2.827988000000005,
+        "p95Ms": 5.537522999999965,
+        "maxMs": 7.959308999999848
+      },
+      "traceSha256": "e2207ed4a004d76057aa846cfd55cb577daa05e710bc30fa888d595a4404809a"
+    }
+  ],
+  "cases": [
+    {
+      "kind": "startup",
+      "repeat": 0,
+      "size": 6000,
+      "preparationMs": 239.20000004768372,
+      "executionMs": 491.7999999523163,
+      "timerBeforeCompletion": false,
+      "rafBeforeCompletion": false,
+      "timerLagMs": 449.39999997615814,
+      "yieldCount": 60,
+      "maxSliceMs": 11.099999904632568,
+      "finalValue": 5999,
+      "history": 0,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "startup",
+      "repeat": 1,
+      "size": 6000,
+      "preparationMs": 140,
+      "executionMs": 481.10000002384186,
+      "timerBeforeCompletion": false,
+      "rafBeforeCompletion": false,
+      "timerLagMs": 447.8000000715256,
+      "yieldCount": 60,
+      "maxSliceMs": 11.100000023841858,
+      "finalValue": 5999,
+      "history": 0,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "startup",
+      "repeat": 2,
+      "size": 6000,
+      "preparationMs": 116.10000002384186,
+      "executionMs": 422.7000000476837,
+      "timerBeforeCompletion": false,
+      "rafBeforeCompletion": false,
+      "timerLagMs": 389.60000002384186,
+      "yieldCount": 60,
+      "maxSliceMs": 9.299999952316284,
+      "finalValue": 5999,
+      "history": 0,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "runtime",
+      "repeat": 0,
+      "size": 6000,
+      "preparationMs": 124.10000002384186,
+      "executionMs": 362.3000000715256,
+      "timerBeforeCompletion": false,
+      "rafBeforeCompletion": false,
+      "timerLagMs": 368.60000002384186,
+      "yieldCount": 60,
+      "maxSliceMs": 12.300000071525574,
+      "finalValue": 5999,
+      "history": 1,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "runtime",
+      "repeat": 1,
+      "size": 6000,
+      "preparationMs": 124.5,
+      "executionMs": 348.5,
+      "timerBeforeCompletion": false,
+      "rafBeforeCompletion": false,
+      "timerLagMs": 354.3000000715256,
+      "yieldCount": 60,
+      "maxSliceMs": 11.600000023841858,
+      "finalValue": 5999,
+      "history": 1,
+      "renderer": "canvas"
+    },
+    {
+      "kind": "runtime",
+      "repeat": 2,
+      "size": 6000,
+      "preparationMs": 131.79999995231628,
+      "executionMs": 317.6999999284744,
+      "timerBeforeCompletion": false,
+      "rafBeforeCompletion": false,
+      "timerLagMs": 323,
+      "yieldCount": 60,
+      "maxSliceMs": 9.200000047683716,
+      "finalValue": 5999,
+      "history": 1,
+      "renderer": "canvas"
+    }
+  ],
+  "pageErrors": []
+}

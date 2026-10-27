@@ -160,3 +160,5 @@ G6-01按ADR0029：Program.ui为版本定义，Snapshot.ui/UIWait由Core管理，
 G6-02按ADR0030：Program.presentation是静态作品配置，Player持有临时systemScreen和导航代次，菜单暂停只影响自身；React GameUI调用既有系统API，不推进PC。Host准备图像/字体，PressGesture裁决物理按压，窄视口表单重排与按比例截图仅属Web设备表现。
 
 H3-01按ADR0031对受控状态投影做复用：Core.view深冻结并按所有状态变更失效，封存历史只在来源变化时重新校验；普通tick的热字段与缓存历史仍合计检查原JSON预算。默认DOM消费隔离只读视图，自定义renderer保持拷贝。History父Schema边界只私有化一次，子记录仍做真实切点/身份/容量校验；Store原子事务和权威检查不变。
+
+W1-01按ADR0032：生产Player拥有实例级BrowserScheduler，以MessageChannel任务（timer后备）承接Coordinator预算续跑及启动候选。端口首次使用才创建，失败构造不遗留设备；dispose取消端口、timer及候选等待。Coordinator保持current轮次且禁止预算中保存；Player不积压执行中的rAF tick。Core仅对已链接私有Program建立函数/指令/后继索引，地址与存档不变。原计划Web交付核验与资源/模块/存储/离线差距见[WEB_READINESS.md](WEB_READINESS.md)。

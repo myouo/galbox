@@ -1,0 +1,322 @@
+{
+  "initial": [
+    {
+      "id": "prologue",
+      "title": "信封上的航线",
+      "canEnter": true
+    },
+    {
+      "id": "shore",
+      "title": "未解锁节点",
+      "canEnter": false
+    },
+    {
+      "id": "tower",
+      "title": "未解锁节点",
+      "canEnter": false
+    },
+    {
+      "id": "beacon",
+      "title": "未解锁节点",
+      "canEnter": false
+    },
+    {
+      "id": "radio",
+      "title": "未解锁节点",
+      "canEnter": false
+    },
+    {
+      "id": "archive",
+      "title": "未解锁节点",
+      "canEnter": false
+    }
+  ],
+  "locked": "GalboxError: FLOW_LOCKED: Node is locked",
+  "noHead": true,
+  "shore": {
+    "root": "shore",
+    "depth": 1,
+    "flow": {
+      "signature": "77c6766928d7a82389925df80859a19714f8933a9929c1c0c4268a7c84a8fe12",
+      "entryNode": "shore",
+      "current": "shore"
+    },
+    "local": {
+      "kind": "i32",
+      "value": 7
+    },
+    "stamp": {
+      "kind": "i32",
+      "value": 63
+    }
+  },
+  "nested": {
+    "depth": 2,
+    "flow": {
+      "signature": "77c6766928d7a82389925df80859a19714f8933a9929c1c0c4268a7c84a8fe12",
+      "entryNode": "shore",
+      "current": "beacon"
+    }
+  },
+  "restored": {
+    "depth": 2,
+    "flow": {
+      "signature": "77c6766928d7a82389925df80859a19714f8933a9929c1c0c4268a7c84a8fe12",
+      "entryNode": "shore",
+      "current": "beacon"
+    }
+  },
+  "spent": {
+    "kind": "i32",
+    "value": 999
+  },
+  "tower": {
+    "root": "tower",
+    "depth": 1,
+    "stamp": {
+      "kind": "i32",
+      "value": 63
+    },
+    "draws": 1
+  },
+  "radio": {
+    "id": "radio",
+    "chapter": "extra",
+    "title": "海上的短波",
+    "description": "完成海岸章节后，找到的额外回信。",
+    "column": 0,
+    "row": 3,
+    "current": false,
+    "visited": false,
+    "unlocked": true,
+    "canEnter": true,
+    "reason": null
+  },
+  "archive": {
+    "id": "archive",
+    "chapter": "extra",
+    "title": "完整的航路图",
+    "description": "收齐两封回信以后，从这里查看完整的航路。",
+    "column": 2,
+    "row": 3,
+    "current": false,
+    "visited": false,
+    "unlocked": true,
+    "canEnter": true,
+    "reason": null
+  },
+  "both": {
+    "revision": 8,
+    "values": {
+      "shoreDone": {
+        "kind": "bool",
+        "value": true
+      },
+      "towerDone": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "prologue.letter@zh-1",
+      "shore.letter@zh-1",
+      "beacon.light@zh-1",
+      "tower.letter@zh-1"
+    ],
+    "flow": {
+      "graphId": "lighthouse-map",
+      "revision": "v1",
+      "signature": "b217f93cfacf3679a13942a180069e88087f6be4cb5f0a570e012881124c244b",
+      "visited": [
+        "prologue",
+        "shore",
+        "beacon",
+        "tower"
+      ],
+      "unlocked": [
+        "prologue",
+        "shore",
+        "beacon",
+        "radio",
+        "tower"
+      ]
+    }
+  },
+  "old": {
+    "profile": {
+      "revision": 8,
+      "values": {
+        "shoreDone": {
+          "kind": "bool",
+          "value": true
+        },
+        "towerDone": {
+          "kind": "bool",
+          "value": true
+        }
+      },
+      "read": [
+        "prologue.letter@zh-1",
+        "shore.letter@zh-1",
+        "beacon.light@zh-1",
+        "tower.letter@zh-1"
+      ],
+      "flow": {
+        "graphId": "lighthouse-map",
+        "revision": "v1",
+        "signature": "b217f93cfacf3679a13942a180069e88087f6be4cb5f0a570e012881124c244b",
+        "visited": [
+          "prologue",
+          "shore",
+          "beacon",
+          "tower"
+        ],
+        "unlocked": [
+          "prologue",
+          "shore",
+          "beacon",
+          "radio",
+          "tower"
+        ]
+      }
+    },
+    "flow": {
+      "signature": "77c6766928d7a82389925df80859a19714f8933a9929c1c0c4268a7c84a8fe12",
+      "entryNode": "prologue",
+      "current": "prologue"
+    },
+    "canArchive": true
+  },
+  "frozen": false,
+  "branch": "backup:23006826-d967-455c-9501-8dfe0d598f22:backup1:p0",
+  "archiveRun": {
+    "root": "archive",
+    "stamp": {
+      "kind": "i32",
+      "value": 0
+    },
+    "flow": {
+      "signature": "77c6766928d7a82389925df80859a19714f8933a9929c1c0c4268a7c84a8fe12",
+      "entryNode": "archive",
+      "current": "archive"
+    }
+  },
+  "branchProfile": {
+    "revision": 9,
+    "values": {
+      "shoreDone": {
+        "kind": "bool",
+        "value": true
+      },
+      "towerDone": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "prologue.letter@zh-1",
+      "shore.letter@zh-1",
+      "beacon.light@zh-1",
+      "tower.letter@zh-1"
+    ],
+    "flow": {
+      "graphId": "lighthouse-map",
+      "revision": "v1",
+      "signature": "b217f93cfacf3679a13942a180069e88087f6be4cb5f0a570e012881124c244b",
+      "visited": [
+        "prologue",
+        "shore",
+        "beacon",
+        "tower",
+        "archive"
+      ],
+      "unlocked": [
+        "prologue",
+        "shore",
+        "beacon",
+        "radio",
+        "tower",
+        "archive"
+      ]
+    }
+  },
+  "main": {
+    "revision": 8,
+    "values": {
+      "shoreDone": {
+        "kind": "bool",
+        "value": true
+      },
+      "towerDone": {
+        "kind": "bool",
+        "value": true
+      }
+    },
+    "read": [
+      "prologue.letter@zh-1",
+      "shore.letter@zh-1",
+      "beacon.light@zh-1",
+      "tower.letter@zh-1"
+    ],
+    "flow": {
+      "graphId": "lighthouse-map",
+      "revision": "v1",
+      "signature": "b217f93cfacf3679a13942a180069e88087f6be4cb5f0a570e012881124c244b",
+      "visited": [
+        "prologue",
+        "shore",
+        "beacon",
+        "tower"
+      ],
+      "unlocked": [
+        "prologue",
+        "shore",
+        "beacon",
+        "radio",
+        "tower"
+      ]
+    }
+  },
+  "prefs": {
+    "version": 2,
+    "audio": {
+      "master": 0.6,
+      "bgm": 1,
+      "voice": 1,
+      "sfx": 1
+    },
+    "text": {
+      "intervalMs": 0
+    },
+    "playback": {
+      "autoDelayMs": 1500,
+      "skipUnread": false
+    },
+    "input": {
+      "advance": [
+        "Enter",
+        "Space"
+      ],
+      "menu": [
+        "Escape"
+      ],
+      "auto": [
+        "KeyA"
+      ],
+      "skip": [
+        "ControlLeft",
+        "ControlRight"
+      ],
+      "quickSave": [
+        "F5"
+      ],
+      "quickLoad": [
+        "F9"
+      ]
+    },
+    "display": {
+      "fontScale": 1.25,
+      "windowOpacity": 1
+    }
+  }
+}

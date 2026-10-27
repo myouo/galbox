@@ -13,10 +13,11 @@
     "G6",
     "G7",
     "H2",
-    "H3"
+    "H3",
+    "W1"
   ],
-  "current_task": "H3-02",
-  "engine_status": "general_vn_expansion",
+  "current_task": "W1-02",
+  "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
@@ -2006,7 +2007,11 @@
         "G3-04",
         "H2-02",
         "H3-01",
-        "H3-02"
+        "H3-02",
+        "W1-01",
+        "W1-02",
+        "W1-03",
+        "W1-04"
       ],
       "status": "todo",
       "implementation": "not_started",
@@ -2029,7 +2034,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "先定义综合原创验收切片与可测规模矩阵，组合正文/多窗口/舞台/音视频/版本化网络流/表单/设置/图文保存/回溯/流程图/鉴赏及两皮肤，复验WebGL与原生无WebGL Canvas、自动/快进/输入与UI交错和严格独立包；分组测量历史投影/捕获/持久事务/UI成本，核验10000历史条目/4MB等声明边界，跟进G4-02以来API P95增幅，不以50ms门槛代替60FPS/移动真机/大作品认证。"
+      "next_action": "完成W1-02按需资源、W1-03模块/存储规模及W1-04缓存/离线/目标设备后，汇总通用功能/规模/性能证据；H3-02软件GPU尾延迟限制须保留，不用当前原创小场景推定大型真实作品认证。"
     },
     {
       "milestone": "H2",
@@ -2170,7 +2175,7 @@
         "docs/evidence/h3-01/source-manifest.json"
       ],
       "blocker": null,
-      "next_action": "运行时/历史优化及前后trace/12张PNG/回归/独立包验收完成。按用户性能优先继续H3-02，调查已观测的WebGL销毁长尾；不将H3-01标记扩大为所有性能指标改善或G7完成。"
+      "next_action": "H3-02已完成图形尾延迟归因并记录平台限制，W1-01已完成长指令/浏览器任务调度优化；继续W1-02资源工作集，不将有限性能结果扩张为所有指标/平台已优化或G7完成。"
     },
     {
       "id": "H3-02",
@@ -2179,9 +2184,9 @@
       "depends_on": [
         "H3-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "controlled graphics submission and teardown measurements",
         "evidence-based renderer improvements or documented platform limit"
@@ -2198,9 +2203,153 @@
         "scoped-device-cleanup",
         "no-deferred-cost-disguise"
       ],
+      "evidence": [
+        "docs/evidence/h3-02/REPORT.md",
+        "docs/evidence/h3-02/drain-control/fixed-trace.json",
+        "docs/evidence/h3-02/no-msaa/fixed-trace.json",
+        "docs/evidence/w1-01/performance/performance.json",
+        "docs/evidence/w1-01/browser-results.json"
+      ],
+      "blocker": null,
+      "next_action": "固定61提交/960ms完成受控归因：SwiftShader上下文释放仍有积压成本，readback只移动等待，关闭MSAA没有稳定总收益；实验未进入生产。保留平台限制，后续W1/G7测量真实工作集/设备，不把此任务done解释为尾延迟已消除。"
+    },
+    {
+      "id": "W1-01",
+      "milestone": "W1",
+      "title": "Web目标架构核验、合作式调度与执行索引优化",
+      "depends_on": [
+        "H3-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "original-plan web readiness audit",
+        "responsive production Web scheduler",
+        "indexed Core execution",
+        "before/after browser measurements"
+      ],
+      "contracts": [
+        "C01",
+        "C02",
+        "C03",
+        "C05",
+        "C07",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "web-event-loop-yield",
+        "same-budget-trace",
+        "startup-cancellation",
+        "packed-web-responsiveness"
+      ],
+      "evidence": [
+        "docs/decisions/0032-web-task-scheduling.md",
+        "docs/WEB_READINESS.md",
+        "docs/evidence/w1-01/REPORT.md",
+        "docs/evidence/w1-01/comparison.json",
+        "docs/evidence/w1-01/browser-results.json",
+        "docs/evidence/w1-01/consumer-result.json",
+        "docs/evidence/w1-01/release-audit.json",
+        "docs/evidence/w1-01/dev-result.json",
+        "docs/evidence/w1-01/source-manifest.json",
+        "docs/evidence/w1-01/handoff-validation.json"
+      ],
+      "blocker": null,
+      "next_action": "有限执行索引/真正Web任务让出/候选取消及架构核验全部验收；继续W1-02资源工作集。同步校验、模块/大存储/离线与实体设备仍未完成，不声称全量Web交付或绝对性能极限。"
+    },
+    {
+      "id": "W1-02",
+      "milestone": "W1",
+      "title": "按需资源准备、有限预取与分层缓存",
+      "depends_on": [
+        "W1-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "dependency-aware asset preparation and bounded cache"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "bounded-startup-working-set",
+        "asset-commit-barrier",
+        "prefetch-cancel-eviction-restore"
+      ],
       "evidence": [],
       "blocker": null,
-      "next_action": "继续用户性能优先要求：在相同剧情/提交帧计数下分离gl.finish、原生loseContext与SDK清理，比较WebGL/Canvas；调查H3-01后销毁样本56–115ms（基线16–25ms）的差异，不靠延后清理或只移出计时区伪装改善。"
+      "next_action": "按v0.6第10.4节定义启动/当前推进/有限前看优先级、并发/解码/纹理预算及旧画面提交屏障；不再要求整个图片目录在开场前全部下载解码。"
+    },
+    {
+      "id": "W1-03",
+      "milestone": "W1",
+      "title": "版本化Program模块与大作品存储扩展",
+      "depends_on": [
+        "W1-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "bound program modules and scalable durable records"
+      ],
+      "contracts": [
+        "C01",
+        "C02",
+        "C05",
+        "C06",
+        "C07",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "program-module-release-binding",
+        "large-game-storage-transactions"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "根据大作品实测定义模块链接/摘要/稳定地址与快照闭包；评估当前整份命名空间/4M JSON字符预算的瓶颈，保留head/回执事务，禁止只提高上限掩盖复制与写放大。"
+    },
+    {
+      "id": "W1-04",
+      "milestone": "W1",
+      "title": "Web发布缓存、离线安装与目标浏览器矩阵",
+      "depends_on": [
+        "W1-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "versioned deployment/cache recovery",
+        "browser/device certification matrix"
+      ],
+      "contracts": [
+        "C07",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "immutable-release-deployment",
+        "resumable-offline-install",
+        "target-browser-evidence",
+        "cold-start-bundle-and-network-budget"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按v0.6第11.5节验证跨发布缓存/中断安装恢复与驱逐提示；明确Firefox/Safari/移动真机支持范围，不用Chromium模拟代替真实设备认证。 当前playground主入口约3.02MB/gzip401KB；按实际冷启动网络/解析测量决定拆包，不能把gzip大小当首屏时延。"
     }
   ]
 }

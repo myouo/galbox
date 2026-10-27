@@ -1,15 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-27。用户最新要求优先性能。H3-01运行时/历史优化已验收，下一H3-02图形提交与释放尾延迟；G7综合验收仍未完成。唯一任务状态见tasks.json。本轮分支perf/runtime-history、基线ce29850，源码/证据随本地提交保存，无外部推送/发布/部署。
+2026-10-27。本轮W1-01与H3-02验收完成，本地分支perf/web-responsive-runtime，基线c71537b；本轮提交以git log为准，无推送/外部发布/部署。架构逐项核验见[WEB_READINESS](WEB_READINESS.md)：TS Core+异步Host方向符合Web游玩，当前SDK alpha尚未完成大型作品的全部Web交付能力。
 
-ADR0031/PERFORMANCE：Core.view深冻结并按变更失效，封存历史共享但仍精确计入原字符/节点/深度预算；capture/恢复保持完整校验和独立DTO。默认DOM与脚本UI不再重复复制整个历史，用户自定义renderer仍隔离。历史父Schema只私有化一次，子语义/authority/修订/回执/原子存储不变；索引/容量与完全相同CSS声明去重减少重复工作。
+W1-01：私有函数/指令/后继索引、实例MessageChannel任务续跑与timer后备、候选取消、端口懒分配/清理、执行中不积压rAF tick。相同6000指令Node执行P95约193–220→22–42ms；浏览器计算期间timer延迟318–541→1–7ms，timer/rAF均可执行，预算1/8/100快照摘要一致。同步校验/构造/插件仍可能长，未以此承诺零卡顿或所有指标最优。
 
-同场景：10000历史Node空闲tick P95 92.06→0.084ms；1000历史/IndexedDB/回溯推进111.2→47.9ms，flush232.1→62.0ms。Node trace与12组PNG逐字节一致。无采样标准小说API P95 22.3→17.3/15.9ms（两次after均保留）。217单元、124完整浏览器、strict独立消费、65 CLI、4 synthetic、性能/API/原生无WebGL移动dev通过。证据 [H3-01报告](evidence/h3-01/REPORT.md) 与source-manifest。
+H3-02：固定61提交/960ms发现SwiftShader等待主要落在context loss，readback只前移成本；关闭MSAA没有稳定总收益，未改生产画质或延迟清理。平台限制见evidence/h3-02/REPORT。标准小说228操作API P95=16.3ms，三次dispose最大67ms，既定门槛通过。
 
-未隐藏的差异：WebGL dispose基线16–25ms，after样本56–115ms更高，仍在500ms门槛内；诊断主耗时是原生loseContext，但尚不能据此证明因果。H3-02需固定剧情/帧提交计数，分离gl.finish/上下文释放/SDK清理并比较Canvas；不能延后清理或只移出计时区伪装优化。
+验证：frozen install/check/build、220单元（加强反例另复跑3项）、130浏览器（0 skipped/flaky/unexpected）、独立包/native ESM/长计算/保存恢复、65 CLI命令、4 synthetic、API 13入口无删除（testing.Coordinator新增executing getter）、两包dry-run全部通过。原生--disable-webgl/未替换API、390×844触控模拟完成图文保存/刷新/两皮肤恢复，单Canvas/0 pageerror。证据、包SHA、源码绑定见evidence/w1-01/REPORT及source-manifest。
 
-SDK SHA256 6346048d1b126ad743f0f5c6c750af0873661db793b0c9580de57f101ad13c17；CLI 1cddf7c26ee098dc7e954da685b740c473d787768bbf45c009787262715fc5da；仍本地0.1.0 alpha。公开声明零变化，view的运行时只读冻结已明确，capture仍可作独立迁移草稿。
+当前下一W1-02（todo）：先写有限资源支持集ADR和阻塞下载基线，再让Host按启动/当前剧情依赖准备、有限前看、并发/解码/纹理预算与淘汰；旧画面在新资源成功前保持，取消/迟到/读档/跨实例必须验证。随后W1-03模块与存储粒度/留存、W1-04发布缓存/可恢复离线/冷启动拆包和浏览器真机矩阵，最后G7综合。N/F/M6真实资料仍缺，不用fixture代替认证。
 
-开发服务运行：http://127.0.0.1:4173/?demo=interface，可加skin=paper或renderer=canvas。重启TMPDIR=/dev/shm pnpm dev；构建pnpm build。profile:runtime与test:performance:comparison复跑说明见PERFORMANCE。全量browser前停dev释放4173/4174。
-
-后续先H3-02，再G7综合/规模和剩余性能归因。较大IndexedDB命名空间事务、显式全量捕获仍随数据量增长；不承诺无限历史/60FPS/全设备。真实N/F/M6仍缺edition/Program/资源/原档附件/原作继续对照。
+运行：export TMPDIR=/dev/shm；pnpm install --frozen-lockfile；pnpm dev。当前开发页http://127.0.0.1:4173/?demo=interface，可加skin=paper或renderer=canvas；build用pnpm build。全量test:browser前停当前dev，释放4173/4174；consumer/CLI/perf分别执行，避免共享构建/设备竞争。任务表是完整状态唯一来源。

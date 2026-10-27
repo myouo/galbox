@@ -26,6 +26,7 @@ export class Coordinator {
   private readonly playback:PlaybackController;
   private requestedPlayback:PlaybackMode='manual';private playbackPaused=false;
   constructor(readonly core:Core,private readonly host:HostPort,private readonly scheduler:Scheduler,private readonly store:Store,readonly epoch:number,readonly authority:string|null,private readonly sessionId:string,private readonly budget=100,readonly history?:HistoryJournal) {this.playback=new PlaybackController(sessionId);if(history)this.core.accept({type:'history.session',id:history.scope});}
+  get executing():boolean {return this.current!==null;}
   playbackView():PlaybackView{return this.playback.view();}
   setPlayback(mode:PlaybackMode):Promise<void>{ensure(mode==='manual'||mode==='auto'||mode==='skip','PLAYBACK_MODE','Unknown playback mode');this.requestedPlayback=mode;return this.enqueue({type:'playback.mode',mode});}
   configurePlayback(input:unknown):Promise<void>{return this.enqueue({type:'playback.preferences',value:parsePlaybackPreferences(input)});}

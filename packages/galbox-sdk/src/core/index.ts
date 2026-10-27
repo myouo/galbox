@@ -45,6 +45,7 @@ function values(slots: readonly {id:string;initial:Value}[]): Record<string,Valu
 function length(text:string):number { return Array.from(text).length; }
 export class Core {
   private readonly program:Program;
+  private readonly functions=new Map<string,{definition:ProgramFunction;code:Map<string,Instruction>;next:Map<string,string>}>();
   private readonly extrasIdentity:string|null;
   private s:Snapshot;
   private viewCache:CoreView|null=null;
@@ -64,7 +65,7 @@ export class Core {
   private reducing=false;
   constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number,entryNode?:string,entryScene?:string) {
     ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
-    this.program=linkProgram(input,operations).copy(); this.profile=parseProfile(profile);this.extrasIdentity=extrasSignature(this.program);extrasProgress(this.program,this.profile,this.extrasIdentity);flowProgress(this.program,this.profile);ensure(entryNode===undefined||entryScene===undefined,'EXTRAS_ENTRY_CONFLICT','Choose one declared root');ensure(snapshot===undefined||(entryNode===undefined&&entryScene===undefined),'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
+    this.program=linkProgram(input,operations).copy();for(const definition of this.program.functions){const code=new Map(definition.code.map(i=>[i.at,i])),next=new Map<string,string>();for(let i=0;i<definition.code.length-1;i++){const at=definition.code[i]?.at,following=definition.code[i+1]?.at;if(at&&following)next.set(at,following);}this.functions.set(definition.id,{definition,code,next});} this.profile=parseProfile(profile);this.extrasIdentity=extrasSignature(this.program);extrasProgress(this.program,this.profile,this.extrasIdentity);flowProgress(this.program,this.profile);ensure(entryNode===undefined||entryScene===undefined,'EXTRAS_ENTRY_CONFLICT','Choose one declared root');ensure(snapshot===undefined||(entryNode===undefined&&entryScene===undefined),'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(entryScene!==undefined?sceneRoot(this.program,this.profile,entryScene):entryNode===undefined?this.program.entry:flowEntry(this.program,this.profile,entryNode)),rng=initialRng(this.program.rng,rngSeed);
@@ -74,14 +75,15 @@ export class Core {
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
   private textPlan():TextPlan {const rich=this.s.text?.rich;ensure(rich,'TEXT_STATE','No structured text');return this.richPlan??=compileRichText(rich.runs);}
-  private fn(id:string):ProgramFunction { const f=this.program.functions.find(f=>f.id===id); ensure(f,'FUNCTION',id); return f; }
+  private definition(id:string){const result=this.functions.get(id);ensure(result,'FUNCTION',id);return result;}
+  private fn(id:string):ProgramFunction {return this.definition(id).definition;}
   private frame(f:ProgramFunction,args:Value[]):Frame {
     const locals=values([...f.params,...f.locals]);f.params.forEach((p,j)=>{const v=args[j];ensure(v,'CALL_ARITY',f.id);locals[p.id]=parseValue(v);});
     return {functionId:f.id,layout:1,pc:f.entry,locals};
   }
   private top():Frame { const f=this.s.frames.at(-1);ensure(f,'STACK','Empty stack');return f; }
-  private op():Instruction { const f=this.top(); const op=this.fn(f.functionId).code.find(i=>i.at===f.pc);ensure(op,'PC',f.pc);return op; }
-  private next():string {const f=this.top();const code=this.fn(f.functionId).code; const op=code[code.findIndex(i=>i.at===f.pc)+1];ensure(op,'FALLTHROUGH',f.pc);return op.at;}
+  private op():Instruction {const f=this.top(),op=this.definition(f.functionId).code.get(f.pc);ensure(op,'PC',f.pc);return op;}
+  private next():string {const f=this.top(),next=this.definition(f.functionId).next.get(f.pc);ensure(next,'FALLTHROUGH',f.pc);return next;}
   private expression(e:import('../protocol/index.js').Expression):Value {return evaluateExpression(e,{slot:id=>Object.hasOwn(this.top().locals,id)?this.top().locals[id]:Object.hasOwn(this.s.globals,id)?this.s.globals[id]:undefined,profile:key=>Object.hasOwn(this.profile.values,key)?this.profile.values[key]:undefined,read:unit=>this.profile.read.includes(unit)});}
   private get(o:Operand):Value { if('expression'in o)return this.expression(o.expression);if('literal'in o)return parseValue(o.literal); const v=this.top().locals[o.slot]??this.s.globals[o.slot];ensure(v,'SLOT',o.slot);return parseValue(v); }
   private put(id:string,v:Value):void {

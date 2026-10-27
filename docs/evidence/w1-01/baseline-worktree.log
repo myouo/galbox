@@ -1,0 +1,3 @@
+git worktree add --detach /dev/shm/galbox-api-baseline-87kzr7 c71537b
+HEAD is now at c71537b perf: reuse immutable runtime views and reduce history work
+Preparing worktree (detached HEAD c71537b)

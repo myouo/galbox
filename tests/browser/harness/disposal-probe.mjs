@@ -24,3 +24,5 @@ export function instrumentDisposal(mode='baseline'){
 }
 
 export function failWebGLInitialization(){const original=Application.prototype.init;let context;const attempts=[];Application.prototype.init=async function(options){attempts.push(options.preference[0]);if(options.preference[0]==='webgl'){context=options.context;throw new Error('Injected WebGL initialization failure');}return original.call(this,options);};return {snapshot:()=>({attempts:[...attempts],failedContextLost:context?.isContextLost()??false}),restore(){Application.prototype.init=original;}};}
+
+export function overrideAntialias(value){const original=Application.prototype.init,get=HTMLCanvasElement.prototype.getContext;Application.prototype.init=function(options){return original.call(this,{...options,antialias:value});};HTMLCanvasElement.prototype.getContext=function(kind,options){return get.call(this,kind,kind==='webgl2'||kind==='webgl'?{...options,antialias:value}:options);};return()=>{Application.prototype.init=original;HTMLCanvasElement.prototype.getContext=get;};}

@@ -26,7 +26,10 @@
     "test:release": "pnpm build:cli && node scripts/release-audit.mjs",
     "profile:disposal": "pnpm build && pnpm build:harness && node scripts/profile-disposal.mjs",
     "profile:runtime": "pnpm build && pnpm build:harness && node scripts/profile-runtime.mjs",
-    "test:performance:comparison": "node scripts/compare-runtime-profile.mjs"
+    "test:performance:comparison": "node scripts/compare-runtime-profile.mjs",
+    "profile:web": "pnpm build && pnpm build:harness && node scripts/profile-web-runtime.mjs",
+    "profile:graphics": "pnpm build && pnpm build:harness && node scripts/profile-graphics-teardown.mjs",
+    "test:web-performance": "node scripts/compare-web-runtime.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

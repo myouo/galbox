@@ -1,0 +1,13 @@
+{
+  "result": "passed",
+  "sourceFiles": 456,
+  "taskStatesAndDependencies": true,
+  "evidenceExists": true,
+  "sourceHashesMatch": true,
+  "sameTraceAndWebResponsiveness": true,
+  "browserExpected": 130,
+  "browserSkippedFlakyUnexpected": 0,
+  "graphicsFixedWorkloadAndCleanup": true,
+  "artifactHashesMatch": true,
+  "nativeNoWebGLDev": true
+}

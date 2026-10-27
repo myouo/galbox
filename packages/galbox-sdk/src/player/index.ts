@@ -1,3 +1,4 @@
+import {BrowserScheduler} from '../web-host/scheduler.js';
 import {parseSystemScreen,parseGamePresentation} from '../protocol/index.js';
 import {ScriptUIRenderer} from '../web-host/script-ui.js';
 import {parseUIAction,parseUIEvent} from '../protocol/index.js';
@@ -92,6 +93,7 @@ export class Player {
   private autoSaving=false;private lastAutoCut='';
   private readonly backupCommits=new WeakMap<PreparedBackupRestore,string>();
   private runtime:Coordinator|null=null;
+  private readonly scheduler=new BrowserScheduler();
   private preferences:PreferencesRecord;
   private readonly preferencesDefaults:import('../protocol/index.js').PlayerPreferences;
   private preferencesSupported=false;
@@ -201,9 +203,8 @@ export class Player {
   }
   private frame=(now:number):void=>{
     if(this.disposed)return;
-    const ms=this.elapsed(now);
-    if(this.runtime&&!this.pauses.size&&(this.lifecycle==='playing'||this.lifecycle==='preparing')) {
-      void this.runtime.dispatch({type:'tick',ms}).catch(e=>this.fail(e));
+    if(this.runtime&&!this.runtime.executing&&!this.pauses.size&&(this.lifecycle==='playing'||this.lifecycle==='preparing')) {
+      void this.runtime.dispatch({type:'tick',ms:this.elapsed(now)}).catch(e=>this.fail(e));
     }
     this.frameId=requestAnimationFrame(this.frame);
   };
@@ -221,9 +222,9 @@ export class Player {
   private async refreshSlots():Promise<void> {
     if(this.disposed)return;const records=await this.requireStore().listSlots?.();const profiles=await this.requireStore().listProfiles?.();if(profiles)this.profiles=profiles.map(p=>({...p}));if(records)this.slots=records.map(r=>({slot:r.slot,revision:r.revision,profileId:r.metadata.profileId,label:r.metadata.label||r.slot,kind:r.metadata.kind??'legacy',capture:r.metadata.capture?parseSaveCapture(r.metadata.capture):null,hasPrevious:r.hasPrevious??false}));this.publish();
   }
-  private async initialCandidate(profile:Profile,entryNode?:string,entryScene?:string):Promise<Core> {
+  private async initialCandidate(profile:Profile,entryNode?:string,entryScene?:string,generation=this.generation):Promise<Core> {
     const candidate=new Core(this.program,profile,undefined,'initial',this.operations,this.program.rng&&'seedSource'in this.program.rng?crypto.getRandomValues(new Uint32Array(1))[0]:undefined,entryNode,entryScene);candidate.accept({type:'text.preferences',value:this.preferences.value.text});let operations=0;
-    for(;;){const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:profile.revision});continue;}if(result==='stable')return candidate;await new Promise<void>(resolve=>queueMicrotask(resolve));}
+    for(;;){ensure(generation===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Startup candidate was replaced');const result=candidate.run(this.options.budget??100);operations+=this.options.budget??100;ensure(operations<=100000,'STARTUP_BUDGET','Startup did not reach a semantic prompt');if(candidate.view().run.wait?.kind==='flush'){candidate.accept({type:'flushAck',revision:profile.revision});continue;}if(result==='stable')return candidate;await this.scheduler.turn();}
   }
   async start(profileId='main'):Promise<void> {this.storyOperation();++this.screenGeneration;
     this.requireStore();const gen=++this.generation;this.lifecycle='preparing';this.publish();
@@ -239,7 +240,7 @@ export class Player {
     ensure(this.replayOnly||!activation.snapshot.replayScene,'EXTRAS_REPLAY_ONLY','A gallery replay cannot take over the main story');const store=this.requireStore(),head=await store.read(activation.profileId??'main');
     ensure(head.head?.id===activation.id&&(head.head.owner??head.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Candidate no longer owns the durable head');
     const historyRecord=store.readHistory&&store.commitHistory&&store.historyReceipt?await store.readHistory(activation.profileId??'main'):{revision:0,entries:[]};ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','History preparation was superseded');this.inputController.clear();const candidate=new Core(this.program,head.profile,activation.snapshot,activation.mode??'restore',this.operations);candidate.accept({type:'text.preferences',value:this.preferences.value.text});const epoch=++this.epoch;this.host.setEpoch(epoch);this.host.render(candidate.view().run);this.text?.render(candidate.view().run);
-    const runtime=new Coordinator(candidate,this.host,{defer:callback=>queueMicrotask(callback)},store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100,new HistoryJournal(this.historyPolicy,historyRecord,activation.profileId??'main',owner,`history:${crypto.randomUUID()}`,store));this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
+    const runtime=new Coordinator(candidate,this.host,this.scheduler,store,epoch,owner,`${this.instance}:${epoch}`,this.options.budget??100,new HistoryJournal(this.historyPolicy,historyRecord,activation.profileId??'main',owner,`history:${crypto.randomUUID()}`,store));this.runtime=runtime;this.unsubscribe=runtime.subscribe(()=>this.publish());this.profileId=activation.profileId??'main';this.onLoad=activation.onLoad;this.provenance=activation.provenance;
     await runtime.configurePlayback(this.preferences.value.playback);await runtime.pausePlayback(this.pauses.size>0);await runtime.start();await this.host.awaitAudioStarts();this.host.assertReady();ensure(gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Takeover was superseded');
     await store.confirm(activation.id,owner);const confirmed=await store.read(this.profileId);ensure(confirmed.head?.id===activation.id&&(confirmed.head.owner??confirmed.head.id)===owner&&gen===this.generation&&!this.disposed,'ACTIVATION_SUPERSEDED','Head changed during takeover');
     this.lifecycle='playing';this.error=null;if(this.presentation){++this.screenGeneration;this.systemScreen='story';this.menu=false;this.setPause('menu',false);}else if(!this.menu)this.systemScreen='story';if(activation.slot||activation.mode!=='initial')this.lastAutoCut=this.autoCut();this.publish();
@@ -251,7 +252,7 @@ export class Player {
       try {
         if(old){await old.freeze();await old.flushAll();}ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale');
         if(policy.entryNode!==undefined)ensure(!old||old.view().canSave,'FLOW_ENTRY_UNAVAILABLE',old?.view().saveReason??'Current cut cannot be left');const durable=await store.read(policy.profileId);this.graphProfile=parseProfile(durable.profile);expectedHead=durable.head?.id??null;let snapshot:Snapshot,changes:readonly ProgressChange[]=[],mode:'initial'|'restore'='restore';
-        if(policy.start){const candidate=await this.initialCandidate(durable.profile,policy.entryNode,policy.entryScene);const v=candidate.view();ensure(v.canSave||v.saveReason==='VIDEO_ACTIVE_UNRESTORABLE','SAVE_UNAVAILABLE',v.saveReason??'startup');snapshot=parseSnapshot(v.run);changes=candidate.pending();mode='initial';}
+        if(policy.start){const candidate=await this.initialCandidate(durable.profile,policy.entryNode,policy.entryScene,gen);const v=candidate.view();ensure(v.canSave||v.saveReason==='VIDEO_ACTIVE_UNRESTORABLE','SAVE_UNAVAILABLE',v.saveReason??'startup');snapshot=parseSnapshot(v.run);changes=candidate.pending();mode='initial';}
         else {ensure(baseline,'LOAD_BASELINE','Missing snapshot');snapshot=validateRestore(this.program,baseline,this.operations);if(policy.recipe){const prepared=prepareRestoreRecipe(this.program,durable.profile,snapshot,policy.recipe,{operations:this.operations});snapshot=prepared.snapshot;changes=prepared.changes;mode='initial';}}
         ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate became stale during preparation');id=`${this.instance}:a${gen}`;
         this.host.validateGraphicsPlan(snapshot);this.host.validateAudioPlan(snapshot);await this.host.revalidateStreams();ensure(gen===this.generation&&!this.disposed,'LOAD_SUPERSEDED','Candidate replaced during media validation');
@@ -398,7 +399,7 @@ export class Player {
   dispose():void {
     if(this.disposed)return;this.disposed=true;++this.screenGeneration;++this.generation;++this.importGeneration;this.options.signal?.removeEventListener('abort',this.abortRequested);this.abort.abort();const extra=this.extra;this.extra=null;extra?.controller.abort();extra?.imageAbort?.abort();extra?.image?.();extra?.child?.dispose();cancelAnimationFrame(this.frameId);
     document.removeEventListener('visibilitychange',this.visibility);window.removeEventListener('blur',this.blur);window.removeEventListener('focus',this.focus);
-    this.unsubscribe?.();this.runtime?.stop();this.inputController.dispose();this.scriptUI?.dispose();this.scriptUI=null;this.host.observeHistoryVoice(null);this.host.observeMusic(null);this.host.dispose();if(this.host.disposalError)this.error=String(this.host.disposalError);try{this.text?.dispose();}catch(error){this.error=String(error);}this.text=null;this.lifecycle='disposed';this.publish();this.listeners.clear();
+    this.unsubscribe?.();this.runtime?.stop();this.scheduler.dispose();this.inputController.dispose();this.scriptUI?.dispose();this.scriptUI=null;this.host.observeHistoryVoice(null);this.host.observeMusic(null);this.host.dispose();if(this.host.disposalError)this.error=String(this.host.disposalError);try{this.text?.dispose();}catch(error){this.error=String(error);}this.text=null;this.lifecycle='disposed';this.publish();this.listeners.clear();
     // IDB transactions already started finish before db.close. Borrowed stores remain open.
     if(this.ownsStore)this.store?.close();
   }

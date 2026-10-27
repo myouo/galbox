@@ -19,3 +19,10 @@ H3-01按用户要求优先处理实际运行热点，状态见tasks.json，设�
 Core.view可能返回同一对象，旧引用保持不变；其readonly在运行时也被深冻结。Core.capture仍是独立可写wire DTO，适合明确迁移/导出。未按只读契约修改view的JavaScript调用方将被拒绝；不能把视图当可变草稿。
 
 已知边界：显式全量捕获/恢复与每次历史新增仍有随数据增长的工作；IndexedDB当前按命名空间保存/校验完整状态，较大事务仍有成本。10000条Core历史不是“任何10000条内容都能放进4MB命名空间”的承诺，所有相互独立的预算同时适用。性能数值只证明所测工作负载，不是60FPS、全设备、移动真机、所有自定义renderer或大作品认证。G7继续综合与规模验证。
+
+W1-01/ADR0032继续处理长指令串和Web响应性：Core对私有Program建立地址索引，Player使用真正浏览器任务续跑与可取消启动，不再连续queueMicrotask；rAF在逻辑轮次执行中不积压tick。同步输入校验、Core构造及同步插件仍需单独衡量，不承诺任何输入下零长任务。
+
+- `pnpm profile:web`：Node 1000/6000指令与预算1/8/100；浏览器原生禁用WebGL、Canvas、启动/运行长计算各3次，计时器/rAF从首个真实yield开始观测。before/after路径用GALBOX_EVIDENCE_DIR设置；`pnpm test:web-performance`核对脚本/环境/trace和响应门槛。不能以同一优化版本制造before。
+- `pnpm profile:graphics`：生产Host固定61提交/960ms，WebGL/Canvas与burst/rAF；none/finish/readback逐一比较，等待+dispose与总成本均保留。GALBOX_GRAPHICS_EXPERIMENT=no-msaa只做测试实验，不修改生产默认。详见evidence/h3-02/REPORT.md；当前软件GPU的提交积压与释放长尾没有被消除。
+
+现有性能脚本证明声明场景，不能把局部执行P95或微任务修复推广为“整个引擎达到绝对极限”。下一主要优化面是W1-02资源工作集和W1-03存储/程序规模，并以实际Web游玩首屏、卡顿、内存和可靠保存为标准。

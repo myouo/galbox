@@ -1,9 +1,13 @@
 # 当前实施计划
 
-用户优先性能。H3-01有限优化验收完成，perf/runtime-history、基线ce29850。217单元/124全浏览器/strict consumer/65 CLI/4 synthetic/API/原生无WebGL dev与同工作负载前后对照通过；证据evidence/h3-01，设计ADR0031，公开说明PERFORMANCE。
+W1-01/H3-02完成；下一W1-02。分支perf/web-responsive-runtime，基线c71537b，本轮代码/证据在同一本地提交，无外部发布。
 
-10000历史tick 92.06→0.084ms；1000历史/IDB/回溯API111.2→47.9ms、flush232.1→62ms；Node trace和12张PNG相同。标准API22.3→17.3/15.9ms。销毁更高的样本全部保留（56–115ms），不把500ms通过当未回归。
+已完成索引、BrowserScheduler真实任务让出/懒端口、启动取消、运行中rAF不积压；220单元、130浏览器、独立消费、65CLI、compat、perf、API和原生禁WebGL dev均通过。报告evidence/w1-01与h3-02；当前dev在4173。测试改源码后必须重验，不能复用不再匹配的source-manifest。
 
-下一H3-02尚未实施：固定剧情与实际提交帧数，分别测GPU drain/gl.finish、native loseContext、SDK资源清理，在WebGL/Canvas下比较；先定位差异因果，再决定生产修复，禁止仅延后清理来美化dispose计时。之后G7继续综合、容量与其它性能验证；N/F/M6真实资料仍缺。
+下一顺序：
+1. 读STATUS/tasks/WEB_READINESS、v0.6第10.4节和现有Host/assets/streams实现；保留本次Git改动与启动服务事实。
+2. W1-02先限定启动资源与剧情依赖、优先级/并发/缓存预算、共享lease/引用计数和旧画面屏障，写ADR；先测整目录准备的冷启动/内存基线。
+3. 沿生产路径实现按需准备与受控预取/淘汰，覆盖取消迟到/重试/恢复/预算/独立实例，不给Core加入DOM或作品特判；UI/字体/鉴赏资源需求也纳入。
+4. 真实浏览器网络节流、两图形后端、保存刷新与独立包验证，更新证据。之后W1-03模块/存储、W1-04离线/发布/平台，G7保留。
 
-当前dev4173，/?demo=interface；TMPDIR=/dev/shm。完整browser前停dev。源码/API未变后不用重复已有门槛；后续改动需对应重验。只做授权本地提交，无外部发布。
+W1-01不等于大作品全部就绪；H3-02只完成归因，软件GPU释放积压尚在。N/F真实资料缺失照旧。使用TMPDIR=/dev/shm；test:browser前停dev。已有本地提交授权延续，不推送/发布。

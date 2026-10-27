@@ -72,3 +72,10 @@ const {streamRequest}=await import('galbox-sdk/port-kit');const {parseIntegrityE
 {
  const c=createCore(p);c.run(100);const first=c.view(),originalRoute=first.run.globals.route.value;assert.equal(c.view(),first);assert.ok(Object.isFrozen(first.run.history));assert.equal(Reflect.set(first.run.globals.route,'value','forbidden'),false);c.accept({type:'tick',ms:16});const next=c.view();assert.equal(next.run.history,first.run.history);assert.equal(next.run.logicalTime,first.run.logicalTime+16);const detached=c.capture();detached.globals.route.value='caller copy';assert.equal(c.view().run.globals.route.value,originalRoute);console.log('Packed immutable view reuse / old reference isolation / detached capture passed');
 }
+
+{
+ const {ProgramBuilder,instruction}=await import('galbox-sdk/port-kit'),{i32}=await import('galbox-sdk/protocol');
+ const burst=new ProgramBuilder({gameId:'packed-indexed',release:'v1',entry:'main'}).global({id:'n',kind:'i32',initial:i32(0)}).function({id:'main',entry:'work:0',layout:1,params:[],locals:[],returns:'void',code:[...Array.from({length:6000},(_,i)=>instruction('value.set',{at:`work:${i}`,dest:'n',value:{literal:i32(i)}})),instruction('control.end',{at:'end'})]}).build();
+ let expected;for(const budget of [1,8,100]){const c=createCore(burst);while(c.run(budget)==='yield'){}const snapshot=c.capture();assert.equal(snapshot.globals.n.value,5999);if(expected)assert.deepEqual(snapshot,expected);else expected=snapshot;}
+ console.log('Packed indexed execution / 6000 instructions / budgets 1,8,100 passed');
+}

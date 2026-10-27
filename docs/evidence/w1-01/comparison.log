@@ -1,0 +1,125 @@
+$ node scripts/compare-web-runtime.mjs
+{
+  "result": "passed",
+  "baseline": "c71537b3c3bf3d7e55baa5a8128679fef7da1ab6",
+  "revision": "c71537b3c3bf3d7e55baa5a8128679fef7da1ab6",
+  "node": [
+    {
+      "size": 1000,
+      "budget": 1,
+      "beforeP95Ms": 18.55377999999996,
+      "afterP95Ms": 9.218649999999911,
+      "sameTrace": true
+    },
+    {
+      "size": 1000,
+      "budget": 8,
+      "beforeP95Ms": 14.005570999999918,
+      "afterP95Ms": 8.242672000000084,
+      "sameTrace": true
+    },
+    {
+      "size": 1000,
+      "budget": 100,
+      "beforeP95Ms": 8.548363999999992,
+      "afterP95Ms": 5.400221999999985,
+      "sameTrace": true
+    },
+    {
+      "size": 6000,
+      "budget": 1,
+      "beforeP95Ms": 220.10274800000025,
+      "afterP95Ms": 57.32427800000005,
+      "sameTrace": true
+    },
+    {
+      "size": 6000,
+      "budget": 8,
+      "beforeP95Ms": 192.79499099999975,
+      "afterP95Ms": 29.327283999999963,
+      "sameTrace": true
+    },
+    {
+      "size": 6000,
+      "budget": 100,
+      "beforeP95Ms": 214.37588200000027,
+      "afterP95Ms": 35.09215399999994,
+      "sameTrace": true
+    }
+  ],
+  "cases": [
+    {
+      "kind": "startup",
+      "repeat": 0,
+      "beforeExecutionMs": 498,
+      "afterExecutionMs": 254,
+      "beforeTimerLagMs": 455,
+      "afterTimerLagMs": 8,
+      "beforeTimerDuring": false,
+      "afterTimerDuring": true,
+      "beforeRafDuring": false,
+      "afterRafDuring": true
+    },
+    {
+      "kind": "startup",
+      "repeat": 1,
+      "beforeExecutionMs": 573.4000000953674,
+      "afterExecutionMs": 245.89999997615814,
+      "beforeTimerLagMs": 540.5,
+      "afterTimerLagMs": 2,
+      "beforeTimerDuring": false,
+      "afterTimerDuring": true,
+      "beforeRafDuring": false,
+      "afterRafDuring": true
+    },
+    {
+      "kind": "startup",
+      "repeat": 2,
+      "beforeExecutionMs": 410.10000002384186,
+      "afterExecutionMs": 183.89999997615814,
+      "beforeTimerLagMs": 377.6999999284744,
+      "afterTimerLagMs": 1.7000000476837158,
+      "beforeTimerDuring": false,
+      "afterTimerDuring": true,
+      "beforeRafDuring": false,
+      "afterRafDuring": true
+    },
+    {
+      "kind": "runtime",
+      "repeat": 0,
+      "beforeExecutionMs": 357.2000000476837,
+      "afterExecutionMs": 48.199999928474426,
+      "beforeTimerLagMs": 362.7999999523163,
+      "afterTimerLagMs": 11.199999928474426,
+      "beforeTimerDuring": false,
+      "afterTimerDuring": true,
+      "beforeRafDuring": false,
+      "afterRafDuring": true
+    },
+    {
+      "kind": "runtime",
+      "repeat": 1,
+      "beforeExecutionMs": 346,
+      "afterExecutionMs": 28.299999952316284,
+      "beforeTimerLagMs": 351,
+      "afterTimerLagMs": 6.200000047683716,
+      "beforeTimerDuring": false,
+      "afterTimerDuring": true,
+      "beforeRafDuring": false,
+      "afterRafDuring": true
+    },
+    {
+      "kind": "runtime",
+      "repeat": 2,
+      "beforeExecutionMs": 313,
+      "afterExecutionMs": 29,
+      "beforeTimerLagMs": 318.2000000476837,
+      "afterTimerLagMs": 7.299999952316284,
+      "beforeTimerDuring": false,
+      "afterTimerDuring": true,
+      "beforeRafDuring": false,
+      "afterRafDuring": true
+    }
+  ],
+  "scope": "same bounded 6000-instruction workload; construction/I/O and arbitrary synchronous extensions are separate costs"
+}

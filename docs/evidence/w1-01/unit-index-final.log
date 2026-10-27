@@ -1,0 +1,9 @@
+
+ RUN  v5.0.5 /home/myo/Desktop/galbox-sdk
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  10:27:40
+   Duration  1.61s (tests 62%, import 24%, transform 14%)
+

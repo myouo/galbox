@@ -18,3 +18,5 @@ export * from 'galbox-sdk/settings';
 export {DefaultUI,GameUI} from 'galbox-sdk/react';
 export {createElement} from 'react';
 export {createRoot} from 'react-dom/client';
+export {WebHost} from '../../../packages/galbox-sdk/src/web-host/host.js';
+export {BrowserScheduler} from '../../../packages/galbox-sdk/src/web-host/scheduler.js';
