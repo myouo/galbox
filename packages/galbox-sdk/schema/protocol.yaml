@@ -6497,6 +6497,16 @@ definitions:
           - intervalMs
         additionalProperties: false
         x-proto-tag: 5
+      - type: object
+        properties:
+          kind:
+            type: string
+            const: confirm
+            x-proto-tag: 1
+        required:
+          - kind
+        additionalProperties: false
+        x-proto-tag: 6
   TextRun:
     oneOf:
       - type: object
@@ -6582,6 +6592,16 @@ definitions:
           - intervalMs
         additionalProperties: false
         x-proto-tag: 5
+      - type: object
+        properties:
+          kind:
+            type: string
+            const: confirm
+            x-proto-tag: 1
+        required:
+          - kind
+        additionalProperties: false
+        x-proto-tag: 6
   RichTextState:
     type: object
     properties:
@@ -6645,6 +6665,10 @@ definitions:
               x-proto-tag: 2
         maxItems: 4096
         x-proto-tag: 11
+      waitingForClick:
+        type: boolean
+        const: true
+        x-proto-tag: 12
     required:
       - version
       - segmentation

@@ -1,4 +1,4 @@
-import {isTextComplete} from '../protocol/text.js';
+import {isTextSegmentComplete} from '../protocol/text.js';
 import {parsePlaybackPreferences,readUnit} from '../protocol/index.js';
 import type {Effect,CoreView,CoreEvent} from '../core/index.js';
 export type PlaybackMode='manual'|'auto'|'skip';
@@ -32,7 +32,7 @@ export class PlaybackController {
    if(!this.preferences.skipUnread&&!view.profile.read.includes(readUnit(run.text))){this.mode='manual';this.reason='unread';this.reset();return null;}
    this.reason='skipping';return {type:'step',prompt:w.prompt,inputId:`${this.identity}:skip:${++this.sequence}`};
   }
-  const full=isTextComplete(run.text),voice=this.voice;
+  const full=isTextSegmentComplete(run.text),voice=this.voice;
   if(!full||voice&&voice.state!=='ended'){this.reason=!full?'revealing':voice?.loop?'voice-loop':`voice-${voice?.state}`;this.reset();return null;}
   this.reason='auto-delay';if(this.eligible)this.elapsed+=ms;else this.eligible=true;
   if(this.elapsed<this.preferences.autoDelayMs)return null;

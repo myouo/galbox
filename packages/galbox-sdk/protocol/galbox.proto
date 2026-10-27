@@ -5798,6 +5798,14 @@ message Gbx_RichTextSourceRun_Case5 {
   optional Gbx_RichTextSourceRun_Case5_intervalMs intervalMs = 2;
 }
 
+message Gbx_RichTextSourceRun_Case6_kind {
+  // Fixed semantic value: "confirm"
+}
+
+message Gbx_RichTextSourceRun_Case6 {
+  optional Gbx_RichTextSourceRun_Case6_kind kind = 1;
+}
+
 message Gbx_RichTextSourceRun {
   oneof value {
     Gbx_RichTextSourceRun_Case1 v1 = 1;
@@ -5805,6 +5813,7 @@ message Gbx_RichTextSourceRun {
     Gbx_RichTextSourceRun_Case3 v3 = 3;
     Gbx_RichTextSourceRun_Case4 v4 = 4;
     Gbx_RichTextSourceRun_Case5 v5 = 5;
+    Gbx_RichTextSourceRun_Case6 v6 = 6;
   }
 }
 
@@ -5883,6 +5892,14 @@ message Gbx_TextRun_Case5 {
   optional Gbx_TextRun_Case5_intervalMs intervalMs = 2;
 }
 
+message Gbx_TextRun_Case6_kind {
+  // Fixed semantic value: "confirm"
+}
+
+message Gbx_TextRun_Case6 {
+  optional Gbx_TextRun_Case6_kind kind = 1;
+}
+
 message Gbx_TextRun {
   oneof value {
     Gbx_TextRun_Case1 v1 = 1;
@@ -5890,6 +5907,7 @@ message Gbx_TextRun {
     Gbx_TextRun_Case3 v3 = 3;
     Gbx_TextRun_Case4 v4 = 4;
     Gbx_TextRun_Case5 v5 = 5;
+    Gbx_TextRun_Case6 v6 = 6;
   }
 }
 
@@ -5956,6 +5974,10 @@ message Gbx_RichTextState_revealedAt {
   repeated Gbx_RichTextState_revealedAt_Item items = 1;
 }
 
+message Gbx_RichTextState_waitingForClick {
+  // Fixed semantic value: true
+}
+
 message Gbx_RichTextState {
   optional Gbx_RichTextState_version version = 1;
   optional Gbx_RichTextState_segmentation segmentation = 2;
@@ -5968,6 +5990,7 @@ message Gbx_RichTextState {
   optional Gbx_RichTextState_pauseRemainingMs pauseRemainingMs = 9;
   optional Gbx_RichTextState_baseIntervalMs baseIntervalMs = 10;
   optional Gbx_RichTextState_revealedAt revealedAt = 11;
+  optional Gbx_RichTextState_waitingForClick waitingForClick = 12;
 }
 
 message Gbx_TextFont_Case1_kind {

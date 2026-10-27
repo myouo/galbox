@@ -10,6 +10,7 @@ export const richText=Object.freeze({
  text:(content:Content,style?:TextStyle)=>run('text',{kind:'text',content:expression(content),...(style?{style}:{})}),
  ruby:(content:Content,reading:Content,style?:TextStyle)=>run('ruby',{kind:'ruby',content:expression(content),reading:expression(reading),...(style?{style}:{})}),
  br:()=>run('break',{kind:'break'}),
+ confirm:()=>run('confirm',{kind:'confirm'}),
  pause:(duration:number)=>run('pause',{kind:'pause',duration}),
  speed:(intervalMs:number)=>run('speed',{kind:'speed',intervalMs})
 });

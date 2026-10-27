@@ -1,19 +1,15 @@
 # galbox-sdk 当前状态
 
-2026-10-27，基线e20366a。本轮完成G2-03无署名旁白、E1-02干净生成与S1-01源码迁移skill；F-01/F-01A进行中，F-02真实原档未开始。当前主线F-01A：以KAG/TJS项目组织、宏和资源分析推进，尽可能还原原作表现；用户明确不要游戏内的实验/说明/诊断/SDK工具栏，不走exe逆向路线。
+2026-10-28，SDK基线5e9e17a，本轮G2-04有限页内确认完成，F-01/F-01A继续进行，原档F-02未开始。用户要求真实实例在SDK外独立依赖、尽可能还原原作表现、无额外实验/诊断/SDK工具栏，以KAG/TJS/资源组织分析为主，不逆向exe。保持唯一TypeScript Core/Web Host路线。
 
-独立作品工程/home/myo/Desktop/galbox-fata-morgana，通过实际SDK tarball和公开exports开发，不借workspace/private源码。SDK仓库未放游戏载荷。原安装目录只读：Steam app303310/build21523397，9个XP3/6284文件/804311540字节提取后长度与Adler32通过，源包SHA复验不变。8语言共享/覆盖目录分开。原版槽位/global/附件及继续参照仍缺，不能认证原档。
+G2-04/ADR0038：richText.confirm、可保存确认游标、新prompt隔离、同页PC/历史ID与页尾已读/历史提交、段落显完/Auto/Skip和默认UI已实现。on-prompt自动槽按输入阶段触发并保持有界；prompt溢出先拒绝，不留半份文字/时钟/profile变化。新源签名无隐式旧档迁移，旧无confirm内容保持兼容。代码与验收见evidence/g2-04/REPORT.md。
 
-源码链startup→Initialize(KAG3.26/语言包/搜索路径)→first(宏/插件)→title→scenario已梳理。标题按钮定位需加Config消息边距，例如535+70=605；空姓名宏仍有布局/历史副作用，字体与行距各语言不同。整作有重复与独有标签、动态宏/TJS，不能按行zip或简单文本替换。详细独立工程docs/ARCHITECTURE.md。
+实际验证：check-accepted通过；38文件246单元；17聚焦浏览器及最后7针对最终显完效果的复验通过，包含两后端/图文保存/真实IndexedDB/刷新/过期输入/NVL/单次历史/默认UI/自动槽。没有冒称重跑旧完整151。实包226文件497984字节、14入口0删除/API与pack/dry-run通过；SDK SHA=d0b01e30c1ccc19a15357a0ced51958b6e9419a47b5ff41c1bdeaa007e93c071。无游戏/证据/日志/Schema JSON/maps，无实际发布。
 
-当前实例仅原图标题静态状态（开始按钮已接通）及8语言各22页旁白，176页由正式Core逐页及两次protobuf恢复通过，22个GUID在此切片一致。游戏内已移除全部额外说明/诊断/语言下拉/默认工具栏/自造结束提示，4:3与源参数布局。最后3真实浏览器通过：8语言/原图标题/无额外UI/4:3/正文位置、Canvas禁用WebGL、图文保存/刷新/双语言隔离、22页。正文position:absolute缺失曾导致跑到顶部，已修正并补位置断言，截图目视复验。原OP44转场/音轨、其余菜单动作、中日.tft字形、后续页内[l]与整作仍未还原，F-01A不done。
+独立工程/home/myo/Desktop/galbox-fata-morgana已安装精确新tar并冻结/类型/3 Python+13 TS/实际转换/3浏览器复验。新字面文本流[l]→confirm、r→换行，8语言真实含[l]源段的同页/页尾历史/protobuf恢复通过；当前开场转换器复用该路径，没有往原22页中添加不存在的控制。
 
-SDK ADR0037通用旁白修复：三类文本允许空speaker并隐藏姓名，正文仍非空；Schema/工厂/Core/DOM/快照/protobuf同路径。pnpm check、37文件238单元、7聚焦浏览器及最后tsc通过，未冒称重跑旧完整151。干净目录生成与--check只读mtime验证通过；generate补自身mkdir，release-audit重建基线生成物。实际API/pack/dry-run对e203通过14入口/0删除，未发布。SDK最终SHA=0a2f8f25929e0663d878bdb5cdbaea7be5d3d183d61d9dbb57d085b27047fe7c，独立工程已按带散列文件名更新依赖、冻结安装/类型/转换/3浏览器重验。详见evidence/narration与fata-steam；raw在artifacts/narration及独立artifacts。
+源码前端核实了KAG反引号、裸true、&/%/继承、重复参数源顺序覆盖和原生重复标签别名；全部701份KS保留为raw控制IR，3337宏定义候选和依赖表只在独立ignored artifacts/ast。宏模板可以只打开if，跳转/返回还会影响条件上下文，不能硬凑全文件结构化括号。raw IR不是已执行注册/完整CFG或整作兼容。技能kag-krkr2-porting补充了这些第一方源码规则并校验。
 
-新skill /home/myo/.codex/skills/kag-krkr2-porting：先检索并阅读现有XP3/ksdec/WASM构建调试skills，再补源码组织/宏语义/忠实移植方法；不是声称无相关技能。校验及助手合成边界/真实1021脚本清点通过。详见evidence/kag-skill，检索/验证raw在artifacts/skill-search。skill不含原作载荷，$kag-krkr2-porting可显式调用。
+游戏GUI仍是4:3原图标题（仅开始接通）和8语言各22页旁白。原OP44转场/音轨、其他菜单、中日.tft、正常对话宏/变量/人物上下文、完整i18n和整作未完成；独立界面无额外实验内容。Steam app303310/build21523397的9包/6284文件资料已只读提取并校验，原版槽位/global/继续参照仍缺，不认证原档。独立dev4180默认Canvas；原资料/日志/vendor拒绝HTTP访问，watch/依赖扫描有界。原始载荷均ignore，SDK内没有真实游戏。
 
-曾仅运行隔离exe副本作参照，未反汇编/修改exe，未得可用画面；按用户要求已停止并结束独立prefix服务，后续仅脚本/资源分析，不把黑屏或素材合成当原作运行证据。无推送/发布。
-
-运行独立项目pnpm dev，127.0.0.1:4180，?lang=zh/en/fr/it/jp/ko/pt-br/ru，默认Canvas。SDK自身pnpm dev仍是tests/player-app验证应用。精确下一步：用新skill继续KAG AST/宏注册/参数与调用作用域、资源覆盖图，逐项恢复完整开场演出；页内确认G2-04、规则图转场G3-05、I1国际化、模块B2/容量C/离线W1-04及G7仍未完成。按语言分包且存档隔离不等于SDK完整i18n。
-
-开发模式另验：独立Vite原默认依赖扫描发生OOM；已限定index.html入口、排除private/artifacts/vendor/dist监视并禁止HTTP读取原始资料/日志/依赖包。新dev真实浏览器通过原标题/首句/Canvas无WebGL/0 pageerror和三个原始路径403，4180已恢复。此项只有独立工程配置变更，SDK运行包SHA不变。
+下一F-01A：用已保留的宏模板和raw控制IR建立注册顺序/参数/调用/变量CFG，优先G3-05规则图转场、原OP音轨与正常对话接入。I1、模块B2/存储C/离线W1-04、G7总体仍未完成。只本地提交，不推送/发布/历史重写。

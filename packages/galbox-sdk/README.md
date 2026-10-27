@@ -102,3 +102,5 @@ compileProgramModules/createModuleProgram与createModulePlayer提供函数级基
 正式外部传输使用galbox-sdk/wire的encodeWire/decodeWire及包内protocol/galbox.proto；代码模块、备份和设置默认二进制.pb。协议源为YAML，运行包不包含JSON schema。内部Core/Host使用强类型DTO，IndexedDB使用structured clone。SDK包白名单排除游戏、测试、证据、日志和source map；其他项目通过player/core/port-kit/wire/react等公开exports导入，不复制仓库目录。
 
 无署名旁白：text.page、templatePage、richPage 的 speaker 可以为空字符串，DOM会隐藏姓名。正文和Ruby读音仍须非空，快照/protobuf保留空姓名。旧SDK遇到含该值的新档仍可能明确拒绝。见ADR0037；该能力来自独立真实作品实验的通用修复，没有作品特判。
+
+页内确认：richText.confirm()在同一richPage内停止揭示并等待确认，reveal/step只显完当前段；确认保留前文，整页已读/历史仅在最终页尾提交。进入/解除确认会更新输入prompt，调用方应订阅最新视图。Snapshot/protobuf保留确认游标，Auto按段等待语音/效果与延迟，skip仍遵守已读策略；on-prompt自动存档按新的输入阶段触发。见ADR0038；新控制不做隐式旧档迁移。

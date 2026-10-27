@@ -1,3 +1,4 @@
+import {isTextConfirming} from '../protocol/index.js';
 import {ResourceLoading} from './loading.js';
 import {PressButton} from './press.js';
 import {GameUI} from './game-ui.js';
@@ -28,7 +29,7 @@ function StoryUI({player}:{player:Player}) {
     {view.lifecycle==='ready'&&<div className="welcome"><p className="eyebrow">VISUAL NOVEL PLAYER</p>{view.resources.renderer==='canvas'&&<small data-testid="graphics-mode">兼容绘图模式已启用</small>}<h1>{view.title}</h1><p>开始一个新的故事。<br/>阅读进度会保存在这台设备上。</p><button className="primary" onClick={()=>invoke(player.start())}>开始阅读</button><button onClick={()=>invoke(player.quickLoad())}>读取快速存档</button></div>}
     {view.lifecycle==='preparing'&&<div className="busy" role="status">准备故事…</div>}
     {(view.lifecycle==='committed-pending'||view.lifecycle==='commit-unknown')&&<div className="modal"><p>{view.lifecycle==='commit-unknown'?'提交结果尚未确认，请先核验持久记录。':'存储已提交，等待接管。'}</p><button onClick={()=>invoke(player.resumeCommitted())}>恢复当前激活</button><button onClick={()=>invoke(player.start())}>开始新游戏</button></div>}
-    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='text'&&<PressButton className="advance" data-testid="advance" aria-label="显完或下一页" identity={`${view.epoch}:${wait.prompt}:${view.paused}:${view.menu}`} activate={()=>invoke(player.step(wait.prompt,view.epoch))}>下一页 <span>◇</span></PressButton>}
+    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='text'&&<PressButton className="advance" data-testid="advance" aria-label={run?.text&&isTextConfirming(run.text)?'确认并继续':'显完或下一页'} identity={`${view.epoch}:${wait.prompt}:${view.paused}:${view.menu}`} activate={()=>invoke(player.step(wait.prompt,view.epoch))}>{run?.text&&isTextConfirming(run.text)?'继续':'下一页'} <span>◇</span></PressButton>}
     {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='choice'&&<div className="choices">{wait.options.map(o=><PressButton key={`${wait.prompt}:${o.id}`} identity={`${view.epoch}:${wait.prompt}:${o.id}:${view.paused}:${view.menu}`} activate={()=>invoke(player.input('choose',wait.prompt,view.epoch,o.id))}>{o.text}</PressButton>)}</div>}
     <InteractionPanel player={player} view={view}/>
     {view.lifecycle==='playing'&&wait?.kind==='video'&&!view.menu&&!view.paused&&<div className="video-controls">{run?.tasks.find(t=>t.id===wait.task)?.videoTask?.skippable&&<button key={`${view.epoch}:${wait.prompt}`} onClick={()=>invoke(player.skipVideo(wait.prompt,view.epoch))}>跳過影片</button>}{run?.tasks.find(t=>t.id===wait.task)?.status==='blocked'&&<button onClick={()=>invoke(player.retryVideo())}>重試影片播放</button>}</div>}

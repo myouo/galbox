@@ -111,7 +111,7 @@ export function parseRichTextSourceRun(input:unknown):RichTextSourceRun {const d
 
 export function parseTextState(input:unknown):TextState {const data=detached(input);ensure(validateTextState(data),'SCHEMA_TEXT',JSON.stringify(validateTextState.errors));return data;}
 
-export {isTextComplete,textUnitCount} from './text.js';
+export {isTextComplete,isTextConfirming,isTextSegmentComplete,textUnitCount} from './text.js';
 
 export function parseTextTheme(input:unknown):TextTheme {const data=detached(input);ensure(validateTextTheme(data),'SCHEMA_TEXT_LAYOUT',JSON.stringify(validateTextTheme.errors));return data;}
 

@@ -1,3 +1,4 @@
+import {isTextConfirming} from '../protocol/index.js';
 import {ResourceLoading} from './loading.js';
 import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import type {CSSProperties} from 'react';
@@ -29,7 +30,7 @@ function GameUIBody({player}:{player:Player}) {
  const resume=()=>navigate(view.core?'story':'title');
  return <div ref={root} className="galbox-ui galbox-game-ui" data-skin={skin.id} data-loading-mode={view.loading.mode} data-system-screen={screen} data-script-form={!!run?.ui?.active} style={style} tabIndex={0}>
  {inStory&&<><nav className="game-toolbar" aria-label="游戏工具栏"><span className="game-brand">{view.title}</span>{skin.toolbar.map(action=>{const label=action==='quick-save'?labels.quickSave:labels[action==='voice'?'voice':action],disabled=busy||action==='voice'&&!view.canReplayVoice||action==='quick-save'&&!view.core?.canSave;return <PressButton key={action} identity={`${id}:${action}`} disabled={disabled} aria-pressed={action==='auto'?view.playback.mode==='auto':action==='skip'?view.fast:undefined} activate={()=>{if(action==='menu')navigate('menu');else if(action==='history')navigate('history');else if(action==='quick-save')invoke(()=>player.quickSave(),'已保存到浏览器');else if(action==='voice')invoke(()=>player.replayVoice());else if(action==='auto')invoke(()=>player.setAuto(view.playback.mode!=='auto'));else player.setFast(!view.fast);}}>{label}</PressButton>;})}</nav>
- {!view.paused&&wait?.kind==='text'&&<PressButton className="advance" data-testid="advance" aria-label="显完或下一页" identity={id} activate={()=>invoke(()=>player.step(wait.prompt,view.epoch))}>下一页 ◇</PressButton>}
+ {!view.paused&&wait?.kind==='text'&&<PressButton className="advance" data-testid="advance" aria-label={view.core?.run.text&&isTextConfirming(view.core.run.text)?'确认并继续':'显完或下一页'} identity={id} activate={()=>invoke(()=>player.step(wait.prompt,view.epoch))}>{view.core?.run.text&&isTextConfirming(view.core.run.text)?'继续':'下一页'} ◇</PressButton>}
  {!view.paused&&wait?.kind==='choice'&&<div className="choices">{wait.options.map(o=><PressButton key={o.id} identity={`${id}:${o.id}`} activate={()=>invoke(()=>player.input('choose',wait.prompt,view.epoch,o.id))}>{o.text}</PressButton>)}</div>}
  <InteractionPanel player={player} view={view}/>
  {!view.paused&&wait?.kind==='video'&&<div className="video-controls">{run?.tasks.find(t=>t.id===wait.task)?.videoTask?.skippable&&<button onClick={()=>invoke(()=>player.skipVideo(wait.prompt,view.epoch))}>跳过影片</button>}<button onClick={()=>invoke(()=>player.retryVideo())}>重试影片</button></div>}

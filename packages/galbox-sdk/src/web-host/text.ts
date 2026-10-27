@@ -16,7 +16,7 @@ export class TextController {
     if(!text?.rich){this.key='';this.units=[];this.rubies=[];this.content.removeAttribute('aria-label');this.content.textContent=text?Array.from(text.content).slice(0,text.revealed).join(''):'';return;}
     const rich=text.rich,key=JSON.stringify([text.prompt,text.textId,text.revision,rich.runs]);
     if(key!==this.key){this.key=key;this.units=[];this.rubies=[];this.content.replaceChildren();const plan=compileRichText(rich.runs);
-      rich.runs.forEach((r,index)=>{if(r.kind==='pause'||r.kind==='speed')return;const root=r.kind==='ruby'?document.createElement('ruby'):this.content;
+      rich.runs.forEach((r,index)=>{if(r.kind==='pause'||r.kind==='speed'||r.kind==='confirm')return;const root=r.kind==='ruby'?document.createElement('ruby'):this.content;
         for(const token of plan.tokens){if(token.kind!=='unit'||token.run!==index)continue;const node=document.createElement('span'),style=token.style;node.className='galbox-text-unit';node.textContent=token.text;if(style.color)node.style.color=style.color;if(style.bold)node.style.fontWeight='bold';if(style.italic)node.style.fontStyle='italic';if(style.underline)node.style.textDecoration='underline';if(style.scale)node.style.fontSize=`${style.scale}em`;if(style.effect)node.dataset.effect=style.effect.kind;root.append(node);this.units.push({node,effect:style.effect});}
         if(r.kind==='ruby'){const reading=document.createElement('rt');reading.textContent=r.reading;if(r.style?.color)reading.style.color=r.style.color;root.append(reading);this.content.append(root);this.rubies.push({node:reading,end:this.units.length});}
       });

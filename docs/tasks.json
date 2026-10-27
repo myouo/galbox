@@ -20,7 +20,7 @@
   ],
   "current_task": "F-01A",
   "engine_status": "web_delivery_scaling",
-  "last_updated": "2026-10-27",
+  "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -2471,10 +2471,11 @@
         "no-experiment-ui"
       ],
       "evidence": [
-        "docs/evidence/fata-steam/REPORT.md"
+        "docs/evidence/fata-steam/REPORT.md",
+        "docs/evidence/g2-04/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "已提取并核验9包/6284文件，8语言各22页及原图标题、SDK恢复通过。继续KAG AST/宏注册与参数作用域，恢复原OP44转场/音轨和菜单，不逆向exe，不静默省略未知指令；当前不算完整开场/整作完成。"
+      "next_action": "KAG词法已按原生转义/参数/标签别名修正，701份KS raw IR和3337宏定义候选保留；G2-04及8语言实际[l]字面段验证通过，可玩仍22页。继续宏注册/调用与变量CFG、G3-05规则图和原OP/音轨/菜单，保持源分析，不逆向exe，不静默省略。"
     },
     {
       "id": "G2-04",
@@ -2484,9 +2485,9 @@
         "G2-01",
         "G1-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "inline confirmation continuation",
         "save and Auto/Skip input semantics"
@@ -2502,9 +2503,12 @@
         "advance-without-duplicate-input",
         "auto-skip-inline-boundaries"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/decisions/0038-inline-text-confirmation.md",
+        "docs/evidence/g2-04/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "真实KAG的[l]不是定时pause或换页。先ADR定义页内确认/揭示/历史/已读/恢复，再落实Schema/工厂/Core/输入与浏览器负例。"
+      "next_action": "有限页内确认已验收：Core/快照/输入/AutoSkip/默认UI/有界自动保存及独立真实源段落。完整KAG历史格式/宏/场景仍由F-01A继续，下一规则图转场与原OP。"
     },
     {
       "id": "G3-05",

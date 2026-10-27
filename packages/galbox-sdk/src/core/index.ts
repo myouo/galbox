@@ -16,7 +16,7 @@ import { ensure,parseProgramModuleBinding, parseSnapshot, parseProfile, parseVal
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume,InteractionEvent } from '../protocol/index.js';
 import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
 import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
-import {compileRichText,richTextSignature,textSegmentation,tickRichText,revealRichText,isTextComplete,validateRichText} from '../protocol/text.js';
+import {compileRichText,richTextSignature,textSegmentation,tickRichText,revealRichText,confirmRichText,isTextConfirming,isTextComplete,validateRichText} from '../protocol/text.js';
 import type {TextPlan} from '../protocol/text.js';
 import {evaluateExpression,templateSignature} from '../protocol/expressions.js';
 import {sampleI32,initialRng} from './rng.js';
@@ -82,6 +82,7 @@ export class Core {
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
   private textPlan():TextPlan {const rich=this.s.text?.rich;ensure(rich,'TEXT_STATE','No structured text');return this.richPlan??=compileRichText(rich.runs);}
+  private renewTextPrompt():void {const w=this.s.wait,text=this.s.text;ensure(w?.kind==='text'&&text,'TEXT_STATE','No active text prompt');const prompt=this.s.counter+1;i32(prompt);this.s.counter=prompt;text.prompt=prompt;w.prompt=prompt;}
   private definition(id:string){const result=this.functions.get(id);ensure(result,'FUNCTION',id);return result;}
   private fn(id:string):ProgramFunction {return this.definition(id).definition;}
   private frame(f:ProgramFunction,args:Value[]):Frame {
@@ -143,12 +144,17 @@ export class Core {
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
       if(this.consumed.has(event.inputId)||!this.s.wait||!('prompt'in this.s.wait)||event.prompt!==this.s.wait.prompt)return;
+      if(this.s.wait.kind==='text'&&this.s.text&&event.type!=='choose'){
+        const confirming=isTextConfirming(this.s.text),revealing=(event.type==='reveal'||event.type==='step')&&!confirming&&!isTextComplete(this.s.text);
+        if((confirming&&event.type!=='reveal')||(revealing&&this.s.text.rich&&this.textPlan().tokens.some(t=>t.kind==='confirm')))i32(this.s.counter+1);
+      }
       this.consumed.add(event.inputId);
       if(event.type==='choose') {
         if(this.s.wait.kind!=='choice')return;const choice=this.s.wait.options.find(o=>o.id===event.option);if(!choice)return;
         this.put(this.s.wait.dest,{kind:'string',value:choice.id});this.top().pc=choice.target;this.s.wait=null;this.s.status='running';
       } else if(this.s.wait.kind==='text'&&this.s.text) {
-        if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich)revealRichText(this.s.text,this.textPlan());else this.s.text.revealed=length(this.s.text.content);return;}
+        if(event.type!=='reveal'&&isTextConfirming(this.s.text)){confirmRichText(this.s.text,this.textPlan());this.renewTextPrompt();return;}
+        if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich){const changed=!isTextComplete(this.s.text)&&!isTextConfirming(this.s.text),plan=this.textPlan();revealRichText(this.s.text,plan);if(changed&&plan.tokens.some(t=>t.kind==='confirm'))this.renewTextPrompt();}else this.s.text.revealed=length(this.s.text.content);return;}
         if(!isTextComplete(this.s.text))return;
         try{this.read();}catch(error){this.consumed.delete(event.inputId);throw error;}
         if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}const confirmed=parseTextState(this.s.text);if(Object.isFrozen(this.s.history))this.s.history=[...this.s.history,confirmed];else this.s.history.push(confirmed);confirmWindowText(this.s);this.top().pc=this.next();this.s.wait=null;this.s.status='running';
@@ -157,8 +163,9 @@ export class Core {
     }
     if(event.type==='tick') {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
+      if(this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich&&!isTextConfirming(this.s.text)){const candidate=parseTextState(this.s.text);tickRichText(candidate,event.ms,this.textPlan());if(isTextConfirming(candidate))i32(this.s.counter+1);}
       this.s.logicalTime+=event.ms;
-      if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich)tickRichText(this.s.text,event.ms,this.textPlan());else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
+      if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text);tickRichText(this.s.text,event.ms,this.textPlan());if(!wasWaiting&&isTextConfirming(this.s.text))this.renewTextPrompt();}else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
       tickAudio(this.s,event.ms);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
