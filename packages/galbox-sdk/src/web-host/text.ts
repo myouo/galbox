@@ -12,7 +12,7 @@ export class TextController {
   applyTheme(theme:DeepReadonly<TextTheme>,scale:number,font:string):void {this.box.style.color=theme.color;this.box.style.fontFamily=font;this.speaker.style.color=theme.speakerColor;this.speaker.style.fontSize=`${theme.fontSize*scale*.8}px`;this.content.style.fontSize=`calc(${theme.fontSize*scale}px * var(--galbox-font-scale,1))`;this.content.style.lineHeight=String(theme.lineHeight);this.content.style.letterSpacing=`${theme.letterSpacing*scale}px`;this.content.style.textAlign=theme.align;this.content.style.minHeight='0';}
   applyDisplayPreferences(input:unknown):void {const value=parseDisplayPreferences(input);this.box.style.setProperty('--galbox-font-scale',String(value.fontScale));this.box.style.setProperty('--galbox-window-opacity',String(value.windowOpacity));}
   render(text:DeepReadonly<TextState>|null):void {
-    this.box.hidden=!text;this.speaker.textContent=text?.speaker??'';
+    this.box.hidden=!text;this.speaker.textContent=text?.speaker??'';this.speaker.hidden=!text?.speaker;
     if(!text?.rich){this.key='';this.units=[];this.rubies=[];this.content.removeAttribute('aria-label');this.content.textContent=text?Array.from(text.content).slice(0,text.revealed).join(''):'';return;}
     const rich=text.rich,key=JSON.stringify([text.prompt,text.textId,text.revision,rich.runs]);
     if(key!==this.key){this.key=key;this.units=[];this.rubies=[];this.content.replaceChildren();const plan=compileRichText(rich.runs);

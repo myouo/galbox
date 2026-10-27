@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "I1-01",
+  "current_task": "F-01A",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -1041,8 +1041,8 @@
       "milestone": "F",
       "title": "锁定 Fata 版本和高风险输入",
       "depends_on": [],
-      "status": "blocked",
-      "implementation": "not_started",
+      "status": "in_progress",
+      "implementation": "in_progress",
       "verification": "not_run",
       "outputs": [
         "edition/source/save package manifest",
@@ -1056,14 +1056,15 @@
         "fata-inputs"
       ],
       "evidence": [
-        "docs/evidence/migration-readiness/REPORT.md"
+        "docs/evidence/migration-readiness/REPORT.md",
+        "docs/evidence/fata-steam/REPORT.md"
       ],
       "blocker": {
-        "kind": "needs-source-evidence",
-        "reason": "缺少明确发行版、可用程序/资源、原档包及原作加载后继续参照；不得以合成格式代替。",
+        "kind": "needs-original-save-reference",
+        "reason": "已取得Steam app303310/build21523397的共享和8语言XP3，已核验提取与脚本结构；仍缺原版槽位/global/附件及加载后继续参照，不能完成原档认证。",
         "input_document": "docs/INPUTS_REQUIRED.md"
       },
-      "next_action": "按INPUTS_REQUIRED接收并核验真实版本/脚本/资源/原档与继续参照。用户可先提供任意作品的小章节作测试迁移实验；其他作品不解除本任务的目标作品资料阻塞，I1等通用SDK任务继续。"
+      "next_action": "按已提取KAG/系统与宏组织继续F-01A独立表现迁移；补原版槽位/global/继续参照后完成F-01，F-02仍未开始。"
     },
     {
       "id": "N-02",
@@ -1874,7 +1875,11 @@
         "W1-01",
         "W1-02",
         "W1-03",
-        "W1-04"
+        "W1-04",
+        "G2-03",
+        "G2-04",
+        "G3-05",
+        "I1-01"
       ],
       "status": "todo",
       "implementation": "not_started",
@@ -1897,7 +1902,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "完成W1-02按需资源、W1-03模块/存储规模及W1-04缓存/离线/目标设备后，汇总通用功能/规模/性能证据；H3-02软件GPU尾延迟限制须保留，不用当前原创小场景推定大型真实作品认证。"
+      "next_action": "继续W1规模/缓存/平台，以及真实作品暴露的页内确认、规则图转场、国际化；完成后汇总通用功能与性能证据，不能以当前22页小片段认证整作。"
     },
     {
       "milestone": "H2",
@@ -2374,6 +2379,189 @@
       ],
       "blocker": null,
       "next_action": "引擎/测试隔离、原始证据ignore、正式protobuf与实际tarball/已安装CLI验收完成。后续保留仓库/包边界检查；下一I1-01定义并实现locale和目录，W1父任务仍未完成。"
+    },
+    {
+      "id": "G2-03",
+      "milestone": "G2",
+      "title": "无署名旁白与完整保存恢复",
+      "depends_on": [
+        "G2-01",
+        "G2-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "empty speaker across page/template/rich factories",
+        "hidden DOM nametag and preserved snapshot/protobuf"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "unnamed-narration-factories",
+        "narration-protobuf-restore",
+        "narration-dom-illustrated-save"
+      ],
+      "evidence": [
+        "docs/decisions/0037-unnamed-narration.md",
+        "docs/evidence/narration/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "有限旁白支持已验收；继续页内[l]交互和I1，不以空姓名修复代替完整KAG表现。"
+    },
+    {
+      "id": "E1-02",
+      "milestone": "E1",
+      "title": "干净检出生成目录与API基线重建",
+      "depends_on": [
+        "E1-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "generation without preexisting ignored directories",
+        "read-only check and reproducible baseline build"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "clean-output-generation",
+        "readonly-generated-check",
+        "api-baseline-regeneration"
+      ],
+      "evidence": [
+        "docs/evidence/narration/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "生成目录ignore后必须由prepare/build创建；基线比较先重建，不依赖本地旧生成物。"
+    },
+    {
+      "id": "F-01A",
+      "milestone": "F",
+      "title": "独立Steam KRKR2源码分析与原作表现迁移",
+      "depends_on": [
+        "M2-06",
+        "E1-01"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "in_progress",
+      "outputs": [
+        "external project consuming SDK tarball",
+        "KAG/system/macro/resource dependency model",
+        "source-faithful initial gameplay"
+      ],
+      "contracts": [
+        "C01",
+        "C02",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "read-only-source-extraction",
+        "external-public-sdk-consumer",
+        "source-visual-timing-and-control-flow",
+        "no-experiment-ui"
+      ],
+      "evidence": [
+        "docs/evidence/fata-steam/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "已提取并核验9包/6284文件，8语言各22页及原图标题、SDK恢复通过。继续KAG AST/宏注册与参数作用域，恢复原OP44转场/音轨和菜单，不逆向exe，不静默省略未知指令；当前不算完整开场/整作完成。"
+    },
+    {
+      "id": "G2-04",
+      "milestone": "G2",
+      "title": "正文页内点击等待与恢复闭包",
+      "depends_on": [
+        "G2-01",
+        "G1-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "inline confirmation continuation",
+        "save and Auto/Skip input semantics"
+      ],
+      "contracts": [
+        "C03",
+        "C04",
+        "C05",
+        "C10"
+      ],
+      "acceptance": [
+        "inline-confirm-save-restore",
+        "advance-without-duplicate-input",
+        "auto-skip-inline-boundaries"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "真实KAG的[l]不是定时pause或换页。先ADR定义页内确认/揭示/历史/已读/恢复，再落实Schema/工厂/Core/输入与浏览器负例。"
+    },
+    {
+      "id": "G3-05",
+      "milestone": "G3",
+      "title": "规则图转场与可恢复表现",
+      "depends_on": [
+        "G3-01",
+        "H2-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "bounded rule-mask transitions",
+        "Canvas/WebGL matching pixels and restore"
+      ],
+      "contracts": [
+        "C04",
+        "C05",
+        "C10"
+      ],
+      "acceptance": [
+        "rule-mask-source-equivalence",
+        "transition-resource-budget",
+        "transition-restore-closure"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "先核实KAG universal规则/模糊/前后页/children与时序，再给通用SDK有限语义和ADR；不得将所有原效果静默替换成crossfade。"
+    },
+    {
+      "id": "S1-01",
+      "milestone": "S1",
+      "title": "KAG/KRKR2源码移植skill检索与整理",
+      "depends_on": [],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "reviewed existing KRKR skills",
+        "discoverable kag-krkr2-porting skill",
+        "read-only structural inspection helper"
+      ],
+      "contracts": [
+        "C01",
+        "C12"
+      ],
+      "acceptance": [
+        "verified-skill-search",
+        "skill-validation",
+        "synthetic-and-real-project-helper-checks"
+      ],
+      "evidence": [
+        "docs/evidence/kag-skill/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "技能已创建并校验，继续按其源脚本/宏/资源组织路线推进独立F-01A，不以技能或22页片段代替整作兼容。"
     }
   ]
 }

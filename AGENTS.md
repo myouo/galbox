@@ -61,6 +61,6 @@ M0 建立 `pnpm check`（类型、生成一致性、导入边界及既定静态�
 
 ## 测试与生成产物边界（用户最新约束）
 
-- SDK是引擎；实例游戏、播放器验证应用与内容fixture一律放在tests/内。正式包不得包含游戏、验证证据或日志。
+- SDK是引擎；原创/合成fixture与SDK验证应用放在tests/内。按用户最新要求，真实作品移植实例放在SDK仓库之外的独立工程，通过实际tarball和公开exports依赖SDK，不用workspace源码别名。正式包不得包含游戏、验证证据或日志。
 - docs/evidence只跟踪短Markdown报告；原始日志/JSON/截图/trace等保留本地并ignore，CI上传artifact，不提交重复生成记录。
 - 使用pnpm打包白名单与独立消费验收检查泄漏；运行目录按tests/player-app、tests/fixtures/game-data使用。

@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { compile } from 'json-schema-to-typescript';
 import Ajv from 'ajv';
 import {parse as parseYaml} from 'yaml';
@@ -6,6 +6,7 @@ import {generateProtobuf} from './generate-protobuf.mjs';
 function validationSchema(value){if(Array.isArray(value))return value.map(validationSchema);if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).filter(([key])=>!key.startsWith('x-proto')).map(([key,v])=>[key,validationSchema(v)]));return value;}
 import standalone from 'ajv/dist/standalone/index.js';
 const sourceSchema=parseYaml(await readFile('packages/galbox-sdk/schema/protocol.yaml','utf8'));const schema=validationSchema(sourceSchema);
+if(!process.argv.includes('--check')){await mkdir('packages/galbox-sdk/src/protocol/generated',{recursive:true});await mkdir('packages/cli/src/generated',{recursive:true});}
 const ajv=new Ajv({allErrors:false,strict:true,code:{source:true,esm:true},inlineRefs:false});
 ajv.addSchema(schema);
 const exports={};

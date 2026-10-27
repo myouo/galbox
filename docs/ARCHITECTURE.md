@@ -31,7 +31,7 @@
 | tests/consumer | 安装打包产物的隔离消费项目/测试夹具 | M2 |
 | tests/fixtures/game-data/synthetic-saves | fixture-save@1 自制格式和损坏/版本样本 | M3 |
 | packages/cli | 真正的 CLI 编排；本地包名可暂用 @galbox/cli | M4 |
-| ports/narcissu、ports/fata-morgana | 版本、映射、义务和私有参照入口 | N/F，资料可用即推进 |
+| 仓库外独立作品工程 | 作品转换器/资源映射/私有参照；安装实际SDK包 | N/F，资料可用即推进 |
 | docs | 当前规范、操作表、能力、决策、任务与验收证据 | 全阶段 |
 
 SDK 主包目标名 `galbox-sdk`，公开 npm 名称尚未核验。内部模块为 protocol、core、runtime、program-tools、save-bridge、web-host、storage、player、react、testing；模块不等于独立发布包。

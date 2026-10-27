@@ -100,3 +100,5 @@ Player预算续跑通过实例MessageChannel任务（缺失时使用timer）让�
 compileProgramModules/createModuleProgram与createModulePlayer提供函数级基础ADV代码模块。moduleProvider传protobuf字节lease，Core在真实call前请求缺失代码；Snapshot.programModules绑定清单及本Core使用集合，读档先加载闭包。普通Program仍走原路径。模块版暂仅基础ADV/control/简单值/基础stage/WAV/tasks/profile/presentation，高级capability、recipe/SaveBridge/备份恢复与回溯明确unsupported；不支持隐式跨格式迁移。详见仓库PROGRAM_MODULES/ADR0035。当前Preferences无locale或翻译目录设置，Unicode/皮肤标签不等于完整i18n。
 
 正式外部传输使用galbox-sdk/wire的encodeWire/decodeWire及包内protocol/galbox.proto；代码模块、备份和设置默认二进制.pb。协议源为YAML，运行包不包含JSON schema。内部Core/Host使用强类型DTO，IndexedDB使用structured clone。SDK包白名单排除游戏、测试、证据、日志和source map；其他项目通过player/core/port-kit/wire/react等公开exports导入，不复制仓库目录。
+
+无署名旁白：text.page、templatePage、richPage 的 speaker 可以为空字符串，DOM会隐藏姓名。正文和Ruby读音仍须非空，快照/protobuf保留空姓名。旧SDK遇到含该值的新档仍可能明确拒绝。见ADR0037；该能力来自独立真实作品实验的通用修复，没有作品特判。

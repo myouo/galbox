@@ -1,17 +1,17 @@
 # galbox-sdk 当前状态
 
-2026-10-27，基线9e0b41f，分支feat/program-modules。本轮E1-01与W1-03B基础有限集已实现并验收；任务表下一项I1-01。父W1-03、高级模块B2、热记录C、离线/目标平台W1-04及G7总体仍未完成，不把本轮当作完整大作品交付。
+2026-10-27，基线e20366a。本轮完成G2-03无署名旁白、E1-02干净生成与S1-01源码迁移skill；F-01/F-01A进行中，F-02真实原档未开始。当前主线F-01A：以KAG/TJS项目组织、宏和资源分析推进，尽可能还原原作表现；用户明确不要游戏内的实验/说明/诊断/SDK工具栏，不走exe逆向路线。
 
-工程：所有游戏/验证应用/运行器分别在tests/fixtures、tests/player-app、tests/tooling。CLI正式模板为空Program骨架，YAML配置，默认program.pb。原始日志/JSON/截图/trace与散列只在ignored artifacts，历史原始材料在artifacts/legacy-evidence；docs/evidence只跟踪短Markdown。生成测试public及TS/validator在prepare/build重建并有一致性检查。当前19个受控JSON约2800行，0受控日志，历史Git对象未重写。check:repository实际验证跟踪文件与ignore规则，test:package检查tarball。
+独立作品工程/home/myo/Desktop/galbox-fata-morgana，通过实际SDK tarball和公开exports开发，不借workspace/private源码。SDK仓库未放游戏载荷。原安装目录只读：Steam app303310/build21523397，9个XP3/6284文件/804311540字节提取后长度与Adler32通过，源包SHA复验不变。8语言共享/覆盖目录分开。原版槽位/global/附件及继续参照仍缺，不能认证原档。
 
-协议：protocol.yaml单一源记录稳定protobuf tag，生成TS/validator/IDL/映射；galbox-sdk/wire实际protobuf，代码模块/CLI默认发布/备份/设置为.pb，旧JSON兼容输入。Core/Host内部直接强类型DTO，IndexedDB原生structured clone。SDK有14个精确exports，包226文件/495530字节压缩/3460026字节解包，无游戏/测试/证据/日志/schema JSON/maps。CLI忽略规则以普通gitignore随包发布、init改名为.gitignore，已安装CLI实际验收，避免包工具丢失点文件。
+源码链startup→Initialize(KAG3.26/语言包/搜索路径)→first(宏/插件)→title→scenario已梳理。标题按钮定位需加Config消息边距，例如535+70=605；空姓名宏仍有布局/历史副作用，字体与行距各语言不同。整作有重复与独有标签、动态宏/TJS，不能按行zip或简单文本替换。详细独立工程docs/ARCHITECTURE.md。
 
-实际验证：frozen install；最后pnpm check；36文件236单元；完整151浏览器（0 skipped/flaky/unexpected）；仓库外tarball/native ESM/strict skipLibCheck=false；69 CLI命令及空骨架/兼容fixture；4 synthetic（N/F仍needs-input）；14入口/0删除的API与pack/publish dry-run（未实际发布）；3活动周期228输入的性能门槛通过（API P95 21.5ms、Core最大P95约1.207ms、dispose最大约186.2ms）。原生禁用WebGL的390×844触控模拟完成分支/图文保存/刷新恢复/设置pb，root,sea,logic,root,sea请求且无interior、0 pageerror。原《灯塔来信》的实际图片/WAV/并行组也经相同模块compiler保存恢复。
+当前实例仅原图标题静态状态（开始按钮已接通）及8语言各22页旁白，176页由正式Core逐页及两次protobuf恢复通过，22个GUID在此切片一致。游戏内已移除全部额外说明/诊断/语言下拉/默认工具栏/自造结束提示，4:3与源参数布局。最后3真实浏览器通过：8语言/原图标题/无额外UI/4:3/正文位置、Canvas禁用WebGL、图文保存/刷新/双语言隔离、22页。正文position:absolute缺失曾导致跑到顶部，已修正并补位置断言，截图目视复验。原OP44转场/音轨、其余菜单动作、中日.tft字形、后续页内[l]与整作仍未还原，F-01A不done。
 
-短证据：evidence/e1-01/REPORT.md和evidence/w1-03b/REPORT.md；原始结果artifacts/hygiene/{check-final.log,unit-final.log,final-browser,accepted,native,native-default}，源码/证据索引handoff.json。最终consumer/CLI/release/package SDK SHA=46795746316cb7a8e66a0f10912e928b0bd278f3332ce0add20e315aff163ba5，CLI SHA=3b5cc5d1448fc1b53825e5570fa06b464954944f33c359536e3047f6a8208a7a，已交叉核对。曾有备份临时文件名识别和CLI .gitignore打包丢失，均修复并真实复验。旧报告仅保留历史结论。
+SDK ADR0037通用旁白修复：三类文本允许空speaker并隐藏姓名，正文仍非空；Schema/工厂/Core/DOM/快照/protobuf同路径。pnpm check、37文件238单元、7聚焦浏览器及最后tsc通过，未冒称重跑旧完整151。干净目录生成与--check只读mtime验证通过；generate补自身mkdir，release-audit重建基线生成物。实际API/pack/dry-run对e203通过14入口/0删除，未发布。SDK最终SHA=0a2f8f25929e0663d878bdb5cdbaea7be5d3d183d61d9dbb57d085b27047fe7c，独立工程已按带散列文件名更新依赖、冻结安装/类型/转换/3浏览器重验。详见evidence/narration与fata-steam；raw在artifacts/narration及独立artifacts。
 
-运行：pnpm install --frozen-lockfile；pnpm dev在127.0.0.1:4173运行tests/player-app，?demo=modules&renderer=canvas为模块测试。pnpm build构建SDK/CLI及测试应用；业务项目从实际tarball的player/core/port-kit/wire/react等入口导入，不复制测试游戏。TMPDIR=/dev/shm用于当前环境临时目录。只做本地提交，未推送/发布/重写历史。
+新skill /home/myo/.codex/skills/kag-krkr2-porting：先检索并阅读现有XP3/ksdec/WASM构建调试skills，再补源码组织/宏语义/忠实移植方法；不是声称无相关技能。校验及助手合成边界/真实1021脚本清点通过。详见evidence/kag-skill，检索/验证raw在artifacts/skill-search。skill不含原作载荷，$kag-krkr2-porting可显式调用。
 
-精确下一步I1-01：先记录locale/语言回退/目录及正文TextId/Revision/ReadUnit规则的ADR，再演进偏好Schema与迁移，接默认UI并验证跨刷新/旧档和protobuf；当前Preferences v2没有locale，i18n尚不支持。B2补齐高级模块恢复闭包；C处理热记录留存/容量；W1-04处理持久缓存/离线与冷启动拆包。测试应用主JS gzip约468KB，比此前约406KB增长；包变小不能代替首屏性能验证。Firefox/Safari/移动真机及真实两作资料仍缺证据，不借用Chromium模拟结果认证。
+曾仅运行隔离exe副本作参照，未反汇编/修改exe，未得可用画面；按用户要求已停止并结束独立prefix服务，后续仅脚本/资源分析，不把黑屏或素材合成当原作运行证据。无推送/发布。
 
-续核验（基线4765eb5）：用户考虑提供真实游戏实验，目前尚未收到。INPUTS_REQUIRED已补最小章节/原作参照清单；tests/private已ignore且门禁拒绝强行跟踪，验证见evidence/migration-readiness/REPORT.md。原游戏脚本→Program转换器与真实原档codec仍缺，接收其他作品可另建测试迁移任务，不替代N/F认证。SDK运行代码未改变；本次只验证仓库边界/ignore正反例及diff，不冒称重跑旧全套测试。I1-01仍是下一通用实施项。
+运行独立项目pnpm dev，127.0.0.1:4180，?lang=zh/en/fr/it/jp/ko/pt-br/ru，默认Canvas。SDK自身pnpm dev仍是tests/player-app验证应用。精确下一步：用新skill继续KAG AST/宏注册/参数与调用作用域、资源覆盖图，逐项恢复完整开场演出；页内确认G2-04、规则图转场G3-05、I1国际化、模块B2/容量C/离线W1-04及G7仍未完成。按语言分包且存档隔离不等于SDK完整i18n。

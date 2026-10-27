@@ -481,7 +481,7 @@ definitions:
             x-proto-tag: 4
           speaker:
             type: string
-            pattern: ^[^\x00]{1,4096}$
+            pattern: ^[^\x00]{0,4096}$
             x-proto-tag: 5
           content:
             type: string
@@ -2408,7 +2408,7 @@ definitions:
         x-proto-tag: 2
       speaker:
         type: string
-        pattern: ^[^\x00]{1,4096}$
+        pattern: ^[^\x00]{0,4096}$
         x-proto-tag: 3
       content:
         type: string
