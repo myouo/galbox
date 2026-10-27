@@ -11162,6 +11162,19 @@ message Gbx_RuleTransition {
   optional Gbx_RuleTransition_progress progress = 4;
 }
 
+message Gbx_UISoundRequest_asset {
+  optional string value = 1;
+}
+
+message Gbx_UISoundRequest_gain {
+  optional double value = 1;
+}
+
+message Gbx_UISoundRequest {
+  optional Gbx_UISoundRequest_asset asset = 1;
+  optional Gbx_UISoundRequest_gain gain = 2;
+}
+
 message WireEnvelope {
   optional uint32 wire_version = 1;
   oneof body {
@@ -11216,6 +11229,7 @@ message WireEnvelope {
     Gbx_StageTaskState body_StageTaskState = 58;
     Gbx_AudioState body_AudioState = 59;
     Gbx_VoiceRecipe body_VoiceRecipe = 60;
+    Gbx_UISoundRequest body_UISoundRequest = 115;
     Gbx_MediaTaskState body_MediaTaskState = 61;
     Gbx_Task body_Task = 62;
     Gbx_GraphicsOptions body_GraphicsOptions = 63;

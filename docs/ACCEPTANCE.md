@@ -126,3 +126,5 @@ W1-03B：以HTTP请求记录断言入口/实际call/恢复时点，拦截未选�
 G2-04：真实richText.confirm工厂与预算1/8/100；首尾/连续控制、Unicode边界、分段instant时间组、PC/正文/逻辑历史身份保持及过期/重复输入拒绝；中途揭示/等待/解除后的protobuf与持久恢复、损坏游标/flag拒绝；Auto效果/语音/延迟和Skip已读约束、on-prompt自动槽位阶段、WebGL/Canvas与默认UI继续/下一页区分。页内确认不提交整页历史或已读，原KAG所有宏与历史样式仍独立对照。
 
 G3-05：真实stageRuleTransition工厂/源签名、整数阈值与opaque像素、RGBA、预算1/8/100和protobuf恢复；两后端实际像素、IndexedDB图文保存/刷新、cancel冻结/finish/清理；尺寸/规则格式/读回与两预算失败前置拒绝保留head/槽/原画面。独立tarball消费原作800×600源规则和标题时序；不以静态页合成或源参数自洽声明原作运行对照、动态children或所有native alpha类型兼容。
+
+G3-06：實際uiSound工廠關聯資源、UISoundRequest驗證/隔離與protobuf邊界0/1；真實瀏覽器無手勢blocked且零抓取、原生buffer開始/自然結束、音量/靜音與暫停選單、劇情SFX不被覆寫、head/槽/PC不變、換音/過期租約/啟用取消/壞摘要/10秒逾時/實際31秒buffer拒絕及dispose。實包與獨立原作enterse/clickse要驗，原生波形與實際時長佐證不能拿狀態字串或虛擬Host代替。

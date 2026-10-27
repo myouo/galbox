@@ -12006,6 +12006,22 @@ definitions:
       - vague
       - progress
     additionalProperties: false
+  UISoundRequest:
+    type: object
+    properties:
+      asset:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 1
+      gain:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 2
+    required:
+      - asset
+      - gain
+    additionalProperties: false
 type: object
 properties:
   program:
@@ -12125,3 +12141,4 @@ x-proto-envelope:
   ProgramModule: 112
   ModuleManifest: 113
   ProgramModuleBinding: 114
+  UISoundRequest: 115

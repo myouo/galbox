@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "F-01A",
+  "current_task": "G3-07",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2473,10 +2473,11 @@
       "evidence": [
         "docs/evidence/fata-steam/REPORT.md",
         "docs/evidence/g2-04/REPORT.md",
-        "docs/evidence/g3-05/REPORT.md"
+        "docs/evidence/g3-05/REPORT.md",
+        "docs/evidence/g3-06/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "规则图SDK及独立原作标题淡入/钢琴/规则菜单已验证，当前仍22页。下一按title.ks的scenario分支接4秒离场规则、3秒背景淡出/5秒音量衰减，再分析start→OP44→prologstart，逐项降低；同时推进宏注册/调用/变量CFG。其余菜单/按钮SE/tft/完整剧情与原档未完成。"
+      "next_action": "原按钮SE、标题离场、44次静态前导转场/等待及358秒原曲、22页和淡出已接，八语言/真实波形/刷新恢复通过。先G3-07补按源淡出停止与多SE buffers，再接正常对话/炉火/宏注册和CFG；click-skip/原菜单/glyph/textfade/tft与原档仍未完成。"
     },
     {
       "id": "G2-04",
@@ -2569,6 +2570,71 @@
       ],
       "blocker": null,
       "next_action": "技能已创建并校验，继续按其源脚本/宏/资源组织路线推进独立F-01A，不以技能或22页片段代替整作兼容。"
+    },
+    {
+      "id": "G3-06",
+      "milestone": "G3",
+      "title": "有界介面提示音與劇情音訊隔離",
+      "depends_on": [
+        "G3-02",
+        "W1-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "typed interface sound request and factory",
+        "bounded owned sound controller",
+        "independent source title sound consumer"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "ui-sound-source-fidelity",
+        "ui-sound-isolation-and-lifecycle",
+        "ui-sound-budget-and-late-cancellation"
+      ],
+      "evidence": [
+        "docs/evidence/g3-06/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "有限UI cue已通过真实工厂/协议/生命周期、17浏览器及最后通知重入守卫6复验、精确实包/独立6浏览器/原作波形。下一G3-07按源淡出停止与多剧情SE缓冲。"
+    },
+    {
+      "id": "G3-07",
+      "milestone": "G3",
+      "title": "按源音轨淡出停止与多个剧情SE缓冲",
+      "depends_on": [
+        "G3-02",
+        "G3-06"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "source-bound fade/stop envelopes",
+        "declared concurrent SFX buffers and full restore closure"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "fade-stops-only-bound-source",
+        "independent-story-sfx-buffers",
+        "audio-buffer-restore-and-late-callbacks"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "核对原BGM.fadeOutAndStop和SE buf0/1，先ADR/有限Schema/真实工厂，再Core/Host/快照/失败原子反例；旧公共协议无完整迁移时明确拒绝并保留旧档。"
     }
   ]
 }

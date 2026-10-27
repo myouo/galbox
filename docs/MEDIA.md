@@ -33,3 +33,11 @@ loop=true 从 0 播放 intro，区间终点后回到 loopStartMs；null 终点�
 媒体启动和自然事件依据 [HTML media](https://html.spec.whatwg.org/multipage/media.html#dom-media-play)，buffer loop 依据 [Web Audio](https://www.w3.org/TR/webaudio/#AudioBufferSourceNode)。语义决策见 decisions/0020-audio-tracks-and-long-media.md。
 
 G3-03已单独建设有限影片任务与设备路径，见VIDEO.md；本页旧audio.play ABI保持启动确认含义，不用影片功能改变旧音频存档语义。
+
+## 介面提示音（G3-06）
+
+`uiSound(audioRef, gain=1)`產生Schema/Protobuf的`UISoundRequest`，由`await player.playUISound(cue)`播放；`player.stopUISound()`取消。工廠關聯audio資源種類，Player再核對當前作品目錄。壓縮音效需明確宣告`playback:'buffer'`；有限v1最多30秒、gain0..1，不支援element或任意URL。介面音效沒有Core任務，不改PC/profile，也不進入快照或讀檔重播。
+
+回傳值started僅表示原生source.start已執行；blocked表示尚需手勢，cancelled表示準備被替換/停止。自然完成另見`getSnapshot().uiSound`的state/ended。無啟用的hover不抓資源，也不在稍後自動補播過期提示音。失敗以Promise拒絕並更新獨立診斷，作品可忽略可選SE的失敗後繼續動作；不借此暫停劇情。
+
+每個Player最多一個cue，一個惰性且可清理的AudioContext，沿既有cache/摘要/解碼預算固定準備及播放資源。新cue替換舊cue，遲到租約只歸還一次；準備上限10秒，結束/停止/隱藏/blur/用戶暫停/重新啟用/dispose清理。劇情選單暫停時仍可播放；master×sfx偏好即時生效，與劇情bgm/voice/sfx及bus包絡分開。沒有承諾無限混音或所有瀏覽器/裝置；見ADR0040與evidence/g3-06/REPORT.md。

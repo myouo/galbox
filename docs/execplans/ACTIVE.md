@@ -1,9 +1,9 @@
 # 当前计划
 
-G3-05有限规则图/恢复/预检和实包已验收，见tasks.json和evidence/g3-05/REPORT.md。SDK基线4c5e234，分支feat/rule-image-transitions；独立工程/home/myo/Desktop/galbox-fata-morgana安装SHA 32a636e668027363fe8ff06f261e61ac2682222386606511f3b149faf79ab91c。仅本地提交，不发布。
+G3-06已验收：uiSound/Schema/Protobuf/Player/有界Host、254单元、最终新6浏览器+媒体历史回归、精确实包与独立波形/刷新。见tasks.json、STATUS与evidence/g3-06/REPORT.md。包SHA 753b4f63e8c56f8265aeacc1faacb5bc32d115c1a4e2746525282b9c0860f718；实例/home/myo/Desktop/galbox-fata-morgana，不用workspace/私有导入。
 
-F-01A继续。当前由生产Core运行源标题3秒淡入、钢琴循环、2.5秒规则菜单及8语言各22页旁白，无额外实验UI。8语言静态目标页按KAG children默认true合成，保持30px位移；rule仍由SDK实时执行。转换资源编码后摘要命名并在最后语言结束重验全部闭包，避免跨语言重写。
+已通过源片段接原按钮声音、标题离场、44静态转场/等待与358秒歌曲→22页→4秒淡出；真实15秒雷声尾音与Web Audio输出验证通过。有限页合成不是TJS/通用KAG VM。8语言保留原差异，未知操作/动态内容/ASD拒绝，不逆向exe。当前不能称整作兼容。
 
-下一执行title.ks*scenario的4秒离场规则→3秒背景淡出→5秒BGM衰减，再处理scenario.ks start→OP44→prologstart源演出。宏模板/raw IR需建立真实注册/参数/调用/变量CFG，701份KS/3337宏候选不是完整执行语义。不要用eval、exe逆向、预录动画或通用VM补洞。
+下一current_task=G3-07：先读原BGM.fadeOutAndStop和SE buf0/1，写有限ADR；实现按源绑定的淡出停止、多剧情SE缓冲、关联类型/快照闭包/失败反例。当前bus归零与下首替换之间可多留不出声旧element，1ms复位也不是逐采样等价；不要掩盖为已精确还原。
 
-标题离场/OP44、其他菜单/按钮SE、正常对话上下文、中日.tft和完整i18n、原档仍未完成。原档/global/继续参照缺失，F-02未开始。I1/W1剩余规模/离线/G7仍独立验收。运行及最终命令/日志见STATUS与短报告，raw输出均ignore。
+然后F-01A接正常对话/炉火与宏注册/参数/调用/变量CFG。原点击完成转场、菜单、glyph/textfade、tft/完整i18n、原档仍待做，原槽/global/继续参照缺失。I1/W1/G7保留。仅本地提交，不推送或发布。

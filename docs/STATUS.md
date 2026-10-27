@@ -1,15 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-28，基线4c5e234，本轮G3-05有限灰度规则图完成；F-01/F-01A继续，F-02原档未开始。保持TypeScript Core/Web Host、单Pixi舞台/Canvas后备、DOM正文、可选React和IndexedDB。真实作品在SDK外依赖实包，游戏内无实验UI，不逆向exe。
+2026-10-28，基线43af5b5，本轮G3-06介面音效完成；F-01A继续，下一G3-07。固定TS Core/Web Host、Pixi/WebGL与Canvas后备、DOM正文、可选React、IndexedDB与protobuf；真实作品独立工程，游戏内无实验UI，不逆向exe。
 
-G3-05/ADR0039：stageRuleTransition、Schema/Protobuf、并行任务与写锁、cancel冻结/活动finish、from/to/rule恢复闭包、宿主预检和有界合成已经落实。两后端同一整数内核/复用缓冲/同相位不重算，默认64MiB逻辑工作区预算；Canvas另合计。Player初始启用允许禁存标题，普通保存仍拒绝。有限集与限制见STAGE/GRAPHICS及evidence/g3-05/REPORT.md。
+G3-06/ADR0040：uiSound音讯种类工厂、单一Schema/Protobuf请求、Player.playUISound/stopUISound与诊断落实。单cue、buffer≤30秒、准备≤10秒、master×sfx、独立惰性context，暂停菜单可响且不抢剧情SFX/BGM。加载/隐藏/blur/用户暂停/dispose取消旧cue与迟到租约；不改PC/profile、不进存档。错误Promise拒绝且与剧情错误隔离。
 
-验证：check通过；39文件252单元；最终5项新浏览器通过，相关舞台/Canvas/载入21项回归通过，不宣称重跑全部历史集。独立consumer真实安装/类型/播放/保存/恢复通过；实包230文件505337字节、14入口，无游戏/测试/日志/证据/JSON Schema/maps。SHA256=32a636e668027363fe8ff06f261e61ac2682222386606511f3b149faf79ab91c；只本地提交，未发布。
+验证：check/生成/边界通过；40文件254单元；17浏览器（新5+媒体/历史12），最终异步拒绝及通知回调重入守卫后新6另复验；实包consumer通过。232文件507752字节、14入口，仅package.json为npm JSON元数据，无游戏/日志/证据/maps/JSON Schema。SHA256=753b4f63e8c56f8265aeacc1faacb5bc32d115c1a4e2746525282b9c0860f718。证据evidence/g3-06/REPORT.md，raw在ignored artifacts/interface-audio。
 
-独立工程/home/myo/Desktop/galbox-fata-morgana精确安装该包，冻结/strict边界、3 Python+15 TS、8语言源trace/两次恢复与4浏览器通过。标题现在由Core执行原3秒淡入、循环钢琴曲、2.5秒规则菜单，再接22页旁白；实际禁WebGL、图文保存、刷新与语言隔离通过，截图已目视。静态children目标页保持原30像素位移；音频首次手势解锁。转码资源按编码后摘要命名，全语言结束再验资源闭包，重复转换24份protobuf摘要一致，另记实例证据。
+独立/home/myo/Desktop/galbox-fata-morgana冻结该包；3 Python+18 TS、严格类型/边界、8语言真实Core序列与两恢复切点通过。已接原进入音1.78秒/雷声15.16秒、标题4秒规则离场+3秒淡出/5秒音乐包络、44次静态前导与原等待、358.4秒循环原曲、22页旁白及其后4秒淡出。balanced预取/64MiB逻辑resident；新档源音量100%，不覆盖旧偏好。最后完整6浏览器通过（含原曲恢复身份/新attempt与producer像素），此前针对性2项亦通过，原生增益后波形非零、雷声自然尾音、原曲实际时钟/loop/音量复位均验。完整前导用受控活动时钟加速另有约24秒原生时间验证，不认证完整墙钟AV/原作像素对照。
 
-尚非完整开场：标题离场与OP44/其音轨、按钮SE/其余菜单、正常对话宏/变量/角色上下文、中日.tft及完整i18n、整作和原档未完成。701份KS raw IR/3337宏候选仍只是分析输入；原档/global与原作继续参照缺失。旧确认功能G2-04不受此扩大。I1、模块/存储容量/离线与G7总体仍待完成。
+源淡出目前bus归零，旧element到下一曲替换才清理；playbgm用最小1ms包络复位。因此G3-07接按源绑定的淡出停止及多剧情SE buffers，不能以UI cue冒充可保存的剧情SFX。下一正常对话/炉火/宏注册CFG，原click-skip、quick/context/其他菜单、glyph/textfade、日中.tft/完整i18n、原档/整作仍未完成。701份KS raw IR/3337宏候选只是分析输入；原槽/global/原作继续参照缺失。I1/W1剩余规模/离线/G7独立验收。
 
-下一F-01A先按title.ks的scenario分支接4秒离场规则、3秒背景淡出和5秒BGM衰减，再从start→OP44→prologstart建立源效果/音轨序列及宏CFG。保持源分析和实际公开工厂；未知效果明确记录，不改成普通淡化或另建解释器。SDK pnpm dev为原创验证应用；独立游戏pnpm dev在4180默认Canvas，?lang=zh/en/fr/it/jp/ko/pt-br/ru。
-
-本轮独立Program/release发生变化，无隐式旧槽迁移；已有槽保留，未经迁移的旧发布明确拒绝，不通过删除槽位掩盖不兼容。
+只本地提交，不推送发布。原槽保留，Program/release更新无隐式旧档迁移。SDK pnpm dev为原创验证应用；独立工程pnpm dev于4180默认Canvas，?lang=zh/en/fr/it/jp/ko/pt-br/ru。接续先读tasks的G3-07/ADR有限集，再编写真实实现与反例。
