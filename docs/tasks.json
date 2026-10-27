@@ -16,7 +16,7 @@
     "H3",
     "W1"
   ],
-  "current_task": "W1-02",
+  "current_task": "W1-03",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2258,7 +2258,7 @@
         "docs/evidence/w1-01/handoff-validation.json"
       ],
       "blocker": null,
-      "next_action": "有限执行索引/真正Web任务让出/候选取消及架构核验全部验收；继续W1-02资源工作集。同步校验、模块/大存储/离线与实体设备仍未完成，不声称全量Web交付或绝对性能极限。"
+      "next_action": "W1-02有限资源策略已验收，继续W1-03模块/存储与W1-04持久缓存/离线/平台；保留同步校验和软件GPU尾延迟限制。"
     },
     {
       "id": "W1-02",
@@ -2267,11 +2267,14 @@
       "depends_on": [
         "W1-01"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
-        "dependency-aware asset preparation and bounded cache"
+        "four selectable loading policies and typed public factory",
+        "dependency-aware resource commit barrier and retry",
+        "bounded concurrent preparation and resident LRU cache",
+        "before/after HTTP and independent consumer evidence"
       ],
       "contracts": [
         "C01",
@@ -2287,9 +2290,23 @@
         "asset-commit-barrier",
         "prefetch-cancel-eviction-restore"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/LOADING.md",
+        "docs/decisions/0033-resource-loading-strategies.md",
+        "docs/evidence/w1-02/REPORT.md",
+        "docs/evidence/w1-02/unit-repair.log",
+        "docs/evidence/w1-02/browser-results.json",
+        "docs/evidence/w1-02/ui-final/browser-results.json",
+        "docs/evidence/w1-02/gallery-final/browser-results.json",
+        "docs/evidence/w1-02/comparison.json",
+        "docs/evidence/w1-02/consumer-result.json",
+        "docs/evidence/w1-02/release-audit.json",
+        "docs/evidence/w1-02/dev-result.json",
+        "docs/evidence/w1-02/source-manifest.json",
+        "docs/evidence/w1-02/handoff-validation.json"
+      ],
       "blocker": null,
-      "next_action": "按v0.6第10.4节定义启动/当前推进/有限前看优先级、并发/解码/纹理预算及旧画面提交屏障；不再要求整个图片目录在开场前全部下载解码。"
+      "next_action": "四种策略、驻留缓存、资源屏障/重试/取消/跨刷新与跨策略恢复、可见CG引用均已验收；下一W1-03模块/存储，W1-04持久字节缓存/离线/平台。保持有限支持范围，不宣称整部大作或全部设备完成。"
     },
     {
       "id": "W1-03",
@@ -2349,7 +2366,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "按v0.6第11.5节验证跨发布缓存/中断安装恢复与驱逐提示；明确Firefox/Safari/移动真机支持范围，不用Chromium模拟代替真实设备认证。 当前playground主入口约3.02MB/gzip401KB；按实际冷启动网络/解析测量决定拆包，不能把gzip大小当首屏时延。"
+      "next_action": "建设版本化持久字节缓存与先下载/按需解码、可恢复离线安装和驱逐提示；验证跨发布CDN缓存、冷启动网络/拆包及Firefox/Safari/移动真机范围，不用Chromium模拟代替认证。"
     }
   ]
 }

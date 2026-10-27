@@ -26,3 +26,5 @@ W1-01/ADR0032继续处理长指令串和Web响应性：Core对私有Program建�
 - `pnpm profile:graphics`：生产Host固定61提交/960ms，WebGL/Canvas与burst/rAF；none/finish/readback逐一比较，等待+dispose与总成本均保留。GALBOX_GRAPHICS_EXPERIMENT=no-msaa只做测试实验，不修改生产默认。详见evidence/h3-02/REPORT.md；当前软件GPU的提交积压与释放长尾没有被消除。
 
 现有性能脚本证明声明场景，不能把局部执行P95或微任务修复推广为“整个引擎达到绝对极限”。下一主要优化面是W1-02资源工作集和W1-03存储/程序规模，并以实际Web游玩首屏、卡顿、内存和可靠保存为标准。
+
+W1-02加载策略用`pnpm profile:loading`和`pnpm test:loading-performance`复现，说明见LOADING及evidence/w1-02。18图/每HTTP响应60ms/阅读停留150ms/显式并发3/16MiB估算预算，before来自fe86769独立构建；四策略最终逻辑与真实存读档一致。计时不含SDK模块冷加载，每配置一次观测，不称P95。报告分别显示createPlayer、start、推进、实际请求和纹理估算，不能只挑首屏速度掩盖按需/章节后移的等待。缓存工作集估算不等于整个浏览器heap；持久离线与模块规模仍另验。

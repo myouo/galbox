@@ -12856,6 +12856,77 @@
         "toolbar"
       ],
       "additionalProperties": false
+    },
+    "LoadingOptions": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "eager",
+            "demand",
+            "balanced",
+            "chapter"
+          ]
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "maxResidentBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1073741824
+        },
+        "lookahead": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "chapters": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+              },
+              "functions": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 256,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                }
+              },
+              "assets": {
+                "type": "array",
+                "maxItems": 256,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "functions",
+              "assets"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

@@ -1,0 +1,16 @@
+{
+  "result": "passed",
+  "sourceFiles": 468,
+  "taskStatesAndDependencies": true,
+  "evidenceExists": true,
+  "sourceHashesMatch": true,
+  "browserRuns": {
+    "browser-results.json": 141,
+    "ui-final/browser-results.json": 28,
+    "gallery-final/browser-results.json": 21
+  },
+  "browserCoverageNote": "141 full; later changed UI/gallery paths revalidated by 28 and 21 focused cases; current 143 is a discovery count, not a final full run",
+  "loadingComparison": true,
+  "artifactHashesMatch": true,
+  "nativeCanvasCrossPolicyRestore": true
+}

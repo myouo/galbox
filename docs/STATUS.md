@@ -1,13 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-27。本轮W1-01与H3-02验收完成，本地分支perf/web-responsive-runtime，基线c71537b；本轮提交以git log为准，无推送/外部发布/部署。架构逐项核验见[WEB_READINESS](WEB_READINESS.md)：TS Core+异步Host方向符合Web游玩，当前SDK alpha尚未完成大型作品的全部Web交付能力。
+2026-10-27。W1-02有限支持集及收尾CG固定引用修复验收完成，feat/loading-strategies，基线fe86769，本轮本地提交以git log为准；无推送/发布/部署。四种设计及限制见LOADING，原计划目标核验见WEB_READINESS。下一任务W1-03。
 
-W1-01：私有函数/指令/后继索引、实例MessageChannel任务续跑与timer后备、候选取消、端口懒分配/清理、执行中不积压rAF tick。相同6000指令Node执行P95约193–220→22–42ms；浏览器计算期间timer延迟318–541→1–7ms，timer/rAF均可执行，预算1/8/100快照摘要一致。同步校验/构造/插件仍可能长，未以此承诺零卡顿或所有指标最优。
+已实现：eager（默认串行兼容）、demand、balanced、chapter；其余默认并发3、可选1–8；非eager需正式release。按切点准备、固定当前/候选/预览引用、驻留估算/LRU、取消/迟到、批次首错停止。资源等待保持旧图文、拒绝保存/flush，失败重试同一轮，隔离准备器效果DTO；候选资源准备先于head提交。默认经典/皮肤/回放UI提供加载重试且清理旧错误，策略不写入剧情快照，可换策略读旧档。
 
-H3-02：固定61提交/960ms发现SwiftShader等待主要落在context loss，readback只前移成本；关闭MSAA没有稳定总收益，未改生产画质或延迟清理。平台限制见evidence/h3-02/REPORT。标准小说228操作API P95=16.3ms，三次dispose最大67ms，既定门槛通过。
+最终受控18图/60ms延迟/150ms阅读/显式并发3：旧创建约1.2s，新demand/balanced约22–23ms、2/18请求；demand推进仍约68–75ms，balanced约4–11ms，chapter把约97ms集中到start。SDK已加载后计时，单次观测非P95；纹理估算不等于浏览器总内存。原目录预算/字体等启动常驻保持，不把局部支持扩大为大作完成。
 
-验证：frozen install/check/build、220单元（加强反例另复跑3项）、130浏览器（0 skipped/flaky/unexpected）、独立包/native ESM/长计算/保存恢复、65 CLI命令、4 synthetic、API 13入口无删除（testing.Coordinator新增executing getter）、两包dry-run全部通过。原生--disable-webgl/未替换API、390×844触控模拟完成图文保存/刷新/两皮肤恢复，单Canvas/0 pageerror。证据、包SHA、源码绑定见evidence/w1-01/REPORT及source-manifest。
+验证：最终check/生成/headless/边界、225单元；完整逻辑/设备141浏览器通过，随后UI收尾28专项、最后CG固定引用21专项通过（当前143用例，未声称最后版本又全跑143）。独立tarball/native ESM/四模式、65 CLI、4 synthetic、13入口API无删除/两包dry-run、标准3周期性能通过。原生禁WebGL的390×844触控模拟已断言demand→balanced真实模式，图文表单、刷新/两皮肤、设置/当前profile恢复，1 Canvas/0 pageerror。所有日志/失败修复/源码和包SHA见evidence/w1-02/REPORT。
 
-当前下一W1-02（todo）：先写有限资源支持集ADR和阻塞下载基线，再让Host按启动/当前剧情依赖准备、有限前看、并发/解码/纹理预算与淘汰；旧画面在新资源成功前保持，取消/迟到/读档/跨实例必须验证。随后W1-03模块与存储粒度/留存、W1-04发布缓存/可恢复离线/冷启动拆包和浏览器真机矩阵，最后G7综合。N/F/M6真实资料仍缺，不用fixture代替认证。
+下一W1-03：先定义Program模块身份/稳定地址/跨模块闭包与延迟加载屏障，再评估IndexedDB整份命名空间/4M JSON字符预算、回执/激活留存与记录粒度；不得只提高上限，保留head/回执原子性、迁移和备份闭包。W1-04继续持久字节缓存、先下载再按需解码、离线安装、发布缓存/冷启动/目标设备。G7及N/F/M6真实作品认证仍未完成，资料不足不造假。
 
-运行：export TMPDIR=/dev/shm；pnpm install --frozen-lockfile；pnpm dev。当前开发页http://127.0.0.1:4173/?demo=interface，可加skin=paper或renderer=canvas；build用pnpm build。全量test:browser前停当前dev，释放4173/4174；consumer/CLI/perf分别执行，避免共享构建/设备竞争。任务表是完整状态唯一来源。
+运行：export TMPDIR=/dev/shm；pnpm install --frozen-lockfile；pnpm dev。当前http://127.0.0.1:4173/?demo=interface&loading=balanced，可改loading=demand/eager/chapter或renderer=canvas；pnpm build输出静态目录。完整test:browser前停止当前dev释放4173/4174；consumer/CLI/perf依次运行。完整状态仅以tasks.json为准。

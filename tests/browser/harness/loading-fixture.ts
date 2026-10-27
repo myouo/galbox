@@ -1,0 +1,10 @@
+import {ProgramBuilder,instruction,imagePut,gamePresentation} from 'galbox-sdk/port-kit';
+import {parseProgram,parseReleaseManifest,i32} from 'galbox-sdk/protocol';
+import {createReleaseManifest} from 'galbox-sdk/release';
+export async function loadingFixture(gameId='loading-browser',presentation=false) {
+ const source=parseProgram(await(await fetch('/program.json')).json()),release=parseReleaseManifest(await(await fetch('/program.json.release.json')).json()),b=new ProgramBuilder({gameId,release:'loading-v1',entry:'main'}).global({id:'n',kind:'i32',initial:i32(0)});
+ if(presentation)b.presentation(gamePresentation());
+ const assets=Array.from({length:8},(_,i)=>{const asset=source.assets.find(a=>a.id===(i%2?'tower':'shore'));if(!asset)throw new Error('source image');return {...asset,id:`picture${i}`};});const refs=assets.map(a=>b.asset('image',a));
+ b.function({id:'main',entry:'image0',layout:1,params:[],locals:[],returns:'void',code:[imagePut('image0','background',refs[0]!,{x:0,y:0,alpha:1}),instruction('text.page',{at:'page0',textId:'page0',revision:'v1',speaker:'澪',content:'旧画面应保留到下一幕准备完成。'}),instruction('i32.add.checked',{at:'count1',dest:'n',left:{slot:'n'},right:{literal:i32(1)}}),imagePut('image1','background',refs[1]!,{x:0,y:0,alpha:1}),instruction('text.page',{at:'page1',textId:'page1',revision:'v1',speaker:'澪',content:'第一幕已经准备完成。'}),instruction('i32.add.checked',{at:'count2',dest:'n',left:{slot:'n'},right:{literal:i32(1)}}),imagePut('image2','background',refs[2]!,{x:0,y:0,alpha:1}),instruction('text.page',{at:'page2',textId:'page2',revision:'v1',speaker:'澪',content:'第二幕已经准备完成。'}),instruction('control.end',{at:'end'})]});const program=b.build(),facts=assets.map((a,i)=>{const fact=release.resources.find(f=>f.id===(i%2?'tower':'shore'));if(!fact)throw new Error('source facts');return {...fact,id:a.id};});
+ const manifest=await createReleaseManifest({program,series:'loading',resources:facts},{async sha256(text){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))].map(n=>n.toString(16).padStart(2,'0')).join('');}});return {program,release:manifest};
+}

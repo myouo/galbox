@@ -1,0 +1,145 @@
+Listing tests:
+  adapters.spec.ts:3:1 › resource identity/ownership/cancellation, invalid header refusal and decoder failure cleanup
+  adapters.spec.ts:24:1 › real IndexedDB isolates namespaces and rejects profile/slot/head conflicts
+  adapters.spec.ts:36:1 › public Player saves partial animation group, resumes with new audio epoch, cleans instances
+  adapters.spec.ts:54:1 › load generations retain current profile and a delayed older preparation never takes over
+  adapters.spec.ts:69:1 › save already inside storage commit reports success after dispose; resources stay released
+  adapters.spec.ts:79:1 › blocked real audio startup retries the same task without repeating narrative updates
+  adapters.spec.ts:90:1 › old input epoch cannot act on an identical restored prompt; pause reasons remain independent
+  adapters.spec.ts:100:1 › postcommit failure retries the same activation; a new load supersedes it permanently
+  adapters.spec.ts:112:1 › missing Web Audio fails with an explicit unavailable diagnostic and no leftover canvas
+  adapters.spec.ts:119:1 › initial Player activation plays a stop-on-restore one-shot; subsequent load stops it
+  async-runtime.spec.ts:4:1 › real Web task continuation paints and handles a menu during a long round without exposing a save cut or repeating input
+  async-runtime.spec.ts:7:52 › startup budget continuation supports dispose before persistent activation
+  async-runtime.spec.ts:7:52 › startup budget continuation supports supersede before persistent activation
+  async-runtime.spec.ts:10:1 › browser scheduler fallback yields a real task and disposing one scheduler preserves another
+  async-runtime.spec.ts:13:1 › long automatic rounds do not accumulate animation-frame ticks as prepaid delay for the next page
+  async-runtime.spec.ts:17:1 › rejected Player construction and unused schedulers allocate no MessageChannel ports
+  backups.spec.ts:4:1 › default UI downloads a portable backup, restores an independent branch and loads it across refresh
+  backups.spec.ts:15:1 › real IndexedDB abort rolls back the entire restore; lost replies retry without activation or hook effects
+  backups.spec.ts:26:1 › another database consumes the backup; release migration is explicit and old slots remain exportable
+  backups.spec.ts:34:1 › restore committed before dispose returns the durable result and leaves a borrowed database usable
+  backups.spec.ts:41:1 › profile-only backups remain selectable after refresh and explicitly start a new story with restored read progress
+  canvas-effects.spec.ts:5:1 › Canvas isolated pixels implement premultiplied crossfade, filters, hierarchy masks, camera, affine rotation and overlay
+  canvas-effects.spec.ts:28:1 › nested groups, clipping and optical blur agree with actual WebGL samples; CPU blur remains available without Canvas filter
+  canvas-effects.spec.ts:47:1 › no-WebGL Canvas stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes
+  canvas-effects.spec.ts:53:1 › composition budget rejects a live candidate before takeover and preserves the current Canvas image, slot and profile
+  canvas-effects.spec.ts:59:1 › a failed Canvas filter readback keeps the previous visible frame, pauses safely and disposes every owned surface
+  data.spec.ts:6:1 › original supply chapter computes exact f64/i64/collections and preserves current profile across old-save refresh and both choices
+  data.spec.ts:12:1 › real IndexedDB numeric migration validates every current/previous cut and keeps the original branch intact
+  data.spec.ts:22:1 › a failed numeric candidate does not commit its profile/audio intentions or revoke the old active player
+  disposal.spec.ts:4:1 › static text/profile updates skip Pixi drawing; epoch and animation changes still draw from owned stage values
+  disposal.spec.ts:15:1 › disposing one Player loses only its context and preserves shared Pixi pools and another live Player
+  disposal.spec.ts:21:1 › a cancelled Application.init that completes late destroys the newly allocated context exactly once
+  expressions.spec.ts:6:1 › original logbook runs expressions and evaluated text, replays saved RNG cuts across refresh and completes both choices
+  expressions.spec.ts:13:1 › host seed is sampled once before durable activation and pending recovery or load never samples again
+  extras.spec.ts:4:1 › CG variants and music are real, while scene replay writes only to a production memory store and main progress survives refresh
+  extras.spec.ts:13:42 › default webgl extras UI shows variants, persistent achievements and playable isolated scenes
+  extras.spec.ts:13:42 › default canvas extras UI shows variants, persistent achievements and playable isolated scenes
+  extras.spec.ts:16:1 › late CG resources are returned after cancellation, and queued saves cannot thaw a gallery-owned main freeze
+  extras.spec.ts:19:1 › closing cannot revive a superseded main owner and an unknown head remains frozen until explicit close retry
+  extras.spec.ts:22:1 › scene preparation failure and closing a running preview leave another Player and all main-story slots intact
+  extras.spec.ts:25:1 › versioned music preview uses conditional HTTP validation and leaves only logical data in a saved story
+  extras.spec.ts:28:1 › a durable profile edit during preview cannot silently resume a stale working profile
+  flowchart.spec.ts:4:1 › declared chapter entry persists visits/unlocks, resets run state and restores nested roots across refresh and backup profiles
+  flowchart.spec.ts:13:1 › flowchart entry rechecks durable gates, rejects unsafe/old requests and preserves authority on preparation failure
+  flowchart.spec.ts:18:42 › default webgl flowchart draws edges, filters chapters and requires visible confirmation
+  flowchart.spec.ts:18:42 › default canvas flowchart draws edges, filters chapters and requires visible confirmation
+  flowchart.spec.ts:21:1 › graph entry rejects the current save prohibition and handles committed reply loss without restoring the old writer
+  flowchart.spec.ts:27:1 › failed device unlock leaves graph entry before commit and restores the prior Player lifecycle
+  graphics.spec.ts:8:1 › actual denied WebGL falls back to Pixi Canvas and original novel plays both routes across IndexedDB refresh
+  graphics.spec.ts:14:1 › Canvas pixels preserve affine transforms, parent clipping, camera, fade and blend without GPU filters
+  graphics.spec.ts:29:1 › same public saves and portable backups move from WebGL to Canvas and back without restoring old progress
+  graphics.spec.ts:35:1 › forced devices, composition budget and total device failure reject before acquire or activation and clean owned views
+  graphics.spec.ts:42:1 › cancelled late Canvas initialization destroys its instance exactly once and leaves the borrowed store untouched
+  graphics.spec.ts:48:1 › a failed WebGL initialization releases its real context before falling back; explicit WebGL never silently changes backend
+  graphics.spec.ts:54:1 › Canvas rejects an over-budget restore candidate before persistent takeover and keeps the old slot and active scene
+  history.spec.ts:4:1 › real history voice is isolated from narrative clocks; rollback restores nested frame/RNG/motion while durable unlocks survive refresh
+  history.spec.ts:13:1 › default history UI previews actual voice in a paused menu and requires confirmation for rollback
+  history.spec.ts:17:1 › history preview honors non-menu pause, rejects a blocked native start, cancels late play and keeps separate Players independent
+  history.spec.ts:26:1 › invalid or failed rollback preserves the live authority, while a committed reply loss stays pending and recovers once
+  history.spec.ts:33:1 › versioned stream history preview revalidates HTTP identity and saves logical checkpoints without temporary media URLs
+  history.spec.ts:39:1 › legacy snapshots replay their validated voice without inventing old rollback checkpoints
+  imports.spec.ts:3:1 › real UI imports into an independent profile, loads separately and preserves hooks after save/refresh
+  imports.spec.ts:17:1 › lost import/activation replies remain idempotent; pending retry does not reapply the hook
+  imports.spec.ts:27:1 › the final activation barrier hands off dirty profile before recomputing the load recipe
+  imports.spec.ts:35:1 › a late File read cannot clear or replace a newer prepared import
+  interactive.spec.ts:7:1 › no-WebGL movie renders in one Canvas, pauses and replays from a real slot; hotspot and active deadline survive refresh
+  interactive.spec.ts:12:1 › WebGL default UI distinguishes movie skip from completion, keyboard hotspots and an authored timeout
+  interactive.spec.ts:17:1 › public embedding leaves a prepared prompt untimed until explicit readiness; restore reactivates and rejects old input identities
+  interactive.spec.ts:25:1 › blocked video retries one logical clip, restore renews attempts and old native end callbacks stay inert
+  interactive.spec.ts:31:1 › decoder rejection precedes activation; permanent initial forbid-video failure recovers the same durable head without duplicate profile writes
+  interactive.spec.ts:37:1 › disposing a pending video play promptly releases takeover and its late promise cannot resurrect the old source
+  interactive.spec.ts:43:1 › readiness excludes a long unrendered preparation interval and a late input loses even when no RAF timeout callback runs
+  layout.spec.ts:6:1 › original ADV/NVL chapter preserves multiple windows, themes, history and profile across refresh and plays both choices
+  layout.spec.ts:13:1 › public renderer is created after fonts, receives isolated data, scales logical layout and disposes exactly once
+  layout.spec.ts:20:1 › font failures and aborts clean prepared resources before activation; separate players retain their own loaded fonts
+  layout.spec.ts:29:1 › renderer creation cancellation releases its late result, and a committed render failure recovers through a fresh renderer
+  loading.spec.ts:4:1 › a visible gallery image keeps its lease after preparation cancellation until the view explicitly releases it
+  loading.spec.ts:7:1 › explicit concurrent stream preparation returns each cancelled late lease exactly once
+  loading.spec.ts:10:1 › failed speculative loading stays nonfatal and demand retries it without advancing the story early
+  loading.spec.ts:13:1 › deferred loading prepares real fonts, media, streaming, script UI and gallery resources on the shared production paths
+  loading.spec.ts:16:1 › superseding a slow startup releases its late lease and only activates the newer candidate
+  loading.spec.ts:19:1 › resident budget failure preserves the pinned current image and never commits the new progress
+  loading.spec.ts:22:68 › loading eager uses its declared startup and prefetch strategy through the real Player
+  loading.spec.ts:22:68 › loading demand uses its declared startup and prefetch strategy through the real Player
+  loading.spec.ts:22:68 › loading balanced uses its declared startup and prefetch strategy through the real Player
+  loading.spec.ts:22:68 › loading chapter uses its declared startup and prefetch strategy through the real Player
+  loading.spec.ts:25:32 › a failed resource round preserves pixels and retries once with classic UI
+  loading.spec.ts:25:32 › a failed resource round preserves pixels and retries once with authored UI
+  loading.spec.ts:28:1 › LRU eviction reloads a real IndexedDB save across refresh under another loading policy
+  media.spec.ts:6:1 › native buffer segment loops remain active past physical duration and replay with a new source on load
+  media.spec.ts:11:1 › disposing a pending native play releases activation promptly and late promise cannot resurrect its source
+  media.spec.ts:16:1 › original wind chapter replays voice, saves live mix, refreshes and completes both routes with natural media waits
+  media.spec.ts:24:1 › native long media clocks pause, loop segments, mix envelopes and restore with fresh requests without retained PCM
+  media.spec.ts:34:1 › blocked element startup retries its invocation and stale ended callbacks cannot finish replayed voice
+  media.spec.ts:40:1 › unsupported decoders fail before activation; permanent play failure leaves a recoverable durable pending head
+  playback.spec.ts:4:1 › Auto waits for native voice completion, pauses in menus and rebuilds voice gates on restore
+  playback.spec.ts:22:1 › configured input is scoped per instance, ignores repeats/editors and discards held inputs after load or focus loss
+  playback.spec.ts:40:1 › default UI persists playback, mappings and display settings, imports/exports JSON and restores defaults
+  playback.spec.ts:54:1 › real IndexedDB v1 preferences migrate without losing revision and reset uses authored defaults
+  player.spec.ts:17:1 › real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary profile
+  player.spec.ts:34:1 › menu pointer release cannot advance and repeated create/dispose releases canvas/audio
+  player.spec.ts:39:1 › keyboard activation consumes one stage and a menu cancels a held key
+  player.spec.ts:43:1 › a blocked real audio start exposes a working retry button without advancing the story
+  preferences.spec.ts:3:1 › default settings persist across refresh and loading an older story slot does not restore older preferences
+  preferences.spec.ts:10:1 › live role gains multiply script gain once, future sources use current preferences and snapshot gains remain authored
+  preferences.spec.ts:17:1 › real IndexedDB settings isolate namespaces, reject stale writers, reconcile unknown replies and report committed disposal
+  presentation.spec.ts:5:42 › authored webgl interface routes title, settings, saves, history, gallery and form without bespoke UI
+  presentation.spec.ts:5:42 › authored canvas interface routes title, settings, saves, history, gallery and form without bespoke UI
+  presentation.spec.ts:8:1 › skin replacement preserves saved story and preferences; navigation cleans previews and rejects late route completion
+  presentation.spec.ts:13:2 › responsive interface › mobile Canvas pages, focus, touch scroll and authored form stay usable without losing saved values
+  presentation.spec.ts:17:1 › full save and data pages paginate, contain confirmation focus and restore a portable profile
+  presentation.spec.ts:20:1 › rendered interface ownership resets on Player replacement and pending preference writes keep sliders usable
+  presentation.spec.ts:23:1 › direct GameUI explicitly rejects missing presentation without starting an invisible story
+  presentation.spec.ts:26:1 › configured menu keys close system pages without stealing editor text or repeating into the story
+  release.spec.ts:4:1 › published release rejects changed Program, binding registry, provider identity and physical resource facts before activation
+  release.spec.ts:13:1 › predecode image budget and ignored acquire cancellation clean initialization and return each late lease once
+  release.spec.ts:20:1 › real PNG and WAV decoding report owned memory; a failed audio start releases nodes and actual context loss pauses the session
+  release.spec.ts:28:1 › HTTP streaming is bounded even when the server supplies no Content-Length
+  release.spec.ts:32:1 › permanent audio failure retains a committed pending activation; a fresh Host resumes without repeating startup profile writes
+  save-system.spec.ts:4:1 › graphical saves capture the same DOM/stage cut and commit after later pages in real IndexedDB
+  save-system.spec.ts:18:51 › illustrated webgl capture contains Ruby, revealed effects, NVL windows and embedded font
+  save-system.spec.ts:18:51 › illustrated canvas capture contains Ruby, revealed effects, NVL windows and embedded font
+  save-system.spec.ts:27:1 › save failures, lost receipts, cancellation and custom renderers do not fabricate a successful save
+  save-system.spec.ts:34:1 › automatic ring and profile quick slots persist without saving immediately on restore
+  save-system.spec.ts:42:1 › default illustrated save library creates, confirms overwrite, renames, loads previous and deletes
+  save-system.spec.ts:45:1 › unsupported text capture, Core no-save and abort refuse before persistence
+  save-system.spec.ts:54:1 › real IndexedDB abort leaves snapshot, image, previous revision and receipt unchanged
+  stage.spec.ts:6:1 › original stage chapter saves live parallel effects, pauses, refreshes without re-evaluating relative motion and completes both routes
+  stage.spec.ts:13:1 › actual WebGL pixels implement premultiplied crossfade, filters, hierarchy masks, camera, affine rotation and overlay
+  stage.spec.ts:32:1 › real IndexedDB refuses corrupt active effect state without replacing the working head or deleting either slot
+  streams.spec.ts:11:1 › actual throttled HTTP starts audio and video before all unique bytes arrive, retains grade and restores from a real slot
+  streams.spec.ts:17:1 › version drift refuses a candidate before persistent takeover and network loss never reports natural completion
+  streams.spec.ts:23:1 › late cancelled stream leases return exactly once and a fake provider identity cannot promote expected bytes
+  streams.spec.ts:27:1 › two live Players share a provider without sharing cancellation or release ownership; exported diagnostics are detached
+  streams.spec.ts:31:1 › release callback failure still cleans the SDK and attempts every lease return exactly once
+  synthetic.spec.ts:3:1 › synthetic binary preparation uses real Web Crypto and rejects corrupt source bytes
+  text.spec.ts:6:1 › original rich chapter renders Ruby/styles, persists a complete page across refresh and plays both routes including Auto
+  text.spec.ts:12:1 › real DOM keeps layout and Unicode units stable; IndexedDB restore recreates saved pause, fraction and effect phase
+  text.spec.ts:24:1 › rich DOM treats source markup as text and rejects changed-source loads without destroying the active run or old slot
+  ui.spec.ts:4:42 › script UI webgl edits six control kinds, captures actual UI pixels and restores nested form across refresh
+  ui.spec.ts:4:42 › script UI canvas edits six control kinds, captures actual UI pixels and restores nested form across refresh
+  ui.spec.ts:8:1 › UI input identities, uncommitted IME, captured values and detached controls stay isolated across load and dispose
+  ui.spec.ts:11:1 › UI image device failure pauses the real Core, refuses incomplete thumbnails and restores through a new Player
+Total: 143 tests in 27 files

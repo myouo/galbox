@@ -39,3 +39,5 @@
 .galbox-game-ui button{overflow-wrap:anywhere}.galbox-game-ui .game-toolbar button{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:700px),(max-height:550px){.galbox-game-ui .advance{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:3}.galbox-game-ui .game-toolbar button{max-width:25%}}
 @media(max-height:550px) and (min-width:701px){.galbox-player:has(>.galbox-game-ui){max-width:calc((100dvh - 24px)*16/9);margin:12px auto 0}}
+
+.galbox-resource-wait{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;pointer-events:none;background:#0003}.galbox-resource-wait>div{pointer-events:auto;background:#152235ee;color:#fff;padding:1rem 1.5rem;border-radius:.6rem;text-align:center}.galbox-resource-wait button{font:inherit;padding:.5rem 1.2rem}

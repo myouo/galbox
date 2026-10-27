@@ -29,7 +29,9 @@
     "test:performance:comparison": "node scripts/compare-runtime-profile.mjs",
     "profile:web": "pnpm build && pnpm build:harness && node scripts/profile-web-runtime.mjs",
     "profile:graphics": "pnpm build && pnpm build:harness && node scripts/profile-graphics-teardown.mjs",
-    "test:web-performance": "node scripts/compare-web-runtime.mjs"
+    "test:web-performance": "node scripts/compare-web-runtime.mjs",
+    "profile:loading": "pnpm build && pnpm build:harness && node scripts/profile-loading.mjs",
+    "test:loading-performance": "node scripts/compare-loading.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

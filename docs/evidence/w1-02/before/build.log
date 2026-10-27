@@ -1,0 +1,5 @@
+Scope: all 4 workspace projects
+[WARN] The store at /home/myo/.local/share/pnpm/store/v11 is not used because packages cannot be hard linked from it into this project. Using the store at /dev/shm/.pnpm-store/v11 instead. Set storeDir to choose the store.
+[ERR_PNPM_UNSAFE_MODULES_DIR] Refusing to remove the modules directory at "/home/myo/Desktop/galbox-sdk/packages/galbox-sdk/node_modules" because its resolved target is not a strict subdirectory of the project root at "/dev/shm/galbox-loading-baseline-fe86769/packages/galbox-sdk".
+[WARN] The install that runs before scripts failed, so your node_modules may be out of sync with your lockfile. Set "verifyDepsBeforeRun: false" to skip this install.
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs

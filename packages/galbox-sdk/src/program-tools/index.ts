@@ -43,3 +43,5 @@ export {uiFingerprint} from '../protocol/ui.js';
 
 export {gamePresentation} from './presentation.js';
 export type {GamePresentationOptions} from './presentation.js';
+
+export {loadingPolicy} from "../protocol/loading.js";

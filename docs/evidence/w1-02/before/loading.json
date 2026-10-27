@@ -1,0 +1,976 @@
+{
+  "revision": "fe86769ce7482d89548cd3996e5b69739b7c7ed6",
+  "browser": "156.0.8078.4",
+  "driverSha256": "c3e20f78a9195101da42d5e2db58e42f1efd12a8b9bb0292c4bbbbe185820bca",
+  "imageCount": 18,
+  "imageBytes": 2636,
+  "serverDelayMs": 60,
+  "readingPauseMs": 150,
+  "residentBudgetBytes": 16777216,
+  "rows": [
+    {
+      "mode": "eager",
+      "createMs": 1224,
+      "createAssets": 18,
+      "startMs": 26.399999976158142,
+      "advances": [
+        10.400000095367432,
+        4
+      ],
+      "resources": {
+        "catalogEncodedBytes": 2636,
+        "streamDeclaredBytes": 0,
+        "integrity": [
+          {
+            "id": "picture0",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "verifiedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture1",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "verifiedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture2",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "verifiedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture3",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "verifiedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture4",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "verifiedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture5",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "verifiedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture6",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "verifiedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture7",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "verifiedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture8",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "verifiedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture9",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "verifiedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture10",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "verifiedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture11",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "verifiedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture12",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "verifiedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture13",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "verifiedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture14",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "verifiedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture15",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "verifiedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture16",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "verifiedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture17",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "verifiedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "bytes": 147
+            }
+          }
+        ],
+        "canvasBlur": "native",
+        "canvasBytesEstimated": 3686400,
+        "canvasPeakBytesEstimated": 3686400,
+        "canvasSurfaces": 1,
+        "renderer": "canvas",
+        "graphicsFallback": "WebGL context unavailable",
+        "graphics": "available",
+        "assets": 18,
+        "encodedBytes": 2636,
+        "textureBytesEstimated": 4147200,
+        "decodedAudioBytes": 0,
+        "mediaElementBytes": 0,
+        "limits": {
+          "maxAssetBytes": 16777216,
+          "maxEncodedBytes": 33554432,
+          "maxTextureBytes": 134217728,
+          "maxAudioBytes": 33554432,
+          "maxImageSide": 4096,
+          "maxAudioMs": 30000
+        }
+      },
+      "final": {
+        "asset": "picture1",
+        "text": "two",
+        "history": 2
+      },
+      "requests": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "mode": "demand",
+      "createMs": 1176.6000000238419,
+      "createAssets": 18,
+      "startMs": 25.699999928474426,
+      "advances": [
+        9.299999952316284,
+        4.399999976158142
+      ],
+      "resources": {
+        "catalogEncodedBytes": 2636,
+        "streamDeclaredBytes": 0,
+        "integrity": [
+          {
+            "id": "picture0",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "verifiedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture1",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "verifiedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture2",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "verifiedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture3",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "verifiedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture4",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "verifiedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture5",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "verifiedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture6",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "verifiedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture7",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "verifiedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture8",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "verifiedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture9",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "verifiedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture10",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "verifiedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture11",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "verifiedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture12",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "verifiedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture13",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "verifiedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture14",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "verifiedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture15",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "verifiedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture16",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "verifiedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture17",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "verifiedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "bytes": 147
+            }
+          }
+        ],
+        "canvasBlur": "native",
+        "canvasBytesEstimated": 3686400,
+        "canvasPeakBytesEstimated": 3686400,
+        "canvasSurfaces": 1,
+        "renderer": "canvas",
+        "graphicsFallback": "WebGL context unavailable",
+        "graphics": "available",
+        "assets": 18,
+        "encodedBytes": 2636,
+        "textureBytesEstimated": 4147200,
+        "decodedAudioBytes": 0,
+        "mediaElementBytes": 0,
+        "limits": {
+          "maxAssetBytes": 16777216,
+          "maxEncodedBytes": 33554432,
+          "maxTextureBytes": 134217728,
+          "maxAudioBytes": 33554432,
+          "maxImageSide": 4096,
+          "maxAudioMs": 30000
+        }
+      },
+      "final": {
+        "asset": "picture1",
+        "text": "two",
+        "history": 2
+      },
+      "requests": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "mode": "balanced",
+      "createMs": 1174.2000000476837,
+      "createAssets": 18,
+      "startMs": 23.199999928474426,
+      "advances": [
+        8.899999976158142,
+        4
+      ],
+      "resources": {
+        "catalogEncodedBytes": 2636,
+        "streamDeclaredBytes": 0,
+        "integrity": [
+          {
+            "id": "picture0",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "verifiedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture1",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "verifiedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture2",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "verifiedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture3",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "verifiedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture4",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "verifiedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture5",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "verifiedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture6",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "verifiedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture7",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "verifiedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture8",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "verifiedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture9",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "verifiedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture10",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "verifiedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture11",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "verifiedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture12",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "verifiedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture13",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "verifiedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture14",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "verifiedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture15",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "verifiedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture16",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "verifiedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture17",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "verifiedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "bytes": 147
+            }
+          }
+        ],
+        "canvasBlur": "native",
+        "canvasBytesEstimated": 3686400,
+        "canvasPeakBytesEstimated": 3686400,
+        "canvasSurfaces": 1,
+        "renderer": "canvas",
+        "graphicsFallback": "WebGL context unavailable",
+        "graphics": "available",
+        "assets": 18,
+        "encodedBytes": 2636,
+        "textureBytesEstimated": 4147200,
+        "decodedAudioBytes": 0,
+        "mediaElementBytes": 0,
+        "limits": {
+          "maxAssetBytes": 16777216,
+          "maxEncodedBytes": 33554432,
+          "maxTextureBytes": 134217728,
+          "maxAudioBytes": 33554432,
+          "maxImageSide": 4096,
+          "maxAudioMs": 30000
+        }
+      },
+      "final": {
+        "asset": "picture1",
+        "text": "two",
+        "history": 2
+      },
+      "requests": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "mode": "chapter",
+      "createMs": 1175.5999999046326,
+      "createAssets": 18,
+      "startMs": 26.700000047683716,
+      "advances": [
+        9.599999904632568,
+        3.8000000715255737
+      ],
+      "resources": {
+        "catalogEncodedBytes": 2636,
+        "streamDeclaredBytes": 0,
+        "integrity": [
+          {
+            "id": "picture0",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "verifiedSha256": "e505bf0e67e1a6195c5c0ee3d9cf6f38aaccf1e2c40fbaa8ac449f5cdb2edb6c",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture1",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "verifiedSha256": "2f354bb177f24d53e554785f61004ba6e7e46f76fe29a0a4253d01e9ecee924b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture2",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "verifiedSha256": "f5f2e60957a51f4125840d821caa0ff32760644c349739c08d81f619fb7f825a",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture3",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "verifiedSha256": "ba7ebe6c4c90dd06129d3dadcf494aa6e87a5d6f736609d89a9b4791626603b7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture4",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "verifiedSha256": "32b72ab68333f9d19be34ccfdd15349b76c7780ce6100ebab9dcadfb9063374b",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture5",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "verifiedSha256": "690dab17c93edc3234267acbacd402f21300ad8d5da5959a4294c1c69ab5a4a6",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture6",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "verifiedSha256": "989cef06613f65486c5125bcaa660c64b36b905b902ab5cb63f3e452b4344407",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture7",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "verifiedSha256": "cef5fd9b0e39244b6b31cba91d5743f9aafd83a8f1ea01e1e0e11b2efcb4c8b9",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture8",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "verifiedSha256": "2aab43388031d264907965d056075c41b1f1bf663653d45b43bdb459e6558ea7",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture9",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "verifiedSha256": "2e27742ba4fcc47ed5eab7ae05f80be5e5187eb250bf471878891595cfe05007",
+              "bytes": 146
+            }
+          },
+          {
+            "id": "picture10",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "verifiedSha256": "eccffa06d773dd6989fce26dc2080c11a5a06c77ab59a0bdf7bcd8d12ad8c994",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture11",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "verifiedSha256": "2a6e50091617515690e0c4658fb253a7f2de1e4af165ad6dc9c0cfc15bfd2266",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture12",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "verifiedSha256": "25e350c1d4741b459405114ec960c2669b2b647d0753108958c138d99876ecf6",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture13",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "verifiedSha256": "f413a8c1e049df9ff6fe32e170afecf2b0ba58b2bde6be9c84c3b1a453b0c4bb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture14",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "verifiedSha256": "08b6938e5e89bc9885590ed940454d026c9b4cb4710278125035c9784ae0bedb",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture15",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "verifiedSha256": "d628d8be9f34bbf5192a9d0b3bf393a4a68130d5566e4e839a38946cdfbef47f",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture16",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "verifiedSha256": "f490a8dd6500fd1926a3baa729790f4229cc7022b40040584874296a1892f55e",
+              "bytes": 147
+            }
+          },
+          {
+            "id": "picture17",
+            "factOrigin": "inspected",
+            "evidence": {
+              "level": "digest-verified",
+              "expectedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "verifiedSha256": "e04b9c635bfd73e8798306628d67376c9bce3875087c2b50e4e06dc2d192ba6f",
+              "bytes": 147
+            }
+          }
+        ],
+        "canvasBlur": "native",
+        "canvasBytesEstimated": 3686400,
+        "canvasPeakBytesEstimated": 3686400,
+        "canvasSurfaces": 1,
+        "renderer": "canvas",
+        "graphicsFallback": "WebGL context unavailable",
+        "graphics": "available",
+        "assets": 18,
+        "encodedBytes": 2636,
+        "textureBytesEstimated": 4147200,
+        "decodedAudioBytes": 0,
+        "mediaElementBytes": 0,
+        "limits": {
+          "maxAssetBytes": 16777216,
+          "maxEncodedBytes": 33554432,
+          "maxTextureBytes": 134217728,
+          "maxAudioBytes": 33554432,
+          "maxImageSide": 4096,
+          "maxAudioMs": 30000
+        }
+      },
+      "final": {
+        "asset": "picture1",
+        "text": "two",
+        "history": 2
+      },
+      "requests": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    }
+  ]
+}

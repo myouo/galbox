@@ -1,0 +1,44 @@
+[
+  {
+    "demo": "layout",
+    "assets": 3,
+    "total": 3,
+    "phase": "idle",
+    "error": null
+  },
+  {
+    "demo": "media",
+    "assets": 3,
+    "total": 5,
+    "phase": "idle",
+    "error": null
+  },
+  {
+    "demo": "streaming",
+    "assets": 2,
+    "total": 3,
+    "phase": "idle",
+    "error": null
+  },
+  {
+    "demo": "ui",
+    "assets": 2,
+    "total": 2,
+    "phase": "idle",
+    "error": null
+  },
+  {
+    "demo": "extras",
+    "assets": 4,
+    "total": 8,
+    "phase": "idle",
+    "error": null
+  },
+  {
+    "demo": "interface",
+    "assets": 4,
+    "total": 9,
+    "phase": "idle",
+    "error": null
+  }
+]

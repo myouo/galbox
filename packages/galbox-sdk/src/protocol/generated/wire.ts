@@ -4110,3 +4110,28 @@ export interface HistoryReceipt {
   revision: number;
   signature: string;
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "LoadingOptions".
+ */
+export interface LoadingOptions {
+  mode: 'eager' | 'demand' | 'balanced' | 'chapter';
+  concurrency?: number;
+  maxResidentBytes?: number;
+  lookahead?: number;
+  /**
+   * @maxItems 64
+   */
+  chapters?: {
+    id: string;
+    /**
+     * @minItems 1
+     * @maxItems 256
+     */
+    functions: [string, ...string[]];
+    /**
+     * @maxItems 256
+     */
+    assets: string[];
+  }[];
+}

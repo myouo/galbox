@@ -1,0 +1,12 @@
+{
+  "capture": "GalboxError: RESOURCE_PREPARING: Wait for resource preparation or retry it",
+  "save": "GalboxError: RESOURCE_PREPARING: Wait for resources before saving",
+  "oldText": "澪旧画面应保留到下一幕准备完成。",
+  "oldPixels": true,
+  "reason": "GalboxError: ASSET_FAILED: Controlled network failure",
+  "oldProfile": [],
+  "n": 1,
+  "history": 1,
+  "text": "page1",
+  "phase": "idle"
+}

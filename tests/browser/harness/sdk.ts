@@ -20,3 +20,5 @@ export {createElement} from 'react';
 export {createRoot} from 'react-dom/client';
 export {WebHost} from '../../../packages/galbox-sdk/src/web-host/host.js';
 export {BrowserScheduler} from '../../../packages/galbox-sdk/src/web-host/scheduler.js';
+
+export {loadingFixture} from "./loading-fixture.js";

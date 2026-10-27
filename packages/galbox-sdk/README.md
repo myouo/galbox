@@ -91,3 +91,5 @@ gamePresentation/ProgramBuilder.presentation声明有限作品皮肤，DefaultUI
 Core.view返回深冻结的只读投影，同一状态可以复用引用，历史可结构共享；不要修改视图或依赖每次读取创建新对象。Core.capture仍返回独立、完整校验的可写wire快照。默认渲染器复用隔离视图，自定义renderer继续接收独立拷贝；性能工作负载与前后证据见仓库docs/PERFORMANCE.md。
 
 Player预算续跑通过实例MessageChannel任务（缺失时使用timer）让出浏览器，启动候选可被新请求或dispose取消。Core仍为同步确定性执行，地址索引不改变快照；预算续跑期间不是保存切点。同步校验/自定义扩展不自动转为Worker。资源按需/Program分模块/离线安装的完整方案尚未实现，详见仓库docs/WEB_READINESS.md与PERFORMANCE.md。
+
+资源加载由PlayerOptions.loading和port-kit的loadingPolicy配置：eager（兼容默认）、demand、balanced、chapter。非eager需正式release；预算/章节成员/策略按Schema校验。PlayerView.loading报告等待/失败与驻留估算，retryResources重试同一剧情轮次；准备期间保留旧画面并拒绝保存。可换策略读取原存档，暂不支持运行中切换或离线安装。详见仓库docs/LOADING.md与ADR0033。

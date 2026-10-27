@@ -79,3 +79,9 @@ const {streamRequest}=await import('galbox-sdk/port-kit');const {parseIntegrityE
  let expected;for(const budget of [1,8,100]){const c=createCore(burst);while(c.run(budget)==='yield'){}const snapshot=c.capture();assert.equal(snapshot.globals.n.value,5999);if(expected)assert.deepEqual(snapshot,expected);else expected=snapshot;}
  console.log('Packed indexed execution / 6000 instructions / budgets 1,8,100 passed');
 }
+
+{
+ const {loadingPolicy}=await import('galbox-sdk/port-kit');const {parseLoadingOptions}=await import('galbox-sdk/protocol');
+ assert.equal(loadingPolicy({mode:'balanced'}).lookahead,2);assert.throws(()=>parseLoadingOptions({mode:'offline-install'}),/SCHEMA_LOADING/);assert.throws(()=>loadingPolicy({mode:'chapter'}),/LOADING_CHAPTERS/);
+ console.log('Packed loading policy factory and strict unknown boundary passed');
+}
