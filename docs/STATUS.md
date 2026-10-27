@@ -15,3 +15,5 @@ SDK ADR0037通用旁白修复：三类文本允许空speaker并隐藏姓名，�
 曾仅运行隔离exe副本作参照，未反汇编/修改exe，未得可用画面；按用户要求已停止并结束独立prefix服务，后续仅脚本/资源分析，不把黑屏或素材合成当原作运行证据。无推送/发布。
 
 运行独立项目pnpm dev，127.0.0.1:4180，?lang=zh/en/fr/it/jp/ko/pt-br/ru，默认Canvas。SDK自身pnpm dev仍是tests/player-app验证应用。精确下一步：用新skill继续KAG AST/宏注册/参数与调用作用域、资源覆盖图，逐项恢复完整开场演出；页内确认G2-04、规则图转场G3-05、I1国际化、模块B2/容量C/离线W1-04及G7仍未完成。按语言分包且存档隔离不等于SDK完整i18n。
+
+开发模式另验：独立Vite原默认依赖扫描发生OOM；已限定index.html入口、排除private/artifacts/vendor/dist监视并禁止HTTP读取原始资料/日志/依赖包。新dev真实浏览器通过原标题/首句/Canvas无WebGL/0 pageerror和三个原始路径403，4180已恢复。此项只有独立工程配置变更，SDK运行包SHA不变。
