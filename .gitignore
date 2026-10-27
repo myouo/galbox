@@ -9,6 +9,8 @@ test-results/
 *.log
 artifacts/
 coverage/
+# Local game migration inputs; keep game files and original saves out of Git.
+tests/private/
 docs/evidence/**
 !docs/evidence/**/
 !docs/evidence/**/README.md

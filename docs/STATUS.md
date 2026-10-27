@@ -13,3 +13,5 @@
 运行：pnpm install --frozen-lockfile；pnpm dev在127.0.0.1:4173运行tests/player-app，?demo=modules&renderer=canvas为模块测试。pnpm build构建SDK/CLI及测试应用；业务项目从实际tarball的player/core/port-kit/wire/react等入口导入，不复制测试游戏。TMPDIR=/dev/shm用于当前环境临时目录。只做本地提交，未推送/发布/重写历史。
 
 精确下一步I1-01：先记录locale/语言回退/目录及正文TextId/Revision/ReadUnit规则的ADR，再演进偏好Schema与迁移，接默认UI并验证跨刷新/旧档和protobuf；当前Preferences v2没有locale，i18n尚不支持。B2补齐高级模块恢复闭包；C处理热记录留存/容量；W1-04处理持久缓存/离线与冷启动拆包。测试应用主JS gzip约468KB，比此前约406KB增长；包变小不能代替首屏性能验证。Firefox/Safari/移动真机及真实两作资料仍缺证据，不借用Chromium模拟结果认证。
+
+续核验（基线4765eb5）：用户考虑提供真实游戏实验，目前尚未收到。INPUTS_REQUIRED已补最小章节/原作参照清单；tests/private已ignore且门禁拒绝强行跟踪，验证见evidence/migration-readiness/REPORT.md。原游戏脚本→Program转换器与真实原档codec仍缺，接收其他作品可另建测试迁移任务，不替代N/F认证。SDK运行代码未改变；本次只验证仓库边界/ignore正反例及diff，不冒称重跑旧全套测试。I1-01仍是下一通用实施项。

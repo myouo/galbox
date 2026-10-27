@@ -1026,13 +1026,15 @@
       "acceptance": [
         "narcissu-inputs"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/migration-readiness/REPORT.md"
+      ],
       "blocker": {
         "kind": "needs-source-evidence",
         "reason": "缺少明确发行版、可用程序/资源、原档包及原作加载后继续参照；不得以合成格式代替。",
         "input_document": "docs/INPUTS_REQUIRED.md"
       },
-      "next_action": "按输入清单接收并核验真实资料；其他 SDK 任务继续。"
+      "next_action": "按INPUTS_REQUIRED接收并核验真实版本/脚本/资源/原档与继续参照。用户可先提供任意作品的小章节作测试迁移实验；其他作品不解除本任务的目标作品资料阻塞，I1等通用SDK任务继续。"
     },
     {
       "id": "F-01",
@@ -1053,13 +1055,15 @@
       "acceptance": [
         "fata-inputs"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/migration-readiness/REPORT.md"
+      ],
       "blocker": {
         "kind": "needs-source-evidence",
         "reason": "缺少明确发行版、可用程序/资源、原档包及原作加载后继续参照；不得以合成格式代替。",
         "input_document": "docs/INPUTS_REQUIRED.md"
       },
-      "next_action": "按输入清单接收并核验真实资料；其他 SDK 任务继续。"
+      "next_action": "按INPUTS_REQUIRED接收并核验真实版本/脚本/资源/原档与继续参照。用户可先提供任意作品的小章节作测试迁移实验；其他作品不解除本任务的目标作品资料阻塞，I1等通用SDK任务继续。"
     },
     {
       "id": "N-02",
