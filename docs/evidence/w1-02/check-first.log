@@ -1,8 +1,0 @@
-$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
-$ node scripts/generate.mjs --check
-$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
-$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
-packages/galbox-sdk/src/web-host/resource-loader.ts(10,20): error TS2305: Module '"./streams.js"' has no exported member 'streamRequest'.
-[ELIFECYCLE] Command failed with exit code 2.
-[ELIFECYCLE] Command failed with exit code 2.
-[ELIFECYCLE] Command failed with exit code 2.

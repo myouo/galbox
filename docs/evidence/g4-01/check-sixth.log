@@ -1,7 +1,0 @@
-$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
-$ node scripts/generate.mjs --check
-$ pnpm build:sdk && tsc -p packages/cli/tsconfig.build.json && node scripts/build-cli.mjs
-$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
-tests/browser/save-system.spec.ts(21,544): error TS2322: Type 'string | null' is not assignable to type 'string'.
-  Type 'null' is not assignable to type 'string'.
-[ELIFECYCLE] Command failed with exit code 2.

@@ -5,7 +5,7 @@ import {Core} from '../../packages/galbox-sdk/src/core/index.js';
 import {parseDatabase} from '../../packages/galbox-sdk/src/runtime/durable.js';
 import {i32} from '../../packages/galbox-sdk/src/protocol/index.js';
 import type {StoreImport} from '../../packages/galbox-sdk/src/protocol/index.js';
-const p:unknown=JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'));
+const p:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
 function snapshot(){const core=new Core(p);core.run(100);return core.capture();}
 function imported(id='one'):StoreImport{return {id,slot:`source-${id}`,snapshot:snapshot(),profile:{revision:0,values:{loads:i32(4)},read:[]},metadata:{profileId:`import:${id}`,label:'Synthetic fixture'}};}
 it('import atomically adds a fresh profile and slot without touching the current head/profile',async()=>{

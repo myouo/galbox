@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-wD3CDz 6c40d86
-HEAD is now at 6c40d86 feat: add versioned HTTP media streams and integrity evidence
-Preparing worktree (detached HEAD 6c40d86)

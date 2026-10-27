@@ -17,4 +17,4 @@ Auto 只在 text 等待、正文完全揭示、当前 voice 已自然结束（�
 
 输入 adapter 只绑定本实例舞台/默认 UI，或 `const detach=player.attachInput(element)` 明确绑定的根。使用物理 `KeyboardEvent.code`，按下记录 epoch/prompt，释放重验；重复 keydown 不消费两次，换映射/菜单/读档/失焦清除 held。焦点在其他 Player 时不会推进本实例；input/textarea/select/contenteditable 保留编辑。按钮 Enter/Space 保留可访问激活；正文按钮同样验证按下时的 prompt。F5/F9 等浏览器快捷键仅在本实例区域匹配且生效时阻止默认行为。调用 detach 或 dispose 移除监听。
 
-默认菜单可配置每动作一个主按键，公开设置 API 支持每动作最多四个。键表、验证范围、设置迁移与 JSON 导入导出见 [SETTINGS.md](SETTINGS.md)。字体缩放与背景透明度作用于 DOM 样式，不是剧本布局指令；后续 G2 仍须提供结构正文和可恢复布局。
+默认菜单可配置每动作一个主按键，公开设置 API 支持每动作最多四个。键表、验证范围、设置迁移与 protobuf 导入导出（兼容旧 JSON）见 [SETTINGS.md](SETTINGS.md)。字体缩放与背景透明度作用于 DOM 样式，不是剧本布局指令；后续 G2 仍须提供结构正文和可恢复布局。

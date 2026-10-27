@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { Core,validateRestore } from '../../packages/galbox-sdk/src/core/index.js';
 import { parseProgram,i32,bool } from '../../packages/galbox-sdk/src/protocol/index.js';
 import { ProgramBuilder,instruction as op,literal } from '../../packages/galbox-sdk/src/program-tools/index.js';
-const source:unknown=JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'));
+const source:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
 function three(c:Core){c.run(100);for(let j=0;j<3;j++){const w=c.view().run.wait;if(w?.kind!=='text')throw new Error('text');c.accept({type:'reveal',prompt:w.prompt,inputId:`r${j}`});c.accept({type:'advance',prompt:w.prompt,inputId:`a${j}`});c.run(100);}}
 it('restores nested call frames and rejects valid-address but invalid call ABI',()=>{
  const p=parseProgram(source),f=p.functions.find(f=>f.id==='incrementChecked');if(!f)throw new Error('fn');f.entry='helper:pause';f.code.unshift(op('wait.delay',{at:'helper:pause',task:'inside',duration:10}));

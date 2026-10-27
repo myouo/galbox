@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-lCCFBO 92d3e18
-HEAD is now at 92d3e18 feat: add selectable resource loading strategies
-Preparing worktree (detached HEAD 92d3e18)

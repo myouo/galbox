@@ -1,0 +1,84 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: ProjectConfig
+type: object
+properties:
+  version:
+    const: 1
+    type: integer
+  source:
+    type: string
+    pattern: ^[^\x00]{1,512}$
+  port:
+    type: string
+    pattern: ^[^\x00]{1,512}$
+  program:
+    type: string
+    pattern: ^[^\x00]{1,512}$
+  assetsRoot:
+    type: string
+    pattern: ^[^\x00]{1,512}$
+  assets:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        kind:
+          enum:
+            - image
+            - audio
+            - font
+            - video
+        path:
+          type: string
+          pattern: ^[^\x00]{1,512}$
+        mime:
+          enum:
+            - image/svg+xml
+            - image/png
+            - audio/wav
+            - font/ttf
+            - audio/mpeg
+            - audio/ogg
+            - video/webm
+        playback:
+          type: string
+          enum:
+            - buffer
+            - element
+        transport:
+          type: object
+          properties:
+            kind:
+              type: string
+              const: versioned-url
+            version:
+              type: string
+              pattern: ^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$
+          required:
+            - kind
+            - version
+          additionalProperties: false
+      required:
+        - id
+        - kind
+        - path
+        - mime
+      additionalProperties: false
+    maxItems: 256
+  series:
+    type: string
+    pattern: ^[a-zA-Z0-9_.-]{1,80}$
+  resourcePolicy:
+    type: string
+    pattern: ^[^\x00]{1,512}$
+required:
+  - version
+  - source
+  - port
+  - program
+  - assetsRoot
+  - assets
+additionalProperties: false

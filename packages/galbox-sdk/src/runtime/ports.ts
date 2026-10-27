@@ -31,6 +31,7 @@ export interface Store {
   confirm(id:string,owner?:string):Promise<Activation>;
   close():void;
 }
+export interface ProgramPreparationPort {prepareFunction(id:string):HostPreparation;}
 export interface HostPreparation {readonly ready:Promise<void>;commit():void;cancel():void;}
 export interface HostPort {prepare?(snapshot:DeepReadonly<Snapshot>,effects:readonly Effect[]):HostPreparation|void;effect(effect:Effect,epoch:number,report:(task:string,attempt:number,result:'completed'|'blocked'|'failed')=>void,playbackEnded?:(task:string,attempt:number)=>void):void;}
 export interface Scheduler {defer(callback:()=>void):void;}

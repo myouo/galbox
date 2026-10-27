@@ -12,7 +12,7 @@
 | 正文 | 独立 DOM/CSS 控制器 | 逻辑画幅、文本版本、揭示进度由标准状态控制 |
 | 默认菜单 | React | 只订阅 Player 只读视图、提交语义动作 |
 | 音频 | Web Audio；按后续素材需求增加媒体元素路径 | M2 先真实短 WAV，明确重播/停止恢复；不宣称精确长音轨续接 |
-| 协议 | JSON Schema → TS 类型与 Ajv validator | 约束支持的 Schema 子集；规范化和语义链接单独执行 |
+| 协议 | YAML Schema → TS 类型、Ajv validator 与 protobuf IDL/映射 | 外部正式传输使用 protobuf；规范化和语义链接单独执行 |
 | 存储 | IndexedDB | 命名空间、修订、profile 批次与 activation 回执 |
 | 构建 | pnpm workspace、TypeScript、Vite | M0 固定相容版本、packageManager/engines 与 lockfile |
 | 验证 | Vitest、规范 trace、Playwright、打包消费者 | 真机和原作对照在对应发布门槛单列 |
@@ -26,10 +26,10 @@
 | 路径 | 内容 | 创建阶段 |
 | --- | --- | --- |
 | packages/galbox-sdk | 主库及有明确依赖边界的内部模块 | M0 |
-| fixtures/standard-novel | 《灯塔来信》Builder 输入、生成数据、原创素材和期望状态 | M1–M2 |
-| apps/playground | 可玩 Player、诊断面板，只消费公开 API | M2 |
+| tests/fixtures/game-data/standard-novel | 《灯塔来信》Builder 输入、生成数据、原创素材和期望状态 | M1–M2 |
+| tests/player-app | 可玩 Player、诊断面板，只消费公开 API | M2 |
 | tests/consumer | 安装打包产物的隔离消费项目/测试夹具 | M2 |
-| fixtures/synthetic-saves | fixture-save@1 自制格式和损坏/版本样本 | M3 |
+| tests/fixtures/game-data/synthetic-saves | fixture-save@1 自制格式和损坏/版本样本 | M3 |
 | packages/cli | 真正的 CLI 编排；本地包名可暂用 @galbox/cli | M4 |
 | ports/narcissu、ports/fata-morgana | 版本、映射、义务和私有参照入口 | N/F，资料可用即推进 |
 | docs | 当前规范、操作表、能力、决策、任务与验收证据 | 全阶段 |
@@ -48,6 +48,8 @@ SDK 主包目标名 `galbox-sdk`，公开 npm 名称尚未核验。内部模块�
 | galbox-sdk/diagnostics | Program/快照追踪、SourceMap 与行为覆盖诊断 | M4 |
 | galbox-sdk/backups | 有界持久备份、完整内容迁移与隔离恢复计划 | M5-01 |
 | galbox-sdk/release | Program/目录/注册表/资源事实与预算的发布闭包 | M5-02 |
+| galbox-sdk/settings | 强类型系统偏好、迁移与校验 | G1 |
+| galbox-sdk/wire | 正式 protobuf 编解码与版本化消息 | E1-01 |
 
 根入口只导出常用 Player API；headless 用户使用 core/protocol 子路径。exports 精确列出，禁止 `./* → ./src/*` 暴露私有实现。某子入口尚未实现时不导出抛 NotImplemented 的伪产品接口。React 等可选 UI 依赖不能被 core 的运行包或类型声明间接引入。
 
@@ -166,3 +168,5 @@ W1-01按ADR0032：生产Player拥有实例级BrowserScheduler，以MessageChanne
 W1-02按ADR0033以中立HostPreparation桥接稳定轮次与异步资源：Coordinator保留current/effects和旧呈现视图，准备成功才分发表现，失败重试同一目标并拒capture/flush。Host拥有缓存引用/预算/取消；候选在head事务前固定资源，显示成功后释放旧画面引用。Core和Snapshot不存Promise/设备句柄；LoadingOptions只属于Host配置。策略/实际范围见LOADING。
 
 W1-03A/ADR0034保持纯durable reducers，Web IndexedDB adapter按操作声明加载slot/history冷记录；热目录和相关冷载荷在同一事务写入。目录/摘要来自Schema，按原逻辑JSON精确合计容量。DB版本2阻止旧代码双写，首次写事务迁移旧行；旧激活快照压缩为superseded标记，当前head仍完整且必须匹配live entry。程序模块/细粒度热记录留W1-03B/C。
+
+W1-03B按ADR0035引入函数声明与独立代码载荷，opaque ModuleProgram只安装验证过的真实函数体；partial linker显式接收外部声明。Core在缺失call前报告需求、由Coordinator通过中立ProgramPreparationPort请求Web代码lease，同轮续跑。每Core模块集合进入Snapshot绑定，恢复先准备闭包。功能边界/全体JS包与剧情代码的区别见PROGRAM_MODULES及TYPE_AND_DATA_AUDIT。

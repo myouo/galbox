@@ -4,7 +4,7 @@ import { Core,validateRestore } from '../../packages/galbox-sdk/src/core/index.j
 import { parseProgram,parseInstruction,i32,readUnit } from '../../packages/galbox-sdk/src/protocol/index.js';
 import { linkProgram } from '../../packages/galbox-sdk/src/program-tools/index.js';
 import { Coordinator,VirtualHost,VirtualScheduler,MemoryStore } from '../../packages/galbox-sdk/src/testing/index.js';
-const program:unknown=JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'));
+const program:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
 function advance(core:Core,id:string){const w=core.view().run.wait;if(w&&'prompt'in w){core.accept({type:'reveal',prompt:w.prompt,inputId:`${id}:reveal`});core.accept({type:'advance',prompt:w.prompt,inputId:id});core.run(100);}}
 function group(core:Core){core.run(100);advance(core,'1');advance(core,'2');advance(core,'3');expect(core.view().run.wait?.kind).toBe('group');}
 describe('finite protocol and production Core',()=>{

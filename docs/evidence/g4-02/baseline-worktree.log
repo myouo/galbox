@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-SwMfMF 01b50c8
-HEAD is now at 01b50c8 feat: add illustrated saves and atomic slot management
-Preparing worktree (detached HEAD 01b50c8)

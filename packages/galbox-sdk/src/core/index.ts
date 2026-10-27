@@ -1,3 +1,5 @@
+import {isModuleProgram} from '../program-tools/module-program.js';
+import type {ModuleProgram} from '../program-tools/module-program.js';
 import {SnapshotProjection} from './view.js';
 import {freezeJson} from '../protocol/codecs.js';
 import {initialUI,isUIInstruction,executeUI,acceptUI,validateUIRestore} from '../protocol/ui.js';
@@ -10,7 +12,7 @@ import {initialAudioState,isAudioInstruction,audioExpressions,tickAudio,updateDu
 import {executeAudio,replayVoice,validateAudioSnapshot} from './audio.js';
 import {isStageInstruction,initialScene,applyStageTask,taskObject,taskLocks,validateStageGraph} from '../protocol/stage.js';
 import {executeStage,removeStageObject,validateStageSnapshot} from './stage.js';
-import { ensure, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,parseInteractionEvent,parseFlowProgress,parseExtrasProgress } from '../protocol/index.js';
+import { ensure,parseProgramModuleBinding, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,parseInteractionEvent,parseFlowProgress,parseExtrasProgress } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume,InteractionEvent } from '../protocol/index.js';
 import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
 import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
@@ -45,6 +47,10 @@ function values(slots: readonly {id:string;initial:Value}[]): Record<string,Valu
 function length(text:string):number { return Array.from(text).length; }
 export class Core {
   private readonly program:Program;
+  private readonly moduleSource:ModuleProgram|null;private usedModules:string[]=[];private neededFunction:string|null=null;
+  get requiredFunction():string|null {return this.neededFunction;}
+  private attachModule(id:string):void {if(this.usedModules.includes(id))return;ensure(this.moduleSource,'MODULE_SOURCE',id);const p=this.moduleSource.program([...this.usedModules,id]);this.program.functions=p.functions;this.usedModules.push(id);this.indexFunctions();this.s.programModules=parseProgramModuleBinding({manifestSha256:this.moduleSource.identity,modules:[...this.usedModules]});this.viewCache=null;}
+  private indexFunctions():void {for(const definition of this.program.functions){if(this.functions.has(definition.id))continue;const code=new Map(definition.code.map(i=>[i.at,i])),next=new Map<string,string>();for(let i=0;i<definition.code.length-1;i++){const a=definition.code[i],b=definition.code[i+1];if(a&&b)next.set(a.at,b.at);}this.functions.set(definition.id,{definition,code,next});}}
   private readonly functions=new Map<string,{definition:ProgramFunction;code:Map<string,Instruction>;next:Map<string,string>}>();
   private readonly extrasIdentity:string|null;
   private s:Snapshot;
@@ -65,12 +71,13 @@ export class Core {
   private reducing=false;
   constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number,entryNode?:string,entryScene?:string) {
     ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
-    this.program=linkProgram(input,operations).copy();for(const definition of this.program.functions){const code=new Map(definition.code.map(i=>[i.at,i])),next=new Map<string,string>();for(let i=0;i<definition.code.length-1;i++){const at=definition.code[i]?.at,following=definition.code[i+1]?.at;if(at&&following)next.set(at,following);}this.functions.set(definition.id,{definition,code,next});} this.profile=parseProfile(profile);this.extrasIdentity=extrasSignature(this.program);extrasProgress(this.program,this.profile,this.extrasIdentity);flowProgress(this.program,this.profile);ensure(entryNode===undefined||entryScene===undefined,'EXTRAS_ENTRY_CONFLICT','Choose one declared root');ensure(snapshot===undefined||(entryNode===undefined&&entryScene===undefined),'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
-    if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
+    this.moduleSource=isModuleProgram(input)?input:null;this.usedModules=this.moduleSource?(snapshot===undefined?[this.moduleSource.entryModule]:this.moduleSource.binding(snapshot)):[];this.program=this.moduleSource?this.moduleSource.program(this.usedModules):linkProgram(input,operations).copy();this.indexFunctions(); this.profile=parseProfile(profile);this.extrasIdentity=extrasSignature(this.program);extrasProgress(this.program,this.profile,this.extrasIdentity);flowProgress(this.program,this.profile);ensure(entryNode===undefined||entryScene===undefined,'EXTRAS_ENTRY_CONFLICT','Choose one declared root');ensure(snapshot===undefined||(entryNode===undefined&&entryScene===undefined),'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
+    if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.moduleSource??this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(entryScene!==undefined?sceneRoot(this.program,this.profile,entryScene):entryNode===undefined?this.program.entry:flowEntry(this.program,this.profile,entryNode)),rng=initialRng(this.program.rng,rngSeed);
       const ui=initialUI(this.program),textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program),flow=initialFlow(this.program,entryNode??null);this.s={...(ui?{ui}:{}),...(entryScene!==undefined?{replayScene:entryScene}:{}),...(this.extrasIdentity?{extrasSignature:this.extrasIdentity}:{}),...(flow?{flow}:{}),...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
+    if(this.moduleSource)this.s.programModules=parseProgramModuleBinding({manifestSha256:this.moduleSource.identity,modules:[...this.usedModules]});
     if(snapshot===undefined)this.checkExtras();
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
@@ -193,11 +200,11 @@ export class Core {
     ensure(Number.isInteger(budget)&&budget>0,'BUDGET','Positive integer required');
     if(this.revoked)return 'stable';
     for(let j=0;j<budget&&this.s.status==='running';j++) {
-      const op=this.op();try {this.execute(op);}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';if(op.op!=='extension.invoke')this.s.status='failed';throw e;}
+      const op=this.op();if(op.op==='control.call'&&!this.functions.has(op.function)){ensure(this.moduleSource,'FUNCTION',op.function);const id=this.moduleSource.moduleForFunction(op.function);if(!this.moduleSource.has(id)){this.neededFunction=op.function;return 'yield';}this.attachModule(id);}this.neededFunction=null;try {this.execute(op);}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';if(op.op!=='extension.invoke')this.s.status='failed';throw e;}
     }
     return this.s.status==='running'?'yield':'stable';
   }
-  applyRecipe(input:unknown):void {
+  applyRecipe(input:unknown):void {ensure(!this.moduleSource,'MODULE_UNSUPPORTED','Module restore recipes are not enabled');
     ensure(this.mode==='candidate'&&!this.revoked&&!this.recovering&&!this.reducing,'RECIPE_CANDIDATE','Recovery can only mutate an isolated candidate');this.viewCache=null;
     const recipe=parseRestoreRecipe(input);ensure(recipe.steps.length<=recipe.maxSteps,'RECIPE_BUDGET','Step count exceeds the declared bound');
     ensure(this.s.status==='waiting'||this.s.status==='ended','RECIPE_PHASE','A semantic baseline is required');
@@ -335,7 +342,7 @@ export class Core {
   }
 }
 function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations,initial=false):Snapshot {
-  const p=linkProgram(input,operations).copy(),s=parseSnapshot(snapshot);
+  const source=isModuleProgram(input)?input:null,s=parseSnapshot(snapshot),p=source?source.program(source.binding(s)):linkProgram(input,operations).copy();ensure(source||!s.programModules,'PROGRAM_MODULE_BINDING','Use the original module source');
   const historyIds=s.history.flatMap(t=>t.historyId?[t.historyId]:[]);ensure(new Set(historyIds).size===historyIds.length&&!(s.wait?.kind==='text'&&s.text?.historyId&&historyIds.includes(s.text.historyId)),'RESTORE_HISTORY_ID','History identities must remain unique');
   ensure((s.extrasSignature??null)===extrasSignature(p),'RESTORE_EXTRAS_DEFINITION','Gallery/resources changed; explicit migration required');
   ensure(s.streamCatalog===streamCatalog(p),'RESTORE_STREAM_CATALOG','Streaming catalog/version changed; explicit migration required');s.invocations=s.invocations??[];

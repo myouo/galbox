@@ -1,10 +1,12 @@
+import {readWireFile} from '../web-host/wire-file.js';
+import {encodeWire,decodeWire} from '../protocol/protobuf.js';
 import {useState} from 'react';
 import type {Player,PlayerView} from '../player/index.js';
 import type {PreferencesPatch} from '../settings/index.js';
 import {GalboxError} from '../protocol/index.js';
 function preferenceError(error:unknown):string {
  if(error instanceof GalboxError){if(error.code.startsWith('SCHEMA_'))return `设置格式无效（${error.code}）`;if(error.code==='INPUT_BINDING_CONFLICT')return '该按键已分配给其他操作，请先修改原绑定。';if(error.code==='PREFERENCES_CONFLICT')return '其他页面已更新设置，请重新读取后再修改。';if(error.code==='PREFERENCES_COMMIT_UNKNOWN')return '保存结果尚未确认，请重新读取设置。';}
- return error instanceof SyntaxError?'设置文件不是有效 JSON。':error instanceof Error?error.message:String(error);
+ return error instanceof SyntaxError?'设置文件格式无效。':error instanceof Error?error.message:String(error);
 }
 export function PreferencesPanel({player,view}:{player:Player;view:PlayerView}){
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[pending,setPending]=useState(0),settings=view.preferences.value;const intervals=[0,8,16,32,64,100,200];
@@ -19,8 +21,8 @@ export function PreferencesPanel({player,view}:{player:Player;view:PlayerView}){
   <label>文本框背景透明度<input aria-label="文本框背景透明度" type="range" min="0" max="1" step="0.05" value={settings.display.windowOpacity} onChange={e=>change({display:{windowOpacity:Number(e.target.value)}})}/></label>
   {(['advance','menu','auto','skip','quickSave','quickLoad'] as const).map(action=>{const current=settings.input[action][0]??'',codes=['Enter','Space','ArrowRight','Escape','KeyA','KeyD','KeyZ','ControlLeft','ShiftLeft','F5','F9'];return <label key={action}>{({advance:'推进按键',menu:'菜单按键',auto:'自动按键',skip:'快进按键',quickSave:'快速保存按键',quickLoad:'快速读取按键'})[action]}<select aria-label={({advance:'推进按键',menu:'菜单按键',auto:'自动按键',skip:'快进按键',quickSave:'快速保存按键',quickLoad:'快速读取按键'})[action]} value={current} onChange={e=>change({input:{[action]:e.target.value?[e.target.value]:[]}})}><option value="">禁用</option>{current&&!codes.includes(current)&&<option value={current}>{current}</option>}{codes.map(code=><option key={code} value={code}>{code}</option>)}</select></label>;})}
   <button onClick={()=>{setBusy(true);void player.resetPreferences().then(()=>setNotice('已恢复默认设置'),e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}>恢复默认设置</button>
-  <button onClick={()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(player.exportPreferences())],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='galbox-settings.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setNotice('已导出系统设置');}}>导出系统设置</button>
-  <label>导入系统设置<input aria-label="导入系统设置" type="file" accept=".json,application/json" onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;setBusy(true);void(async()=>{if(file.size>32768)throw new Error('设置文件过大');await player.importPreferences(JSON.parse(await file.text()));setNotice('已导入系统设置');})().catch(e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}/></label>
+  <button onClick={()=>{const url=URL.createObjectURL(new Blob([new Uint8Array(encodeWire('PlayerPreferences',player.exportPreferences())).buffer],{type:'application/x-protobuf'})),a=document.createElement('a');a.href=url;a.download='galbox-settings.pb';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setNotice('已导出系统设置');}}>导出系统设置</button>
+  <label>导入系统设置<input aria-label="导入系统设置" type="file" accept=".pb,application/x-protobuf,.json,application/json" onChange={e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;setBusy(true);void(async()=>{if(file.size>32768)throw new Error('设置文件过大');await player.importPreferences(readWireFile('PlayerPreferences',new Uint8Array(await file.arrayBuffer())));setNotice('已导入系统设置');})().catch(e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}/></label>
   <button onClick={()=>{setBusy(true);void player.reloadPreferences().then(()=>setNotice('已重新读取设置'),e=>setNotice(preferenceError(e))).finally(()=>setBusy(false));}}>重新读取设置</button><p aria-live="polite" data-testid="preferences-notice">{pending?'正在保存设置…':notice}</p>
  </fieldset>;
 }

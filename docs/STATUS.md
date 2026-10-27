@@ -1,13 +1,15 @@
 # galbox-sdk 当前状态
 
-2026-10-27。W1-03A有限验收完成，perf/segmented-storage，基线92d3e18，本轮提交见git log。父任务W1-03仍进行中，程序按需加载/更大容量尚未实现，下一W1-03B；没有外部推送、发布或部署。
+2026-10-27，基线9e0b41f，分支feat/program-modules。本轮E1-01与W1-03B基础有限集已实现并验收；任务表下一项I1-01。父W1-03、高级模块B2、热记录C、离线/目标平台W1-04及G7总体仍未完成，不把本轮当作完整大作品交付。
 
-A将槽位/历史大载荷拆为IndexedDB冷记录，热目录/目标载荷/摘要/回执同事务提交；读取必要冷记录时检查缺失/大小/Schema，热设置不再被无关损坏槽位阻塞。DB版本2关闭旧连接并拒绝旧版SDK双写，首次写事务迁移旧行，abort保留旧数据。写入输入在异步排队前私有化。旧激活保留superseded/retired ID标记，移除其完整快照；当前head/live entry完整一致，旧ID不能复活。
+工程：所有游戏/验证应用/运行器分别在tests/fixtures、tests/player-app、tests/tooling。CLI正式模板为空Program骨架，YAML配置，默认program.pb。原始日志/JSON/截图/trace与散列只在ignored artifacts，历史原始材料在artifacts/legacy-evidence；docs/evidence只跟踪短Markdown。生成测试public及TS/validator在prepare/build重建并有一致性检查。当前19个受控JSON约2800行，0受控日志，历史Git对象未重写。check:repository实际验证跟踪文件与ignore规则，test:package检查tarball。
 
-相同真实Core快照48槽位：设置写入P95 44.7→2.0ms，进度45.6→2.7ms；写入逻辑JSON约180万→7.5–7.8万字符，snapshot SHA及最终状态一致。含探针序列化开销，不是物理磁盘字节或所有玩家延迟。4M逻辑JSON命名空间和1M备份上限保持；热head/profile/回执仍有规模成本。
+协议：protocol.yaml单一源记录稳定protobuf tag，生成TS/validator/IDL/映射；galbox-sdk/wire实际protobuf，代码模块/CLI默认发布/备份/设置为.pb，旧JSON兼容输入。Core/Host内部直接强类型DTO，IndexedDB原生structured clone。SDK有14个精确exports，包226文件/495530字节压缩/3460026字节解包，无游戏/测试/证据/日志/schema JSON/maps。CLI忽略规则以普通gitignore随包发布、init改名为.gitignore，已安装CLI实际验收，避免包工具丢失点文件。
 
-验证：frozen install/check、227单元/34文件、完整146浏览器（0 skipped/flaky/unexpected）、独立包/native ESM/真实DB2、65 CLI命令、4 synthetic、13入口无删除/两包dry-run、标准性能均通过。原生禁WebGL的移动布局、冷槽位图文/刷新/两皮肤、demand→balanced、当前进度与设置恢复已验；DB/layout=2，1 Canvas/0 pageerror。证据/包SHA/source-manifest见evidence/w1-03a/REPORT。
+实际验证：frozen install；最后pnpm check；36文件236单元；完整151浏览器（0 skipped/flaky/unexpected）；仓库外tarball/native ESM/strict skipLibCheck=false；69 CLI命令及空骨架/兼容fixture；4 synthetic（N/F仍needs-input）；14入口/0删除的API与pack/publish dry-run（未实际发布）；3活动周期228输入的性能门槛通过（API P95 21.5ms、Core最大P95约1.207ms、dispose最大约186.2ms）。原生禁用WebGL的390×844触控模拟完成分支/图文保存/刷新恢复/设置pb，root,sea,logic,root,sea请求且无interior、0 pageerror。原《灯塔来信》的实际图片/WAV/并行组也经相同模块compiler保存恢复。
 
-下一B先写有限模块manifest/函数接口/摘要/稳定地址及快照闭包ADR，建立大Program构造/链接基线，再做真正按执行依赖加载、取消和恢复，不能先下载全部合并冒充懒加载。C继续热记录细分、留存与更大容量，不只提高上限。W1-04持久字节缓存/离线/平台、G7及N/F/M6真实认证仍未完成，缺资料不造假。
+短证据：evidence/e1-01/REPORT.md和evidence/w1-03b/REPORT.md；原始结果artifacts/hygiene/{check-final.log,unit-final.log,final-browser,accepted,native,native-default}，源码/证据索引handoff.json。最终consumer/CLI/release/package SDK SHA=46795746316cb7a8e66a0f10912e928b0bd278f3332ce0add20e315aff163ba5，CLI SHA=3b5cc5d1448fc1b53825e5570fa06b464954944f33c359536e3047f6a8208a7a，已交叉核对。曾有备份临时文件名识别和CLI .gitignore打包丢失，均修复并真实复验。旧报告仅保留历史结论。
 
-运行：export TMPDIR=/dev/shm；pnpm install --frozen-lockfile；pnpm dev。当前http://127.0.0.1:4173/?demo=interface&loading=balanced，可改loading或renderer=canvas。pnpm build输出静态目录；完整browser前停实际Vite子进程释放4173/4174，consumer/CLI/perf依次执行。完整状态以tasks.json为准。
+运行：pnpm install --frozen-lockfile；pnpm dev在127.0.0.1:4173运行tests/player-app，?demo=modules&renderer=canvas为模块测试。pnpm build构建SDK/CLI及测试应用；业务项目从实际tarball的player/core/port-kit/wire/react等入口导入，不复制测试游戏。TMPDIR=/dev/shm用于当前环境临时目录。只做本地提交，未推送/发布/重写历史。
+
+精确下一步I1-01：先记录locale/语言回退/目录及正文TextId/Revision/ReadUnit规则的ADR，再演进偏好Schema与迁移，接默认UI并验证跨刷新/旧档和protobuf；当前Preferences v2没有locale，i18n尚不支持。B2补齐高级模块恢复闭包；C处理热记录留存/容量；W1-04处理持久缓存/离线与冷启动拆包。测试应用主JS gzip约468KB，比此前约406KB增长；包变小不能代替首屏性能验证。Firefox/Safari/移动真机及真实两作资料仍缺证据，不借用Chromium模拟结果认证。

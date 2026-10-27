@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-lz9NvE 6a22ca1
-HEAD is now at 6a22ca1 feat: add declarative script UI and restorable controls
-Preparing worktree (detached HEAD 6a22ca1)

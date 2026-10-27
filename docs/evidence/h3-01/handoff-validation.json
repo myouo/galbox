@@ -1,9 +1,0 @@
-{
-  "result": "passed",
-  "sourceFiles": 447,
-  "taskStatesAndDependencies": true,
-  "evidenceExists": true,
-  "sourceHashesMatch": true,
-  "semanticAndImageComparisonPassed": true,
-  "artifactHashesMatch": true
-}

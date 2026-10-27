@@ -23,7 +23,7 @@ for(const file of await walk(base)) {
   if((ts.isImportDeclaration(n)||ts.isExportDeclaration(n))&&n.moduleSpecifier&&ts.isStringLiteral(n.moduleSpecifier))spec=n.moduleSpecifier.text;
   if(ts.isCallExpression(n)&&n.expression.kind===ts.SyntaxKind.ImportKeyword){console.error(`Dynamic import in headless: ${file}`);failed=true;}
   if(spec&&zone==='core'&&(spec.includes('save-bridge')||spec.includes('diagnostics')||spec.includes('backups')||spec.includes('release')||spec.includes('settings')||spec.includes('program-tools/index'))){console.error(`Core reverse dependency: ${file} -> ${spec}`);failed=true;}
-  if(spec&&!(file===path.join(base,'protocol/digest.ts')&&['@noble/hashes/sha2.js','@noble/hashes/utils.js'].includes(spec))&&!(file===path.join(base,'protocol/text.ts')&&spec==='unicode-segmenter/grapheme')&&(!spec.startsWith('.')||!allowed.has(path.relative(base,path.resolve(path.dirname(file),spec)).split(path.sep)[0]))){console.error(`Headless boundary: ${file} -> ${spec}`);failed=true;}
+  if(spec&&!(file===path.join(base,'protocol/protobuf.ts')&&spec==='protobufjs/minimal.js')&&!(file===path.join(base,'protocol/digest.ts')&&['@noble/hashes/sha2.js','@noble/hashes/utils.js'].includes(spec))&&!(file===path.join(base,'protocol/text.ts')&&spec==='unicode-segmenter/grapheme')&&(!spec.startsWith('.')||!allowed.has(path.relative(base,path.resolve(path.dirname(file),spec)).split(path.sep)[0]))){console.error(`Headless boundary: ${file} -> ${spec}`);failed=true;}
   if(isDeviceIdentifier(n)){console.error(`Device global ${n.text}: ${file}`);failed=true;}
   ts.forEachChild(n,visit);
  }

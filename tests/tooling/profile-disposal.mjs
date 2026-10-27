@@ -1,0 +1,26 @@
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {createServer} from 'node:http';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {chromium} from '@playwright/test';
+const evidence=path.resolve(process.env.GALBOX_EVIDENCE_DIR??'artifacts/evidence/h1-01/profile-before');await mkdir(evidence,{recursive:true});
+const app=path.resolve('tests/player-app/dist'),harness=path.resolve('tests/browser/harness/dist');
+const server=createServer(async(req,res)=>{try{const name=decodeURIComponent(new URL(req.url??'/','http://localhost').pathname),relative=name==='/'?'index.html':name.slice(1);let bytes;for(const root of [harness,app]){const file=path.resolve(root,relative);if(!file.startsWith(root+path.sep))continue;try{bytes=await readFile(file);break;}catch{}}if(!bytes){res.writeHead(404);res.end();return;}res.writeHead(200,{'content-type':({'.js':'text/javascript','.html':'text/html','.json':'application/json','.css':'text/css','.svg':'image/svg+xml','.wav':'audio/wav'}[path.extname(relative)]??'application/octet-stream'),'cache-control':'no-store'});res.end(bytes);}catch{res.writeHead(400);res.end();}});await new Promise(r=>server.listen(0,'127.0.0.1',r));const address=server.address();assert.ok(address&&typeof address!=='string');
+const reports=[];
+const modes=(process.env.GALBOX_DISPOSAL_MODES??'baseline,scoped-destroy,render-on-change').split(',');assert.ok(modes.every(m=>['baseline','scoped-destroy','render-on-change','flush-after-render'].includes(m)));
+try{for(const mode of modes){
+ const browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});try{
+  const page=await browser.newPage({viewport:{width:1280,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(`http://127.0.0.1:${address.port}/`);await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();await page.locator('body').click({position:{x:1,y:1}});const cdp=await page.context().newCDPSession(page);await cdp.send('Profiler.enable');await cdp.send('Profiler.setSamplingInterval',{interval:1000});await cdp.send('Profiler.start');
+  const result=await page.evaluate(async mode=>{
+   const sdk=await import('/sdk.js'),probe=await import('/disposal-probe.js'),p=await(await fetch('/program.json')).json(),release=await(await fetch('/program.json.release.json')).json(),spy=probe.instrumentDisposal(mode),mount=document.createElement('div');mount.style.cssText='width:1280px;height:720px;position:relative';document.body.append(mount);let foreignPoolClears=0;const marker={clear(){foreignPoolClears++;}};probe.GlobalResourceRegistry.register(marker);const disposal=[],owned=[];
+   const nextFrames=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+   async function stable(player){if(['text','choice'].includes(player.getSnapshot().core?.run.wait?.kind)||player.getSnapshot().core?.run.status==='ended')return;await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{unsubscribe();reject(new Error('prompt timeout'));},10000),unsubscribe=player.subscribe(()=>{const v=player.getSnapshot();if(v.error){clearTimeout(timer);unsubscribe();reject(new Error(v.error));}else if(['text','choice'].includes(v.core?.run.wait?.kind)||v.core?.run.status==='ended'){clearTimeout(timer);unsubscribe();resolve();}});});}
+   try{for(let cycle=0;cycle<3;cycle++){
+    const player=await sdk.createPlayer({program:p,release,bindings:sdk.createSaveBindingRegistry([sdk.createFixtureBinding(p)]),provider:sdk.createHttpProvider(p,location.href),mount,saveCompatibilitySeries:'1'});
+    if(cycle===0){for(let route=0;route<4;route++){await player.start();let actions=0;for(;;){await stable(player);const v=player.getSnapshot();if(v.core.run.status==='ended')break;const w=v.core.run.wait;if(w.kind==='choice')await player.input('choose',w.prompt,v.epoch,w.options[route%2].id);else await player.step(w.prompt,v.epoch);await nextFrames();if(++actions>100)throw new Error('trace loop');}}await player.save('benchmark');await player.load('benchmark');}
+    disposal.push(spy.dispose(player));const v=player.getSnapshot();owned.push({assets:v.resources.assets,pcm:v.resources.decodedAudioBytes,texture:v.resources.textureBytesEstimated,canvases:mount.querySelectorAll('canvas').length});
+   }return {mode,disposal,owned,foreignPoolClears,globalClears:spy.globalClears,renders:spy.renders,events:spy.events};}finally{spy.restore();probe.GlobalResourceRegistry.unregister(marker);mount.remove();}
+  },mode);const profile=await cdp.send('Profiler.stop');await writeFile(path.join(evidence,`${mode}.cpuprofile`),JSON.stringify(profile.profile));assert.deepEqual(errors,[]);reports.push({...result,pageErrors:errors,browser:browser.version()});console.log(JSON.stringify({mode,disposal:result.disposal,globalClears:result.globalClears,foreignPoolClears:result.foreignPoolClears,renders:result.renders,longestEvents:[...result.events].sort((a,b)=>b.ms-a.ms).slice(0,8)},null,2));
+ }finally{await browser.close();}}
+ await writeFile(path.join(evidence,'disposal-profile.json'),JSON.stringify({result:'measured',note:'Test-only controlled variants and CPU profiler overhead; final acceptance uses unprofiled production SDK',reports},null,2)+'\n');
+}finally{await new Promise(r=>server.close(r));}

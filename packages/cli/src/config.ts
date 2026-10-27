@@ -1,3 +1,4 @@
+import {parse as parseYaml} from 'yaml';
 import {readFile,realpath,mkdir,rename,writeFile,lstat} from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
@@ -16,8 +17,10 @@ export async function safePath(root:string,relative:string,write=false):Promise<
  let existing=target;for(;;){try{await lstat(existing);break;}catch(error){if(error!==null&&typeof error==='object'&&'code'in error&&error.code==='ENOENT'&&write){const parent=path.dirname(existing);requireValue(parent!==existing,'PROJECT_PATH',relative);existing=parent;}else throw error;}}
  requireValue(inside(await realpath(root),await realpath(existing)),'PROJECT_PATH','Symlink escapes the project');return target;
 }
-export async function readJSON(file:string):Promise<unknown> {try{const text=await readFile(file,'utf8');requireValue(Buffer.byteLength(text)<=4_000_000,'INPUT_SIZE',file);const value:unknown=JSON.parse(text);return value;}catch(error){if(error instanceof CliError)throw error;throw new CliError({...diagnostic(error,file),code:'PROJECT_JSON'});}}
+export async function readJSON(file:string):Promise<unknown> {try{const text=await readFile(file,'utf8');requireValue(Buffer.byteLength(text)<=4_000_000,'INPUT_SIZE',file);const value:unknown=/\.ya?ml$/.test(file)?parseYaml(text):JSON.parse(text);return value;}catch(error){if(error instanceof CliError)throw error;throw new CliError({...diagnostic(error,file),code:'PROJECT_JSON'});}}
 export async function projectConfig(directory:string):Promise<{root:string;config:ProjectConfig}> {
- const root=await realpath(directory),file=await safePath(root,'galbox.config.json');const data=await readJSON(file);requireValue(validate(data),'PROJECT_CONFIG',`${file}: invalid project schema`);return {root,config:data};
+ const root=await realpath(directory);let name='galbox.config.yaml';try{await lstat(path.join(root,name));}catch(error){if(error!==null&&typeof error==='object'&&'code'in error&&error.code==='ENOENT')name='galbox.config.json';else throw error;}const file=await safePath(root,name);const data=await readJSON(file);requireValue(validate(data),'PROJECT_CONFIG',`${file}: invalid project schema`);return {root,config:data};
 }
 export async function atomicJSON(file:string,data:unknown):Promise<void> {await mkdir(path.dirname(file),{recursive:true});const temporary=path.join(path.dirname(file),`.galbox-${randomUUID()}.tmp`);await writeFile(temporary,JSON.stringify(data,null,2)+'\n',{flag:'wx'});await rename(temporary,file);}
+
+export async function atomicBytes(file:string,data:Uint8Array):Promise<void> {await mkdir(path.dirname(file),{recursive:true});const temporary=path.join(path.dirname(file),`.galbox-${randomUUID()}.tmp`);await writeFile(temporary,data,{flag:'wx'});await rename(temporary,file);}

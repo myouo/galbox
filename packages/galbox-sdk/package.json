@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "files": [
     "dist",
-    "schema",
+    "protocol/galbox.proto",
     "README.md"
   ],
   "exports": {
@@ -57,11 +57,16 @@
     "./settings": {
       "types": "./dist/settings/index.d.ts",
       "import": "./dist/settings/index.js"
+    },
+    "./wire": {
+      "types": "./dist/protocol/protobuf.d.ts",
+      "import": "./dist/protocol/protobuf.js"
     }
   },
   "dependencies": {
     "@noble/hashes": "2.4.0",
     "pixi.js": "8.22.0",
+    "protobufjs": "8.8.1",
     "unicode-segmenter": "0.17.3"
   },
   "peerDependencies": {

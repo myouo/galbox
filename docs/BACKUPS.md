@@ -3,9 +3,10 @@
 M5-01 的公共入口为 `galbox-sdk/backups` 与 Player。默认 React 菜单提供「下载备份」「选择备份」「确认恢复备份」。备份只包含已经持久化的数据；需要保留当前剧情位置时先保存。备份不携带资源、原档附件、未保存的活动位置或旧会话权限。
 
 ```ts
+import {encodeWire, decodeWire} from 'galbox-sdk/wire';
 const backup = await player.exportBackup(); // 先 flush，再单次事务读持久闭包
-const json = JSON.stringify(backup); // 可下载为 JSON
-const parsed: unknown = JSON.parse(json);
+const bytes = encodeWire('PortableBackup', backup); // 可下载为 .pb
+const parsed = decodeWire('PortableBackup', bytes);
 const plan = player.prepareBackupRestore(parsed);
 console.log(plan.report()); // 先检查数量、源 release、迁移 ID
 const result = await player.commitBackupRestore(plan);

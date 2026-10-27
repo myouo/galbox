@@ -4,7 +4,7 @@ import {Core} from '../../packages/galbox-sdk/src/core/index.js';
 import {prepareRestoreRecipe,defineRestoreRecipe} from '../../packages/galbox-sdk/src/runtime/recipe.js';
 import {codec,defineOperation,createOperationRegistry,waitFor,instruction,ProgramBuilder} from '../../packages/galbox-sdk/src/program-tools/index.js';
 import {i32} from '../../packages/galbox-sdk/src/protocol/index.js';
-const program:unknown=JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'));
+const program:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
 function baseline(){const core=new Core(program,{revision:3,values:{loads:i32(4)},read:[]});core.run(100);return {core,snapshot:core.capture(),profile:core.view().profile};}
 it('recovery only mutates a candidate; staging and preview do not consume profile changes',()=>{
  const {core,snapshot,profile}=baseline();const recipe=defineRestoreRecipe('count',[instruction('profile.i32.add.checked',{at:'recipe:count',key:'loads',delta:1})]);const first=prepareRestoreRecipe(program,profile,snapshot,recipe),second=prepareRestoreRecipe(program,profile,snapshot,recipe);

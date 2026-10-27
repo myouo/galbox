@@ -7,7 +7,7 @@ import {parseProgram,parsePortableBackup,i32} from '../../packages/galbox-sdk/sr
 import type {PortableBackup,DeepReadonly} from '../../packages/galbox-sdk/src/protocol/index.js';
 import {defineRestoreRecipe} from '../../packages/galbox-sdk/src/runtime/recipe.js';
 import {createOperationRegistry} from '../../packages/galbox-sdk/src/core/operations.js';
-const program=parseProgram(JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'))),series='backup-tests';
+const program=parseProgram(JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'))),series='backup-tests';
 const options={program,series};
 function cut(){const c=new Core(program);c.run(100);return c.capture();}
 async function saved(){const store=new MemoryStore(storageNamespace(program.gameId,series)),snapshot=cut();await store.progress({id:'web',baseRevision:0,through:1,changes:[{seq:1,type:'set',key:'unlock',value:i32(9)}]},null);await store.save('quick',snapshot,0);await store.save('quick',snapshot,1);return {store,snapshot,backup:await store.backup(program.gameId,series,program.release)};}

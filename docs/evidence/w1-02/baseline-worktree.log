@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-uVSGf7 fe86769
-HEAD is now at fe86769 perf: yield browser tasks and index narrative execution
-Preparing worktree (detached HEAD fe86769)

@@ -5,7 +5,7 @@ import {ProgramBuilder,cgExtra,musicExtra,sceneExtra,sceneMarker,achievement,ext
 import {parseProgram,parseProfile,parsePortableBackup,parseExtrasProgress,bool,i32,string,canonicalWireJSON} from 'galbox-sdk/protocol';
 import {MemoryStore,Coordinator,VirtualHost,VirtualScheduler} from 'galbox-sdk/testing';
 import {defineContentMigration,prepareBackupRestore,materializeBackupRestore} from 'galbox-sdk/backups';
-const program=()=>parseProgram(JSON.parse(readFileSync('fixtures/extras-novel/program.json','utf8')));
+const program=()=>parseProgram(JSON.parse(readFileSync('tests/fixtures/game-data/extras-novel/program.json','utf8')));
 async function run(budget=100){const p=program(),core=createCore(p),store=new MemoryStore(),scheduler=new VirtualScheduler(),runtime=new Coordinator(core,new VirtualHost(),scheduler,store,1,null,'extras',budget);async function send(e:Parameters<Coordinator['dispatch']>[0]){const promise=runtime.dispatch(e);scheduler.drain();await promise;await runtime.flushAll();}await send({type:'tick',ms:0});await send({type:'text.preferences',value:{intervalMs:0}});await send({type:'tick',ms:0});async function next(){const w=core.view().run.wait;if(w?.kind!=='text')throw new Error('text');await send({type:'reveal',prompt:w.prompt,inputId:'r'+w.prompt});await send({type:'advance',prompt:w.prompt,inputId:'a'+w.prompt});}return {p,core,store,runtime,send,next};}
 it('real extras factories/linking enforce resource kinds, scene marker identity and profile-only conditions',()=>{
  const p=program();expect(p.capabilities).toContain('extras');

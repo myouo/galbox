@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-SVbaR3 f981ecc
-HEAD is now at f981ecc feat: add ADV NVL text windows themes and renderer ports
-Preparing worktree (detached HEAD f981ecc)

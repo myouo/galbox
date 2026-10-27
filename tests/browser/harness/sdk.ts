@@ -7,7 +7,7 @@ export * from 'galbox-sdk/testing';
 export { openStore } from '../../../packages/galbox-sdk/src/storage/indexeddb.js';
 export { verifiedBytes } from '../../../packages/galbox-sdk/src/web-host/assets.js';
 export * from 'galbox-sdk/save-bridge';
-export {createFixtureBinding} from '../../../fixtures/synthetic-saves/binding.js';
+export {createFixtureBinding} from '../../fixtures/game-data/synthetic-saves/binding.js';
 
 export * from 'galbox-sdk/backups';
 
@@ -22,3 +22,5 @@ export {WebHost} from '../../../packages/galbox-sdk/src/web-host/host.js';
 export {BrowserScheduler} from '../../../packages/galbox-sdk/src/web-host/scheduler.js';
 
 export {loadingFixture} from "./loading-fixture.js";
+
+export * from 'galbox-sdk/wire';

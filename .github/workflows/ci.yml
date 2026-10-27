@@ -3,6 +3,8 @@ on: [push, pull_request]
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      GALBOX_EVIDENCE_DIR: artifacts/ci
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,3 +25,12 @@ jobs:
       - run: pnpm test:cli
       - run: pnpm test:consumer
       - run: pnpm test:release
+      - run: pnpm test:package
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-evidence
+          path: |
+            artifacts/
+            test-results/
+          if-no-files-found: ignore

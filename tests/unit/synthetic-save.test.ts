@@ -4,12 +4,12 @@ import {createHash} from 'node:crypto';
 import {Core} from 'galbox-sdk/core';
 import {materializeImport,createSaveBindingRegistry} from 'galbox-sdk/save-bridge';
 import type {FormatContext,OriginalSaveFile} from 'galbox-sdk/save-bridge';
-import {createFixtureBinding,fixtureCodec,fixtureSource,originalSchema} from '../../fixtures/synthetic-saves/binding.js';
+import {createFixtureBinding,fixtureCodec,fixtureSource,originalSchema} from '../fixtures/game-data/synthetic-saves/binding.js';
 import {defineSaveCodec,defineSaveMapping,defineSaveSource,bindOriginalSave,codec} from 'galbox-sdk/port-kit';
 import {parseProgram} from 'galbox-sdk/protocol';
-const program:unknown=JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'));
+const program:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
 const context:FormatContext={async digest(bytes){return new Uint8Array(createHash('sha256').update(bytes).digest());},decodeUtf8(bytes){return new TextDecoder('utf-8',{fatal:true}).decode(bytes);}};
-function files():OriginalSaveFile[]{return ['slot.bin','global.json'].map(name=>({name,bytes:new Uint8Array(readFileSync(`fixtures/synthetic-saves/data/${name}`))}));}
+function files():OriginalSaveFile[]{return ['slot.bin','global.json'].map(name=>({name,bytes:new Uint8Array(readFileSync(`tests/fixtures/game-data/synthetic-saves/data/${name}`))}));}
 function payload(changes:Record<string,unknown>):Uint8Array{
  const bytes=files()[0]!.bytes,body=JSON.parse(context.decodeUtf8(bytes.slice(9,-32)));const data=new TextEncoder().encode(JSON.stringify({...body,...changes})),result=new Uint8Array(9+data.length+32);result.set([71,66,70,88,1]);new DataView(result.buffer).setUint32(5,data.length,true);result.set(data,9);result.set(createHash('sha256').update(data).digest(),9+data.length);return result;
 }

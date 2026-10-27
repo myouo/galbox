@@ -7,7 +7,7 @@ import { ensure,GalboxError,parseAudioPlaybackEvent,parsePlaybackPreferences,par
 import type {AudioPlaybackEvent,PlaybackPreferences} from '../protocol/index.js';
 import {PlaybackController} from './playback.js';
 import type {PlaybackMode,PlaybackView} from './playback.js';
-import type { HostPort, HostPreparation, Scheduler, Store, ProgressBatch } from './ports.js';
+import type { HostPort, HostPreparation, ProgramPreparationPort, Scheduler, Store, ProgressBatch } from './ports.js';
 type RuntimeEvent=CoreEvent|{type:'playback.mode';mode:PlaybackMode}|{type:'playback.preferences';value:PlaybackPreferences}|{type:'playback.pause';value:boolean}|{type:'playback.ended';value:AudioPlaybackEvent};
 interface Queued {event:RuntimeEvent;automated?:boolean;freeze?:boolean;resolve:()=>void;reject:(e:unknown)=>void;}
 export class Coordinator {
@@ -27,7 +27,7 @@ export class Coordinator {
   private resourcePhase:'idle'|'loading'|'failed'='idle';private resourceFailure:string|null=null;
   private readonly playback:PlaybackController;
   private requestedPlayback:PlaybackMode='manual';private playbackPaused=false;
-  constructor(readonly core:Core,private readonly host:HostPort,private readonly scheduler:Scheduler,private readonly store:Store,readonly epoch:number,readonly authority:string|null,private readonly sessionId:string,private readonly budget=100,readonly history?:HistoryJournal) {this.playback=new PlaybackController(sessionId);if(history)this.core.accept({type:'history.session',id:history.scope});}
+  constructor(readonly core:Core,private readonly host:HostPort,private readonly scheduler:Scheduler,private readonly store:Store,readonly epoch:number,readonly authority:string|null,private readonly sessionId:string,private readonly budget=100,readonly history?:HistoryJournal,private readonly code?:ProgramPreparationPort) {this.playback=new PlaybackController(sessionId);if(history)this.core.accept({type:'history.session',id:history.scope});}
   get executing():boolean {return this.current!==null;}
   resourceView(){return {phase:this.resourcePhase,error:this.resourceFailure};}
   capture(){ensure(this.resourcePhase==='idle','RESOURCE_PREPARING','Wait for resource preparation or retry it');return this.core.capture();}
@@ -64,15 +64,16 @@ export class Coordinator {
     if(this.resourcePhase!=='idle')return;
     try {
       if(!this.current){this.current=this.queue.shift()??null;if(!this.current){this.draining=false;return;}this.previous=this.core.view();this.accept(this.current.event);}
-      if(this.core.run(this.budget)==='yield'){this.scheduler.defer(()=>this.work());return;}
+      if(this.core.run(this.budget)==='yield'){if(this.core.requiredFunction){this.prepareCode(this.core.requiredFunction);return;}this.scheduler.defer(()=>this.work());return;}
       if(!this.effects())return;
-      if(this.current.event.type==='tick'&&!this.current.freeze&&!this.current.automated){this.current.automated=true;const action=!this.playbackPaused&&this.playback.view().mode===this.requestedPlayback?this.playback.tick(this.core.view(),this.current.event.ms):null;if(action){this.accept(action);if(this.core.run(this.budget)==='yield'){this.scheduler.defer(()=>this.work());return;}if(!this.effects())return;}}
+      if(this.current.event.type==='tick'&&!this.current.freeze&&!this.current.automated){this.current.automated=true;const action=!this.playbackPaused&&this.playback.view().mode===this.requestedPlayback?this.playback.tick(this.core.view(),this.current.event.ms):null;if(action){this.accept(action);if(this.core.run(this.budget)==='yield'){if(this.core.requiredFunction){this.prepareCode(this.core.requiredFunction);return;}this.scheduler.defer(()=>this.work());return;}if(!this.effects())return;}}
       this.playback.settle(this.core.view());
       const current=this.current;this.current=null;if(current?.freeze){this.frozen=true;this.held.push(...this.queue);this.queue=[];}this.notify();current?.resolve();
       if(this.core.view().dirty||this.history?.dirty||this.core.view().run.wait?.kind==='flush')void this.flush().catch(()=>{});
       if(this.queue.length){this.scheduler.defer(()=>this.work());return;}this.draining=false;
     } catch(error) {this.current?.reject(error);this.current=null;this.draining=false;this.notify();}
   }
+  private prepareCode(id:string):void {try{ensure(this.code,'MODULE_PROVIDER','A module preparation port is required');const preparation=this.code.prepareFunction(id);this.preparation=preparation;this.resourcePhase='loading';this.notify();void preparation.ready.then(()=>{if(this.stopped||this.preparation!==preparation)return;try{preparation.commit();this.preparation=null;this.resourcePhase='idle';this.scheduler.defer(()=>this.work());}catch(e){this.cancelPreparation(preparation);this.preparation=null;this.resourceFailed(e);}},e=>{if(this.stopped||this.preparation!==preparation)return;this.cancelPreparation(preparation);this.preparation=null;this.resourceFailed(e);});}catch(e){this.resourceFailed(e);}}
   private accept(event:RuntimeEvent):void{
     if(this.history&&(event.type==='advance'||event.type==='step')){const before=this.core.view();if(before.run.wait?.kind==='text'&&before.run.text&&before.run.wait.prompt===event.prompt&&isTextComplete(before.run.text)){const snapshot=this.history.policy.rollback&&before.canSave?this.core.capture():null;this.core.accept(event);const after=this.core.view();if(after.run.history.length===before.run.history.length+1)this.history.confirmed(snapshot,before.run.text,this.history.policy.rollback?before.saveReason:'ROLLBACK_DISABLED',before.run.release);return;}}
     switch(event.type){case 'playback.mode':this.playback.setMode(event.mode);return;case 'playback.preferences':this.playback.configure(event.value);return;case 'playback.pause':this.playback.pause(event.value);return;case 'playback.ended':this.core.accept({type:'media.ended',task:event.value.task,attempt:event.value.attempt});this.playback.ended(event.value.task,event.value.attempt);return;default:this.core.accept(event);if(event.type==='task')this.playback.started(event.task,event.attempt,event.result);}}

@@ -1,0 +1,11 @@
+import {execFileSync} from 'node:child_process';
+import {readFile} from 'node:fs/promises';
+const files=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);
+const forbidden=files.filter(f=>f.endsWith('.log')||/^docs\/evidence\//.test(f)&&!f.endsWith('.md')||/^(apps|fixtures)\//.test(f)||/^tests\/player-app\/public\//.test(f)||/^packages\/[^/]+\/src\/generated\//.test(f)||/^packages\/galbox-sdk\/src\/protocol\/generated\//.test(f));
+if(forbidden.length)throw new Error('Generated/test payloads tracked in source:\n'+forbidden.join('\n'));
+const outputs=['probe.log','artifacts/probe.json','coverage/probe.json','docs/evidence/probe/result.json','docs/evidence/probe/screenshot.png','docs/evidence/probe/trace.zip','tests/player-app/public/program.pb','packages/galbox-sdk/src/protocol/generated/probe.ts','packages/cli/src/generated/probe.ts'];
+const ignored=execFileSync('git',['check-ignore','--no-index','--stdin','-z'],{input:outputs.join('\0')+'\0',encoding:'utf8'}).split('\0').filter(Boolean);
+if(outputs.some(p=>!ignored.includes(p)))throw new Error('Generated output is missing from .gitignore');
+const pkg=JSON.parse(await readFile('packages/galbox-sdk/package.json','utf8'));
+if(pkg.files.some(p=>/tests|fixtures|evidence|schema/.test(p)))throw new Error('SDK package whitelist includes non-runtime payloads');
+console.log('Repository boundaries and ignored output policy passed');

@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-IC9FgE 7d71fb0
-HEAD is now at 7d71fb0 feat: add extras catalog and isolated gallery replay
-Preparing worktree (detached HEAD 7d71fb0)

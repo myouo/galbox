@@ -1,2 +1,0 @@
-$ node scripts/test-cli.mjs --full
-Independent CLI/template passed (54 commands; browser save/restore and dev HTTP)

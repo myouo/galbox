@@ -4,3 +4,23 @@ dist/
 playwright-report/
 test-results/
 *.tgz
+
+# Local build/test evidence; retain small reviewable summaries only.
+*.log
+artifacts/
+coverage/
+docs/evidence/**
+!docs/evidence/**/
+!docs/evidence/**/README.md
+!docs/evidence/**/REPORT.md
+!docs/evidence/ARCHIVE.md
+# Generated test distributions and fixture wire documents.
+tests/player-app/public/
+tests/fixtures/game-data/**/program.json
+tests/fixtures/game-data/**/program.json.release.json
+tests/fixtures/game-data/**/paper.json
+tests/fixtures/game-data/**/paper.json.release.json
+
+# Regenerated from checked-in YAML/IDL contracts during prepare/build.
+packages/galbox-sdk/src/protocol/generated/
+packages/cli/src/generated/

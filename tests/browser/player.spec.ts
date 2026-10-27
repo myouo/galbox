@@ -29,7 +29,7 @@ test('real Pixi/WAV/IndexedDB: save, restore, refresh, both endings and ordinary
  expect(await page.getByTestId('story-text').innerText()).toBe(prior);
  const oldEpoch=(await diagnostics(page)).epoch;await page.getByRole('button',{name:'菜单',exact:true}).click();await page.getByRole('button',{name:'重新开始',exact:true}).click();await expect.poll(async()=>(await diagnostics(page)).epoch).toBeGreaterThan(oldEpoch);await expect.poll(async()=>(await diagnostics(page)).lifecycle).toBe('playing');await opening(page);await finish(page,'tower');
  await expect.poll(async()=>(await diagnostics(page)).profile?.values.towerUnlocked?.value).toBe(true);expect((await diagnostics(page)).profile?.values.shoreUnlocked?.value).toBe(true);expect((await diagnostics(page)).globals?.route?.value).toBe('tower');
- await page.screenshot({path:'docs/evidence/playable.png'});expect(errors).toEqual([]);
+ await page.screenshot({path:`${process.env.GALBOX_EVIDENCE_DIR??'artifacts/evidence'}/playable.png`});expect(errors).toEqual([]);
 });
 test('menu pointer release cannot advance and repeated create/dispose releases canvas/audio',async({page})=>{
  await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).click();await page.getByTestId('advance').click();

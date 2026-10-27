@@ -45,3 +45,7 @@ export {gamePresentation} from './presentation.js';
 export type {GamePresentationOptions} from './presentation.js';
 
 export {loadingPolicy} from "../protocol/loading.js";
+
+export {ModuleProgram,createModuleProgram} from './module-program.js';
+export {compileProgramModules} from './module-compiler.js';
+export type {CompiledModules} from './module-compiler.js';

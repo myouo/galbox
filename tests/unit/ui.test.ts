@@ -7,7 +7,7 @@ import {ProgramBuilder,uiButton,uiToggle,uiRange,uiInput,uiImage,uiScreen,uiCata
 import {parseProgram,parseSnapshot,parseUIEvent,parseProfile,parsePortableBackup,i32,bool,string,canonicalWireJSON} from 'galbox-sdk/protocol';
 import type {UIAction} from 'galbox-sdk/protocol';
 import {MemoryStore,Coordinator,VirtualHost,VirtualScheduler} from 'galbox-sdk/testing';
-const program=()=>parseProgram(JSON.parse(readFileSync('fixtures/ui-novel/program.json','utf8')));
+const program=()=>parseProgram(JSON.parse(readFileSync('tests/fixtures/game-data/ui-novel/program.json','utf8')));
 function settle(c:Core,budget=100){while(c.run(budget)==='yield'){}return c;}
 function form(budget=100){const c=settle(createCore(program()),budget),w=c.capture().wait;if(w?.kind!=='text')throw new Error('text');c.accept({type:'reveal',prompt:w.prompt,inputId:'intro-r'});c.accept({type:'advance',prompt:w.prompt,inputId:'intro-a'});settle(c,budget);return c;}
 function waiting(c:Core){const w=c.capture().wait;if(w?.kind!=='ui')throw new Error('ui');return w;}

@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-VUfBkJ 935f8e8
-HEAD is now at 935f8e8 feat: add typed expressions evaluated text and resumable RNG
-Preparing worktree (detached HEAD 935f8e8)

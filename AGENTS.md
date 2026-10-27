@@ -58,3 +58,9 @@ M0 建立 `pnpm check`（类型、生成一致性、导入边界及既定静态�
 - 每次语义扩展先记录有限支持集和 ADR，再让 Schema、生成物、真实工厂、Core 与失败反例一起落地。不得绕过公共工厂证明类型安全。
 - 有状态操作注册表在创建 Core 前冻结；调用状态不按 opcode 全局共享。reducer/迁移输入输出必须隔离，失败不得改变剧情、profile、等待或已提交效果。
 - 改变 args/phase/wait ABI 时，只有完整 invocation 迁移可以接纳旧档；单独 state 迁移不得冒充完整兼容。旧协议没有迁移时明确拒绝并保留旧档。
+
+## 测试与生成产物边界（用户最新约束）
+
+- SDK是引擎；实例游戏、播放器验证应用与内容fixture一律放在tests/内。正式包不得包含游戏、验证证据或日志。
+- docs/evidence只跟踪短Markdown报告；原始日志/JSON/截图/trace等保留本地并ignore，CI上传artifact，不提交重复生成记录。
+- 使用pnpm打包白名单与独立消费验收检查泄漏；运行目录按tests/player-app、tests/fixtures/game-data使用。

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { Core } from '../../packages/galbox-sdk/src/core/index.js';
 import { MemoryStore,Coordinator,VirtualHost,VirtualScheduler } from '../../packages/galbox-sdk/src/testing/index.js';
 import type { ProgressBatch } from '../../packages/galbox-sdk/src/testing/index.js';
-const program:unknown=JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'));
+const program:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
 function snapshot(){const c=new Core(program);c.run(100);return c.capture();}
 const batch=(id:string,revision:number,seq=1):ProgressBatch=>({id,baseRevision:revision,through:seq,changes:[{seq,type:'set',key:'unlocked',value:{kind:'bool',value:true}}]});
 it('commits progress and receipts atomically; lost replies are idempotent and changed payload is rejected',async()=>{

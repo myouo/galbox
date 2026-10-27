@@ -5,9 +5,9 @@ import {createReleaseManifest,verifyReleaseManifest,releaseFingerprint,inspectRe
 import type {ResourceFact} from 'galbox-sdk/release';
 import {parseProgram,parseReleaseManifest,codec} from 'galbox-sdk/protocol';
 import {defineOperation,createOperationRegistry,createSaveBindingRegistry,defineSaveMapping,bindOriginalSave} from 'galbox-sdk/port-kit';
-import {createFixtureBinding,fixtureCodec} from '../../fixtures/synthetic-saves/binding.js';
-const program=parseProgram(JSON.parse(readFileSync('fixtures/standard-novel/program.json','utf8'))),series='release-tests',digest={async sha256(text:string){return createHash('sha256').update(text,'utf8').digest('hex');}};
-const resources=program.assets.map(a=>inspectResource(a,new Uint8Array(readFileSync('apps/playground/public/'+a.path)),b=>new TextDecoder('utf-8',{fatal:true}).decode(b)));
+import {createFixtureBinding,fixtureCodec} from '../fixtures/game-data/synthetic-saves/binding.js';
+const program=parseProgram(JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'))),series='release-tests',digest={async sha256(text:string){return createHash('sha256').update(text,'utf8').digest('hex');}};
+const resources=program.assets.map(a=>inspectResource(a,new Uint8Array(readFileSync('tests/player-app/public/'+a.path)),b=>new TextDecoder('utf-8',{fatal:true}).decode(b)));
 const options={program,series,resources};
 it('binds real Program/media/registries and a stable series into a detached release and fingerprint',async()=>{
  const manifest=await createReleaseManifest({...options,bindings:createSaveBindingRegistry([createFixtureBinding(program)])},digest);expect(manifest.programSha256).toBe(await digest.sha256(canonicalReleaseJSON(program)));expect(manifest.resources).toHaveLength(9);
@@ -33,7 +33,7 @@ it('enforces compressed, image, PCM and duration budgets before admission, inclu
 it('rejects unsafe SVG, invalid dimensions, unsupported WAV encodings and truncated chunks',()=>{
  const svg={id:'vector',kind:'image',mime:'image/svg+xml'} as const,utf8=(b:Uint8Array)=>new TextDecoder('utf-8',{fatal:true}).decode(b),encode=(s:string)=>new TextEncoder().encode(s);
  expect(()=>inspectResource(svg,encode('<svg viewBox="0 0 10 10"></svg>'),utf8)).toThrow('RESOURCE_SVG_SIZE');expect(()=>inspectResource(svg,encode('<svg width="10" height="10"><image href="https://example.com/a.png"/></svg>'),utf8)).toThrow('RESOURCE_SVG');
- const a=program.assets.find(a=>a.kind==='audio')!;const wav=new Uint8Array(readFileSync('apps/playground/public/'+a.path)),bad=wav.slice();new DataView(bad.buffer).setUint16(20,85,true);expect(()=>inspectResource(a,bad,utf8)).toThrow('RESOURCE_WAV_FORMAT');expect(()=>inspectResource(a,wav.slice(0,-2),utf8)).toThrow('RESOURCE_WAV');
+ const a=program.assets.find(a=>a.kind==='audio')!;const wav=new Uint8Array(readFileSync('tests/player-app/public/'+a.path)),bad=wav.slice();new DataView(bad.buffer).setUint16(20,85,true);expect(()=>inspectResource(a,bad,utf8)).toThrow('RESOURCE_WAV_FORMAT');expect(()=>inspectResource(a,wav.slice(0,-2),utf8)).toThrow('RESOURCE_WAV');
  const png=new Uint8Array(33);png.set([137,80,78,71,13,10,26,10]);const v=new DataView(png.buffer);v.setUint32(8,13);v.setUint32(12,0x49484452);v.setUint32(16,8192);v.setUint32(20,8192);const fact=inspectResource({id:'oversized',kind:'image',mime:'image/png'},png,utf8);expect(()=>resourceUsage([fact])).toThrow('RESOURCE_IMAGE_SIDE');
 });
 it('refuses required timed-choice/video capabilities instead of treating a release as proof of support',async()=>{

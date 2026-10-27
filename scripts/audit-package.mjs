@@ -1,0 +1,13 @@
+import {spawnSync} from 'node:child_process';
+import {mkdir,writeFile,stat} from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const dir=path.resolve(process.env.GALBOX_EVIDENCE_DIR??'artifacts/package-audit');await mkdir(dir,{recursive:true});
+const tar=path.join(dir,'sdk.tgz');const packed=spawnSync('pnpm',['--dir','packages/galbox-sdk','pack','--out',tar],{encoding:'utf8'});assert.equal(packed.status,0,packed.stderr);
+const listing=spawnSync('tar',['-tzf',tar],{encoding:'utf8'});assert.equal(listing.status,0,listing.stderr);const files=listing.stdout.trim().split('\n');
+const forbidden=files.filter(f=>/\/(tests|fixtures|apps|docs|evidence|templates)\//.test(f)||/\.(log|map)$/.test(f)||f.endsWith('.json')&&f!=='package/package.json');assert.deepEqual(forbidden,[]);assert.ok(files.includes('package/protocol/galbox.proto'));assert.ok(files.some(f=>f.endsWith('/protocol/protobuf.js')));
+const cli=path.join(dir,'cli.tgz'),cliPack=spawnSync('pnpm',['--dir','packages/cli','pack','--out',cli],{encoding:'utf8'});assert.equal(cliPack.status,0,cliPack.stderr);
+const cliList=spawnSync('tar',['-tzf',cli],{encoding:'utf8'});assert.equal(cliList.status,0,cliList.stderr);assert.ok(cliList.stdout.includes('package/templates/standard/gitignore'));assert.ok(!cliList.stdout.includes('templates/standard/public/assets/'));
+const ignore=spawnSync('tar',['-xOf',cli,'package/templates/standard/gitignore'],{encoding:'utf8'});assert.equal(ignore.status,0,ignore.stderr);assert.ok(ignore.stdout.split('\n').includes('*.log'));
+const bytes=(await stat(tar)).size;const report=`# Package audit\n\nActual SDK tarball: ${files.length} files, ${bytes} compressed bytes.\n\nNo games, tests, logs, evidence, source maps or JSON schemas. Only package.json remains as npm metadata. Protobuf IDL and the public wire entry are present. CLI tarball includes the ignore template, installed as .gitignore at init, and no game assets.\n`;
+await writeFile(path.join(dir,'REPORT.md'),report);console.log(report);

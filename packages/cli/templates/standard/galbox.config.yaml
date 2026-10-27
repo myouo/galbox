@@ -1,0 +1,7 @@
+version: 1
+source: story.mjs
+port: port.mjs
+program: public/program.pb
+assetsRoot: public
+assets: []
+series: '1'

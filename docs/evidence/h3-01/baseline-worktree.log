@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-Csp0xI ce29850
-HEAD is now at ce29850 feat: add configurable game interface and mobile controls
-Preparing worktree (detached HEAD ce29850)

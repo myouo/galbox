@@ -1,3 +1,4 @@
+import {isModuleProgram} from '../program-tools/module-program.js';
 import type {MediaStreamProvider} from '../runtime/stream-ports.js';
 import { ensure, parseProgram, GalboxError,canonicalWireJSON } from '../protocol/index.js';
 import type { Asset, Program } from '../protocol/index.js';
@@ -5,7 +6,7 @@ export interface AssetLease {readonly release:string;readonly id:string;readonly
 export interface AssetRequest {readonly release:string;readonly asset:Readonly<Asset>;readonly maxBytes?:number;}
 export interface AssetProvider {readonly streams?:MediaStreamProvider;acquire(request:AssetRequest,signal:AbortSignal):Promise<AssetLease>;}
 export function createHttpProvider(program:unknown,baseURL:string):AssetProvider {
-  const catalog=parseProgram(program);const base=new URL(baseURL,location.href);
+  const catalog=isModuleProgram(program)?program.describe().header:parseProgram(program);const base=new URL(baseURL,location.href);
   let catalogHash:Promise<string>|undefined;return {streams:{async open(request,cancel){const asset=catalog.assets.find(a=>a.id===request.identity.assetId);ensure(!cancel.cancelled,'ASSET_CANCELLED',request.identity.assetId);catalogHash??=crypto.subtle.digest('SHA-256',new TextEncoder().encode(canonicalWireJSON(catalog.assets))).then(b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''));ensure(asset?.transport&&request.identity.gameId===catalog.gameId&&request.identity.release===catalog.release&&request.identity.catalogSha256===await catalogHash&&request.identity.kind===asset.kind&&request.identity.mime===asset.mime&&request.identity.expectedSha256===asset.sha256&&request.identity.version===asset.transport.version,'STREAM_IDENTITY','HTTP provider catalog mismatch');const uri=new URL(asset.path,base);ensure(uri.origin===base.origin,'ASSET_URL','Cross-origin streaming requires an explicit provider');uri.searchParams.set('galbox-version',asset.transport.version);uri.searchParams.set('galbox-lease',crypto.randomUUID());ensure(!cancel.cancelled,'ASSET_CANCELLED',asset.id);return {identity:request.identity,uri:uri.href,releaseLease(){}};}},async acquire(request,signal){
     const asset=catalog.assets.find(a=>a.id===request.asset.id);
     ensure(request.release===catalog.release&&asset&&JSON.stringify(asset)===JSON.stringify(request.asset),'ASSET_CATALOG','Provider release/catalog mismatch');

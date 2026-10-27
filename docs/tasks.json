@@ -14,9 +14,11 @@
     "G7",
     "H2",
     "H3",
-    "W1"
+    "W1",
+    "E1",
+    "I1"
   ],
-  "current_task": "W1-03B",
+  "current_task": "I1-01",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -576,7 +578,7 @@
       ],
       "evidence": [
         "docs/evidence/2026-10-25-m0-m2.md",
-        "docs/evidence/consumer-result.json",
+        "docs/evidence/README.md",
         "docs/evidence/m3-01/REPORT.md",
         "docs/evidence/m3-02/REPORT.md",
         "docs/evidence/m3-03/REPORT.md",
@@ -587,7 +589,8 @@
         "docs/evidence/m5-04/REPORT.md",
         "docs/evidence/h1-01/REPORT.md",
         "docs/evidence/g1-01/REPORT.md",
-        "docs/evidence/g0-02/REPORT.md"
+        "docs/evidence/g0-02/REPORT.md",
+        "docs/evidence/ARCHIVE.md"
       ],
       "blocker": null,
       "next_action": "本轮门槛完成；下轮从 M3-01 的同步有状态扩展与完整调用迁移开始。"
@@ -961,7 +964,6 @@
       ],
       "evidence": [
         "docs/evidence/m5-03/REPORT.md",
-        "docs/evidence/m5-03/performance.json",
         "docs/evidence/m5-04/REPORT.md",
         "docs/evidence/h1-01/REPORT.md",
         "docs/evidence/g1-01/REPORT.md",
@@ -998,7 +1000,6 @@
       ],
       "evidence": [
         "docs/evidence/m5-04/REPORT.md",
-        "docs/evidence/m5-04/release-audit.json",
         "docs/evidence/h1-01/REPORT.md",
         "docs/evidence/g1-01/REPORT.md",
         "docs/evidence/g0-02/REPORT.md"
@@ -1244,8 +1245,6 @@
       ],
       "evidence": [
         "docs/evidence/h1-01/REPORT.md",
-        "docs/evidence/h1-01/performance.json",
-        "docs/evidence/h1-01/release-audit.json",
         "docs/evidence/g1-01/REPORT.md",
         "docs/evidence/g0-02/REPORT.md"
       ],
@@ -1348,16 +1347,7 @@
         "numeric-data-migration"
       ],
       "evidence": [
-        "docs/evidence/g0-03/REPORT.md",
-        "docs/evidence/g0-03/check.log",
-        "docs/evidence/g0-03/unit.log",
-        "docs/evidence/g0-03/browser-results.json",
-        "docs/evidence/g0-03/consumer-result.json",
-        "docs/evidence/g0-03/result.json",
-        "docs/evidence/g0-03/performance.json",
-        "docs/evidence/g0-03/release-audit.json",
-        "docs/evidence/g0-03/dev-result.json",
-        "docs/evidence/g0-03/source-manifest.json"
+        "docs/evidence/g0-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本数据支持集与G3-01舞台/G3-02音频有限集已完成；当前G3-03视频/交互，其他通用任务未完成。"
@@ -1431,16 +1421,7 @@
         "input-bindings"
       ],
       "evidence": [
-        "docs/evidence/g1-02/REPORT.md",
-        "docs/evidence/g1-02/check.log",
-        "docs/evidence/g1-02/unit.log",
-        "docs/evidence/g1-02/browser-results.json",
-        "docs/evidence/g1-02/consumer-result.json",
-        "docs/evidence/g1-02/result.json",
-        "docs/evidence/g1-02/performance.json",
-        "docs/evidence/g1-02/release-audit.json",
-        "docs/evidence/g1-02/dev-result.json",
-        "docs/evidence/g1-02/source-manifest.json"
+        "docs/evidence/g1-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本有限支持集已完成；当前 G2-02 ADV/NVL/多文本框/主题布局，G0-03 与其它通用 G 项仍未完成。"
@@ -1474,16 +1455,7 @@
         "text-effect-save-restore"
       ],
       "evidence": [
-        "docs/evidence/g2-01/REPORT.md",
-        "docs/evidence/g2-01/check.log",
-        "docs/evidence/g2-01/unit.log",
-        "docs/evidence/g2-01/browser-results.json",
-        "docs/evidence/g2-01/consumer-result.json",
-        "docs/evidence/g2-01/result.json",
-        "docs/evidence/g2-01/performance.json",
-        "docs/evidence/g2-01/release-audit.json",
-        "docs/evidence/g2-01/dev-result.json",
-        "docs/evidence/g2-01/source-manifest.json"
+        "docs/evidence/g2-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本支持集及G2-02窗口/主题有限集完成；当前G0-03值族扩展，其余通用G项仍未完成。"
@@ -1518,16 +1490,7 @@
         "custom-text-renderer"
       ],
       "evidence": [
-        "docs/evidence/g2-02/REPORT.md",
-        "docs/evidence/g2-02/check.log",
-        "docs/evidence/g2-02/unit.log",
-        "docs/evidence/g2-02/browser-results.json",
-        "docs/evidence/g2-02/consumer-result.json",
-        "docs/evidence/g2-02/result.json",
-        "docs/evidence/g2-02/performance.json",
-        "docs/evidence/g2-02/release-audit.json",
-        "docs/evidence/g2-02/dev-result.json",
-        "docs/evidence/g2-02/source-manifest.json"
+        "docs/evidence/g2-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本支持集及G0-03数据基础已完成，当前G3-01舞台演出扩展；其余通用任务继续。"
@@ -1561,16 +1524,7 @@
         "effect-replace-cancel"
       ],
       "evidence": [
-        "docs/evidence/g3-01/REPORT.md",
-        "docs/evidence/g3-01/check.log",
-        "docs/evidence/g3-01/unit.log",
-        "docs/evidence/g3-01/browser-results.json",
-        "docs/evidence/g3-01/consumer-result.json",
-        "docs/evidence/g3-01/result.json",
-        "docs/evidence/g3-01/performance.json",
-        "docs/evidence/g3-01/release-audit.json",
-        "docs/evidence/g3-01/dev-result.json",
-        "docs/evidence/g3-01/source-manifest.json"
+        "docs/evidence/g3-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本舞台及G3-02音频有限集已完成；按current_task继续G3-03，网络流G3-04及其余通用目标仍保留。"
@@ -1603,16 +1557,7 @@
         "media-unavailable"
       ],
       "evidence": [
-        "docs/evidence/g3-02/REPORT.md",
-        "docs/evidence/g3-02/check.log",
-        "docs/evidence/g3-02/unit.log",
-        "docs/evidence/g3-02/browser-results.json",
-        "docs/evidence/g3-02/consumer-result.json",
-        "docs/evidence/g3-02/result.json",
-        "docs/evidence/g3-02/performance.json",
-        "docs/evidence/g3-02/release-audit.json",
-        "docs/evidence/g3-02/dev-result.json",
-        "docs/evidence/g3-02/source-manifest.json"
+        "docs/evidence/g3-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "本有限音频/长媒体解码/混音/当前正文语音支持集完成；下一项G3-03视频/热点/限时交互。v0.6版本化网络流与分级完整性仍为G3-04（G7依赖），不能用Blob渐进解码冒充网络streaming，其余通用能力和N/F真实认证未完成。"
@@ -1645,16 +1590,7 @@
         "deadline-activation"
       ],
       "evidence": [
-        "docs/evidence/g3-03/REPORT.md",
-        "docs/evidence/g3-03/check.log",
-        "docs/evidence/g3-03/unit.log",
-        "docs/evidence/g3-03/browser-results.json",
-        "docs/evidence/g3-03/consumer-result.json",
-        "docs/evidence/g3-03/result.json",
-        "docs/evidence/g3-03/performance.json",
-        "docs/evidence/g3-03/release-audit.json",
-        "docs/evidence/g3-03/dev-result.json",
-        "docs/evidence/g3-03/source-manifest.json"
+        "docs/evidence/g3-03/REPORT.md"
       ],
       "blocker": null,
       "next_action": "有限WebM/VP8影片、矩形热点/键盘与启用后活动期限验收完成；下一G3-04版本化网络流/分级完整性。不把Blob播放当网络streaming，不扩大成任意编码/seek/GUI或真实作品兼容。"
@@ -1686,17 +1622,7 @@
         "stream-cancel-isolation"
       ],
       "evidence": [
-        "docs/evidence/g3-04/REPORT.md",
-        "docs/evidence/g3-04/check.log",
-        "docs/evidence/g3-04/unit.log",
-        "docs/evidence/g3-04/browser-results.json",
-        "docs/evidence/g3-04/stream-progress.json",
-        "docs/evidence/g3-04/consumer-result.json",
-        "docs/evidence/g3-04/result.json",
-        "docs/evidence/g3-04/performance.json",
-        "docs/evidence/g3-04/release-audit.json",
-        "docs/evidence/g3-04/dev-result.json",
-        "docs/evidence/g3-04/source-manifest.json"
+        "docs/evidence/g3-04/REPORT.md"
       ],
       "blocker": null,
       "next_action": "有限版本化HTTP element媒体/分级完整性/租约取消/恢复目录绑定验收完成；下一G4-01同切点图文存读档/槽位管理。URL等级依赖源站immutable契约，不冒充客户端密码验证或任意协议/规模认证。"
@@ -1729,17 +1655,7 @@
         "slot-management"
       ],
       "evidence": [
-        "docs/evidence/g4-01/REPORT.md",
-        "docs/evidence/g4-01/check.log",
-        "docs/evidence/g4-01/unit.log",
-        "docs/evidence/g4-01/browser-results.json",
-        "docs/evidence/g4-01/same-cut.json",
-        "docs/evidence/g4-01/consumer-result.json",
-        "docs/evidence/g4-01/result.json",
-        "docs/evidence/g4-01/performance.json",
-        "docs/evidence/g4-01/release-audit.json",
-        "docs/evidence/g4-01/dev-result.json",
-        "docs/evidence/g4-01/source-manifest.json"
+        "docs/evidence/g4-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "ADR0025有限图文保存/回执/槽位管理验收通过；下一G4-02有界历史语音/受控回溯，当前profile权威和新activation不回写旧进度。"
@@ -1771,17 +1687,7 @@
         "rollback-progress-authority"
       ],
       "evidence": [
-        "docs/evidence/g4-02/REPORT.md",
-        "docs/evidence/g4-02/check.log",
-        "docs/evidence/g4-02/unit.log",
-        "docs/evidence/g4-02/browser-results.json",
-        "docs/evidence/g4-02/history-result.json",
-        "docs/evidence/g4-02/consumer-result.json",
-        "docs/evidence/g4-02/result.json",
-        "docs/evidence/g4-02/performance.json",
-        "docs/evidence/g4-02/release-audit.json",
-        "docs/evidence/g4-02/dev-result.json",
-        "docs/evidence/g4-02/source-manifest.json"
+        "docs/evidence/g4-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "ADR0026有限历史语音/确认切点/有界journal/当前profile回溯验收通过；下一G5-01流程图节点访问/解锁/合法重入。G7须跟进本轮API P95 26.5ms较旧基准增幅与大规模成本。"
@@ -1813,18 +1719,7 @@
         "graph-safe-restore"
       ],
       "evidence": [
-        "docs/evidence/g5-01/REPORT.md",
-        "docs/evidence/g5-01/check.log",
-        "docs/evidence/g5-01/unit.log",
-        "docs/evidence/g5-01/browser-results.json",
-        "docs/evidence/g5-01/ui-recheck/browser-results.json",
-        "docs/evidence/g5-01/flowchart-result.json",
-        "docs/evidence/g5-01/consumer-result.json",
-        "docs/evidence/g5-01/result.json",
-        "docs/evidence/g5-01/performance.json",
-        "docs/evidence/g5-01/release-audit.json",
-        "docs/evidence/g5-01/dev-result.json",
-        "docs/evidence/g5-01/source-manifest.json"
+        "docs/evidence/g5-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "ADR0027有限流程图/访问解锁/声明新根与恢复绑定验收完成；下一G5-02鉴赏、成就/全局解锁及回放隔离。"
@@ -1866,18 +1761,7 @@
         "replay-isolation"
       ],
       "evidence": [
-        "docs/evidence/g5-02/REPORT.md",
-        "docs/evidence/g5-02/check.log",
-        "docs/evidence/g5-02/unit.log",
-        "docs/evidence/g5-02/browser-results.json",
-        "docs/evidence/g5-02/extras-result.json",
-        "docs/evidence/g5-02/consumer-result.json",
-        "docs/evidence/g5-02/result.json",
-        "docs/evidence/g5-02/compatibility-result.json",
-        "docs/evidence/g5-02/performance.json",
-        "docs/evidence/g5-02/release-audit.json",
-        "docs/evidence/g5-02/dev-result.json",
-        "docs/evidence/g5-02/source-manifest.json"
+        "docs/evidence/g5-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "ADR0028有限目录/持久解锁/CG音乐/隔离场景回放验收完成；下一G6-01剧本驱动UI控件、事件身份及状态恢复。"
@@ -1919,19 +1803,7 @@
         "ui-restore"
       ],
       "evidence": [
-        "docs/evidence/g6-01/REPORT.md",
-        "docs/evidence/g6-01/check.log",
-        "docs/evidence/g6-01/unit.log",
-        "docs/evidence/g6-01/browser-results.json",
-        "docs/evidence/g6-01/ui-recheck/browser-results.json",
-        "docs/evidence/g6-01/ui-recheck/script-ui-result.json",
-        "docs/evidence/g6-01/consumer-result.json",
-        "docs/evidence/g6-01/result.json",
-        "docs/evidence/g6-01/compatibility-result.json",
-        "docs/evidence/g6-01/performance.json",
-        "docs/evidence/g6-01/release-audit.json",
-        "docs/evidence/g6-01/dev-result.json",
-        "docs/evidence/g6-01/source-manifest.json"
+        "docs/evidence/g6-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "ADR0029有限控件/事件/状态恢复、图文捕获和真实DOM验收完成；下一G6-02完整默认界面、作品皮肤与移动布局。"
@@ -1979,20 +1851,7 @@
         "touch-keyboard"
       ],
       "evidence": [
-        "docs/evidence/g6-02/REPORT.md",
-        "docs/evidence/g6-02/check.log",
-        "docs/evidence/g6-02/unit.log",
-        "docs/evidence/g6-02/browser-results.json",
-        "docs/evidence/g6-02/ui-recheck/browser-results.json",
-        "docs/evidence/g6-02/ui-recheck/interface-result.json",
-        "docs/evidence/g6-02/ui-recheck/mobile-capture.json",
-        "docs/evidence/g6-02/consumer-result.json",
-        "docs/evidence/g6-02/result.json",
-        "docs/evidence/g6-02/compatibility-result.json",
-        "docs/evidence/g6-02/performance.json",
-        "docs/evidence/g6-02/release-audit.json",
-        "docs/evidence/g6-02/dev-result.json",
-        "docs/evidence/g6-02/source-manifest.json"
+        "docs/evidence/g6-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "ADR0030有限默认页面/版本化皮肤/移动布局和输入隔离验收完成；下一G7-01综合原创功能、声明规模、性能归因与独立消费。"
@@ -2066,16 +1925,7 @@
         "graphics-capability-refusal"
       ],
       "evidence": [
-        "docs/evidence/h2-01/REPORT.md",
-        "docs/evidence/h2-01/check.log",
-        "docs/evidence/h2-01/unit.log",
-        "docs/evidence/h2-01/browser-results.json",
-        "docs/evidence/h2-01/consumer-result.json",
-        "docs/evidence/h2-01/result.json",
-        "docs/evidence/h2-01/performance.json",
-        "docs/evidence/h2-01/release-audit.json",
-        "docs/evidence/h2-01/dev-result.json",
-        "docs/evidence/h2-01/source-manifest.json"
+        "docs/evidence/h2-01/REPORT.md"
       ],
       "next_action": "H2-01与H2-02有限兼容集均通过；当前按G3-03继续，不能把有限Canvas效果和单平台验收扩大为全部通用/作品完成。"
     },
@@ -2106,17 +1956,7 @@
         "canvas-composition-budget"
       ],
       "evidence": [
-        "docs/evidence/h2-02/REPORT.md",
-        "docs/evidence/h2-02/check.log",
-        "docs/evidence/h2-02/unit.log",
-        "docs/evidence/h2-02/browser-results.json",
-        "docs/evidence/h2-02/canvas-parity.json",
-        "docs/evidence/h2-02/consumer-result.json",
-        "docs/evidence/h2-02/result.json",
-        "docs/evidence/h2-02/performance.json",
-        "docs/evidence/h2-02/release-audit.json",
-        "docs/evidence/h2-02/dev-result.json",
-        "docs/evidence/h2-02/source-manifest.json"
+        "docs/evidence/h2-02/REPORT.md"
       ],
       "next_action": "既有有限舞台Canvas组/相机滤镜与透明转场、预算/故障处理验收完成；下一G3-03视频/热点/限时交互。模糊为有容差近似，极端层叠超预算明确拒绝，完整G7与N/F未完成。"
     },
@@ -2158,21 +1998,7 @@
         "browser-save-restore-regression"
       ],
       "evidence": [
-        "docs/evidence/h3-01/REPORT.md",
-        "docs/evidence/h3-01/check.log",
-        "docs/evidence/h3-01/unit-second.log",
-        "docs/evidence/h3-01/browser-results.json",
-        "docs/evidence/h3-01/before/runtime-profile.json",
-        "docs/evidence/h3-01/after/runtime-profile.json",
-        "docs/evidence/h3-01/comparison.json",
-        "docs/evidence/h3-01/before/performance.json",
-        "docs/evidence/h3-01/after/performance.json",
-        "docs/evidence/h3-01/disposal-investigation/disposal-profile.json",
-        "docs/evidence/h3-01/consumer-result.json",
-        "docs/evidence/h3-01/result.json",
-        "docs/evidence/h3-01/release-audit.json",
-        "docs/evidence/h3-01/dev-result.json",
-        "docs/evidence/h3-01/source-manifest.json"
+        "docs/evidence/h3-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "H3-02已完成图形尾延迟归因并记录平台限制，W1-01已完成长指令/浏览器任务调度优化；继续W1-02资源工作集，不将有限性能结果扩张为所有指标/平台已优化或G7完成。"
@@ -2205,10 +2031,7 @@
       ],
       "evidence": [
         "docs/evidence/h3-02/REPORT.md",
-        "docs/evidence/h3-02/drain-control/fixed-trace.json",
-        "docs/evidence/h3-02/no-msaa/fixed-trace.json",
-        "docs/evidence/w1-01/performance/performance.json",
-        "docs/evidence/w1-01/browser-results.json"
+        "docs/evidence/w1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "固定61提交/960ms完成受控归因：SwiftShader上下文释放仍有积压成本，readback只移动等待，关闭MSAA没有稳定总收益；实验未进入生产。保留平台限制，后续W1/G7测量真实工作集/设备，不把此任务done解释为尾延迟已消除。"
@@ -2248,14 +2071,7 @@
       "evidence": [
         "docs/decisions/0032-web-task-scheduling.md",
         "docs/WEB_READINESS.md",
-        "docs/evidence/w1-01/REPORT.md",
-        "docs/evidence/w1-01/comparison.json",
-        "docs/evidence/w1-01/browser-results.json",
-        "docs/evidence/w1-01/consumer-result.json",
-        "docs/evidence/w1-01/release-audit.json",
-        "docs/evidence/w1-01/dev-result.json",
-        "docs/evidence/w1-01/source-manifest.json",
-        "docs/evidence/w1-01/handoff-validation.json"
+        "docs/evidence/w1-01/REPORT.md"
       ],
       "blocker": null,
       "next_action": "W1-02有限资源策略已验收，继续W1-03模块/存储与W1-04持久缓存/离线/平台；保留同步校验和软件GPU尾延迟限制。"
@@ -2293,17 +2109,7 @@
       "evidence": [
         "docs/LOADING.md",
         "docs/decisions/0033-resource-loading-strategies.md",
-        "docs/evidence/w1-02/REPORT.md",
-        "docs/evidence/w1-02/unit-repair.log",
-        "docs/evidence/w1-02/browser-results.json",
-        "docs/evidence/w1-02/ui-final/browser-results.json",
-        "docs/evidence/w1-02/gallery-final/browser-results.json",
-        "docs/evidence/w1-02/comparison.json",
-        "docs/evidence/w1-02/consumer-result.json",
-        "docs/evidence/w1-02/release-audit.json",
-        "docs/evidence/w1-02/dev-result.json",
-        "docs/evidence/w1-02/source-manifest.json",
-        "docs/evidence/w1-02/handoff-validation.json"
+        "docs/evidence/w1-02/REPORT.md"
       ],
       "blocker": null,
       "next_action": "四种策略、驻留缓存、资源屏障/重试/取消/跨刷新与跨策略恢复、可见CG引用均已验收；下一W1-03模块/存储，W1-04持久字节缓存/离线/平台。保持有限支持范围，不宣称整部大作或全部设备完成。"
@@ -2316,7 +2122,8 @@
         "W1-02",
         "W1-03A",
         "W1-03B",
-        "W1-03C"
+        "W1-03C",
+        "W1-03B2"
       ],
       "status": "in_progress",
       "implementation": "in_progress",
@@ -2339,7 +2146,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "A已完成。继续B真实程序模块身份/按执行依赖加载/恢复闭包，再完成C热记录粒度/留存/容量。B/C未完成前父任务保持进行中。"
+      "next_action": "A和基础B已验收；B2补齐高级能力模块，C继续热记录粒度/留存/容量。父任务保持进行中。"
     },
     {
       "id": "W1-04",
@@ -2402,15 +2209,7 @@
       "evidence": [
         "docs/decisions/0034-segmented-storage.md",
         "docs/STORAGE.md",
-        "docs/evidence/w1-03a/REPORT.md",
-        "docs/evidence/w1-03a/unit-third.log",
-        "docs/evidence/w1-03a/browser-results.json",
-        "docs/evidence/w1-03a/comparison.json",
-        "docs/evidence/w1-03a/consumer-result.json",
-        "docs/evidence/w1-03a/release-audit.json",
-        "docs/evidence/w1-03a/dev-result.json",
-        "docs/evidence/w1-03a/source-manifest.json",
-        "docs/evidence/w1-03a/handoff-validation.json"
+        "docs/evidence/w1-03a/REPORT.md"
       ],
       "blocker": null,
       "next_action": "冷热分离/原子迁移/旧激活瘦身已验收，4M逻辑和1M备份上限保持；下一B真实程序模块，C处理热记录和容量，父任务不能done。"
@@ -2418,13 +2217,13 @@
     {
       "id": "W1-03B",
       "milestone": "W1",
-      "title": "版本化程序模块、按需执行与恢复闭包",
+      "title": "基础版本化程序模块、按需执行与恢复闭包",
       "depends_on": [
         "W1-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "module manifest and real producer",
         "demand code loading and restore closure"
@@ -2441,9 +2240,14 @@
         "no-eager-merge-disguise",
         "module-cancellation-and-restore"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/decisions/0035-program-modules.md",
+        "docs/PROGRAM_MODULES.md",
+        "docs/TYPE_AND_DATA_AUDIT.md",
+        "docs/evidence/w1-03b/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "见父任务W1-03及当前ADR/STATUS；不得提前声明总体完成。"
+      "next_action": "基础ADV模块的实际HTTP依赖请求、快照闭包、取消/重试、原创《灯塔来信》与严格tarball已验收；高级能力B2、容量C、i18n I1与离线W1-04仍待做。"
     },
     {
       "id": "W1-03C",
@@ -2474,6 +2278,98 @@
       "evidence": [],
       "blocker": null,
       "next_action": "见父任务W1-03及当前ADR/STATUS；不得提前声明总体完成。"
+    },
+    {
+      "id": "W1-03B2",
+      "milestone": "W1",
+      "title": "高级媒体、剧本UI与鉴赏等模块闭包",
+      "depends_on": [
+        "W1-03B"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "advanced capability modular execution"
+      ],
+      "contracts": [
+        "C01",
+        "C02",
+        "C05",
+        "C07",
+        "C10"
+      ],
+      "acceptance": [
+        "advanced-module-closure"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "在基础模块路径验证后补齐高级指令/元数据签名与恢复闭包，不用基础模块通过替代全部功能模块化。"
+    },
+    {
+      "id": "I1-01",
+      "milestone": "I1",
+      "title": "系统界面locale设置与作品翻译目录",
+      "depends_on": [
+        "W1-03B"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "typed locale setting and fallback catalog",
+        "system UI and narrative localization contracts"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "locale-persistence",
+        "localized-system-ui",
+        "text-revision-readunit-binding"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "当前无locale设置/目录；Unicode和皮肤标签不算完整i18n。先定义语言回退、持久偏好与正文TextId/Revision继承，再实现。"
+    },
+    {
+      "id": "E1-01",
+      "milestone": "E1",
+      "title": "引擎仓库边界、生成产物治理与protobuf正式传输",
+      "depends_on": [
+        "W1-03A"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "test-only game instances",
+        "ignored artifacts and compact evidence",
+        "protobuf wire contract and public codec",
+        "lean package and independent imports"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "no-game-or-log-package-leak",
+        "no-tracked-raw-evidence",
+        "protobuf-interop-and-presence",
+        "independent-public-imports"
+      ],
+      "evidence": [
+        "docs/ENGINEERING.md",
+        "docs/WIRE.md",
+        "docs/decisions/0036-engineering-protobuf.md",
+        "docs/evidence/e1-01/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "引擎/测试隔离、原始证据ignore、正式protobuf与实际tarball/已安装CLI验收完成。后续保留仓库/包边界检查；下一I1-01定义并实现locale和目录，W1父任务仍未完成。"
     }
   ]
 }

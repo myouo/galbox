@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-wkDQGf 2720eb4
-HEAD is now at 2720eb4 feat: add structured text ruby and resumable text effects
-Preparing worktree (detached HEAD 2720eb4)

@@ -91,3 +91,7 @@ const {streamRequest}=await import('galbox-sdk/port-kit');const {parseIntegrityE
  await assert.rejects(retirement.activate('old',save,(await retirement.read()).head.id,0),/ACTIVATION_SUPERSEDED/);await assert.rejects(retirement.claim('old','new-owner'),/ACTIVATION_SUPERSEDED/);assert.deepEqual((await retirement.read()).head.snapshot,save);
  console.log('Packed retired activation identities cannot take over again');
 }
+
+{
+ const {createModuleProgram}=await import('galbox-sdk/port-kit');const root=(await import('galbox-sdk/wire')).decodeWire('ModuleManifest',new Uint8Array(await readFile('./public/modules/manifest.pb'))),source=createModuleProgram(root);source.install((await import('galbox-sdk/wire')).decodeWire('ProgramModule',new Uint8Array(await readFile('./public/modules/code/root.pb'))));const c=createCore(source);c.run(100);assert.deepEqual(c.capture().programModules.modules,['root']);assert.equal(source.has('interior'),false);console.log('Packed headless module factory and source binding passed');
+}

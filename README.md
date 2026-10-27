@@ -25,10 +25,10 @@ pnpm check           # 生成一致性、主包/应用严格类型、无 DOM/Nod
 pnpm test            # 生产 Core/协调器、Schema/链接/恢复负例、提交和激活故障
 pnpm test:browser    # 构建静态应用/独立测试 harness，再运行真实 Chromium 集成
 pnpm test:consumer   # tarball、仓库外临时安装、公开声明检查、独立浏览器播放/保存恢复
-pnpm build           # SDK ESM/声明与 apps/playground/dist 静态目录
+pnpm build           # SDK ESM/声明与 tests/player-app/dist 静态目录
 ```
 
-`pnpm fixture` 从原创 Builder 输入重新生成素材和 Program；`pnpm generate` 更新 Schema 生成物。`check:generated` 是只读漂移检查。`pnpm dev` 会先构建 SDK，不使用源码路径别名伪装公开包消费。静态产物可由任意 HTTP 静态服务器提供；本地预览用 `pnpm exec vite preview --config apps/playground/vite.config.ts --host 127.0.0.1`。
+`pnpm fixture` 从原创 Builder 输入重新生成素材和 Program；`pnpm generate` 更新 Schema 生成物。`check:generated` 是只读漂移检查。`pnpm dev` 会先构建 SDK，不使用源码路径别名伪装公开包消费。静态产物可由任意 HTTP 静态服务器提供；本地预览用 `pnpm exec vite preview --config tests/player-app/vite.config.ts --host 127.0.0.1`。
 
 ## 嵌入
 
@@ -50,13 +50,13 @@ await player.load('quick');
 player.dispose();
 ```
 
-默认 UI 使用 `DefaultUI` / `usePlayer`，并导入 `galbox-sdk/react/style.css`。在 `.galbox-player` 容器内放置一个 `.stage` mount 和 `<DefaultUI player={player}/>`；正文 DOM 由 Host 管理。完整接入实例见 [playground](apps/playground/src/main.tsx)；只使用 tarball 的最小项目见 [consumer](tests/consumer/main.ts)。
+默认 UI 使用 `DefaultUI` / `usePlayer`，并导入 `galbox-sdk/react/style.css`。在 `.galbox-player` 容器内放置一个 `.stage` mount 和 `<DefaultUI player={player}/>`；正文 DOM 由 Host 管理。完整接入实例见 [playground](tests/player-app/src/main.tsx)；只使用 tarball 的最小项目见 [consumer](tests/consumer/main.ts)。
 
 内部快照接入当前持久 profile，不覆盖新的解锁。冲突不会自动合并非单调字段；`discardAndLoad` 是显式放弃当前未持久进度的入口。已提交存储操作不会因 dispose 被报告为无副作用取消。
 
 初始能力与限制见 [CAPABILITIES](docs/CAPABILITIES.md)，细节决策见 [ADR-0002](docs/decisions/0002-m0-m2-semantics.md)。有状态扩展与迁移用法见 [OPERATIONS](docs/OPERATIONS.md)。后续从 `CODEX_CONTINUE.md` 和任务表推进 N/F 与 M6 的真实资料/兼容门槛，不将本检查点称作最终两作支持版。
 
-合成来源工厂和不可变准备计划见 [SAVE_BRIDGE](docs/SAVE_BRIDGE.md)。`pnpm test:compatibility` 明确区分 synthetic 通过与真实 N/F 缺资料；导入、独立进度与每次加载的事务钩子已实现。菜单选择 fixtures/synthetic-saves/data 下的 slot.bin 和 global.json，先检查报告、提交，再显式载入。
+合成来源工厂和不可变准备计划见 [SAVE_BRIDGE](docs/SAVE_BRIDGE.md)。`pnpm test:compatibility` 明确区分 synthetic 通过与真实 N/F 缺资料；导入、独立进度与每次加载的事务钩子已实现。菜单选择 tests/fixtures/game-data/synthetic-saves/data 下的 slot.bin 和 global.json，先检查报告、提交，再显式载入。
 
 标准项目 CLI 已提供 init/assets build/validate/dev/build/saves analyze/verify，见 [CLI](docs/CLI.md)。完整第三方扩展、调用迁移、自制来源与浏览器任务见 [DEVELOPER_WORKFLOW](docs/DEVELOPER_WORKFLOW.md)。
 
@@ -81,7 +81,7 @@ H1-01 绘制/销毁加固见 [证据](docs/evidence/h1-01/REPORT.md)：不重复
 
 G0-02 原创通用验证章节：[灯塔来信·值班簿](http://127.0.0.1:4173/?demo=expressions)，使用正式表达式/插值/RNG 与存档恢复；API 与支持边界见 [EXPRESSIONS](docs/EXPRESSIONS.md)。当前仍只启用 bool/i32/string，G0-03 浮点/集合和其它通用 G 项继续建设。
 
-G1-02 通用播放系统：默认工具栏可开启自动阅读或按住已读快进；菜单可以配置等待、未读策略、实例按键、字号和背景透明度，导入导出 JSON 或恢复作品默认。Auto 等待真实 voice 结束并在选项处停止；读档从手动开始，玩家偏好独立保留。规则与公开 API 见 [PLAYBACK](docs/PLAYBACK.md)、[SETTINGS](docs/SETTINGS.md)。富文本/Ruby/NVL、图文存档、流程图/鉴赏和剧本 UI 仍按后续 G 任务建设。
+G1-02 通用播放系统：默认工具栏可开启自动阅读或按住已读快进；菜单可以配置等待、未读策略、实例按键、字号和背景透明度，导出 protobuf、兼容导入旧 JSON 或恢复作品默认。Auto 等待真实 voice 结束并在选项处停止；读档从手动开始，玩家偏好独立保留。规则与公开 API 见 [PLAYBACK](docs/PLAYBACK.md)、[SETTINGS](docs/SETTINGS.md)。富文本/Ruby/NVL、图文存档、流程图/鉴赏和剧本 UI 仍按后续 G 任务建设。
 
 G2-01 原创章节：[灯塔来信·信纸上的光](http://127.0.0.1:4173/?demo=text)。使用正式 `richText`/`richPage` 工厂表达 Ruby、样式、换行、速度/停顿和文字效果，Core/DOM/Auto/存档共用正文状态；API、恢复规则与有限支持范围见 [TEXT](docs/TEXT.md)。NVL/多文本框和声明式主题布局仍由 G2-02 接续。
 
@@ -116,3 +116,7 @@ G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子�
 可选加载策略见[LOADING](docs/LOADING.md)：完整预载、节流按需、均衡预取、章节预载共用资源准备/重试/预算规则；非eager需正式release。试玩可加`?loading=balanced`或`?loading=demand`。
 
 W1-03A将IndexedDB的槽位/历史大载荷与热记录分离，普通设置/进度更新不再重写全部槽位。数据库版本升级与旧激活标记说明见[STORAGE](docs/STORAGE.md)；程序模块和容量扩展仍在W1-03后续任务。
+
+基础剧情代码可按实际函数调用加载，见[PROGRAM_MODULES](docs/PROGRAM_MODULES.md)；强类型、进程内/网络/存储数据方式及i18n缺口见[核验报告](docs/TYPE_AND_DATA_AUDIT.md)。模块示例`?demo=modules`，高级模块与i18n仍有后续任务。
+
+工程边界见[ENGINEERING](docs/ENGINEERING.md)，正式传输与独立项目导入见[WIRE](docs/WIRE.md)。游戏/验证应用位于tests，原始输出位于ignored artifacts；SDK发布包不会复制这些内容。

@@ -4,7 +4,7 @@ import {gamePresentation,ProgramBuilder,instruction,linkProgram} from 'galbox-sd
 import {parseProgram,parseGamePresentation,parseSystemScreen} from 'galbox-sdk/protocol';
 import {createCore} from 'galbox-sdk/core';
 import {PressGesture} from '../../packages/galbox-sdk/src/runtime/press.js';
-const program=(name='program')=>parseProgram(JSON.parse(readFileSync(`fixtures/presentation-novel/${name}.json`,'utf8')));
+const program=(name='program')=>parseProgram(JSON.parse(readFileSync(`tests/fixtures/game-data/presentation-novel/${name}.json`,'utf8')));
 it('real presentation factories validate kind associations, safe tokens, finite actions and required navigation',()=>{
  // @ts-expect-error Runtime resource kind validation is not replaced by the type.
  expect(()=>gamePresentation({title:{background:{id:'music',kind:'audio'}}})).toThrow('PRESENTATION_IMAGE');

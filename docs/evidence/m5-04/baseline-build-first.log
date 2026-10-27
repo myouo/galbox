@@ -1,2 +1,0 @@
-/home/myo/Desktop/galbox-sdk/node_modules/.bin/tsc -p packages/galbox-sdk/tsconfig.build.json
-packages/galbox-sdk/src/web-host/host.ts(1,46): error TS2307: Cannot find module 'pixi.js' or its corresponding type declarations.

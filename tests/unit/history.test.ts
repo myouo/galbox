@@ -5,7 +5,7 @@ import {MemoryStore,Coordinator,VirtualHost,VirtualScheduler,HistoryJournal,hist
 import {parseHistoryEntry,parseHistoryCommit,parseHistoryRecord,canonicalWireJSON} from 'galbox-sdk/protocol';
 import {prepareBackupRestore,materializeBackupRestore,defineContentMigration} from 'galbox-sdk/backups';
 import type {CoreEvent} from 'galbox-sdk/core';
-const program=()=>JSON.parse(readFileSync('fixtures/history-novel/program.json','utf8'));
+const program=()=>JSON.parse(readFileSync('tests/fixtures/game-data/history-novel/program.json','utf8'));
 async function run(budget:number){const p=program(),core=new Core(p),store=new MemoryStore(),scheduler=new VirtualScheduler(),history=new HistoryJournal(historyPolicy(),{revision:0,entries:[]},'main',null,'history:test',store),runtime=new Coordinator(core,new VirtualHost(),scheduler,store,1,null,'session',budget,history);async function send(e:CoreEvent){const r=runtime.dispatch(e);scheduler.drain();await r;await runtime.flushAll();}await send({type:'tick',ms:0});await send({type:'text.preferences',value:{intervalMs:0}});await send({type:'tick',ms:0});return {p,core,store,scheduler,history,runtime,send};}
 async function advance(f:Awaited<ReturnType<typeof run>>,id:string){const w=f.core.view().run.wait;if(w?.kind!=='text')throw new Error('text');await f.send({type:'reveal',prompt:w.prompt,inputId:id+':reveal'});await f.send({type:'advance',prompt:w.prompt,inputId:id});}
 it('records only real confirmations with the same checkpoint across budgets, preserving nested frame/RNG/active tasks and unsafe reasons',async()=>{

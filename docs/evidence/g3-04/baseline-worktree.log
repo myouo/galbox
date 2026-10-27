@@ -1,3 +1,0 @@
-git worktree add --detach /dev/shm/galbox-api-baseline-py6AAG 74d5ff1
-HEAD is now at 74d5ff1 docs: link video and interaction demo
-Preparing worktree (detached HEAD 74d5ff1)

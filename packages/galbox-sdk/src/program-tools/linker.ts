@@ -78,7 +78,7 @@ export function valueKind(operand: Operand, slots: readonly Slot[]): ValueKind {
   if ('expression'in operand)return validateExpressionTree(operand.expression,id=>slots.find(s=>s.id===id)?.kind);
   const s=slots.find(s=>s.id === operand.slot); ensure(s,'SLOT',operand.slot); return s.kind;
 }
-export function validateLinks(p: Program,operations:OperationRegistry=emptyOperations): void {
+export function validateLinks(p: Program,operations:OperationRegistry=emptyOperations,imports:readonly import('../protocol/index.js').ModuleFunction[]=[]): void {
   const unique=(ids:string[],code:string)=>ensure(new Set(ids).size===ids.length,code,'Duplicate identity');
   unique(p.functions.map(f=>f.id),'FUNCTION_DUPLICATE'); unique(p.assets.map(a=>a.id),'ASSET_DUPLICATE');
   unique(p.functions.flatMap(f=>f.code.map(i=>i.at)),'ADDRESS_DUPLICATE');
@@ -87,7 +87,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
   if(p.rng)ensure(p.capabilities.includes('rng.lcg32'),'RNG_CAPABILITY','Declare rng.lcg32');
   const richIds=new Set(p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich').map(i=>readUnit(i)));for(const op of p.functions.flatMap(f=>f.code))if(op.op==='text.page'||op.op==='text.template')ensure(!richIds.has(readUnit(op)),'TEXT_FORMAT_IDENTITY','Rich and legacy text cannot share textId/revision');
   validatePresentation(p);validateUICatalog(p);validateFlowchart(p);validateExtras(p);validateTextLayout(p);streamCatalog(p);ensure(!p.assets.some(a=>a.transport)||p.capabilities.includes('media.stream'),'STREAM_CAPABILITY','Declare media.stream');for(const a of p.assets)if(a.transport)ensure(a.kind==='video'||a.kind==='audio'&&(a.playback==='element'||a.playback===undefined&&a.mime!=='audio/wav'),'STREAM_PLAYBACK','Streaming requires media element playback');
-  const main=p.functions.find(f=>f.id === p.entry); ensure(main && !main.params.length && main.returns==='void','ENTRY','Entry must take no parameters and return void');
+  const main=p.functions.find(f=>f.id === p.entry)??imports.find(f=>f.id===p.entry); ensure(main && !main.params.length && main.returns==='void','ENTRY','Entry must take no parameters and return void');
   for(const a of p.assets)ensure((a.kind==='image'&&a.mime.startsWith('image/'))||(a.kind==='audio'&&['audio/wav','audio/mpeg','audio/ogg'].includes(a.mime))||(a.kind==='font'&&a.mime==='font/ttf')||(a.kind==='video'&&a.mime==='video/webm'),'ASSET_KIND',a.id);
   for(const a of p.assets){if(a.kind==='video')ensure(p.capabilities.includes('video.webm'),'VIDEO_CAPABILITY','Declare video.webm');ensure(a.kind==='audio'||a.playback===undefined,'ASSET_PLAYBACK','Playback mode only applies to audio');if(a.kind==='audio'&&(a.mime!=='audio/wav'||a.playback==='element'))ensure(p.capabilities.includes('audio.media'),'MEDIA_CAPABILITY','Declare audio.media');}
   for(const f of p.functions) {
@@ -119,7 +119,7 @@ export function validateLinks(p: Program,operations:OperationRegistry=emptyOpera
         case 'control.jump': target(i.target); break;
         case 'control.branch': ensure(kind(i.left)===kind(i.right),'COMPARE_KIND',i.at); ensure(i.cmp==='eq'||['i32','i64','f64','string'].includes(kind(i.left)),'COMPARE_KIND',i.at); target(i.yes); target(i.no); break;
         case 'control.call': {
-          const callee=p.functions.find(f=>f.id===i.function); ensure(callee,'FUNCTION',i.function);
+          const callee=p.functions.find(f=>f.id===i.function)??imports.find(f=>f.id===i.function); ensure(callee,'FUNCTION',i.function);
           ensure(i.args.length===callee.params.length,'CALL_ARITY',i.at);
           i.args.forEach((o,j)=>ensure(kind(o)===callee.params[j]?.kind,'CALL_KIND',i.at));
           if(callee.returns==='void')ensure(i.dest===undefined,'RETURN_SLOT',i.at); else { ensure(i.dest,'RETURN_SLOT',i.at); dest(i.dest,callee.returns); } break;
