@@ -17,3 +17,5 @@ Canvas 现已支持既有 G3-01 有限集：二维 pose/层级/矩形 clip、相
 WebGL↔Canvas 同槽与便携备份可互读，当前普通进度与玩家偏好不被旧槽回写。证据见 evidence/h2-02/REPORT.md：无 WebGL 的两路线/保存刷新、真实 RGBA、预算/故障边界、独立 tarball、旧 WebGL 回归；开发模式以 Chromium --disable-webgl 与原生 API 复测。其它浏览器/真机与大作品尺度仍需对应验收。
 
 决策见 ADR0021/0022。实现核对锁定 Pixi8.22.0 的 CanvasRenderTargetAdaptor/CanvasContextSystem/FilterPipe；依据 [CanvasRenderer](https://pixijs.download/v8.22.0/docs/rendering.CanvasRenderer.html) 与 [HTML Canvas compositing](https://html.spec.whatwg.org/multipage/canvas.html#compositing)。
+
+G3-05的有限灰度规则转场在两后端共用CPU像素内核，见[STAGE](STAGE.md)。`maxRuleBytes`独立限制合成工作区，Canvas再与back buffer/滤镜预算合计。`resources.ruleBytesEstimated/rulePeakBytesEstimated/ruleSurfaces/ruleFrames`分别报告当前/峰值估算、活动表面和真正重算次数；同整数相位不重复上传。dispose释放本实例纹理和数组，不清共享全局池。

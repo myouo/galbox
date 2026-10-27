@@ -257,6 +257,9 @@ definitions:
       shake:
         $ref: "#/definitions/StageOffset"
         x-proto-tag: 12
+      ruleTransition:
+        $ref: "#/definitions/RuleTransition"
+        x-proto-tag: 13
     required:
       - id
       - asset
@@ -2171,6 +2174,65 @@ definitions:
           - value
         additionalProperties: false
         x-proto-tag: 64
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.rule
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          duration:
+            $ref: "#/definitions/I32Expression"
+            x-proto-tag: 4
+          policy:
+            type: string
+            const: reject
+            x-proto-tag: 5
+          easing:
+            type: string
+            enum:
+              - linear
+              - ease-in
+              - ease-out
+              - ease-in-out
+            x-proto-tag: 6
+          id:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 7
+          asset:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 8
+          rule:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 9
+          vague:
+            type: integer
+            minimum: 1
+            maximum: 256
+            x-proto-tag: 10
+        required:
+          - op
+          - at
+          - task
+          - duration
+          - policy
+          - easing
+          - id
+          - asset
+          - rule
+          - vague
+        additionalProperties: false
+        x-proto-tag: 65
   Function:
     type: object
     properties:
@@ -8883,6 +8945,56 @@ definitions:
           - periodMs
         additionalProperties: false
         x-proto-tag: 6
+      - type: object
+        properties:
+          type:
+            type: string
+            const: rule
+            x-proto-tag: 1
+          signature:
+            type: string
+            pattern: ^[^\x00]{1,65536}$
+            x-proto-tag: 2
+          easing:
+            type: string
+            enum:
+              - linear
+              - ease-in
+              - ease-out
+              - ease-in-out
+            x-proto-tag: 3
+          target:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          from:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 5
+          to:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 6
+          rule:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 7
+          vague:
+            type: integer
+            minimum: 1
+            maximum: 256
+            x-proto-tag: 8
+        required:
+          - type
+          - signature
+          - easing
+          - target
+          - from
+          - to
+          - rule
+          - vague
+        additionalProperties: false
+        x-proto-tag: 7
   StageStyle:
     type: object
     properties:
@@ -9155,6 +9267,11 @@ definitions:
         minimum: 1
         maximum: 536870912
         x-proto-tag: 2
+      maxRuleBytes:
+        type: integer
+        minimum: 1
+        maximum: 268435456
+        x-proto-tag: 3
   InteractionRect:
     type: object
     properties:
@@ -11861,6 +11978,33 @@ definitions:
     required:
       - manifestSha256
       - modules
+    additionalProperties: false
+  RuleTransition:
+    type: object
+    properties:
+      from:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 1
+      rule:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 2
+      vague:
+        type: integer
+        minimum: 1
+        maximum: 256
+        x-proto-tag: 3
+      progress:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 4
+    required:
+      - from
+      - rule
+      - vague
+      - progress
     additionalProperties: false
 type: object
 properties:

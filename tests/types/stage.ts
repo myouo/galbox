@@ -1,8 +1,13 @@
-import {stageImage,stageTween,stageFilter,stageTransition,stageCamera,expr as E,variable} from '../../packages/galbox-sdk/src/program-tools/index.js';
+import {stageImage,stageTween,stageFilter,stageTransition,stageRuleTransition,stageCamera,expr as E,variable} from '../../packages/galbox-sdk/src/program-tools/index.js';
 import type {AssetRef} from '../../packages/galbox-sdk/src/program-tools/index.js';
 export function stageTypes(image:AssetRef<'image'>,audio:AssetRef<'audio'>){stageImage('put','character',image,{x:E.variable(variable('x','f64')),scaleX:-1,anchorX:.5});stageTween('move','move','character',{rotation:90},{duration:E.integer(1000),relative:true});stageFilter('blur','blur',{kind:'camera'},{blur:4},{duration:500});stageCamera('zoom','zoom',{zoom:1.2},{duration:500});
  // @ts-expect-error Images cannot be sourced from audio handles.
  stageTransition('bad','bad','character',audio,{duration:500});
+ stageRuleTransition('rule','rule','character',image,image,{duration:E.integer(1000),vague:64});
+ // @ts-expect-error The grayscale rule requires an image handle.
+ stageRuleTransition('bad','bad','character',image,audio,{duration:500});
+ // @ts-expect-error Rule transitions deliberately cannot replace an active source.
+ stageRuleTransition('bad','bad','character',image,image,{duration:500,policy:'replace'});
  // @ts-expect-error Numeric stage fields cannot use bool expressions.
  stageTween('bad','bad','character',{x:E.flag(true)},{duration:500});
  // @ts-expect-error Duration is an integer expression, not f64.

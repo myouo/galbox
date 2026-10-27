@@ -17,6 +17,10 @@ stageFade('night','night','#102030',.25,{duration:1000});
 // 用普通task.join等待选定成员；不join则与正文/其它任务并行。
 ```
 
+G3-05新增 `stageRuleTransition(at, task, objectId, targetImage, grayscaleRule, {duration, vague:64})`，从单张静态图向目标图按灰度门槛转场。三张图必须尺寸一致，rule为不透明灰度图，vague=1..256，duration/easing沿用舞台时钟。from/to/rule、来源签名与进度进入Protobuf快照；取消冻结当前合成，finish精确到目标。活动效果可先finish；已cancelled的冻结画面或分层画面需stageImage建立新基底，不能递归叠加规则转场或replace活动asset写者。规则图与from即使在冻结后也属于恢复资源闭包。
+
+两后端复用同一有界像素合成器，静态相位不重复计算。`graphics.maxRuleBytes`默认64MiB，估算为每像素21字节和每表面512字节查表；Canvas还要求与其back buffer/滤镜预算合计不超`maxCanvasBytes`。这是逻辑工作区估算，不是实测RAM/VRAM。尺寸/规则格式/读回/预算失败在候选接管前拒绝；不支持任意shader、原生children聚合或所有KRKR alpha类型。见[ADR0039](decisions/0039-rule-image-transitions.md)。
+
 新工厂接收有限number或TypedExpression<i32/f64>，duration为number或i32表达式。未知字段、资源种类、非有限结果、越界、层级环和冲突明确拒绝。Builder自动声明stage.effects/expressions/values.extended；raw Program仍经Schema和完整链接。参数只在启动求值一次，快照保存解析后的from/to/fields/duration/easing和源签名，变量后来变化或load不重算。
 
 Pose包含x/y/alpha、scaleX/Y、rotation、skewX/Y、pivotX/Y、anchorX/Y；位置/pivot为逻辑像素，rotation/skew是度。scale -100..100（负数镜像），rotation ±360000，skew ±85，anchor 0..1，alpha0..1，其余位置范围±1000000。相对模式只加提供的字段，不暗做最短角路径。easing为linear/ease-in/ease-out/ease-in-out的固定多项式。

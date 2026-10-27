@@ -2472,10 +2472,11 @@
       ],
       "evidence": [
         "docs/evidence/fata-steam/REPORT.md",
-        "docs/evidence/g2-04/REPORT.md"
+        "docs/evidence/g2-04/REPORT.md",
+        "docs/evidence/g3-05/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "KAG词法已按原生转义/参数/标签别名修正，701份KS raw IR和3337宏定义候选保留；G2-04及8语言实际[l]字面段验证通过，可玩仍22页。继续宏注册/调用与变量CFG、G3-05规则图和原OP/音轨/菜单，保持源分析，不逆向exe，不静默省略。"
+      "next_action": "规则图SDK及独立原作标题淡入/钢琴/规则菜单已验证，当前仍22页。下一按title.ks的scenario分支接4秒离场规则、3秒背景淡出/5秒音量衰减，再分析start→OP44→prologstart，逐项降低；同时推进宏注册/调用/变量CFG。其余菜单/按钮SE/tft/完整剧情与原档未完成。"
     },
     {
       "id": "G2-04",
@@ -2518,9 +2519,9 @@
         "G3-01",
         "H2-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "bounded rule-mask transitions",
         "Canvas/WebGL matching pixels and restore"
@@ -2535,9 +2536,11 @@
         "transition-resource-budget",
         "transition-restore-closure"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/g3-05/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "先核实KAG universal规则/模糊/前后页/children与时序，再给通用SDK有限语义和ADR；不得将所有原效果静默替换成crossfade。"
+      "next_action": "有限灰度规则图已完成：两后端、恢复闭包、预算/读回拒绝、真实工厂与实包；独立8语言标题按源时序消费。继续F-01A标题离场/OP44与宏CFG；不扩大为动态children聚合或全部原生alpha类型。"
     },
     {
       "id": "S1-01",

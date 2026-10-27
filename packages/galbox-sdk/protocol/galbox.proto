@@ -245,6 +245,10 @@ message Gbx_StageObject_shake {
   optional Gbx_StageOffset value = 1;
 }
 
+message Gbx_StageObject_ruleTransition {
+  optional Gbx_RuleTransition value = 1;
+}
+
 message Gbx_StageObject {
   optional Gbx_StageObject_id id = 1;
   optional Gbx_StageObject_asset asset = 2;
@@ -258,6 +262,7 @@ message Gbx_StageObject {
   optional Gbx_StageObject_visible visible = 10;
   optional Gbx_StageObject_layers layers = 11;
   optional Gbx_StageObject_shake shake = 12;
+  optional Gbx_StageObject_ruleTransition ruleTransition = 13;
 }
 
 message Gbx_Option_id {
@@ -2050,6 +2055,59 @@ message Gbx_Instruction_Case64 {
   optional Gbx_Instruction_Case64_value value = 5;
 }
 
+message Gbx_Instruction_Case65_op {
+  // Fixed semantic value: "stage.rule"
+}
+
+message Gbx_Instruction_Case65_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case65_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case65_duration {
+  optional Gbx_I32Expression value = 1;
+}
+
+message Gbx_Instruction_Case65_policy {
+  // Fixed semantic value: "reject"
+}
+
+message Gbx_Instruction_Case65_easing {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case65_id {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case65_asset {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case65_rule {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case65_vague {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case65 {
+  optional Gbx_Instruction_Case65_op op = 1;
+  optional Gbx_Instruction_Case65_at at = 2;
+  optional Gbx_Instruction_Case65_task task = 3;
+  optional Gbx_Instruction_Case65_duration duration = 4;
+  optional Gbx_Instruction_Case65_policy policy = 5;
+  optional Gbx_Instruction_Case65_easing easing = 6;
+  optional Gbx_Instruction_Case65_id id = 7;
+  optional Gbx_Instruction_Case65_asset asset = 8;
+  optional Gbx_Instruction_Case65_rule rule = 9;
+  optional Gbx_Instruction_Case65_vague vague = 10;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -2116,6 +2174,7 @@ message Gbx_Instruction {
     Gbx_Instruction_Case62 v62 = 62;
     Gbx_Instruction_Case63 v63 = 63;
     Gbx_Instruction_Case64 v64 = 64;
+    Gbx_Instruction_Case65 v65 = 65;
   }
 }
 
@@ -8102,6 +8161,49 @@ message Gbx_StageTaskState_Case6 {
   optional Gbx_StageTaskState_Case6_periodMs periodMs = 7;
 }
 
+message Gbx_StageTaskState_Case7_type {
+  // Fixed semantic value: "rule"
+}
+
+message Gbx_StageTaskState_Case7_signature {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case7_easing {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case7_target {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case7_from {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case7_to {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case7_rule {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case7_vague {
+  optional sint64 value = 1;
+}
+
+message Gbx_StageTaskState_Case7 {
+  optional Gbx_StageTaskState_Case7_type type = 1;
+  optional Gbx_StageTaskState_Case7_signature signature = 2;
+  optional Gbx_StageTaskState_Case7_easing easing = 3;
+  optional Gbx_StageTaskState_Case7_target target = 4;
+  optional Gbx_StageTaskState_Case7_from from = 5;
+  optional Gbx_StageTaskState_Case7_to to = 6;
+  optional Gbx_StageTaskState_Case7_rule rule = 7;
+  optional Gbx_StageTaskState_Case7_vague vague = 8;
+}
+
 message Gbx_StageTaskState {
   oneof value {
     Gbx_StageTaskState_Case1 v1 = 1;
@@ -8110,6 +8212,7 @@ message Gbx_StageTaskState {
     Gbx_StageTaskState_Case4 v4 = 4;
     Gbx_StageTaskState_Case5 v5 = 5;
     Gbx_StageTaskState_Case6 v6 = 6;
+    Gbx_StageTaskState_Case7 v7 = 7;
   }
 }
 
@@ -8357,9 +8460,14 @@ message Gbx_GraphicsOptions_maxCanvasBytes {
   optional sint64 value = 1;
 }
 
+message Gbx_GraphicsOptions_maxRuleBytes {
+  optional sint64 value = 1;
+}
+
 message Gbx_GraphicsOptions {
   optional Gbx_GraphicsOptions_renderer renderer = 1;
   optional Gbx_GraphicsOptions_maxCanvasBytes maxCanvasBytes = 2;
+  optional Gbx_GraphicsOptions_maxRuleBytes maxRuleBytes = 3;
 }
 
 message Gbx_InteractionRect_x {
@@ -11029,6 +11137,29 @@ message Gbx_ProgramModuleBinding_modules {
 message Gbx_ProgramModuleBinding {
   optional Gbx_ProgramModuleBinding_manifestSha256 manifestSha256 = 1;
   optional Gbx_ProgramModuleBinding_modules modules = 2;
+}
+
+message Gbx_RuleTransition_from {
+  optional string value = 1;
+}
+
+message Gbx_RuleTransition_rule {
+  optional string value = 1;
+}
+
+message Gbx_RuleTransition_vague {
+  optional sint64 value = 1;
+}
+
+message Gbx_RuleTransition_progress {
+  optional double value = 1;
+}
+
+message Gbx_RuleTransition {
+  optional Gbx_RuleTransition_from from = 1;
+  optional Gbx_RuleTransition_rule rule = 2;
+  optional Gbx_RuleTransition_vague vague = 3;
+  optional Gbx_RuleTransition_progress progress = 4;
 }
 
 message WireEnvelope {
