@@ -12,9 +12,10 @@
     "G5",
     "G6",
     "G7",
-    "H2"
+    "H2",
+    "H3"
   ],
-  "current_task": "G7-01",
+  "current_task": "H3-02",
   "engine_status": "general_vn_expansion",
   "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2003,7 +2004,9 @@
         "G6-02",
         "G3-01",
         "G3-04",
-        "H2-02"
+        "H2-02",
+        "H3-01",
+        "H3-02"
       ],
       "status": "todo",
       "implementation": "not_started",
@@ -2111,6 +2114,93 @@
         "docs/evidence/h2-02/source-manifest.json"
       ],
       "next_action": "既有有限舞台Canvas组/相机滤镜与透明转场、预算/故障处理验收完成；下一G3-03视频/热点/限时交互。模糊为有容差近似，极端层叠超预算明确拒绝，完整G7与N/F未完成。"
+    },
+    {
+      "id": "H3-01",
+      "milestone": "H3",
+      "title": "性能热点归因与生产路径优化",
+      "depends_on": [
+        "G6-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "packages/galbox-sdk/src/core/view.ts",
+        "packages/galbox-sdk/src/protocol/budget.ts",
+        "packages/galbox-sdk/src/protocol/canonical.ts",
+        "packages/galbox-sdk/src/core/index.ts",
+        "packages/galbox-sdk/src/runtime/history.ts",
+        "packages/galbox-sdk/src/web-host/capture.ts",
+        "scripts/profile-runtime.mjs",
+        "scripts/compare-runtime-profile.mjs",
+        "docs/PERFORMANCE.md",
+        "docs/decisions/0031-performance-owned-views.md"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C06",
+        "C07",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "same-workload-performance",
+        "immutable-view-ownership",
+        "history-scale-cost",
+        "browser-save-restore-regression"
+      ],
+      "evidence": [
+        "docs/evidence/h3-01/REPORT.md",
+        "docs/evidence/h3-01/check.log",
+        "docs/evidence/h3-01/unit-second.log",
+        "docs/evidence/h3-01/browser-results.json",
+        "docs/evidence/h3-01/before/runtime-profile.json",
+        "docs/evidence/h3-01/after/runtime-profile.json",
+        "docs/evidence/h3-01/comparison.json",
+        "docs/evidence/h3-01/before/performance.json",
+        "docs/evidence/h3-01/after/performance.json",
+        "docs/evidence/h3-01/disposal-investigation/disposal-profile.json",
+        "docs/evidence/h3-01/consumer-result.json",
+        "docs/evidence/h3-01/result.json",
+        "docs/evidence/h3-01/release-audit.json",
+        "docs/evidence/h3-01/dev-result.json",
+        "docs/evidence/h3-01/source-manifest.json"
+      ],
+      "blocker": null,
+      "next_action": "运行时/历史优化及前后trace/12张PNG/回归/独立包验收完成。按用户性能优先继续H3-02，调查已观测的WebGL销毁长尾；不将H3-01标记扩大为所有性能指标改善或G7完成。"
+    },
+    {
+      "id": "H3-02",
+      "milestone": "H3",
+      "title": "图形提交与上下文释放尾延迟归因",
+      "depends_on": [
+        "H3-01"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "controlled graphics submission and teardown measurements",
+        "evidence-based renderer improvements or documented platform limit"
+      ],
+      "contracts": [
+        "C03",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "end-to-end-graphics-latency",
+        "scoped-device-cleanup",
+        "no-deferred-cost-disguise"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "继续用户性能优先要求：在相同剧情/提交帧计数下分离gl.finish、原生loseContext与SDK清理，比较WebGL/Canvas；调查H3-01后销毁样本56–115ms（基线16–25ms）的差异，不靠延后清理或只移出计时区伪装改善。"
     }
   ]
 }

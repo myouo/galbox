@@ -1,9 +1,9 @@
 # 当前实施计划
 
-G6-02已完成有限验收，feat/game-interface-skins，基线6a22ca1。ADR0030/INTERFACE、presentation工厂/Player系统页/完整GameUI/双皮肤与新CLI模板、共享PressGesture/焦点/移动表单与contain截图已落地。
+用户优先性能。H3-01有限优化验收完成，perf/runtime-history、基线ce29850。217单元/124全浏览器/strict consumer/65 CLI/4 synthetic/API/原生无WebGL dev与同工作负载前后对照通过；证据evidence/h3-01，设计ADR0031，公开说明PERFORMANCE。
 
-最终211单元、122完整browser+8项最后UI复验、strict consumer、65 CLI、4 synthetic、性能/API和原生无WebGL dev通过。证据evidence/g6-02；最后配置前置、菜单键、恢复入口由定向UI和新包覆盖。before-final-menu/失败日志仅作过程，CLI探针读取真实公开PlayerView，不放回玩家页面。
+10000历史tick 92.06→0.084ms；1000历史/IDB/回溯API111.2→47.9ms、flush232.1→62ms；Node trace和12张PNG相同。标准API22.3→17.3/15.9ms。销毁更高的样本全部保留（56–115ms），不把500ms通过当未回归。
 
-下一G7-01尚未实施：定义综合原创内容和声明规模/平台矩阵，沿同一正式SDK组合全部通用支持集；复验网络流/Canvas/保存刷新/跨UI交错与独立包。测量并归因历史/捕获/持久事务/UI成本，核验历史10000条/4MB等边界，不能拿50ms通过代替60FPS/真机/大作品认证。真实N/F/M6仍缺资料。
+下一H3-02尚未实施：固定剧情与实际提交帧数，分别测GPU drain/gl.finish、native loseContext、SDK资源清理，在WebGL/Canvas下比较；先定位差异因果，再决定生产修复，禁止仅延后清理来美化dispose计时。之后G7继续综合、容量与其它性能验证；N/F/M6真实资料仍缺。
 
-TMPDIR=/dev/shm；dev现4173，/?demo=interface，可加skin=paper或renderer=canvas。全量browser前停止dev释放4173/4174。只做授权本地提交，无外部发布；后续改相关代码须重验。
+当前dev4173，/?demo=interface；TMPDIR=/dev/shm。完整browser前停dev。源码/API未变后不用重复已有门槛；后续改动需对应重验。只做授权本地提交，无外部发布。

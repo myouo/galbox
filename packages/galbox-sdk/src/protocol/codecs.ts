@@ -8,10 +8,12 @@ export interface ProtocolCodec<T, Id extends string = string> {
 }
 export type Decoded<C> = C extends ProtocolCodec<infer T> ? T : never;
 export type ObjectDecoded<C extends Record<string, ProtocolCodec<unknown>>> = { [K in keyof C]: Decoded<C[K]> };
+const deeplyFrozen=new WeakSet<object>();
+export function isDeeplyFrozenJSON(value:object):boolean {return deeplyFrozen.has(value);}
 export function freezeJson<T>(data: T): DeepReadonly<T> {
-  if (data !== null && typeof data === 'object') {
+  if (data !== null && typeof data === 'object'&&!deeplyFrozen.has(data)) {
     for (const child of Object.values(data)) freezeJson(child);
-    Object.freeze(data);
+    Object.freeze(data);deeplyFrozen.add(data);
   }
   // Homomorphic readonly is assignable from an owned value. A checked codec handles generic narrowing below.
   function readonlyValue(value: T): value is T & DeepReadonly<T> { return Object.isFrozen(value) || value === null || typeof value !== 'object'; }

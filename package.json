@@ -24,7 +24,9 @@
     "test:cli": "node scripts/test-cli.mjs --full",
     "test:performance": "pnpm build && pnpm build:harness && node scripts/performance.mjs",
     "test:release": "pnpm build:cli && node scripts/release-audit.mjs",
-    "profile:disposal": "pnpm build && pnpm build:harness && node scripts/profile-disposal.mjs"
+    "profile:disposal": "pnpm build && pnpm build:harness && node scripts/profile-disposal.mjs",
+    "profile:runtime": "pnpm build && pnpm build:harness && node scripts/profile-runtime.mjs",
+    "test:performance:comparison": "node scripts/compare-runtime-profile.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

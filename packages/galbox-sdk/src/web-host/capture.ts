@@ -4,9 +4,10 @@ export interface TextCapture {readonly svg:string;readonly fit?:'contain';}
 // Capture is synchronous: all computed values and scrolling belong to this cut.
 export function captureText(roots:readonly HTMLElement[],mount:HTMLElement,fontCSS:string):TextCapture {
  const rect=mount.getBoundingClientRect();ensure(rect.width>0&&rect.height>0,'SAVE_CAPTURE_LAYOUT','Visible mount size is required');
+ const styles=new Map<string,string>();
  const wrapper=document.createElement('div');wrapper.style.cssText=`position:relative;width:${rect.width}px;height:${rect.height}px;overflow:hidden`;
  function copy(source:HTMLElement):HTMLElement {
-  const clone=document.createElement(source.tagName),style=getComputedStyle(source);for(const property of style)clone.style.setProperty(property,style.getPropertyValue(property));
+  const clone=document.createElement(source.tagName),computed=getComputedStyle(source),style=document.createElement('span').style;for(const property of computed)style.setProperty(property,computed.getPropertyValue(property));const css=style.cssText;let name=styles.get(css);if(name===undefined){name=`galbox-capture-${styles.size}`;styles.set(css,name);}clone.className=name;
   if(source instanceof HTMLInputElement){clone.setAttribute('type',source.type);clone.setAttribute('value',source.dataset.galboxValue??source.value);if((source.dataset.galboxChecked??String(source.checked))==='true')clone.setAttribute('checked','');for(const name of ['min','max','step','maxlength']){const value=source.getAttribute(name);if(value!==null)clone.setAttribute(name,value);}}
   if(source instanceof HTMLImageElement){ensure(source.src.startsWith('data:image/'),'SAVE_CAPTURE_IMAGE','UI capture needs embedded verified images');clone.setAttribute('src',source.src);clone.setAttribute('alt',source.alt);}
   clone.style.animation='none';clone.style.transition='none';clone.removeAttribute('id');
@@ -15,7 +16,7 @@ export function captureText(roots:readonly HTMLElement[],mount:HTMLElement,fontC
   return clone;
  }
  for(const root of roots){const clone=copy(root),bounds=root.getBoundingClientRect();clone.style.position='absolute';clone.style.inset='auto';clone.style.left=`${bounds.left-rect.left}px`;clone.style.top=`${bounds.top-rect.top}px`;clone.style.width=`${bounds.width}px`;clone.style.height=`${bounds.height}px`;clone.style.margin='0';wrapper.append(clone);}
- const style=document.createElement('style');style.textContent=fontCSS;wrapper.prepend(style);
+ const style=document.createElement('style');style.textContent=fontCSS+Array.from(styles,([css,name])=>`.${name}{${css}}`).join('\n');wrapper.prepend(style);
  const content=new XMLSerializer().serializeToString(wrapper),svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}" viewBox="0 0 ${rect.width} ${rect.height}"><foreignObject width="100%" height="100%">${content}</foreignObject></svg>`;
  ensure(svg.length<=4_000_000,'SAVE_CAPTURE_SIZE','Text capture exceeds 4 MB');return {svg};
 }

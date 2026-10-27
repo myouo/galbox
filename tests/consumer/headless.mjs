@@ -69,3 +69,6 @@ const {streamRequest}=await import('galbox-sdk/port-kit');const {parseIntegrityE
 }
 
 {const {gamePresentation,ProgramBuilder,instruction}=await import('galbox-sdk/port-kit');const b=new ProgramBuilder({gameId:'skin-native',release:'v1',entry:'main'}).presentation(gamePresentation()).function({id:'main',entry:'end',layout:1,params:[],locals:[],returns:'void',code:[instruction('control.end',{at:'end'})]});const p=b.build(),core=createCore(p);core.run(100);const old=core.capture();p.presentation.palette.background='#ffffff';assert.equal(createCore(p,undefined,old).capture().status,'ended');assert.equal('presentation'in old,false);console.log('Packed skin schema/factory and narrative-independent restoration passed without DOM');}
+{
+ const c=createCore(p);c.run(100);const first=c.view(),originalRoute=first.run.globals.route.value;assert.equal(c.view(),first);assert.ok(Object.isFrozen(first.run.history));assert.equal(Reflect.set(first.run.globals.route,'value','forbidden'),false);c.accept({type:'tick',ms:16});const next=c.view();assert.equal(next.run.history,first.run.history);assert.equal(next.run.logicalTime,first.run.logicalTime+16);const detached=c.capture();detached.globals.route.value='caller copy';assert.equal(c.view().run.globals.route.value,originalRoute);console.log('Packed immutable view reuse / old reference isolation / detached capture passed');
+}

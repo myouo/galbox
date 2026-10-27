@@ -1,3 +1,5 @@
+import {wireBudget} from './budget.js';
+import {canonicalParsedJSON} from './canonical.js';
 import {isTextComplete} from './text.js';
 import {normalizeNativeValue} from './values.js';
 import {normalizeExpression,normalizeInstruction,normalizeProgram,normalizeSnapshot,normalizeProfile,normalizeRecipe,normalizeMetadata,normalizeBackup} from './normalize.js';
@@ -17,11 +19,11 @@ export class GalboxError extends Error {
 export function ensure(condition: unknown, code: string, message: string): asserts condition {
   if (!condition) throw new GalboxError(code, message);
 }
-export function canonicalWireJSON(input:unknown):string {return JSON.stringify(detached(input),(_key:string,v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,Reflect.get(v,k)])):v);}
+export function canonicalWireJSON(input:unknown):string {return canonicalParsedJSON(detached(input));}
 function detached(input: unknown): unknown {
   let nodes=0;const ancestors=new Set<object>();
   function visit(value:unknown,depth:number):void {
-    ensure(++nodes<=100000&&depth<=64,'INPUT_SIZE','JSON tree exceeds the supported bound');
+    ensure(++nodes<=wireBudget.nodes&&depth<=wireBudget.depth,'INPUT_SIZE','JSON tree exceeds the supported bound');
     if(value===null||typeof value==='boolean'||typeof value==='string')return;
     if(typeof value==='number'){ensure(Number.isFinite(value),'INPUT_JSON','Non-finite number');return;}
     ensure(typeof value==='object','INPUT_JSON','Expected plain JSON');
@@ -32,7 +34,7 @@ function detached(input: unknown): unknown {
     for(const key of keys){const descriptor=Object.getOwnPropertyDescriptor(value,key);ensure(descriptor&&'value'in descriptor,'INPUT_JSON','Accessors are not wire data');visit(descriptor.value,depth+1);}
     ancestors.delete(value);
   }
-  try {visit(input,0);const text=JSON.stringify(input);ensure(text&&text.length<=4_000_000,'INPUT_SIZE','At most 4 MB of finite JSON');return JSON.parse(text);}
+  try {visit(input,0);const text=JSON.stringify(input);ensure(text&&text.length<=wireBudget.characters,'INPUT_SIZE','At most 4 MB of finite JSON');return JSON.parse(text);}
   catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('INPUT_JSON','Expected plain acyclic JSON');}
 }
 export function parseProgram(input: unknown): Program {
@@ -181,9 +183,11 @@ export function parseSaveReceipt(input:unknown):SaveReceipt {const data=detached
 export function assertSaveCut(snapshot:DeepReadonly<Snapshot>,metadata:DeepReadonly<SlotMetadata>):void {const c=metadata.capture;if(c)ensure(c.logicalTime===snapshot.logicalTime&&c.textId===(snapshot.text?.textId??null)&&c.speaker===(snapshot.text?.speaker??'').slice(0,512)&&c.text===(snapshot.text?.content??'').slice(0,4096),'SAVE_CAPTURE_MISMATCH','Capture summary differs from snapshot cut');}
 
 export function parseHistoryPolicy(input:unknown):HistoryPolicy {const d=detached(input);ensure(validateHistoryPolicy(d),'HISTORY_POLICY','Invalid bounded history policy');return d;}
-export function parseHistoryEntry(input:unknown):HistoryEntry {const d=detached(input);ensure(validateHistoryEntry(d),'HISTORY_ENTRY','Invalid history entry');ensure(isTextComplete(d.text),'HISTORY_TEXT','History must represent a confirmed complete body');ensure(d.text.historyId===d.id,'HISTORY_ID','Text and checkpoint identity differ');if(d.snapshot){normalizeSnapshot(d.snapshot);ensure(d.reason===null&&d.snapshot.saveAllowed&&d.snapshot.release===d.release&&d.snapshot.wait?.kind==='text'&&d.snapshot.text?.historyId===d.id&&canonicalWireJSON(d.snapshot.text)===canonicalWireJSON(d.text),'HISTORY_CUT','Checkpoint must be the actual confirmed text cut');}else ensure(d.reason,'HISTORY_CUT','Missing point must explain its refusal');return d;}
-export function parseHistoryRecord(input:unknown):HistoryRecord {const d=detached(input);ensure(validateHistoryRecord(d),'HISTORY_RECORD','Invalid history record');d.entries=d.entries.map(parseHistoryEntry);ensure(new Set(d.entries.map(e=>e.id)).size===d.entries.length&&JSON.stringify(d.entries).length<=1000000,'HISTORY_SIZE','Journal bound or identity exceeded');return d;}
-export function parseHistoryCommit(input:unknown):HistoryCommit {const d=detached(input);ensure(validateHistoryCommit(d),'HISTORY_COMMIT','Invalid history commit');d.entries=parseHistoryRecord({revision:0,entries:d.entries}).entries;return d;}
+function normalizeHistoryEntry(d:HistoryEntry):HistoryEntry {ensure(isTextComplete(d.text),'HISTORY_TEXT','History must represent a confirmed complete body');ensure(d.text.historyId===d.id,'HISTORY_ID','Text and checkpoint identity differ');if(d.snapshot){normalizeSnapshot(d.snapshot);ensure(d.reason===null&&d.snapshot.saveAllowed&&d.snapshot.release===d.release&&d.snapshot.wait?.kind==='text'&&d.snapshot.text?.historyId===d.id&&canonicalParsedJSON(d.snapshot.text)===canonicalParsedJSON(d.text),'HISTORY_CUT','Checkpoint must be the actual confirmed text cut');}else ensure(d.reason,'HISTORY_CUT','Missing point must explain its refusal');return d;}
+function normalizeHistoryEntries(entries:HistoryEntry[]):void {for(const entry of entries)normalizeHistoryEntry(entry);ensure(new Set(entries.map(e=>e.id)).size===entries.length&&JSON.stringify(entries).length<=1000000,'HISTORY_SIZE','Journal bound or identity exceeded');}
+export function parseHistoryEntry(input:unknown):HistoryEntry {const d=detached(input);ensure(validateHistoryEntry(d),'HISTORY_ENTRY','Invalid history entry');return normalizeHistoryEntry(d);}
+export function parseHistoryRecord(input:unknown):HistoryRecord {const d=detached(input);ensure(validateHistoryRecord(d),'HISTORY_RECORD','Invalid history record');normalizeHistoryEntries(d.entries);return d;}
+export function parseHistoryCommit(input:unknown):HistoryCommit {const d=detached(input);ensure(validateHistoryCommit(d),'HISTORY_COMMIT','Invalid history commit');normalizeHistoryEntries(d.entries);return d;}
 export function parseHistoryReceipt(input:unknown):HistoryReceipt {const d=detached(input);ensure(validateHistoryReceipt(d),'HISTORY_RECEIPT','Invalid history receipt');return d;}
 
 export function parseFlowChapter(input:unknown):FlowChapter {const d=detached(input);ensure(validateFlowChapter(d),'FLOW_CHAPTER','Invalid chapter');return d;}

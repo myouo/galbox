@@ -1,0 +1,1 @@
+结果、范围和未掩盖的销毁差异见 [REPORT](REPORT.md)。before为ce29850生产基线，after为候选；runtime-profile/CPU、comparison/12组PNG证明有限矩阵的语义与图像一致。无采样performance-first及复测均保留，disposal-investigation仅用于归因、不冒充无探针门槛。check/unit-second/完整124 browser/consumer/65 CLI/compat/release/原生dev为实际验证；source-manifest绑定最终源码。

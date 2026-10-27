@@ -1,0 +1,989 @@
+{
+  "result": "passed",
+  "capturedAt": "2026-10-27T00:13:41.687Z",
+  "revision": "ce298504167cd6ef38e429b757e1bb2aed4ebb74",
+  "nodeVersion": "v24.15.0",
+  "browser": "156.0.8078.4",
+  "instrumentation": "CDP CPU sampling enabled for browser matrix; not the uninstrumented performance gate",
+  "node": [
+    {
+      "history": 0,
+      "jsonCharacters": 565,
+      "view": {
+        "samples": 25,
+        "medianMs": 0.04526799999996456,
+        "p95Ms": 0.10918700000001991,
+        "maxMs": 0.18323599999996532,
+        "totalMs": 1.5044520000004695
+      },
+      "capture": {
+        "samples": 25,
+        "medianMs": 0.0267549999999801,
+        "p95Ms": 0.06489800000008472,
+        "maxMs": 0.0658050000000685,
+        "totalMs": 0.8305350000001681
+      },
+      "restoreValidation": {
+        "samples": 25,
+        "medianMs": 0.21690699999999197,
+        "p95Ms": 0.30932800000005045,
+        "maxMs": 0.3568319999999403,
+        "totalMs": 5.649718000000007
+      },
+      "backlogProjection": {
+        "samples": 25,
+        "medianMs": 0.001886000000013155,
+        "p95Ms": 0.004749999999944521,
+        "maxMs": 0.008173999999939952,
+        "totalMs": 0.05246299999953408
+      },
+      "dispatch": {
+        "samples": 25,
+        "medianMs": 0.14132200000005923,
+        "p95Ms": 0.4336749999999938,
+        "maxMs": 0.8518410000000358,
+        "totalMs": 4.783278999999652
+      },
+      "emptyFlush": {
+        "samples": 25,
+        "medianMs": 0.035976000000005115,
+        "p95Ms": 0.08913800000004812,
+        "maxMs": 0.10625299999992421,
+        "totalMs": 1.0754550000001473
+      },
+      "traceSha256": "9e83d612776d954a30faf0e9f243e2d715649e39d141d987c7701fb42695df9d",
+      "profileReads": 0
+    },
+    {
+      "history": 100,
+      "jsonCharacters": 23556,
+      "view": {
+        "samples": 25,
+        "medianMs": 0.34306900000001406,
+        "p95Ms": 0.5318240000000287,
+        "maxMs": 0.7561359999999695,
+        "totalMs": 9.29410399999972
+      },
+      "capture": {
+        "samples": 25,
+        "medianMs": 0.3000369999999748,
+        "p95Ms": 0.5169449999999642,
+        "maxMs": 0.520577000000003,
+        "totalMs": 8.198954999999955
+      },
+      "restoreValidation": {
+        "samples": 25,
+        "medianMs": 0.5148490000000265,
+        "p95Ms": 0.7758360000000266,
+        "maxMs": 3.250675000000001,
+        "totalMs": 15.160298999999895
+      },
+      "backlogProjection": {
+        "samples": 25,
+        "medianMs": 0.4148810000000367,
+        "p95Ms": 0.8665770000000066,
+        "maxMs": 1.1096099999999751,
+        "totalMs": 13.09150000000011
+      },
+      "dispatch": {
+        "samples": 25,
+        "medianMs": 1.1694780000000264,
+        "p95Ms": 1.7486630000000787,
+        "maxMs": 2.047582000000034,
+        "totalMs": 30.110994000000574
+      },
+      "emptyFlush": {
+        "samples": 25,
+        "medianMs": 0.300036000000091,
+        "p95Ms": 0.5064640000000509,
+        "maxMs": 1.394488000000024,
+        "totalMs": 8.353651000000127
+      },
+      "traceSha256": "cbe718b2c29dcf257982d2d9ef5ae05821fda22e81172e88edc0b8707059d7ea",
+      "profileReads": 1
+    },
+    {
+      "history": 1000,
+      "jsonCharacters": 232362,
+      "view": {
+        "samples": 25,
+        "medianMs": 2.195329000000015,
+        "p95Ms": 2.58261600000003,
+        "maxMs": 3.438017000000059,
+        "totalMs": 56.32011499999976
+      },
+      "capture": {
+        "samples": 25,
+        "medianMs": 2.0480699999999388,
+        "p95Ms": 2.414192000000071,
+        "maxMs": 2.960544000000027,
+        "totalMs": 52.9361710000004
+      },
+      "restoreValidation": {
+        "samples": 25,
+        "medianMs": 2.3863189999999577,
+        "p95Ms": 3.231659000000036,
+        "maxMs": 3.9468560000000252,
+        "totalMs": 63.85721199999989
+      },
+      "backlogProjection": {
+        "samples": 25,
+        "medianMs": 0.35766799999998966,
+        "p95Ms": 0.38065100000005714,
+        "maxMs": 0.3949719999999388,
+        "totalMs": 8.972236000000294
+      },
+      "dispatch": {
+        "samples": 25,
+        "medianMs": 8.614777000000004,
+        "p95Ms": 11.468368999999939,
+        "maxMs": 11.833092999999963,
+        "totalMs": 221.8676749999995
+      },
+      "emptyFlush": {
+        "samples": 25,
+        "medianMs": 2.070703999999978,
+        "p95Ms": 3.1480400000000373,
+        "maxMs": 3.355724999999893,
+        "totalMs": 56.799545999999964
+      },
+      "traceSha256": "41be0cd29352335056be1070d8f6ce5347ec0a103aa55bb569f1931b20b1095d",
+      "profileReads": 1
+    },
+    {
+      "history": 10000,
+      "jsonCharacters": 2338368,
+      "view": {
+        "samples": 8,
+        "medianMs": 29.128507000000127,
+        "p95Ms": 30.60236800000007,
+        "maxMs": 30.60236800000007,
+        "totalMs": 215.46638199999984
+      },
+      "capture": {
+        "samples": 8,
+        "medianMs": 21.94900400000006,
+        "p95Ms": 22.672510000000102,
+        "maxMs": 22.672510000000102,
+        "totalMs": 173.07977000000028
+      },
+      "restoreValidation": {
+        "samples": 8,
+        "medianMs": 23.71568100000013,
+        "p95Ms": 25.481172000000015,
+        "maxMs": 25.481172000000015,
+        "totalMs": 191.23938900000007
+      },
+      "backlogProjection": {
+        "samples": 8,
+        "medianMs": 0.3544539999998051,
+        "p95Ms": 0.3915470000001733,
+        "maxMs": 0.3915470000001733,
+        "totalMs": 2.8447089999995114
+      },
+      "dispatch": {
+        "samples": 8,
+        "medianMs": 87.75535799999989,
+        "p95Ms": 92.05528200000026,
+        "maxMs": 92.05528200000026,
+        "totalMs": 707.0975839999996
+      },
+      "emptyFlush": {
+        "samples": 8,
+        "medianMs": 22.17086900000004,
+        "p95Ms": 23.345272000000023,
+        "maxMs": 23.345272000000023,
+        "totalMs": 175.03312499999993
+      },
+      "traceSha256": "8372eb381048908d318c37b09384c3214371b05185bd256f2c1e71144e8b547a",
+      "profileReads": 1
+    }
+  ],
+  "browserCases": [
+    {
+      "history": 0,
+      "storage": "memory",
+      "rollback": false,
+      "api": {
+        "samples": 12,
+        "medianMs": 3.799999952316284,
+        "p95Ms": 10.599999904632568,
+        "maxMs": 10.599999904632568
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 1.100000023841858,
+        "p95Ms": 1.2000000476837158,
+        "maxMs": 1.2000000476837158
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 28.699999928474426,
+        "p95Ms": 31.100000023841858,
+        "maxMs": 31.100000023841858
+      },
+      "illustratedSaveMs": 477.39999997615814,
+      "retainedHistory": 12,
+      "backlog": 12,
+      "jsonCharacters": 3872,
+      "thumbnailFile": "thumb-0-memory-false.png"
+    },
+    {
+      "history": 0,
+      "storage": "memory",
+      "rollback": true,
+      "api": {
+        "samples": 12,
+        "medianMs": 7,
+        "p95Ms": 12.100000023841858,
+        "maxMs": 12.100000023841858
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 0.7999999523162842,
+        "p95Ms": 1.399999976158142,
+        "maxMs": 1.399999976158142
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 25.399999976158142,
+        "p95Ms": 30.600000023841858,
+        "maxMs": 30.600000023841858
+      },
+      "illustratedSaveMs": 179.39999997615814,
+      "retainedHistory": 12,
+      "backlog": 12,
+      "jsonCharacters": 3872,
+      "thumbnailFile": "thumb-0-memory-true.png"
+    },
+    {
+      "history": 0,
+      "storage": "indexeddb",
+      "rollback": false,
+      "api": {
+        "samples": 12,
+        "medianMs": 2,
+        "p95Ms": 3,
+        "maxMs": 3
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 3.9000000953674316,
+        "p95Ms": 7.799999952316284,
+        "maxMs": 7.799999952316284
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 27.799999952316284,
+        "p95Ms": 29,
+        "maxMs": 29
+      },
+      "illustratedSaveMs": 212.79999995231628,
+      "retainedHistory": 12,
+      "backlog": 12,
+      "jsonCharacters": 3872,
+      "thumbnailFile": "thumb-0-indexeddb-false.png"
+    },
+    {
+      "history": 0,
+      "storage": "indexeddb",
+      "rollback": true,
+      "api": {
+        "samples": 12,
+        "medianMs": 4.100000023841858,
+        "p95Ms": 7.099999904632568,
+        "maxMs": 7.099999904632568
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 7.200000047683716,
+        "p95Ms": 13.5,
+        "maxMs": 13.5
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 24.799999952316284,
+        "p95Ms": 30.700000047683716,
+        "maxMs": 30.700000047683716
+      },
+      "illustratedSaveMs": 190.90000009536743,
+      "retainedHistory": 12,
+      "backlog": 12,
+      "jsonCharacters": 3872,
+      "thumbnailFile": "thumb-0-indexeddb-true.png"
+    },
+    {
+      "history": 100,
+      "storage": "memory",
+      "rollback": false,
+      "api": {
+        "samples": 12,
+        "medianMs": 7.600000023841858,
+        "p95Ms": 8.5,
+        "maxMs": 8.5
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 2.600000023841858,
+        "p95Ms": 4,
+        "maxMs": 4
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 22.300000071525574,
+        "p95Ms": 24.899999976158142,
+        "maxMs": 24.899999976158142
+      },
+      "illustratedSaveMs": 53.59999990463257,
+      "retainedHistory": 112,
+      "backlog": 32,
+      "jsonCharacters": 26902,
+      "thumbnailFile": "thumb-100-memory-false.png"
+    },
+    {
+      "history": 100,
+      "storage": "memory",
+      "rollback": true,
+      "api": {
+        "samples": 12,
+        "medianMs": 53.60000002384186,
+        "p95Ms": 118.89999997615814,
+        "maxMs": 118.89999997615814
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 2.3000000715255737,
+        "p95Ms": 3.3000000715255737,
+        "maxMs": 3.3000000715255737
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 10,
+        "p95Ms": 17.399999976158142,
+        "maxMs": 17.399999976158142
+      },
+      "illustratedSaveMs": 207.69999992847443,
+      "retainedHistory": 112,
+      "backlog": 32,
+      "jsonCharacters": 26902,
+      "thumbnailFile": "thumb-100-memory-true.png"
+    },
+    {
+      "history": 100,
+      "storage": "indexeddb",
+      "rollback": false,
+      "api": {
+        "samples": 12,
+        "medianMs": 5.600000023841858,
+        "p95Ms": 6.200000047683716,
+        "maxMs": 6.200000047683716
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 6.700000047683716,
+        "p95Ms": 11.200000047683716,
+        "maxMs": 11.200000047683716
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 20.899999976158142,
+        "p95Ms": 29.399999976158142,
+        "maxMs": 29.399999976158142
+      },
+      "illustratedSaveMs": 191.89999997615814,
+      "retainedHistory": 112,
+      "backlog": 32,
+      "jsonCharacters": 26902,
+      "thumbnailFile": "thumb-100-indexeddb-false.png"
+    },
+    {
+      "history": 100,
+      "storage": "indexeddb",
+      "rollback": true,
+      "api": {
+        "samples": 12,
+        "medianMs": 24.899999976158142,
+        "p95Ms": 39,
+        "maxMs": 39
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 41,
+        "p95Ms": 73.19999992847443,
+        "maxMs": 73.19999992847443
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 21.200000047683716,
+        "p95Ms": 28.699999928474426,
+        "maxMs": 28.699999928474426
+      },
+      "illustratedSaveMs": 221.10000002384186,
+      "retainedHistory": 112,
+      "backlog": 32,
+      "jsonCharacters": 26903,
+      "thumbnailFile": "thumb-100-indexeddb-true.png"
+    },
+    {
+      "history": 1000,
+      "storage": "memory",
+      "rollback": false,
+      "api": {
+        "samples": 12,
+        "medianMs": 41.799999952316284,
+        "p95Ms": 56.799999952316284,
+        "maxMs": 56.799999952316284
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 17.100000023841858,
+        "p95Ms": 21.100000023841858,
+        "maxMs": 21.100000023841858
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 25.399999976158142,
+        "p95Ms": 28.5,
+        "maxMs": 28.5
+      },
+      "illustratedSaveMs": 271.7999999523163,
+      "retainedHistory": 1012,
+      "backlog": 32,
+      "jsonCharacters": 235733,
+      "thumbnailFile": "thumb-1000-memory-false.png"
+    },
+    {
+      "history": 1000,
+      "storage": "memory",
+      "rollback": true,
+      "api": {
+        "samples": 12,
+        "medianMs": 177.20000004768372,
+        "p95Ms": 197.20000004768372,
+        "maxMs": 197.20000004768372
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 17.700000047683716,
+        "p95Ms": 21.700000047683716,
+        "maxMs": 21.700000047683716
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 28.100000023841858,
+        "p95Ms": 34.199999928474426,
+        "maxMs": 34.199999928474426
+      },
+      "illustratedSaveMs": 317.89999997615814,
+      "retainedHistory": 1012,
+      "backlog": 32,
+      "jsonCharacters": 235733,
+      "thumbnailFile": "thumb-1000-memory-true.png"
+    },
+    {
+      "history": 1000,
+      "storage": "indexeddb",
+      "rollback": false,
+      "api": {
+        "samples": 12,
+        "medianMs": 32.40000009536743,
+        "p95Ms": 40.39999997615814,
+        "maxMs": 40.39999997615814
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 67.20000004768372,
+        "p95Ms": 136.70000004768372,
+        "maxMs": 136.70000004768372
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 35.39999997615814,
+        "p95Ms": 62.5,
+        "maxMs": 62.5
+      },
+      "illustratedSaveMs": 472.8000000715256,
+      "retainedHistory": 1012,
+      "backlog": 32,
+      "jsonCharacters": 235733,
+      "thumbnailFile": "thumb-1000-indexeddb-false.png"
+    },
+    {
+      "history": 1000,
+      "storage": "indexeddb",
+      "rollback": true,
+      "api": {
+        "samples": 12,
+        "medianMs": 93.5,
+        "p95Ms": 111.19999992847443,
+        "maxMs": 111.19999992847443
+      },
+      "flush": {
+        "samples": 12,
+        "medianMs": 149.20000004768372,
+        "p95Ms": 232.09999990463257,
+        "maxMs": 232.09999990463257
+      },
+      "twoFrames": {
+        "samples": 12,
+        "medianMs": 35.40000009536743,
+        "p95Ms": 65,
+        "maxMs": 65
+      },
+      "illustratedSaveMs": 518.6999999284744,
+      "retainedHistory": 1012,
+      "backlog": 32,
+      "jsonCharacters": 235733,
+      "thumbnailFile": "thumb-1000-indexeddb-true.png"
+    }
+  ],
+  "trace": [
+    {
+      "history": 0,
+      "storage": "memory",
+      "rollback": false,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 0,
+      "storage": "memory",
+      "rollback": true,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 0,
+      "storage": "indexeddb",
+      "rollback": false,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 0,
+      "storage": "indexeddb",
+      "rollback": true,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 100,
+      "storage": "memory",
+      "rollback": false,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 100,
+      "storage": "memory",
+      "rollback": true,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 100,
+      "storage": "indexeddb",
+      "rollback": false,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 100,
+      "storage": "indexeddb",
+      "rollback": true,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 1000,
+      "storage": "memory",
+      "rollback": false,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 1000,
+      "storage": "memory",
+      "rollback": true,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 1000,
+      "storage": "indexeddb",
+      "rollback": false,
+      "pc": "page",
+      "profileReads": 1
+    },
+    {
+      "history": 1000,
+      "storage": "indexeddb",
+      "rollback": true,
+      "pc": "page",
+      "profileReads": 1
+    }
+  ],
+  "cpu": [
+    {
+      "function": "toDataURL",
+      "url": "",
+      "line": -1,
+      "ms": 2081.713999999998
+    },
+    {
+      "function": "(idle)",
+      "url": "",
+      "line": -1,
+      "ms": 1920.8579999999995
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "line": -1,
+      "ms": 592.4100000000005
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 535.7140000000006
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 448.60999999999996
+    },
+    {
+      "function": "process",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 535,
+      "ms": 417.58000000000027
+    },
+    {
+      "function": "process",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 535,
+      "ms": 404.46500000000015
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "line": -1,
+      "ms": 367.7249999999998
+    },
+    {
+      "function": "process",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 535,
+      "ms": 347.65099999999984
+    },
+    {
+      "function": "u.onsuccess",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 185547,
+      "ms": 317.7210000000002
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 231.53599999999992
+    },
+    {
+      "function": "getImageData",
+      "url": "",
+      "line": -1,
+      "ms": 212.5479999999999
+    },
+    {
+      "function": "r",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114098,
+      "ms": 206.662
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 170.1159999999999
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 155.94799999999992
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 135.02599999999995
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 130.297
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 126.25299999999993
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 125.02199999999986
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 124.18899999999991
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 123.27999999999997
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 115.80699999999995
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 114.96299999999992
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 114.52799999999988
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 113.64399999999983
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 107.25599999999993
+    },
+    {
+      "function": "au",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114093,
+      "ms": 106.98699999999992
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 105.91799999999988
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 105.88999999999999
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 105.88599999999995
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 103.78999999999994
+    },
+    {
+      "function": "encode",
+      "url": "",
+      "line": -1,
+      "ms": 97.29500000000003
+    },
+    {
+      "function": "au",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114093,
+      "ms": 91.08199999999997
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 88.86099999999995
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 80.27300000000001
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 80.192
+    },
+    {
+      "function": "encode",
+      "url": "",
+      "line": -1,
+      "ms": 79.37800000000001
+    },
+    {
+      "function": "confirmed",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 115749,
+      "ms": 79.13600000000001
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 78.163
+    },
+    {
+      "function": "r",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114098,
+      "ms": 74.963
+    },
+    {
+      "function": "jS",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 184935,
+      "ms": 73.83799999999998
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 72.84599999999998
+    },
+    {
+      "function": "encode",
+      "url": "",
+      "line": -1,
+      "ms": 72.81300000000002
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 71.80099999999999
+    },
+    {
+      "function": "commitState",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 115476,
+      "ms": 70.67499999999998
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 67.458
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 67.36200000000002
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 66.17899999999999
+    },
+    {
+      "function": "MS",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 184938,
+      "ms": 65.451
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 64.236
+    },
+    {
+      "function": "r",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114098,
+      "ms": 59.996000000000016
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 59.854000000000006
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 57.76500000000001
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 56.75899999999999
+    },
+    {
+      "function": "kd",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114469,
+      "ms": 55.581
+    },
+    {
+      "function": "r",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114098,
+      "ms": 54.86500000000001
+    },
+    {
+      "function": "r",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114098,
+      "ms": 54.38800000000002
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 114096,
+      "ms": 53.595000000000006
+    },
+    {
+      "function": "gi",
+      "url": "http://127.0.0.1:34383/sdk.js",
+      "line": 45442,
+      "ms": 53.416000000000004
+    },
+    {
+      "function": "put",
+      "url": "",
+      "line": -1,
+      "ms": 52.653000000000006
+    }
+  ],
+  "pageErrors": []
+}

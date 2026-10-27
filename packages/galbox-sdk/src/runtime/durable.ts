@@ -1,3 +1,4 @@
+import {canonicalParsedJSON} from '../protocol/canonical.js';
 import {wireDigest} from '../protocol/digest.js';
 import {normalizePreferencesRecord,normalizePreferences} from '../settings/index.js';
 import { emptyProfile, parseProfile, parseSnapshot, parseValue, ensure, parseSlotMetadata, parseStoreImport, parseRestoreRecipe, parseProgressBatch, parseJsonValue, parseBackupRestoreReceipt, parsePlayerPreferences, parsePreferencesRecord,parseSaveCommit,parseSaveReceipt,assertSaveCut,parseHistoryRecord,parseHistoryCommit,parseHistoryReceipt,parseFlowProgress,parseExtrasProgress } from '../protocol/index.js';
@@ -84,7 +85,7 @@ export function historyReceipt(state:DatabaseState,id:string):HistoryReceipt|nul
 export function commitHistory(state:DatabaseState,input:HistoryCommit,authority:string|null):HistoryReceipt {
  const data=parseHistoryCommit(input);key(data.id);selectProfile(state,data.profileId);const signature=wireDigest(data),old=own(state.historyReceipts,data.id);
  if(old){ensure(old.signature===signature&&old.authority===authority,'HISTORY_ID_REUSED',data.id);return parseHistoryReceipt(old);}
- ensure((state.head?.owner??state.head?.id??null)===authority&&(state.head?.profileId??'main')===data.profileId,'SESSION_REVOKED','Journal writer no longer owns this profile');const prior=readHistory(state,data.profileId);ensure(prior.revision===data.baseRevision,'HISTORY_CONFLICT','Journal changed');
- for(const entry of data.entries){const existing=prior.entries.find(e=>e.id===entry.id);if(existing)ensure(wireDigest(existing)===wireDigest(entry),'HISTORY_ENTRY_REUSED','A checkpoint identity cannot change payload');}
+ ensure((state.head?.owner??state.head?.id??null)===authority&&(state.head?.profileId??'main')===data.profileId,'SESSION_REVOKED','Journal writer no longer owns this profile');const prior=own(state.histories,data.profileId)??{revision:0,entries:[]};ensure(prior.revision===data.baseRevision,'HISTORY_CONFLICT','Journal changed');
+ const previousEntries=new Map(prior.entries.map(entry=>[entry.id,entry]));for(const entry of data.entries){const existing=previousEntries.get(entry.id);if(existing)ensure(canonicalParsedJSON(existing)===canonicalParsedJSON(entry),'HISTORY_ENTRY_REUSED','A checkpoint identity cannot change payload');}
  const next=parseHistoryRecord({revision:prior.revision+1,entries:data.entries}),receipt=parseHistoryReceipt({id:data.id,profileId:data.profileId,authority,revision:next.revision,signature});state.histories[data.profileId]=next;state.historyReceipts[data.id]=receipt;return parseHistoryReceipt(receipt);
 }

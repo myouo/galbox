@@ -1,0 +1,31 @@
+{
+  "driver": "scripts/profile-runtime.mjs",
+  "sha256": "88745ffb23fcbd341be36cb0b266042bbac53d37c5e4b694e8630de9d61ad13a",
+  "productionBaseline": "ce29850",
+  "nodeHistories": [
+    0,
+    100,
+    1000,
+    10000
+  ],
+  "browserHistories": [
+    0,
+    100,
+    1000
+  ],
+  "browserStorage": [
+    "memory",
+    "indexeddb"
+  ],
+  "browserRollback": [
+    false,
+    true
+  ],
+  "browserActionsPerCase": 12,
+  "browserRenderer": "canvas",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "notes": "Same driver used for before and after runtime-profile; both Node traces and PNGs compared. Browser matrix uses CPU sampling; standard gate does not."
+}

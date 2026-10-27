@@ -1,13 +1,14 @@
 import {PressGesture} from '../runtime/press.js';
-import {ensure,parseSnapshot} from '../protocol/index.js';
+import {ensure,parseUIState,parseUIWait} from '../protocol/index.js';
 import type {Snapshot,DeepReadonly,UIControl,UIAction} from '../protocol/index.js';
 import {captureText} from './capture.js';
 import type {TextCapture} from './capture.js';
+type UIProjection={ui?:Snapshot['ui'];wait:Snapshot['wait']};
 export interface UIIdentity {readonly epoch:number;readonly prompt:number;readonly attempt:number;readonly generation:number;}
 interface Row {control:DeepReadonly<UIControl>;root:HTMLElement;label:HTMLElement;input:HTMLInputElement|null;button:HTMLButtonElement|null;}
 export class ScriptUIRenderer {
  private readonly root=document.createElement('section');private readonly plane=document.createElement('div');private readonly resize:ResizeObserver;
- private rows=new Map<string,Row>();private identity:UIIdentity|null=null;private last:Snapshot|null=null;private epoch=0;private interactive=false;private available=false;private disposed=false;private screenKey='';private activated='';
+ private rows=new Map<string,Row>();private identity:UIIdentity|null=null;private last:UIProjection|null=null;private epoch=0;private interactive=false;private available=false;private disposed=false;private screenKey='';private activated='';
  private readonly gesture=new PressGesture();private layoutKey='';private composing=new Map<string,string>();private pending=new Map<string,number>();private sequence=0;
  constructor(private readonly mount:HTMLElement,private readonly image:(id:string,width:number,height:number)=>string,private readonly submit:(action:UIAction,identity:UIIdentity)=>Promise<void>,private readonly activate:(identity:UIIdentity)=>Promise<void>,private readonly error:(e:unknown)=>void,private readonly responsive=false){
   this.root.className='galbox-script-ui';this.root.dataset.testid='script-ui';this.root.style.cssText='position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2';this.root.setAttribute('aria-label','剧本界面');this.plane.style.cssText='position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:top left;font-family:system-ui,sans-serif;pointer-events:none';this.root.append(this.plane);this.root.hidden=true;mount.append(this.root);const scale=()=>this.layout();this.resize=new ResizeObserver(scale);this.resize.observe(mount);scale();this.root.addEventListener('focusout',event=>{if(!(event.relatedTarget instanceof Node)||!this.root.contains(event.relatedTarget))this.gesture.cancel();});
@@ -27,8 +28,8 @@ export class ScriptUIRenderer {
   }
   this.plane.append(root);return {control:c,root,label,input,button};
  }
- render(snapshot:DeepReadonly<Snapshot>|null,epoch:number,available:boolean):void {
-  if(this.disposed)return;this.last=snapshot?parseSnapshot(snapshot):null;this.epoch=epoch;this.available=available;const active=snapshot?.ui?.active,w=snapshot?.wait,identity=active&&w?.kind==='ui'?{epoch,prompt:w.prompt,attempt:w.attempt,generation:w.generation}:null;const interactive=!!identity&&available&&w?.kind==='ui'&&w.phase==='active';
+ render(snapshot:DeepReadonly<UIProjection>|null,epoch:number,available:boolean):void {
+  if(this.disposed)return;this.last=snapshot?{...(snapshot.ui?{ui:parseUIState(snapshot.ui)}:{}),wait:snapshot.wait?.kind==='ui'?parseUIWait(snapshot.wait):null}:null;this.epoch=epoch;this.available=available;const active=snapshot?.ui?.active,w=snapshot?.wait,identity=active&&w?.kind==='ui'?{epoch,prompt:w.prompt,attempt:w.attempt,generation:w.generation}:null;const interactive=!!identity&&available&&w?.kind==='ui'&&w.phase==='active';
   if(JSON.stringify(identity)!==this.key()||!interactive){this.gesture.cancel();this.composing.clear();this.pending.clear();}this.identity=identity;this.interactive=interactive;this.root.hidden=!active;
   if(!active){this.rows.clear();this.plane.replaceChildren();this.screenKey='';this.activated='';return;}
   const key=`${epoch}:${active.generation}:${identity?.prompt??'readonly'}:${identity?.attempt??0}:${available?'open':'paused'}`;if(this.screenKey!==key){this.rows.clear();this.plane.replaceChildren();this.screenKey=key;this.root.setAttribute('aria-label',active.screen.title);this.plane.style.background=active.screen.background;this.root.style.background=active.screen.background;for(const c of active.screen.controls)this.rows.set(c.id,this.make(c));}

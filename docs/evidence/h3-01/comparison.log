@@ -1,0 +1,32 @@
+$ node scripts/compare-runtime-profile.mjs
+{
+  "result": "passed",
+  "largest": {
+    "history": 10000,
+    "beforeDispatchP95": 92.05528200000026,
+    "afterDispatchP95": 0.08398499999998421,
+    "ratio": 0.0009123322222833881,
+    "traceIdentical": true
+  },
+  "durable": {
+    "history": 1000,
+    "storage": "indexeddb",
+    "rollback": true,
+    "api": {
+      "beforeP95": 111.19999992847443,
+      "afterP95": 47.89999997615814,
+      "ratio": 0.43075539574611665
+    },
+    "flush": {
+      "beforeP95": 232.09999990463257,
+      "afterP95": 62,
+      "ratio": 0.2671262387999791
+    },
+    "illustratedSave": {
+      "beforeMs": 518.6999999284744,
+      "afterMs": 261.7999999523163
+    },
+    "pngSha256": "2a0d775465ba7c362340120092ab05d61e1db21e057625d41cc6228c9ed51b54",
+    "pngIdentical": true
+  }
+}

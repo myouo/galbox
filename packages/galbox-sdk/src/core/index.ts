@@ -1,3 +1,5 @@
+import {SnapshotProjection} from './view.js';
+import {freezeJson} from '../protocol/codecs.js';
 import {initialUI,isUIInstruction,executeUI,acceptUI,validateUIRestore} from '../protocol/ui.js';
 import {extrasSignature,extrasProgress,evaluateExtras,sceneRoot,validateSceneRoot} from '../protocol/extras.js';
 import {flowProgress,flowEntry,initialFlow,validateFlowRun} from '../protocol/flow.js';
@@ -45,6 +47,9 @@ export class Core {
   private readonly program:Program;
   private readonly extrasIdentity:string|null;
   private s:Snapshot;
+  private viewCache:CoreView|null=null;
+  private readonly projection=new SnapshotProjection();
+  private profileView:{source:Profile;sequence:number;revision:number;value:DeepReadonly<Profile>}|null=null;
   private profile:Profile;
   private changes:ProgressChange[]=[];
   private progressSeq=0;
@@ -87,15 +92,15 @@ export class Core {
   private markFlow(id:string,visited:boolean):void {const node=this.program.flowchart?.nodes.find(n=>n.id===id),state=flowProgress(this.program,this.profile);ensure(node&&state&&this.s.flow,'FLOW_NODE_UNKNOWN',id);const before=JSON.stringify(state);if(visited&&!state.visited.includes(id))state.visited.push(id);if(!state.unlocked.includes(id))state.unlocked.push(id);const next=parseFlowProgress(state);if(before!==JSON.stringify(next)){this.profile.flow=next;this.changes.push({seq:++this.progressSeq,type:'flow',value:parseFlowProgress(next)});}if(visited)this.s.flow.current=id;}
   private checkExtras(force?:string):void {const extra=evaluateExtras(this.program,this.profile,this.extrasIdentity,force);if(extra?.changed){this.profile.extras=parseExtrasProgress(extra.progress);this.changes.push({seq:++this.progressSeq,type:'extras',value:parseExtrasProgress(extra.progress)});}}
   private read():void {const text=this.s.text;ensure(text,'TEXT','No page');const unit=readUnit(text),unread=!this.profile.read.includes(unit);if(!this.program.extras){if(unread){this.profile.read.push(unit);this.changes.push({seq:++this.progressSeq,type:'read',unit});}return;}const next=parseProfile(this.profile);if(unread)next.read.push(unit);const extra=evaluateExtras(this.program,next,this.extrasIdentity);if(extra?.changed)next.extras=extra.progress;parseProfile(next);this.profile=next;if(unread)this.changes.push({seq:++this.progressSeq,type:'read',unit});if(extra?.changed)this.changes.push({seq:++this.progressSeq,type:'extras',value:parseExtrasProgress(extra.progress)});}
-  view():CoreView {ensure(!this.reducing,'CORE_REENTRANT','Use the reducer context');return {run:parseSnapshot(this.s),profile:parseProfile(this.profile),dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()};}
+  view():CoreView {ensure(!this.reducing,'CORE_REENTRANT','Use the reducer context');if(this.viewCache)return this.viewCache;if(!this.profileView||this.profileView.source!==this.profile||this.profileView.sequence!==this.progressSeq||this.profileView.revision!==this.profile.revision)this.profileView={source:this.profile,sequence:this.progressSeq,revision:this.profile.revision,value:freezeJson(parseProfile(this.profile))};return this.viewCache=Object.freeze({run:this.projection.read(this.s),profile:this.profileView.value,dirty:this.changes.length,error:this.error,canSave:this.canSave(),saveReason:this.saveReason()});}
   pending():ProgressChange[] {return this.changes.map(c=>c.type==='set'?{...c,value:parseValue(c.value)}:c.type==='flow'?{...c,value:parseFlowProgress(c.value)}:c.type==='extras'?{...c,value:parseExtrasProgress(c.value)}:{...c});}
-  acknowledge(through:number,revision:number):void { ensure(!this.reducing,'CORE_REENTRANT','No receipt mutation inside a reducer');ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
+  acknowledge(through:number,revision:number):void { ensure(!this.reducing,'CORE_REENTRANT','No receipt mutation inside a reducer');this.viewCache=null;ensure(revision>=this.profile.revision,'PROFILE_REVISION','Revision moved backwards');this.changes=this.changes.filter(c=>c.seq>through);this.profile.revision=revision;this.s.profileBasis=revision; }
   private operationSaveAllowed():boolean {const w=this.s.wait;if(w?.kind!=='operation')return true;const saved=this.s.invocations?.find(v=>v.id===w.invocation);if(!saved)return false;const op=this.operations.get(saved.operation,saved.version);return op.manifest.save==='safe'&&op.manifest.restore==='continue';}
   canSave():boolean {return this.operationSaveAllowed()&&!videoSaveReason(this.s)&&!mediaSaveReason(this.s)&&!this.revoked&&this.s.saveAllowed&&this.s.status!=='running'&&this.s.status!=='failed'&&this.s.wait?.kind!=='flush';}
   private saveReason():string|null {return !this.operationSaveAllowed()?'OPERATION_UNRESTORABLE':videoSaveReason(this.s)??mediaSaveReason(this.s)??(this.revoked?'SESSION_REVOKED':!this.s.saveAllowed?'SAVE_POLICY':this.s.status==='running'?'BUDGET_CONTINUATION':this.s.status==='failed'?'CORE_FAILED':this.s.wait?.kind==='flush'?'PROFILE_BARRIER':null);}
   capture():Snapshot {ensure(!this.reducing,'CORE_REENTRANT','No capture inside a reducer');ensure(this.canSave(),'SAVE_UNAVAILABLE',this.saveReason()??'unknown');return parseSnapshot(this.s);}
   drainEffects():Effect[] {ensure(!this.reducing,'CORE_REENTRANT','No effect drain inside a reducer');const effects=this.effects;this.effects=[];return effects;}
-  revoke():void {ensure(!this.reducing,'CORE_REENTRANT','No authority mutation inside a reducer');this.revoked=true;this.effects=[];}
+  revoke():void {ensure(!this.reducing,'CORE_REENTRANT','No authority mutation inside a reducer');this.viewCache=null;this.revoked=true;this.effects=[];}
   private resumeEffects(mode:'restore'|'initial'):void {
     for(const invocation of this.s.invocations??[])if(invocation.wait)invocation.wait.attempt++;
     for(const t of this.s.tasks)if(t.kind==='audio'&&['running','blocked'].includes(t.status)) {
@@ -114,7 +119,7 @@ export class Core {
   }
   private interactionBranch(branch:import('../protocol/interaction.js').InteractionBranch):void {this.put(branch.dest,{kind:'string',value:branch.id});this.top().pc=branch.target;this.s.wait=null;this.s.status='running';}
   accept(event:CoreEvent):void {
-    ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');
+    ensure(!this.reducing,'CORE_REENTRANT','Reentrant dispatch is forbidden');this.viewCache=null;
     if(this.revoked||this.s.status==='failed')return;
     if(event.type==='history.session'){const next=parseSnapshot({...this.s,historySession:event.id});ensure(next.historySession,'HISTORY_SESSION','Missing validated session scope');if(next.wait?.kind==='text'&&next.text)next.text.historyId=`${next.historySession}:${next.text.prompt}`;this.s=next;return;}
     if(event.type==='media.ended'){if(!videoEnded(this.s,event.task,event.attempt))mediaEnded(this.s,event.task,event.attempt);this.resolveWait();return;}
@@ -137,7 +142,7 @@ export class Core {
         if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich)revealRichText(this.s.text,this.textPlan());else this.s.text.revealed=length(this.s.text.content);return;}
         if(!isTextComplete(this.s.text))return;
         try{this.read();}catch(error){this.consumed.delete(event.inputId);throw error;}
-        if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}this.s.history.push(parseTextState(this.s.text));confirmWindowText(this.s);this.top().pc=this.next();this.s.wait=null;this.s.status='running';
+        if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}const confirmed=parseTextState(this.s.text);if(Object.isFrozen(this.s.history))this.s.history=[...this.s.history,confirmed];else this.s.history.push(confirmed);confirmWindowText(this.s);this.top().pc=this.next();this.s.wait=null;this.s.status='running';
       }
       return;
     }
@@ -182,7 +187,7 @@ export class Core {
     this.top().pc=this.next();this.s.wait=null;this.s.status='running';
   }
   run(budget:number):'yield'|'stable' {
-    ensure(!this.reducing,'CORE_REENTRANT','Reentrant execution is forbidden');
+    ensure(!this.reducing,'CORE_REENTRANT','Reentrant execution is forbidden');if(this.s.status==='running')this.viewCache=null;
     ensure(Number.isInteger(budget)&&budget>0,'BUDGET','Positive integer required');
     if(this.revoked)return 'stable';
     for(let j=0;j<budget&&this.s.status==='running';j++) {
@@ -191,7 +196,7 @@ export class Core {
     return this.s.status==='running'?'yield':'stable';
   }
   applyRecipe(input:unknown):void {
-    ensure(this.mode==='candidate'&&!this.revoked&&!this.recovering&&!this.reducing,'RECIPE_CANDIDATE','Recovery can only mutate an isolated candidate');
+    ensure(this.mode==='candidate'&&!this.revoked&&!this.recovering&&!this.reducing,'RECIPE_CANDIDATE','Recovery can only mutate an isolated candidate');this.viewCache=null;
     const recipe=parseRestoreRecipe(input);ensure(recipe.steps.length<=recipe.maxSteps,'RECIPE_BUDGET','Step count exceeds the declared bound');
     ensure(this.s.status==='waiting'||this.s.status==='ended','RECIPE_PHASE','A semantic baseline is required');
     const before={s:this.s,profile:this.profile,changes:this.changes,effects:this.effects,seq:this.progressSeq};

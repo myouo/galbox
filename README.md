@@ -108,3 +108,5 @@ G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子�
 剧本驱动控件见 [SCRIPT_UI](docs/SCRIPT_UI.md)：原创 `/?demo=ui` 提供声明式文字/图片/按钮/开关/滑条/单行输入，编辑中可保存并刷新恢复，提交由Core统一写入剧情槽；支持Canvas。
 
 完整游戏界面与皮肤见 [INTERFACE](docs/INTERFACE.md)：原创 `/?demo=interface` 和 `&skin=paper` 仅变配置，使用同一SDK标题/菜单/存读档/设置/历史/流程图/鉴赏；支持Canvas、移动页面与表单、触控/键盘。
+
+性能工作负载与状态视图约束见 [PERFORMANCE](docs/PERFORMANCE.md)：可复跑历史规模、真实IndexedDB、截图和前后语义/像素对照，保留完整外部输入与存档校验。

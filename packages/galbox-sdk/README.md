@@ -87,3 +87,5 @@ Extras use `cgExtra/musicExtra/sceneExtra/achievement/extrasCatalog/unlockExtra/
 剧本UI提供uiCatalog/真实控件与字段工厂、ui.show/hide/类型化更新/ui.wait；Player自动安装生产DOM控件，uiAction/activateUI沿Core事件身份处理，Snapshot保存编辑值/等待，图文捕获包含界面。支持集/迁移/设备失败见仓库docs/SCRIPT_UI.md。
 
 gamePresentation/ProgramBuilder.presentation声明有限作品皮肤，DefaultUI使用完整GameUI系统页面；无声明的旧作品保留经典布局。showSystemScreen路由不写剧情状态，支持移动页面/表单与共享按压规则。完整配置、恢复与平台边界见仓库docs/INTERFACE.md。
+
+Core.view返回深冻结的只读投影，同一状态可以复用引用，历史可结构共享；不要修改视图或依赖每次读取创建新对象。Core.capture仍返回独立、完整校验的可写wire快照。默认渲染器复用隔离视图，自定义renderer继续接收独立拷贝；性能工作负载与前后证据见仓库docs/PERFORMANCE.md。

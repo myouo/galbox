@@ -1,0 +1,206 @@
+{
+  "node": [
+    {
+      "history": 0,
+      "view": 0.0028640000000450527,
+      "dispatch": 0.11382099999997308,
+      "emptyFlush": 0.008943999999985408
+    },
+    {
+      "history": 100,
+      "view": 0.0019570000000044274,
+      "dispatch": 0.07916499999998905,
+      "emptyFlush": 0.005869000000075175
+    },
+    {
+      "history": 1000,
+      "view": 0.0018870000000106302,
+      "dispatch": 0.06826499999999669,
+      "emptyFlush": 0.005171000000018466
+    },
+    {
+      "history": 10000,
+      "view": 0.0019559999999501088,
+      "dispatch": 0.08398499999998421,
+      "emptyFlush": 0.005728999999973894
+    }
+  ],
+  "browser": [
+    {
+      "history": 0,
+      "storage": "memory",
+      "rollback": false,
+      "api": 9,
+      "flush": 0.3999999761581421
+    },
+    {
+      "history": 0,
+      "storage": "memory",
+      "rollback": true,
+      "api": 5.799999952316284,
+      "flush": 0.30000007152557373
+    },
+    {
+      "history": 0,
+      "storage": "indexeddb",
+      "rollback": false,
+      "api": 1.2000000476837158,
+      "flush": 6.599999904632568
+    },
+    {
+      "history": 0,
+      "storage": "indexeddb",
+      "rollback": true,
+      "api": 3.600000023841858,
+      "flush": 7.400000095367432
+    },
+    {
+      "history": 100,
+      "storage": "memory",
+      "rollback": false,
+      "api": 2.600000023841858,
+      "flush": 0.20000004768371582
+    },
+    {
+      "history": 100,
+      "storage": "memory",
+      "rollback": true,
+      "api": 46.90000009536743,
+      "flush": 0.30000007152557373
+    },
+    {
+      "history": 100,
+      "storage": "indexeddb",
+      "rollback": false,
+      "api": 1.399999976158142,
+      "flush": 4.799999952316284
+    },
+    {
+      "history": 100,
+      "storage": "indexeddb",
+      "rollback": true,
+      "api": 25.199999928474426,
+      "flush": 34.799999952316284
+    },
+    {
+      "history": 1000,
+      "storage": "memory",
+      "rollback": false,
+      "api": 18.299999952316284,
+      "flush": 0.2999999523162842
+    },
+    {
+      "history": 1000,
+      "storage": "memory",
+      "rollback": true,
+      "api": 94,
+      "flush": 0.30000007152557373
+    },
+    {
+      "history": 1000,
+      "storage": "indexeddb",
+      "rollback": false,
+      "api": 4.600000023841858,
+      "flush": 29.600000023841858
+    },
+    {
+      "history": 1000,
+      "storage": "indexeddb",
+      "rollback": true,
+      "api": 47.89999997615814,
+      "flush": 62
+    }
+  ],
+  "cpu": [
+    {
+      "function": "(idle)",
+      "url": "",
+      "line": -1,
+      "ms": 3489.6010000000106
+    },
+    {
+      "function": "toDataURL",
+      "url": "",
+      "line": -1,
+      "ms": 1547.5579999999995
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "line": -1,
+      "ms": 467.86599999999993
+    },
+    {
+      "function": "process",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 568,
+      "ms": 356.95400000000006
+    },
+    {
+      "function": "u.onsuccess",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 185519,
+      "ms": 270.20699999999994
+    },
+    {
+      "function": "process",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 568,
+      "ms": 189.35799999999998
+    },
+    {
+      "function": "getImageData",
+      "url": "",
+      "line": -1,
+      "ms": 185.56599999999992
+    },
+    {
+      "function": "process",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 568,
+      "ms": 177.47399999999988
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "line": -1,
+      "ms": 169.827
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 114131,
+      "ms": 134.97799999999992
+    },
+    {
+      "function": "encode",
+      "url": "",
+      "line": -1,
+      "ms": 86.86199999999997
+    },
+    {
+      "function": "S",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 33,
+      "ms": 70.61099999999999
+    },
+    {
+      "function": "Pd",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 114503,
+      "ms": 68.44900000000003
+    },
+    {
+      "function": "U",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 114131,
+      "ms": 66.17800000000003
+    },
+    {
+      "function": "commitState",
+      "url": "http://127.0.0.1:33419/sdk.js",
+      "line": 115523,
+      "ms": 65.37300000000002
+    }
+  ]
+}

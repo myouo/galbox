@@ -130,3 +130,5 @@ G5-02有限集按ADR0028/EXTRAS：128条目录/16CG差分、类型关联/声明�
 G6-01有限集按ADR0029/SCRIPT_UI：16屏/64控件/同时1屏，label/image/button/toggle/range/input、纯表达式更新/类型化提交、generation与epoch/prompt/attempt/inputId隔离、完整Snapshot/备份迁移、真实DOM/IME/同切点缩略图与设备失败/两后端/独立消费。
 
 G6-02有限集按ADR0030/INTERFACE：版本化安全皮肤/类型关联资源、完整标题及分类系统页、分页与确认焦点、临时导航/鉴赏清理/标题继续、共享按压、移动重排与纵向截图、同剧情双皮肤/CLI/独立消费。
+
+H3-01按用户性能优先要求与ADR0031/PERFORMANCE：正式运行时热点归因、深冻结只读投影/封存历史的精确总预算、单次父Schema验证后的子语义检查、历史索引与等价样式捕获；前后相同场景/trace/PNG、真实存储/回归与独立包通过才完成。G7综合认证仍另验。

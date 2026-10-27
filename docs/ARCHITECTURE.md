@@ -158,3 +158,5 @@ G5-02按ADR0028：Program.extras/Profile.extras/Snapshot.extrasSignature及专�
 G6-01按ADR0029：Program.ui为版本定义，Snapshot.ui/UIWait由Core管理，所有UIEvent进入原Coordinator。Player组装生产DOM ScriptUIRenderer，WebHost提供验证后图像，React保留默认系统菜单；DOM未提交IME/焦点不是剧情状态。捕获屏障同步复制正文、舞台和UI后合成，不省略失败层。
 
 G6-02按ADR0030：Program.presentation是静态作品配置，Player持有临时systemScreen和导航代次，菜单暂停只影响自身；React GameUI调用既有系统API，不推进PC。Host准备图像/字体，PressGesture裁决物理按压，窄视口表单重排与按比例截图仅属Web设备表现。
+
+H3-01按ADR0031对受控状态投影做复用：Core.view深冻结并按所有状态变更失效，封存历史只在来源变化时重新校验；普通tick的热字段与缓存历史仍合计检查原JSON预算。默认DOM消费隔离只读视图，自定义renderer保持拷贝。History父Schema边界只私有化一次，子记录仍做真实切点/身份/容量校验；Store原子事务和权威检查不变。

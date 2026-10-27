@@ -110,3 +110,5 @@ G5-02：`gallery-unlock-persistence` 验证真实kind关联工厂/声明场景�
 G6-01：`script-ui-state`需真实工厂/屏幕成员/资源kind/字段dest类型关联，预算1/8/100、编辑与剧情变量分离、统一按钮提交到嵌套帧、错误值/格点/隐藏禁用控件不改状态；`ui-event-generation`需prepared/active、新show/读档/暂停的输入身份隔离、旧DOM/按住键/IME迟到不污染新屏、双实例/dispose；`ui-restore`需保存全部字段/等待、源身份及上一修订完整迁移、图文包含实际UI像素、IndexedDB刷新与旧档保当前profile、设备失败不产不完整缩略图且新Player能恢复、WebGL/Canvas/strict打包消费者。
 
 G6-02：`default-game-ui`需标题/继续/新开始、系统菜单、保存读取分页/确认、历史/流程图/鉴赏及备份/独立进度实际工作；`theme-only-instance`需真实皮肤工厂/资源kind/未知动作拒绝，双配置共用执行定义、旧档保当前皮肤/偏好、只读所有权/多实例和迟到导航拒绝；`touch-keyboard`需窄/矮视口内容可达、44px主要目标、实际触控滚动/拖出取消、按键身份/Tab/Escape/确认焦点、连续设置写入、移动表单完整图文保存/刷新、WebGL/Canvas及strict独立包。
+
+H3-01：同一工作负载比较Core与Player/历史/存储/捕获；Node trace、实际存档PNG与保留历史一致，长历史tick/推进/flush有可重现改善。必须验证只读视图旧引用/回执/recipe成功失败/撤销的失效、全局节点及字符预算、可变外部输入不污染缓存、自定义renderer/Store隔离，以及浏览器/打包消费和销毁长尾的实际记录。
