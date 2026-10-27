@@ -1,0 +1,14 @@
+{
+  "timerDuring": true,
+  "rafDuring": true,
+  "saveError": "GalboxError: SAVE_UNAVAILABLE: BUDGET_CONTINUATION",
+  "menu": true,
+  "paused": true,
+  "text": "菜单可以响应",
+  "final": {
+    "kind": "i32",
+    "value": 5999
+  },
+  "history": 1,
+  "wait": "done"
+}

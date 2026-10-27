@@ -93,3 +93,5 @@ Core.view返回深冻结的只读投影，同一状态可以复用引用，历�
 Player预算续跑通过实例MessageChannel任务（缺失时使用timer）让出浏览器，启动候选可被新请求或dispose取消。Core仍为同步确定性执行，地址索引不改变快照；预算续跑期间不是保存切点。同步校验/自定义扩展不自动转为Worker。资源按需/Program分模块/离线安装的完整方案尚未实现，详见仓库docs/WEB_READINESS.md与PERFORMANCE.md。
 
 资源加载由PlayerOptions.loading和port-kit的loadingPolicy配置：eager（兼容默认）、demand、balanced、chapter。非eager需正式release；预算/章节成员/策略按Schema校验。PlayerView.loading报告等待/失败与驻留估算，retryResources重试同一剧情轮次；准备期间保留旧画面并拒绝保存。可换策略读取原存档，暂不支持运行中切换或离线安装。详见仓库docs/LOADING.md与ADR0033。
+
+浏览器存储现使用IndexedDB版本2，按需将旧命名空间原子拆分为热记录、槽位/历史和槽位摘要。旧SDK(version1)会收到VersionError；迁移失败保留旧逻辑数据，不承诺降级数据库版本。普通进度/设置不读写无关冷载荷；被取代激活保留不可复活的ID标记。Snapshot/PortableBackup格式、4M逻辑JSON字符命名空间预算与1M备份预算保持。磁盘布局是内部实现，请通过Player/Store API读写。见仓库docs/STORAGE.md。

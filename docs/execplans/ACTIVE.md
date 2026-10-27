@@ -1,13 +1,13 @@
 # 当前实施计划
 
-W1-02完成，下一W1-03；分支feat/loading-strategies，基线fe86769。本轮数据/代码在同一本地提交，无外部发布。详细策略LOADING，原计划差距WEB_READINESS，实际报告evidence/w1-02。
+W1-03A完成，W1-03父任务仍进行中，下一W1-03B。分支perf/segmented-storage，基线92d3e18。A的代码/证据在同一本地提交，未推送发布；详情STORAGE与evidence/w1-03a。
 
-完成门槛：check-complete、225单元、141逻辑/设备全量、最后UI的28专项、CG固定引用21专项、consumer-complete、CLI-complete65、compat4 synthetic、release-complete、performance-complete、profile-verified/comparison、native dev真实demand→balanced无WebGL/刷新/图文。当前143浏览器用例列表仅为列举，勿冒充最后全跑143。旧失败两轮及修复证据保留。
+已验：227单元、146全量浏览器、consumer-final、65 CLI、compat4 synthetic、API无删除/dry-run、性能/同快照前后探针、native Canvas DB2图文/跨刷新与跨策略。原4M逻辑/1M备份上限保留，热行和回执仍整体，不能宣称大作品容量完成。数据库版本不能自动降回1，迁移失败保持旧行可读。旧激活只瘦身载荷，不删除防重放身份或回执。
 
-接续顺序：
-1. 检查Git/用户改动、STATUS/tasks及v0.6模块/存储章节；当前dev在4173，测试前停掉实际Vite子进程。
-2. W1-03先写有限支持集与ADR，明确模块manifest/链接/地址/快照/取消，及存储读写放大、留存/原子head/回执/迁移。
-3. 先做可复现规模基线，再沿唯一生产Core/Coordinator/Host/Store实现，不引入另一解释器或放大上限伪装支持。
-4. 真浏览器/故障/跨刷新/打包消费验收；之后W1-04字节缓存/离线/平台、G7综合，N/F资料门槛独立保留。
+接续B：
+1. 检查Git/用户改动和任务事实，读取v0.6 4.3/4.5/6.2及恢复闭包约束。
+2. 先明确模块清单/函数接口与稳定地址、摘要/registry绑定、取消/重试/保存边界，写ADR和真实构造/链接基线。
+3. 沿唯一Core/Coordinator实现模块依赖准备；不可将全量下载合并或UI切换另一个解释器当成懒加载。
+4. 版本错误/丢模块/迟到/嵌套调用恢复与独立包实际验证。之后C热记录/留存/容量，W1-04离线/发布/平台，G7及真实材料门槛保留。
 
-新策略只在创建时选择，媒体流不等于整轨预下载，资源等待暂不支持保存。驻留估算不覆盖浏览器全部内存，eager CG临时预览副本单列。TMPDIR=/dev/shm；更改源码后重验相关证据，保持包SHA与源码绑定，不推送发布。
+当前dev在4173；测试前停Vite实际子进程。TMPDIR=/dev/shm。磁盘内部布局已变，验证持久槽位应从Store读取或显式读冷记录；不要把热行slots={}解释成丢档。更改源码后重验相关证据。

@@ -1,13 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-27。W1-02有限支持集及收尾CG固定引用修复验收完成，feat/loading-strategies，基线fe86769，本轮本地提交以git log为准；无推送/发布/部署。四种设计及限制见LOADING，原计划目标核验见WEB_READINESS。下一任务W1-03。
+2026-10-27。W1-03A有限验收完成，perf/segmented-storage，基线92d3e18，本轮提交见git log。父任务W1-03仍进行中，程序按需加载/更大容量尚未实现，下一W1-03B；没有外部推送、发布或部署。
 
-已实现：eager（默认串行兼容）、demand、balanced、chapter；其余默认并发3、可选1–8；非eager需正式release。按切点准备、固定当前/候选/预览引用、驻留估算/LRU、取消/迟到、批次首错停止。资源等待保持旧图文、拒绝保存/flush，失败重试同一轮，隔离准备器效果DTO；候选资源准备先于head提交。默认经典/皮肤/回放UI提供加载重试且清理旧错误，策略不写入剧情快照，可换策略读旧档。
+A将槽位/历史大载荷拆为IndexedDB冷记录，热目录/目标载荷/摘要/回执同事务提交；读取必要冷记录时检查缺失/大小/Schema，热设置不再被无关损坏槽位阻塞。DB版本2关闭旧连接并拒绝旧版SDK双写，首次写事务迁移旧行，abort保留旧数据。写入输入在异步排队前私有化。旧激活保留superseded/retired ID标记，移除其完整快照；当前head/live entry完整一致，旧ID不能复活。
 
-最终受控18图/60ms延迟/150ms阅读/显式并发3：旧创建约1.2s，新demand/balanced约22–23ms、2/18请求；demand推进仍约68–75ms，balanced约4–11ms，chapter把约97ms集中到start。SDK已加载后计时，单次观测非P95；纹理估算不等于浏览器总内存。原目录预算/字体等启动常驻保持，不把局部支持扩大为大作完成。
+相同真实Core快照48槽位：设置写入P95 44.7→2.0ms，进度45.6→2.7ms；写入逻辑JSON约180万→7.5–7.8万字符，snapshot SHA及最终状态一致。含探针序列化开销，不是物理磁盘字节或所有玩家延迟。4M逻辑JSON命名空间和1M备份上限保持；热head/profile/回执仍有规模成本。
 
-验证：最终check/生成/headless/边界、225单元；完整逻辑/设备141浏览器通过，随后UI收尾28专项、最后CG固定引用21专项通过（当前143用例，未声称最后版本又全跑143）。独立tarball/native ESM/四模式、65 CLI、4 synthetic、13入口API无删除/两包dry-run、标准3周期性能通过。原生禁WebGL的390×844触控模拟已断言demand→balanced真实模式，图文表单、刷新/两皮肤、设置/当前profile恢复，1 Canvas/0 pageerror。所有日志/失败修复/源码和包SHA见evidence/w1-02/REPORT。
+验证：frozen install/check、227单元/34文件、完整146浏览器（0 skipped/flaky/unexpected）、独立包/native ESM/真实DB2、65 CLI命令、4 synthetic、13入口无删除/两包dry-run、标准性能均通过。原生禁WebGL的移动布局、冷槽位图文/刷新/两皮肤、demand→balanced、当前进度与设置恢复已验；DB/layout=2，1 Canvas/0 pageerror。证据/包SHA/source-manifest见evidence/w1-03a/REPORT。
 
-下一W1-03：先定义Program模块身份/稳定地址/跨模块闭包与延迟加载屏障，再评估IndexedDB整份命名空间/4M JSON字符预算、回执/激活留存与记录粒度；不得只提高上限，保留head/回执原子性、迁移和备份闭包。W1-04继续持久字节缓存、先下载再按需解码、离线安装、发布缓存/冷启动/目标设备。G7及N/F/M6真实作品认证仍未完成，资料不足不造假。
+下一B先写有限模块manifest/函数接口/摘要/稳定地址及快照闭包ADR，建立大Program构造/链接基线，再做真正按执行依赖加载、取消和恢复，不能先下载全部合并冒充懒加载。C继续热记录细分、留存与更大容量，不只提高上限。W1-04持久字节缓存/离线/平台、G7及N/F/M6真实认证仍未完成，缺资料不造假。
 
-运行：export TMPDIR=/dev/shm；pnpm install --frozen-lockfile；pnpm dev。当前http://127.0.0.1:4173/?demo=interface&loading=balanced，可改loading=demand/eager/chapter或renderer=canvas；pnpm build输出静态目录。完整test:browser前停止当前dev释放4173/4174；consumer/CLI/perf依次运行。完整状态仅以tasks.json为准。
+运行：export TMPDIR=/dev/shm；pnpm install --frozen-lockfile；pnpm dev。当前http://127.0.0.1:4173/?demo=interface&loading=balanced，可改loading或renderer=canvas。pnpm build输出静态目录；完整browser前停实际Vite子进程释放4173/4174，consumer/CLI/perf依次执行。完整状态以tasks.json为准。

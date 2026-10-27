@@ -114,3 +114,5 @@ G4-01 图文存档使用正式 SDK 的同切点舞台+DOM 正文捕获、原子�
 面向浏览器交付的现状与原计划逐项核验见[Web就绪度报告](docs/WEB_READINESS.md)。预算长计算已使用真实浏览器任务续跑，Core指令按地址索引；网络流/取消与异步存档已有实际验证。整部作品按需资源、Program模块、存储规模和离线安装尚未全部实现，见W1后续任务；不能把SDK alpha等同于所有大作已可上线。性能证据和复现命令见[PERFORMANCE](docs/PERFORMANCE.md)。
 
 可选加载策略见[LOADING](docs/LOADING.md)：完整预载、节流按需、均衡预取、章节预载共用资源准备/重试/预算规则；非eager需正式release。试玩可加`?loading=balanced`或`?loading=demand`。
+
+W1-03A将IndexedDB的槽位/历史大载荷与热记录分离，普通设置/进度更新不再重写全部槽位。数据库版本升级与旧激活标记说明见[STORAGE](docs/STORAGE.md)；程序模块和容量扩展仍在W1-03后续任务。

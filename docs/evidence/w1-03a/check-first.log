@@ -1,0 +1,12 @@
+$ pnpm check:generated && pnpm build:cli && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.headless.json --noEmit && pnpm check:boundaries
+$ node scripts/generate.mjs --check
+file:///home/myo/Desktop/galbox-sdk/scripts/generate.mjs:21
+if(/\brequire\s*\(/u.test(output['validators.js']))throw new Error('Standalone validator must be native ESM without CommonJS runtime helpers');
+                                                         ^
+
+Error: Standalone validator must be native ESM without CommonJS runtime helpers
+    at file:///home/myo/Desktop/galbox-sdk/scripts/generate.mjs:21:58
+
+Node.js v24.15.0
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

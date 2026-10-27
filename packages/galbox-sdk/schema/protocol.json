@@ -12927,6 +12927,112 @@
         "mode"
       ],
       "additionalProperties": false
+    },
+    "StorageLayout": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "galbox-records",
+          "type": "string"
+        },
+        "version": {
+          "const": 2,
+          "type": "integer"
+        },
+        "records": {
+          "type": "array",
+          "maxItems": 8192,
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "slot",
+                  "history"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[^\\u0000]{1,256}$"
+              },
+              "characters": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4000000
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "characters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "format",
+        "version",
+        "records"
+      ],
+      "additionalProperties": false
+    },
+    "RetiredActivation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[^\\u0000]{1,256}$"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "status": {
+          "const": "superseded",
+          "type": "string"
+        },
+        "retired": {
+          "const": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "sequence",
+        "status",
+        "retired"
+      ],
+      "additionalProperties": false
+    },
+    "StoredSlotSummary": {
+      "type": "object",
+      "properties": {
+        "slot": {
+          "type": "string",
+          "pattern": "^[^\\u0000]{1,256}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "hasPrevious": {
+          "type": "boolean"
+        },
+        "metadata": {
+          "$ref": "#/definitions/SlotMetadata"
+        }
+      },
+      "required": [
+        "slot",
+        "revision",
+        "hasPrevious",
+        "metadata"
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

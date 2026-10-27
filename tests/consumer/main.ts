@@ -1,3 +1,4 @@
+import {verifySegmentedStorage} from './storage.js';
 import {verifyLoadingPolicies} from './loading.js';
 import {verifyWebResponsiveness} from './responsiveness.js';
 import {createElement} from 'react';
@@ -42,7 +43,7 @@ button?.addEventListener('click',()=>{void(async()=>{
  const player=await createPlayer({program,provider:createHttpProvider(program,location.href),mount,saveCompatibilitySeries:'consumer',release});
  const settings=normalizePreferences({version:1,audio:{master:.4,bgm:.7,voice:1,sfx:1},text:{intervalMs:32}});await player.importPreferences(settings);await player.updatePreferences({input:{advance:['KeyD']},playback:{autoDelayMs:60000},display:{fontScale:1.25,windowOpacity:.7}});const settingsBackup=player.exportPreferences();await player.resetPreferences();await player.importPreferences(settingsBackup);if(player.getSnapshot().preferences.value.input.advance[0]!=='KeyD'||mount.querySelector<HTMLElement>('.galbox-text')?.style.getPropertyValue('--galbox-font-scale')!=='1.25')throw new Error('Settings import/default reset failed');
  if(player.getSnapshot().release?.origin!=='manifest'||player.getSnapshot().resources.decodedAudioBytes<=0)throw new Error('Missing verified release/resource report');await player.updatePreferences({audio:{master:.4,bgm:.7},text:{intervalMs:32}});if(player.getSnapshot().preferences.value.audio.master!==.4)throw new Error('Preferences not applied');await player.start();const before=player.getSnapshot().core?.run.wait;if(before?.kind!=='text')throw new Error('Initial wait');
- await player.input('reveal',before.prompt,player.getSnapshot().epoch);await player.setAuto(true);if(player.getSnapshot().playback.mode!=='auto')throw new Error('Auto API failed');await player.save('consumer');await player.input('advance',before.prompt,player.getSnapshot().epoch);
+ await player.input('reveal',before.prompt,player.getSnapshot().epoch);await player.setAuto(true);if(player.getSnapshot().playback.mode!=='auto')throw new Error('Auto API failed');await player.save('consumer');await verifySegmentedStorage(player.namespace,'consumer');await player.input('advance',before.prompt,player.getSnapshot().epoch);
  const advanced=player.getSnapshot().core?.run.text?.textId;if(advanced==='opening.1')throw new Error('Did not advance');await player.load('consumer');
  if(player.getSnapshot().core?.run.text?.textId!=='opening.1')throw new Error('Did not restore');
  if(player.getSnapshot().playback.mode!=='manual'||player.exportPreferences().display.fontScale!==1.25)throw new Error('Restore mixed playback session and durable preferences');

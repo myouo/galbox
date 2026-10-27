@@ -85,3 +85,9 @@ const {streamRequest}=await import('galbox-sdk/port-kit');const {parseIntegrityE
  assert.equal(loadingPolicy({mode:'balanced'}).lookahead,2);assert.throws(()=>parseLoadingOptions({mode:'offline-install'}),/SCHEMA_LOADING/);assert.throws(()=>loadingPolicy({mode:'chapter'}),/LOADING_CHAPTERS/);
  console.log('Packed loading policy factory and strict unknown boundary passed');
 }
+
+{
+ const retirement=new MemoryStore();await retirement.activate('old',save,null,0);for(let i=0;i<50;i++){const head=(await retirement.read()).head;await retirement.activate('new:'+i,save,head.id,0);}
+ await assert.rejects(retirement.activate('old',save,(await retirement.read()).head.id,0),/ACTIVATION_SUPERSEDED/);await assert.rejects(retirement.claim('old','new-owner'),/ACTIVATION_SUPERSEDED/);assert.deepEqual((await retirement.read()).head.snapshot,save);
+ console.log('Packed retired activation identities cannot take over again');
+}

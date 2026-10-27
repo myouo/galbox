@@ -1,0 +1,558 @@
+{
+  "revision": "92d3e1809ee01439c0db94701e8d0131909d2624",
+  "browser": "156.0.8078.4",
+  "driverSha256": "3cc566d68eae75525ba3f52c83295408331a4547f7e1fef51976cccefb47fadf",
+  "scope": "actual IndexedDB and Core; get/put serialization probe adds overhead; 2 warmups + 10 observations per operation",
+  "rows": [
+    {
+      "slots": 0,
+      "snapshotCharacters": 35978,
+      "snapshotSha": "8e6160cf96b5edfe2df353b47ffc9a25a8571f2f8a5c085a4df630d9c485a0d2",
+      "head": "initial",
+      "profileRevision": 12,
+      "series": [
+        {
+          "operation": "preferences",
+          "medianMs": 2,
+          "p95Ms": 2.600000023841858,
+          "samples": [
+            {
+              "ms": 2,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2.5,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.7999999523162842,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.899999976158142,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2.3000000715255737,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2.399999976158142,
+              "readCharacters": 72797,
+              "writtenCharacters": 72797,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2.600000023841858,
+              "readCharacters": 72797,
+              "writtenCharacters": 72798,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.8000000715255737,
+              "readCharacters": 72798,
+              "writtenCharacters": 72798,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.899999976158142,
+              "readCharacters": 72798,
+              "writtenCharacters": 72798,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            }
+          ]
+        },
+        {
+          "operation": "progress",
+          "medianMs": 1.8000000715255737,
+          "p95Ms": 2.600000023841858,
+          "samples": [
+            {
+              "ms": 2.600000023841858,
+              "readCharacters": 73255,
+              "writtenCharacters": 73479,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.8000000715255737,
+              "readCharacters": 73479,
+              "writtenCharacters": 73703,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.7999999523162842,
+              "readCharacters": 73703,
+              "writtenCharacters": 73927,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2.100000023841858,
+              "readCharacters": 73927,
+              "writtenCharacters": 74151,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.899999976158142,
+              "readCharacters": 74151,
+              "writtenCharacters": 74375,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 2.5,
+              "readCharacters": 74375,
+              "writtenCharacters": 74599,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.7999999523162842,
+              "readCharacters": 74599,
+              "writtenCharacters": 74823,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.600000023841858,
+              "readCharacters": 74823,
+              "writtenCharacters": 75049,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.7999999523162842,
+              "readCharacters": 75049,
+              "writtenCharacters": 75278,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 1.8000000715255737,
+              "readCharacters": 75278,
+              "writtenCharacters": 75507,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slots": 16,
+      "snapshotCharacters": 35978,
+      "snapshotSha": "8e6160cf96b5edfe2df353b47ffc9a25a8571f2f8a5c085a4df630d9c485a0d2",
+      "head": "initial",
+      "profileRevision": 12,
+      "series": [
+        {
+          "operation": "preferences",
+          "medianMs": 14.899999976158142,
+          "p95Ms": 16.600000023841858,
+          "samples": [
+            {
+              "ms": 16.600000023841858,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 13.400000095367432,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 13.099999904632568,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 14.600000023841858,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 16,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 16.600000023841858,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 13.899999976158142,
+              "readCharacters": 650040,
+              "writtenCharacters": 650040,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 14.300000071525574,
+              "readCharacters": 650040,
+              "writtenCharacters": 650041,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 14.899999976158142,
+              "readCharacters": 650041,
+              "writtenCharacters": 650041,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 15.100000023841858,
+              "readCharacters": 650041,
+              "writtenCharacters": 650041,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            }
+          ]
+        },
+        {
+          "operation": "progress",
+          "medianMs": 13.600000023841858,
+          "p95Ms": 22.5,
+          "samples": [
+            {
+              "ms": 12.299999952316284,
+              "readCharacters": 650498,
+              "writtenCharacters": 650722,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 12.100000023841858,
+              "readCharacters": 650722,
+              "writtenCharacters": 650946,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 13.5,
+              "readCharacters": 650946,
+              "writtenCharacters": 651170,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 15.699999928474426,
+              "readCharacters": 651170,
+              "writtenCharacters": 651394,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 13.300000071525574,
+              "readCharacters": 651394,
+              "writtenCharacters": 651618,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 13.600000023841858,
+              "readCharacters": 651618,
+              "writtenCharacters": 651842,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 14,
+              "readCharacters": 651842,
+              "writtenCharacters": 652066,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 12.800000071525574,
+              "readCharacters": 652066,
+              "writtenCharacters": 652292,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 22.5,
+              "readCharacters": 652292,
+              "writtenCharacters": 652521,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 14,
+              "readCharacters": 652521,
+              "writtenCharacters": 652750,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slots": 48,
+      "snapshotCharacters": 35978,
+      "snapshotSha": "8e6160cf96b5edfe2df353b47ffc9a25a8571f2f8a5c085a4df630d9c485a0d2",
+      "head": "initial",
+      "profileRevision": 12,
+      "series": [
+        {
+          "operation": "preferences",
+          "medianMs": 41.5,
+          "p95Ms": 44.699999928474426,
+          "samples": [
+            {
+              "ms": 40.89999997615814,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 43.299999952316284,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41.5,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41.5,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 39.800000071525574,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 40.699999928474426,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 40.200000047683716,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804568,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 44.699999928474426,
+              "readCharacters": 1804568,
+              "writtenCharacters": 1804569,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 40.700000047683716,
+              "readCharacters": 1804569,
+              "writtenCharacters": 1804569,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41.699999928474426,
+              "readCharacters": 1804569,
+              "writtenCharacters": 1804569,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            }
+          ]
+        },
+        {
+          "operation": "progress",
+          "medianMs": 41,
+          "p95Ms": 45.60000002384186,
+          "samples": [
+            {
+              "ms": 39.299999952316284,
+              "readCharacters": 1805026,
+              "writtenCharacters": 1805250,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 45.60000002384186,
+              "readCharacters": 1805250,
+              "writtenCharacters": 1805474,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41,
+              "readCharacters": 1805474,
+              "writtenCharacters": 1805698,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 38.89999997615814,
+              "readCharacters": 1805698,
+              "writtenCharacters": 1805922,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41,
+              "readCharacters": 1805922,
+              "writtenCharacters": 1806146,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41,
+              "readCharacters": 1806146,
+              "writtenCharacters": 1806370,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41.5,
+              "readCharacters": 1806370,
+              "writtenCharacters": 1806594,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 38.39999997615814,
+              "readCharacters": 1806594,
+              "writtenCharacters": 1806820,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 41.800000071525574,
+              "readCharacters": 1806820,
+              "writtenCharacters": 1807049,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            },
+            {
+              "ms": 43,
+              "readCharacters": 1807049,
+              "writtenCharacters": 1807278,
+              "readKeys": [
+                "\"storage-scale\""
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "pageErrors": []
+}

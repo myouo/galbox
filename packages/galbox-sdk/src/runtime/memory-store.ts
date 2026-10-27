@@ -6,13 +6,13 @@ import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/bac
 export class MemoryStore implements Store {
   private state=databaseState();
   constructor(private readonly namespace?:string,profile:unknown=emptyProfile()) {this.state.profile=parseProfile(profile);}
-  private commitState(s:ReturnType<typeof databaseState>):void {ensure(JSON.stringify(s).length<=4_000_000,'STORAGE_SIZE','Namespace exceeds 4 MB JSON budget');this.state=s;}
+  private commitState(s:ReturnType<typeof databaseState>):void {ensure(JSON.stringify(s).length<=4_000_000,'STORAGE_SIZE','Namespace exceeds 4M JSON character budget');this.state=s;}
   async backup(gameId:string,series:string,release:string){ensure(!this.namespace||this.namespace===storageNamespace(gameId,series),'BACKUP_NAMESPACE','Backup identity must match storage');return captureBackup(parseDatabase(this.state),gameId,series,release);}
   async restoreBackup(commit:StoreBackupRestore){ensure(!this.namespace||this.namespace===storageNamespace(commit.backup.gameId,commit.backup.series),'BACKUP_NAMESPACE','Restore identity must match storage');const s=parseDatabase(this.state),r=commitBackupRestore(s,commit);this.commitState(s);return r;}
   async readHistory(id:string){return readHistory(parseDatabase(this.state),id);}
   async historyReceipt(id:string){return historyReceipt(parseDatabase(this.state),id);}
   async commitHistory(input:HistoryCommit,authority:string|null){const s=parseDatabase(this.state),r=commitHistory(s,input,authority);this.commitState(s);return r;}
-  async commitSave(input:SaveCommit){const data=parseSaveCommit(input),s=parseDatabase(this.state),r=commitSave(s,data);ensure(JSON.stringify(s).length<=4_000_000,'STORAGE_SIZE','Namespace exceeds 4 MB JSON budget');this.commitState(s);return r;}
+  async commitSave(input:SaveCommit){const data=parseSaveCommit(input),s=parseDatabase(this.state),r=commitSave(s,data);ensure(JSON.stringify(s).length<=4_000_000,'STORAGE_SIZE','Namespace exceeds 4M JSON character budget');this.commitState(s);return r;}
   async saveReceipt(id:string){return saveReceipt(parseDatabase(this.state),id);}
   async renameSlot(slot:string,revision:number,label:string){const s=parseDatabase(this.state),r=renameSlot(s,slot,revision,label);this.commitState(s);return r;}
   async deleteSlot(slot:string,revision:number){const s=parseDatabase(this.state);deleteSlot(s,slot,revision);this.commitState(s);}

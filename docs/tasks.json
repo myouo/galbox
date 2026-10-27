@@ -16,7 +16,7 @@
     "H3",
     "W1"
   ],
-  "current_task": "W1-03",
+  "current_task": "W1-03B",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-27",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2313,10 +2313,13 @@
       "milestone": "W1",
       "title": "版本化Program模块与大作品存储扩展",
       "depends_on": [
-        "W1-02"
+        "W1-02",
+        "W1-03A",
+        "W1-03B",
+        "W1-03C"
       ],
-      "status": "todo",
-      "implementation": "not_started",
+      "status": "in_progress",
+      "implementation": "in_progress",
       "verification": "not_run",
       "outputs": [
         "bound program modules and scalable durable records"
@@ -2336,7 +2339,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "根据大作品实测定义模块链接/摘要/稳定地址与快照闭包；评估当前整份命名空间/4M JSON字符预算的瓶颈，保留head/回执事务，禁止只提高上限掩盖复制与写放大。"
+      "next_action": "A已完成。继续B真实程序模块身份/按执行依赖加载/恢复闭包，再完成C热记录粒度/留存/容量。B/C未完成前父任务保持进行中。"
     },
     {
       "id": "W1-04",
@@ -2367,6 +2370,110 @@
       "evidence": [],
       "blocker": null,
       "next_action": "建设版本化持久字节缓存与先下载/按需解码、可恢复离线安装和驱逐提示；验证跨发布CDN缓存、冷启动网络/拆包及Firefox/Safari/移动真机范围，不用Chromium模拟代替认证。"
+    },
+    {
+      "id": "W1-03A",
+      "milestone": "W1",
+      "title": "存储冷热分离与旧激活载荷回收",
+      "depends_on": [
+        "W1-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "segmented IndexedDB cold records",
+        "atomic legacy migration",
+        "superseded activation tombstones"
+      ],
+      "contracts": [
+        "C05",
+        "C06",
+        "C07",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "bounded-hot-io",
+        "atomic-cold-record-commit",
+        "legacy-storage-upgrade",
+        "retired-head-never-revives"
+      ],
+      "evidence": [
+        "docs/decisions/0034-segmented-storage.md",
+        "docs/STORAGE.md",
+        "docs/evidence/w1-03a/REPORT.md",
+        "docs/evidence/w1-03a/unit-third.log",
+        "docs/evidence/w1-03a/browser-results.json",
+        "docs/evidence/w1-03a/comparison.json",
+        "docs/evidence/w1-03a/consumer-result.json",
+        "docs/evidence/w1-03a/release-audit.json",
+        "docs/evidence/w1-03a/dev-result.json",
+        "docs/evidence/w1-03a/source-manifest.json",
+        "docs/evidence/w1-03a/handoff-validation.json"
+      ],
+      "blocker": null,
+      "next_action": "冷热分离/原子迁移/旧激活瘦身已验收，4M逻辑和1M备份上限保持；下一B真实程序模块，C处理热记录和容量，父任务不能done。"
+    },
+    {
+      "id": "W1-03B",
+      "milestone": "W1",
+      "title": "版本化程序模块、按需执行与恢复闭包",
+      "depends_on": [
+        "W1-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "module manifest and real producer",
+        "demand code loading and restore closure"
+      ],
+      "contracts": [
+        "C05",
+        "C06",
+        "C07",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "program-module-release-binding",
+        "no-eager-merge-disguise",
+        "module-cancellation-and-restore"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "见父任务W1-03及当前ADR/STATUS；不得提前声明总体完成。"
+    },
+    {
+      "id": "W1-03C",
+      "milestone": "W1",
+      "title": "细粒度热记录、留存与大作品容量",
+      "depends_on": [
+        "W1-03A"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "per-record durable metadata",
+        "explicit bounded retention and capacity"
+      ],
+      "contracts": [
+        "C05",
+        "C06",
+        "C07",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "large-game-storage-transactions",
+        "receipt-idempotence-after-retention",
+        "complete-backup-closure"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "见父任务W1-03及当前ADR/STATUS；不得提前声明总体完成。"
     }
   ]
 }

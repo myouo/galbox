@@ -164,3 +164,5 @@ H3-01按ADR0031对受控状态投影做复用：Core.view深冻结并按所有�
 W1-01按ADR0032：生产Player拥有实例级BrowserScheduler，以MessageChannel任务（timer后备）承接Coordinator预算续跑及启动候选。端口首次使用才创建，失败构造不遗留设备；dispose取消端口、timer及候选等待。Coordinator保持current轮次且禁止预算中保存；Player不积压执行中的rAF tick。Core仅对已链接私有Program建立函数/指令/后继索引，地址与存档不变。原计划Web交付核验与资源/模块/存储/离线差距见[WEB_READINESS.md](WEB_READINESS.md)。
 
 W1-02按ADR0033以中立HostPreparation桥接稳定轮次与异步资源：Coordinator保留current/effects和旧呈现视图，准备成功才分发表现，失败重试同一目标并拒capture/flush。Host拥有缓存引用/预算/取消；候选在head事务前固定资源，显示成功后释放旧画面引用。Core和Snapshot不存Promise/设备句柄；LoadingOptions只属于Host配置。策略/实际范围见LOADING。
+
+W1-03A/ADR0034保持纯durable reducers，Web IndexedDB adapter按操作声明加载slot/history冷记录；热目录和相关冷载荷在同一事务写入。目录/摘要来自Schema，按原逻辑JSON精确合计容量。DB版本2阻止旧代码双写，首次写事务迁移旧行；旧激活快照压缩为superseded标记，当前head仍完整且必须匹配live entry。程序模块/细粒度热记录留W1-03B/C。

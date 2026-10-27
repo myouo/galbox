@@ -4135,3 +4135,39 @@ export interface LoadingOptions {
     assets: string[];
   }[];
 }
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StorageLayout".
+ */
+export interface StorageLayout {
+  format: 'galbox-records';
+  version: 2;
+  /**
+   * @maxItems 8192
+   */
+  records: {
+    kind: 'slot' | 'history';
+    id: string;
+    characters: number;
+  }[];
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "RetiredActivation".
+ */
+export interface RetiredActivation {
+  id: string;
+  sequence: number;
+  status: 'superseded';
+  retired: true;
+}
+/**
+ * This interface was referenced by `Wire`'s JSON-Schema
+ * via the `definition` "StoredSlotSummary".
+ */
+export interface StoredSlotSummary {
+  slot: string;
+  revision: number;
+  hasPrevious: boolean;
+  metadata: SlotMetadata;
+}

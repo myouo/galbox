@@ -1,0 +1,14 @@
+$ pnpm build:sdk && vitest run
+$ tsc -p packages/galbox-sdk/tsconfig.build.json && node scripts/build-sdk.mjs
+
+ RUN  v5.0.5 /home/myo/Desktop/galbox-sdk
+
+
+ Test Files  34 passed (34)
+      Tests  227 passed (227)
+   Start at  16:36:30
+   Duration  4.98s (import 45%, tests 35%, transform 20%)
+
+    Isolate  34 workers spawned · ~203ms startup each (spawn + environment, per file)
+             at least ~257ms faster with isolate: false — reuses workers across files instead of one per file
+
