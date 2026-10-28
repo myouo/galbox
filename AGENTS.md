@@ -64,3 +64,9 @@ M0 建立 `pnpm check`（类型、生成一致性、导入边界及既定静态�
 - SDK是引擎；原创/合成fixture与SDK验证应用放在tests/内。按用户最新要求，真实作品移植实例放在SDK仓库之外的独立工程，通过实际tarball和公开exports依赖SDK，不用workspace源码别名。正式包不得包含游戏、验证证据或日志。
 - docs/evidence只跟踪短Markdown报告；原始日志/JSON/截图/trace等保留本地并ignore，CI上传artifact，不提交重复生成记录。
 - 使用pnpm打包白名单与独立消费验收检查泄漏；运行目录按tests/player-app、tests/fixtures/game-data使用。
+
+## 本轮远程与预览约束（用户追加）
+
+本轮用户明确授权完成后推送SDK到myouo/galbox，独立实例到myouo/morgana。真实作品原包、解包目录、提取脚本/二进制素材、构建载荷、凭据和日志不得进入GitHub；检查发布引用可达的完整历史。SDK保留现有开发历史；独立morgana按用户要求折叠成一次全新根提交并移除原LICENSE；仅允许对已确认旧远端SHA使用明确force-with-lease，远端变化则拒绝。整理后的PO翻译源允许提交，原KS/TJS与解包数据不提交。
+
+test.morgana.love仅作本地build的可玩预览，自动化网络回归转testsdk.morgana.love。下载限速只在自动化浏览器的CDP模拟中启用，预览/Worker/R2不加入生产带宽限制。原作载荷只在已授权的R2专桶，两个站点的前端发布目录/Worker分开。

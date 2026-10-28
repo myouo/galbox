@@ -2369,6 +2369,9 @@ definitions:
       presentation:
         $ref: "#/definitions/GamePresentation"
         x-proto-tag: 18
+      textCatalogBinding:
+        $ref: "#/definitions/ProgramTextBinding"
+        x-proto-tag: 19
     required:
       - version
       - gameId
@@ -4194,6 +4197,10 @@ definitions:
       display:
         $ref: "#/definitions/DisplayPreferences"
         x-proto-tag: 6
+      locale:
+        type: string
+        pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+        x-proto-tag: 7
     required:
       - version
       - audio
@@ -4694,6 +4701,10 @@ definitions:
         additionalProperties: false
         minProperties: 1
         x-proto-tag: 5
+      locale:
+        type: string
+        pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+        x-proto-tag: 6
     required: []
     additionalProperties: false
     minProperties: 1
@@ -12034,6 +12045,278 @@ definitions:
       - asset
       - gain
     additionalProperties: false
+  ProgramTextBinding:
+    type: object
+    properties:
+      version:
+        const: 1
+        type: integer
+        x-proto-tag: 1
+      locale:
+        type: string
+        pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+        x-proto-tag: 2
+      sha256:
+        type: string
+        pattern: ^[a-f0-9]{64}$
+        x-proto-tag: 3
+    required:
+      - version
+      - locale
+      - sha256
+    additionalProperties: false
+  ProgramTextEntry:
+    oneOf:
+      - type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          kind:
+            const: title
+            type: string
+            x-proto-tag: 2
+          text:
+            type: string
+            x-proto-tag: 3
+            pattern: ^[\s\S]{0,512}$
+        required:
+          - at
+          - kind
+          - text
+        additionalProperties: false
+        x-proto-tag: 1
+      - type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          kind:
+            const: page
+            type: string
+            x-proto-tag: 2
+          textId:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          revision:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          speaker:
+            type: string
+            pattern: ^[^\x00]{0,4096}$
+            x-proto-tag: 5
+          content:
+            type: string
+            pattern: ^[^\x00]{1,4096}$
+            x-proto-tag: 6
+        required:
+          - at
+          - kind
+          - textId
+          - revision
+          - speaker
+          - content
+        additionalProperties: false
+        x-proto-tag: 2
+      - type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          kind:
+            const: rich
+            type: string
+            x-proto-tag: 2
+          textId:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          revision:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          speaker:
+            $ref: "#/definitions/StringExpression"
+            x-proto-tag: 5
+          runs:
+            type: array
+            items:
+              $ref: "#/definitions/RichTextSourceRun"
+            minItems: 1
+            maxItems: 128
+            x-proto-tag: 6
+        required:
+          - at
+          - kind
+          - textId
+          - revision
+          - speaker
+          - runs
+        additionalProperties: false
+        x-proto-tag: 3
+      - type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          kind:
+            const: choice
+            type: string
+            x-proto-tag: 2
+          options:
+            type: array
+            minItems: 1
+            maxItems: 64
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+                  x-proto-tag: 1
+                text:
+                  type: string
+                  pattern: ^[^\x00]{1,4096}$
+                  x-proto-tag: 2
+              required:
+                - id
+                - text
+              additionalProperties: false
+            x-proto-tag: 3
+        required:
+          - at
+          - kind
+          - options
+        additionalProperties: false
+        x-proto-tag: 4
+  ProgramTextCatalog:
+    type: object
+    properties:
+      version:
+        const: 1
+        type: integer
+        x-proto-tag: 1
+      gameId:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 2
+      release:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 3
+      locale:
+        type: string
+        pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+        x-proto-tag: 4
+      entries:
+        type: array
+        minItems: 1
+        maxItems: 4096
+        items:
+          $ref: "#/definitions/ProgramTextEntry"
+        x-proto-tag: 5
+    required:
+      - version
+      - gameId
+      - release
+      - locale
+      - entries
+    additionalProperties: false
+  LocaleCatalog:
+    type: object
+    properties:
+      version:
+        const: 1
+        type: integer
+        x-proto-tag: 1
+      defaultLocale:
+        type: string
+        pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+        x-proto-tag: 2
+      locales:
+        type: array
+        minItems: 1
+        maxItems: 64
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+              x-proto-tag: 1
+            label:
+              type: string
+              x-proto-tag: 2
+              pattern: ^[\s\S]{0,128}$
+            aliases:
+              type: array
+              maxItems: 16
+              items:
+                type: string
+                pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+              x-proto-tag: 3
+            fallback:
+              oneOf:
+                - type: "null"
+                  x-proto-tag: 1
+                - type: string
+                  pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+                  x-proto-tag: 2
+              x-proto-tag: 4
+          required:
+            - id
+            - label
+            - aliases
+            - fallback
+          additionalProperties: false
+        x-proto-tag: 3
+    required:
+      - version
+      - defaultLocale
+      - locales
+    additionalProperties: false
+  InterfaceTextCatalog:
+    type: object
+    properties:
+      version:
+        const: 1
+        type: integer
+        x-proto-tag: 1
+      locale:
+        type: string
+        pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
+        x-proto-tag: 2
+      messages:
+        type: array
+        minItems: 1
+        maxItems: 4096
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 1
+            text:
+              type: string
+              x-proto-tag: 2
+              pattern: ^[\s\S]{0,65536}$
+          required:
+            - id
+            - text
+          additionalProperties: false
+        x-proto-tag: 3
+    required:
+      - version
+      - locale
+      - messages
+    additionalProperties: false
 type: object
 properties:
   program:
@@ -12154,3 +12437,8 @@ x-proto-envelope:
   ModuleManifest: 113
   ProgramModuleBinding: 114
   UISoundRequest: 115
+  ProgramTextBinding: 116
+  ProgramTextEntry: 117
+  ProgramTextCatalog: 118
+  LocaleCatalog: 119
+  InterfaceTextCatalog: 120

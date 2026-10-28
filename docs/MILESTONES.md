@@ -142,3 +142,5 @@ W1-03分A/B/C验收：A为冷热载荷分离、原子迁移与旧激活瘦身；
 W1-03B有限v1见ADR0035/PROGRAM_MODULES：基础ADV函数模块/声明链接、实际call加载、同轮取消/重试、快照清单/使用集合与恢复闭包、Web字节lease和真实生产者；高级capability模块属B2。I1-01跟踪locale/目录/回退与正文读单位，不把现有Unicode/皮肤标签算成完整国际化。
 
 G2-04有限集按ADR0038提供同页confirm、分段显完/输入隔离、原有RichText恢复兼容和新源拒绝隐式迁移；Auto/Skip、图文/IndexedDB、协议与真实源文本流另验。它不是原KAG历史排版、完整宏/TJS/整作语义完成声明。
+
+I1-01/ADR0042有限第一步：Schema/protobuf目录、title/plain/rich/choice的split/bind、locale偏好与显式目录回退、模板直执行拒绝及旧偏好/旧档浏览器验收。DefaultUI完整翻译与章节文本流尚未计入完成；独立作品R2网络验证单独记录W1-05。

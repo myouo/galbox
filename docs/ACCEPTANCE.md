@@ -130,3 +130,7 @@ G3-05：真实stageRuleTransition工厂/源签名、整数阈值与opaque像素�
 G3-06：實際uiSound工廠關聯資源、UISoundRequest驗證/隔離與protobuf邊界0/1；真實瀏覽器無手勢blocked且零抓取、原生buffer開始/自然結束、音量/靜音與暫停選單、劇情SFX不被覆寫、head/槽/PC不變、換音/過期租約/啟用取消/壞摘要/10秒逾時/實際31秒buffer拒絕及dispose。實包與獨立原作enterse/clickse要驗，原生波形與實際時長佐證不能拿狀態字串或虛擬Host代替。
 
 G1-03：旧偏好补默认/protobuf/非法模式；真实媒体在失焦后继续、Auto退出/不穿页、OP同epoch，禁止RAF时隐藏timer推进与当前图文捕获、实际增益包络、显式暂停不被focus解除、dispose清理。独立实包与原作OP验证；开发服务源/资源更新不再触发会话重开。
+
+I1-01第一步：公共工厂split→protobuf→bind必须还原原Program及字节；模板直执行、目录错locale/release/digest/槽位修订拒绝而不改输入。真实Player/IndexedDB需验证旧偏好缺locale的作者默认、reloadPreferences同规则、旧剧情读档不回滚locale、dispose重建后持久偏好。完整系统UI翻译未验收前父任务不得done。
+
+W1-05：独立R2桶只上传当前资源闭包；HTTPS全对象摘要、HEAD/Range/条件请求/缺失资源/鉴权缓存边界及真实浏览器选中语言加载、慢网、失败重试、OP/存档/刷新验证。公开原包/其他作品/离线整包/移动真实设备不据此认证。

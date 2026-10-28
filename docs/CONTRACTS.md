@@ -89,3 +89,5 @@ W1-02/ADR0033补充C05/C07/C10：资源准备未提交时保持旧呈现投影�
 W1-03A/ADR0034补充C06/C07/C11：冷热分片不拆开目录/快照/摘要/回执原子性；必要冷记录缺失、大小不符或非法即失败，无关热操作不读取全部载荷。迁移中途失败保留旧布局。retired ID不可作为新激活或旧pending复活，当前head须匹配未退役的live entry；回执不删除、不失去幂等性。写入输入在排入IndexedDB异步事务前私有化。容量仍按原完整逻辑JSON精确合计，次级摘要索引不算第二份逻辑存档。
 
 W1-03B：代码I/O不进入Core。未加载call不修改PC/参数，准备失败不安装半份代码；租约身份/长度/SHA/ABI/锚点/链接均检查，取消/迟到不得推进剧情。快照绑定完整清单及该Core用过的模块，不以共享缓存集合替代执行闭包；恢复和旧绑定不符明确拒绝。基础模块集外的能力显式unsupported，不据此宣称全集模块化或i18n已完成。
+
+ADR0042：带textCatalogBinding的Program模板不能直接执行；bind必须验证game/release/locale、完整目录摘要、槽位和TextId/Revision，再还原普通Program。偏好locale不属于剧情快照，读旧档不得回滚偏好；旧偏好缺locale时使用本Player作者默认。未声明翻译不按行配对或猜测已读继承；有限split支持集外明确unsupported。

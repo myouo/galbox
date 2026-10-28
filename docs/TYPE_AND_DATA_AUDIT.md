@@ -10,7 +10,7 @@
 | 网络程序数据 | 正式Program/模块/快照等支持protobuf，以Uint8Array lease传输并校验身份、长度、SHA、Schema、函数接口/锚点和链接。新默认传输由galbox-sdk/wire实际protobuf编解码，旧JSON仅显式兼容。 |
 | 图像/声音/影片 | 资源provider的字节lease、Blob/object URL或显式版本URL媒体流；完整摘要与versioned-url等级分别报告。设备句柄不进入Core快照。 |
 | 保存与持久化 | Snapshot/可携带备份为强类型DTO，正式导出为protobuf；IndexedDB使用原生structured clone对象与同事务记录，JSON仅保留在旧格式兼容、语义摘要和字符预算中。 |
-| i18n设置 | 当前Preferences v2只有audio/text/playback/input/display，没有locale、语言回退或翻译目录。加入locale的patch会被真实Schema拒绝。Unicode字素、字体、ruby以及皮肤自定义标签不等于完整i18n。默认UI仍有中文文本。 |
+| i18n设置 | Preferences v2新增可选locale；LocaleCatalog声明默认/别名/显式回退。ADR0042提供有限title/page/rich/choice文本拆分和强身份绑定，正文/界面目录均可protobuf传输。默认UI完整翻译、运行中换语言与章节文本流尚未完成。 |
 | 哪些模块按依赖加载 | 新增的基础剧情代码模块按实际跨函数call加载，快照记录本Core用过的模块。图像等资源沿四种独立策略加载。SDK/Pixi/React的JS功能包仍主要由Vite打包，不能把代码分块或文件分目录都称为按执行依赖加载。 |
 
 实际类型反例在program-modules.test中通过真实instruction/set/ProgramBuilder工厂验证：错误opcode参数和变量值编译失败；动态callee不存在则链接失败。模块版createModulePlayer要求真实ModuleProgram对象，其运行时身份由工厂登记；字节provider伪造moduleId的负例在浏览器中验证失败并归还lease。只读投影、输入副本和效果副本保持所有权隔离。
@@ -19,4 +19,4 @@
 
 初版模块支持基础ADV/control、简单值、基础stage/audio/tasks/profile与静态presentation。高级媒体、富文、剧本UI、流程图/鉴赏、扩展及模块版recipe/备份恢复明确unsupported，单体路径继续支持原能力，W1-03B2跟踪补齐。总输入/内存边界没有因分包取消。
 
-i18n后续I1-01需分别处理：系统UI语言偏好持久化、语言目录与回退；正文TextId/Revision/ReadUnit及语音资源选择；存档保留已求值文本，切换语言时的已读继承必须明确。当前不把该任务标完成。
+I1-01有限第一步已实现locale偏好/目录/显式回退与原TextId/Revision保留的split/bind；真实Player/IndexedDB验证旧偏好继承和旧剧情读档不回滚语言。独立实例换语言返回标题并分语言存档，不猜测跨语言已读继承。DefaultUI完整翻译、语音目录选择/运行中正文重绑定和大章节文本流仍待，父任务保持in_progress。

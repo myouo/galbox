@@ -2324,6 +2324,10 @@ message Gbx_Program_presentation {
   optional Gbx_GamePresentation value = 1;
 }
 
+message Gbx_Program_textCatalogBinding {
+  optional Gbx_ProgramTextBinding value = 1;
+}
+
 message Gbx_Program {
   optional Gbx_Program_version version = 1;
   optional Gbx_Program_gameId gameId = 2;
@@ -2343,6 +2347,7 @@ message Gbx_Program {
   optional Gbx_Program_extras extras = 16;
   optional Gbx_Program_ui ui = 17;
   optional Gbx_Program_presentation presentation = 18;
+  optional Gbx_Program_textCatalogBinding textCatalogBinding = 19;
 }
 
 message Gbx_Profile_revision {
@@ -4186,6 +4191,10 @@ message Gbx_PlayerPreferences_display {
   optional Gbx_DisplayPreferences value = 1;
 }
 
+message Gbx_PlayerPreferences_locale {
+  optional string value = 1;
+}
+
 message Gbx_PlayerPreferences {
   optional Gbx_PlayerPreferences_version version = 1;
   optional Gbx_PlayerPreferences_audio audio = 2;
@@ -4193,6 +4202,7 @@ message Gbx_PlayerPreferences {
   optional Gbx_PlayerPreferences_playback playback = 4;
   optional Gbx_PlayerPreferences_input input = 5;
   optional Gbx_PlayerPreferences_display display = 6;
+  optional Gbx_PlayerPreferences_locale locale = 7;
 }
 
 message Gbx_PreferencesRecord_revision {
@@ -4327,12 +4337,17 @@ message Gbx_PreferencesPatch_display {
   optional Gbx_PreferencesPatch_display_windowOpacity windowOpacity = 2;
 }
 
+message Gbx_PreferencesPatch_locale {
+  optional string value = 1;
+}
+
 message Gbx_PreferencesPatch {
   optional Gbx_PreferencesPatch_audio audio = 1;
   optional Gbx_PreferencesPatch_text text = 2;
   optional Gbx_PreferencesPatch_playback playback = 3;
   optional Gbx_PreferencesPatch_input input = 4;
   optional Gbx_PreferencesPatch_display display = 5;
+  optional Gbx_PreferencesPatch_locale locale = 6;
 }
 
 message Gbx_I32Expression_Case1_kind {
@@ -11185,6 +11200,271 @@ message Gbx_UISoundRequest {
   optional Gbx_UISoundRequest_gain gain = 2;
 }
 
+message Gbx_ProgramTextBinding_version {
+  // Fixed semantic value: 1
+}
+
+message Gbx_ProgramTextBinding_locale {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextBinding_sha256 {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextBinding {
+  optional Gbx_ProgramTextBinding_version version = 1;
+  optional Gbx_ProgramTextBinding_locale locale = 2;
+  optional Gbx_ProgramTextBinding_sha256 sha256 = 3;
+}
+
+message Gbx_ProgramTextEntry_Case1_at {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case1_kind {
+  // Fixed semantic value: "title"
+}
+
+message Gbx_ProgramTextEntry_Case1_text {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case1 {
+  optional Gbx_ProgramTextEntry_Case1_at at = 1;
+  optional Gbx_ProgramTextEntry_Case1_kind kind = 2;
+  optional Gbx_ProgramTextEntry_Case1_text text = 3;
+}
+
+message Gbx_ProgramTextEntry_Case2_at {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case2_kind {
+  // Fixed semantic value: "page"
+}
+
+message Gbx_ProgramTextEntry_Case2_textId {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case2_revision {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case2_speaker {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case2_content {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case2 {
+  optional Gbx_ProgramTextEntry_Case2_at at = 1;
+  optional Gbx_ProgramTextEntry_Case2_kind kind = 2;
+  optional Gbx_ProgramTextEntry_Case2_textId textId = 3;
+  optional Gbx_ProgramTextEntry_Case2_revision revision = 4;
+  optional Gbx_ProgramTextEntry_Case2_speaker speaker = 5;
+  optional Gbx_ProgramTextEntry_Case2_content content = 6;
+}
+
+message Gbx_ProgramTextEntry_Case3_at {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case3_kind {
+  // Fixed semantic value: "rich"
+}
+
+message Gbx_ProgramTextEntry_Case3_textId {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case3_revision {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case3_speaker {
+  optional Gbx_StringExpression value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case3_runs_Item {
+  optional Gbx_RichTextSourceRun value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case3_runs {
+  repeated Gbx_ProgramTextEntry_Case3_runs_Item items = 1;
+}
+
+message Gbx_ProgramTextEntry_Case3 {
+  optional Gbx_ProgramTextEntry_Case3_at at = 1;
+  optional Gbx_ProgramTextEntry_Case3_kind kind = 2;
+  optional Gbx_ProgramTextEntry_Case3_textId textId = 3;
+  optional Gbx_ProgramTextEntry_Case3_revision revision = 4;
+  optional Gbx_ProgramTextEntry_Case3_speaker speaker = 5;
+  optional Gbx_ProgramTextEntry_Case3_runs runs = 6;
+}
+
+message Gbx_ProgramTextEntry_Case4_at {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case4_kind {
+  // Fixed semantic value: "choice"
+}
+
+message Gbx_ProgramTextEntry_Case4_options_Item_id {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case4_options_Item_text {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextEntry_Case4_options_Item {
+  optional Gbx_ProgramTextEntry_Case4_options_Item_id id = 1;
+  optional Gbx_ProgramTextEntry_Case4_options_Item_text text = 2;
+}
+
+message Gbx_ProgramTextEntry_Case4_options {
+  repeated Gbx_ProgramTextEntry_Case4_options_Item items = 1;
+}
+
+message Gbx_ProgramTextEntry_Case4 {
+  optional Gbx_ProgramTextEntry_Case4_at at = 1;
+  optional Gbx_ProgramTextEntry_Case4_kind kind = 2;
+  optional Gbx_ProgramTextEntry_Case4_options options = 3;
+}
+
+message Gbx_ProgramTextEntry {
+  oneof value {
+    Gbx_ProgramTextEntry_Case1 v1 = 1;
+    Gbx_ProgramTextEntry_Case2 v2 = 2;
+    Gbx_ProgramTextEntry_Case3 v3 = 3;
+    Gbx_ProgramTextEntry_Case4 v4 = 4;
+  }
+}
+
+message Gbx_ProgramTextCatalog_version {
+  // Fixed semantic value: 1
+}
+
+message Gbx_ProgramTextCatalog_gameId {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextCatalog_release {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextCatalog_locale {
+  optional string value = 1;
+}
+
+message Gbx_ProgramTextCatalog_entries_Item {
+  optional Gbx_ProgramTextEntry value = 1;
+}
+
+message Gbx_ProgramTextCatalog_entries {
+  repeated Gbx_ProgramTextCatalog_entries_Item items = 1;
+}
+
+message Gbx_ProgramTextCatalog {
+  optional Gbx_ProgramTextCatalog_version version = 1;
+  optional Gbx_ProgramTextCatalog_gameId gameId = 2;
+  optional Gbx_ProgramTextCatalog_release release = 3;
+  optional Gbx_ProgramTextCatalog_locale locale = 4;
+  optional Gbx_ProgramTextCatalog_entries entries = 5;
+}
+
+message Gbx_LocaleCatalog_version {
+  // Fixed semantic value: 1
+}
+
+message Gbx_LocaleCatalog_defaultLocale {
+  optional string value = 1;
+}
+
+message Gbx_LocaleCatalog_locales_Item_id {
+  optional string value = 1;
+}
+
+message Gbx_LocaleCatalog_locales_Item_label {
+  optional string value = 1;
+}
+
+message Gbx_LocaleCatalog_locales_Item_aliases_Item {
+  optional string value = 1;
+}
+
+message Gbx_LocaleCatalog_locales_Item_aliases {
+  repeated Gbx_LocaleCatalog_locales_Item_aliases_Item items = 1;
+}
+
+message Gbx_LocaleCatalog_locales_Item_fallback_Case1 {
+
+}
+
+message Gbx_LocaleCatalog_locales_Item_fallback_Case2 {
+  optional string value = 1;
+}
+
+message Gbx_LocaleCatalog_locales_Item_fallback {
+  oneof value {
+    Gbx_LocaleCatalog_locales_Item_fallback_Case1 v1 = 1;
+    Gbx_LocaleCatalog_locales_Item_fallback_Case2 v2 = 2;
+  }
+}
+
+message Gbx_LocaleCatalog_locales_Item {
+  optional Gbx_LocaleCatalog_locales_Item_id id = 1;
+  optional Gbx_LocaleCatalog_locales_Item_label label = 2;
+  optional Gbx_LocaleCatalog_locales_Item_aliases aliases = 3;
+  optional Gbx_LocaleCatalog_locales_Item_fallback fallback = 4;
+}
+
+message Gbx_LocaleCatalog_locales {
+  repeated Gbx_LocaleCatalog_locales_Item items = 1;
+}
+
+message Gbx_LocaleCatalog {
+  optional Gbx_LocaleCatalog_version version = 1;
+  optional Gbx_LocaleCatalog_defaultLocale defaultLocale = 2;
+  optional Gbx_LocaleCatalog_locales locales = 3;
+}
+
+message Gbx_InterfaceTextCatalog_version {
+  // Fixed semantic value: 1
+}
+
+message Gbx_InterfaceTextCatalog_locale {
+  optional string value = 1;
+}
+
+message Gbx_InterfaceTextCatalog_messages_Item_id {
+  optional string value = 1;
+}
+
+message Gbx_InterfaceTextCatalog_messages_Item_text {
+  optional string value = 1;
+}
+
+message Gbx_InterfaceTextCatalog_messages_Item {
+  optional Gbx_InterfaceTextCatalog_messages_Item_id id = 1;
+  optional Gbx_InterfaceTextCatalog_messages_Item_text text = 2;
+}
+
+message Gbx_InterfaceTextCatalog_messages {
+  repeated Gbx_InterfaceTextCatalog_messages_Item items = 1;
+}
+
+message Gbx_InterfaceTextCatalog {
+  optional Gbx_InterfaceTextCatalog_version version = 1;
+  optional Gbx_InterfaceTextCatalog_locale locale = 2;
+  optional Gbx_InterfaceTextCatalog_messages messages = 3;
+}
+
 message WireEnvelope {
   optional uint32 wire_version = 1;
   oneof body {
@@ -11240,6 +11520,11 @@ message WireEnvelope {
     Gbx_AudioState body_AudioState = 59;
     Gbx_VoiceRecipe body_VoiceRecipe = 60;
     Gbx_UISoundRequest body_UISoundRequest = 115;
+    Gbx_ProgramTextBinding body_ProgramTextBinding = 116;
+    Gbx_ProgramTextEntry body_ProgramTextEntry = 117;
+    Gbx_ProgramTextCatalog body_ProgramTextCatalog = 118;
+    Gbx_LocaleCatalog body_LocaleCatalog = 119;
+    Gbx_InterfaceTextCatalog body_InterfaceTextCatalog = 120;
     Gbx_MediaTaskState body_MediaTaskState = 61;
     Gbx_Task body_Task = 62;
     Gbx_GraphicsOptions body_GraphicsOptions = 63;

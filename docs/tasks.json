@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G3-07",
+  "current_task": "E1-03",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2320,11 +2320,12 @@
       "milestone": "I1",
       "title": "系统界面locale设置与作品翻译目录",
       "depends_on": [
-        "W1-03B"
+        "W1-03B",
+        "I1-01A"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "partial",
       "outputs": [
         "typed locale setting and fallback catalog",
         "system UI and narrative localization contracts"
@@ -2341,7 +2342,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "当前无locale设置/目录；Unicode和皮肤标签不算完整i18n。先定义语言回退、持久偏好与正文TextId/Revision继承，再实现。"
+      "next_action": "I1-01A有限文本目录/locale偏好已验收；父任务继续DefaultUI全部系统文字、动态正文/语音选择和跨章节目录。独立作品语言切换明确回标题，不猜测跨语言已读继承。"
     },
     {
       "id": "E1-01",
@@ -2479,7 +2480,7 @@
         "docs/evidence/f-01b/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "G1-03后台演出/音乐继续且Auto关闭、F-01B首页读取/设置/原外链/退出及右键选择禁用完成；仍前导+22页。下一G3-07源绑定停音/多SE，再普通对话/炉火/宏CFG；原作完整菜单/tft/原档仍未完成。"
+      "next_action": "本轮8语言资源/文本隔离和独立R2试验见W1-05；仍为44前导+22页。下一G3-07停音/多SE、普通对话/炉火/宏CFG；完整菜单/tft/原档与原作对照仍未完成。"
     },
     {
       "id": "G2-04",
@@ -2706,6 +2707,131 @@
       ],
       "blocker": null,
       "next_action": "有限首页全部可见入口及SDK真实读写/设置已验收；原作独立已读速度、完整书签保护/固定槽制/精确菜单转场未完成，随F-01A普通剧情与原菜单继续。"
+    },
+    {
+      "id": "I1-01A",
+      "milestone": "I1",
+      "title": "有限文本目录绑定与持久locale偏好",
+      "depends_on": [
+        "W1-03B"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "Schema/protobuf locale and text catalogs",
+        "splitProgramText/bindProgramText and explicit fallback factories",
+        "Player catalog binding and persisted locale defaults"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "localized-catalog-roundtrip",
+        "locale-persistence",
+        "text-revision-readunit-binding"
+      ],
+      "evidence": [
+        "docs/evidence/i1-01/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "有限title/plain/rich/choice已完成；DefaultUI完整翻译/运行中换语言/章节文本流仍归I1-01，未承诺跨语言已读继承。"
+    },
+    {
+      "id": "W1-05",
+      "milestone": "W1",
+      "title": "独立R2资源发布与真实域名网络验证",
+      "depends_on": [
+        "W1-02",
+        "I1-01A",
+        "F-01B"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "dedicated R2 bucket and protected test.morgana.love",
+        "current release asset closure with content-addressed paths",
+        "locale-isolated story/UI protobuf and browser network evidence"
+      ],
+      "contracts": [
+        "C01",
+        "C07",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "remote-resource-digests",
+        "authenticated-range-and-cache",
+        "localized-network-play-save-restore"
+      ],
+      "evidence": [
+        "docs/evidence/w1-05/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "R2全量304对象/双域名隔离/本地build预览/最终20线上回归通过；速度限制仅CDP模拟。继续W1离线/真实多浏览器与整作容量，不以Blob冒充网络渐进流。"
+    },
+    {
+      "id": "I1-01B",
+      "milestone": "I1",
+      "title": "实例贡献者PO文本源与可复现protobuf发布",
+      "depends_on": [
+        "I1-01A"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "editable story/UI PO and TOML locale/control declarations",
+        "validated contributor corrections, font subset and text revisions",
+        "reproducible publication and stale-source rejection"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "po-edit-through-production-core",
+        "po-invalid-source-control-rejection",
+        "editable-eight-locale-browser"
+      ],
+      "evidence": [
+        "docs/evidence/i1-01/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "可编辑PO/TOML、严格失败校验、字体子集/Revision、确定性发布、24 TS/16 msgfmt与最终20线上浏览器已验收；I1父任务完整DefaultUI/动态换语言/章节文本流仍待。"
+    },
+    {
+      "id": "E1-03",
+      "milestone": "E1",
+      "title": "用户授权GitHub推送与实例历史折叠/载荷排除",
+      "depends_on": [
+        "E1-01"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "partial",
+      "outputs": [
+        "myouo/galbox SDK remote",
+        "myouo/morgana one root commit without original LICENSE",
+        "reachable-history game/extraction/credential audit"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "no-game-or-extracted-content-in-push",
+        "remote-head-matches-local",
+        "single-instance-root-commit"
+      ],
+      "evidence": [
+        "docs/evidence/e1-03/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "完成PO/双域名最新验收后推送SDK；morgana按用户要求删除本地开发历史与旧LICENSE，以单一根提交和精确force-with-lease替换确认过的旧main，核对远端SHA。"
     }
   ]
 }

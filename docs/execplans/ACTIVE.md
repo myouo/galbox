@@ -1,9 +1,9 @@
 # 当前计划
 
-用户本轮优先：禁止浏览器右键/选字，补首页；后台OP/音乐继续，自动阅读退出且不恢复。G1-03/ADR0041与F-01B有限支持集已验收，见tasks与evidence/g1-03、f-01b。SDK包135464bdfce17645fe8acc23e399fdfbcc4394bfde706dbda51b8becb60e312a，独立工程/home/myo/Desktop/galbox-fata-morgana精确tarball依赖。
+current_task=E1-03。SDK I1-01A有限目录/locale偏好已验收，包7873ffcbf4c082a75c2b2655ba27cfd22800080d6c72d90247b79c2df18f7355（234文件518051字节）。实例PO/TOML作者源、校验/字体子集/Revision/确定性生成已实现；3 Python+24 TS、16个PO msgfmt、8语言转换、strict/build/3本地浏览器通过，最新版20线上浏览器全部通过，证据artifacts/po-remote-browser.log。
 
-已验证SDK255单元、新3+原7浏览器及最后新3、实包consumer；实例3 Python+20 TS/八语言Core/完整10浏览器。原图首页全部入口、设置/图文存读档/安全外链/退出实际工作。独立已读速度、原固定槽制/保护/精确菜单动画仍待，不据此声称完整菜单/整作。
+W1-05已实际建R2专桶并验证304对象64355598字节；两个域名之前各20项通过，当前PO更新后重新部署。test.morgana.love保持本地build预览；testsdk.morgana.love执行网络/故障/慢网回归。速度只在CDP模拟，无站点限速；原曲仍完整摘要Blob。凭据仅外部private/cloudflare/access.md，Worker secret不入Git。
 
-开发hmr=false，源/资源更新不再自动重开会话；手动刷新仍正常启动标题。OP后台用同Core继续，失焦/隐藏清Auto与按键，显式菜单/用户暂停不被focus解除；后台timer受浏览器限制，未认证逐帧AV或所有OS后台行为。
+E1-03用户要求完成后推送：SDK→myouo/galbox保留历史；独立实例→myouo/morgana清除本地历史，单一新根提交并删除原LICENSE。旧远端main=9205fc35eb7f5d870363632a7486cb29f9131da4，只有LICENSE；替换必须精确force-with-lease，远端有变化则拒绝。尚未提交/推送。原包、解包KS/TJS、素材、日志、凭据不得进实例提交，仅清理后的PO翻译文本可进Git。
 
-current_task=G3-07：核对BGM.fadeOutAndStop与SE buf0/1，先有限ADR，再源绑定停音、多剧情SE缓冲/恢复闭包/失败反例。当前bus淡出到0后下一曲才清旧element/1ms复位仍为已知近似。然后F-01A正常对话/炉火/宏CFG。原档/global/继续参照缺失，F-02未开始；I1/W1/G7保留。仅本地提交，不发布。
+最后验证完成，正在本地提交与实际推送并核对远端SHA；下一G3-07源绑定停音/多剧情SE。当前44前导+22页，不是整作/原档认证，I1完整DefaultUI与跨章节/动态翻译仍待。

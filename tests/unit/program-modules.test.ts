@@ -20,4 +20,4 @@ it('typed wire factories reject opcode/value mismatches; dynamic ID relationship
  const b=new ProgramBuilder({gameId:'type-audit',release:'v1',entry:'main'}).function({id:'main',entry:'call',layout:1,params:[],locals:[],returns:'void',code:[instruction('control.call',{at:'call',function:'missing',args:[]}),instruction('control.end',{at:'end'})]});expect(()=>b.build()).toThrow('FUNCTION');
 });
 
-it('i18n is not silently accepted as a supported preference',async()=>{const {defaultPreferences,mergePreferences}=await import('galbox-sdk/settings');expect(()=>mergePreferences(defaultPreferences(),{locale:'en-US'})).toThrow('SCHEMA');});
+it('locale preferences accept validated language tags and reject malformed external input',async()=>{const {defaultPreferences,mergePreferences}=await import('galbox-sdk/settings');expect(mergePreferences(defaultPreferences(),{locale:'en-US'}).locale).toBe('en-US');expect(()=>mergePreferences(defaultPreferences(),{locale:'../en'})).toThrow('SCHEMA');});

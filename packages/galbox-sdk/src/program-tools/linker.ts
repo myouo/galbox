@@ -80,7 +80,7 @@ export function valueKind(operand: Operand, slots: readonly Slot[]): ValueKind {
 }
 export function validateLinks(p: Program,operations:OperationRegistry=emptyOperations,imports:readonly import('../protocol/index.js').ModuleFunction[]=[]): void {
   const unique=(ids:string[],code:string)=>ensure(new Set(ids).size===ids.length,code,'Duplicate identity');
-  unique(p.functions.map(f=>f.id),'FUNCTION_DUPLICATE'); unique(p.assets.map(a=>a.id),'ASSET_DUPLICATE');
+  ensure(!p.textCatalogBinding,'TEXT_CATALOG_REQUIRED','Resolve the selected text catalog before linking/executing');unique(p.functions.map(f=>f.id),'FUNCTION_DUPLICATE'); unique(p.assets.map(a=>a.id),'ASSET_DUPLICATE');
   unique(p.functions.flatMap(f=>f.code.map(i=>i.at)),'ADDRESS_DUPLICATE');
   ensure(p.capabilities.every(c=>capabilities.some(s=>s===c)),'UNSUPPORTED_CAPABILITY',p.capabilities.join(','));
   ensure(!programNeedsExtended(p)||p.capabilities.includes('values.extended'),'VALUE_CAPABILITY','Declare values.extended');

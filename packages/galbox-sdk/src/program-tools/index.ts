@@ -49,3 +49,5 @@ export {loadingPolicy} from "../protocol/loading.js";
 export {ModuleProgram,createModuleProgram} from './module-program.js';
 export {compileProgramModules} from './module-compiler.js';
 export type {CompiledModules} from './module-compiler.js';
+
+export {splitProgramText,bindProgramText,localeCatalog,resolveLocale,interfaceTextCatalog,createTranslator} from './localization.js';
