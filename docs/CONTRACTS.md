@@ -91,3 +91,5 @@ W1-03A/ADR0034补充C06/C07/C11：冷热分片不拆开目录/快照/摘要/回�
 W1-03B：代码I/O不进入Core。未加载call不修改PC/参数，准备失败不安装半份代码；租约身份/长度/SHA/ABI/锚点/链接均检查，取消/迟到不得推进剧情。快照绑定完整清单及该Core用过的模块，不以共享缓存集合替代执行闭包；恢复和旧绑定不符明确拒绝。基础模块集外的能力显式unsupported，不据此宣称全集模块化或i18n已完成。
 
 ADR0042：带textCatalogBinding的Program模板不能直接执行；bind必须验证game/release/locale、完整目录摘要、槽位和TextId/Revision，再还原普通Program。偏好locale不属于剧情快照，读旧档不得回滚偏好；旧偏好缺locale时使用本Player作者默认。未声明翻译不按行配对或猜测已读继承；有限split支持集外明确unsupported。
+
+ADR0046：字符单位等待在遇到控制时采样有效interval，活动剩余时长与采样值进入Snapshot；偏好变化只影响之后的等待。瞬显跳过新字符等待，显完可跳过当前等待；confirm仍是独立输入屏障。固定等待与旧合法数据语义不变，未知新变体在旧实现明确拒绝。

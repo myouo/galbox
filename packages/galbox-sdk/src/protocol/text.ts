@@ -4,7 +4,7 @@ import type {TextState,TextRun,TextStyle,Instruction,DeepReadonly,RichTextState}
 export const textSegmentation='uax29-17.0.0@1';
 type Text=DeepReadonly<TextState>;
 type RichInstruction=Extract<Instruction,{op:'text.rich'}>;
-export type TextToken={kind:'unit';text:string;run:number;style:DeepReadonly<TextStyle>}|{kind:'pause';duration:number}|{kind:'speed';intervalMs:number}|{kind:'confirm'};
+export type TextToken={kind:'unit';text:string;run:number;style:DeepReadonly<TextStyle>}|{kind:'pause';duration:number}|{kind:'pause.units';units:number}|{kind:'speed';intervalMs:number}|{kind:'confirm'};
 export interface TextPlan {content:string;tokens:TextToken[];units:number;}
 function unicode(text:string):void {ensure(!/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(text),'TEXT_UNICODE','Unpaired UTF-16 surrogate');}
 export function compileRichText(runs:readonly DeepReadonly<TextRun>[]):TextPlan {
@@ -13,6 +13,7 @@ export function compileRichText(runs:readonly DeepReadonly<TextRun>[]):TextPlan 
  const tokens:TextToken[]=[];let units=0;offset=0;
  runs.forEach((run,index)=>{
   ensure(boundaries.has(offset),'TEXT_GRAPHEME_BOUNDARY','A run or control splits a grapheme');
+  if(run.kind==='pause.units'){tokens.push({kind:'pause.units',units:run.units});return;}
   if(run.kind==='pause'){tokens.push({kind:'pause',duration:run.duration});return;}
   if(run.kind==='speed'){tokens.push({kind:'speed',intervalMs:run.intervalMs});return;}
   if(run.kind==='confirm'){tokens.push({kind:'confirm'});return;}
@@ -26,10 +27,11 @@ function intervalAt(rich:DeepReadonly<RichTextState>,plan:TextPlan):number {let 
 export function tickRichText(text:TextState,ms:number,plan:TextPlan):void {
  const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');let budget=ms,interval=intervalAt(rich,plan);
  while(rich.cursor<plan.tokens.length||rich.pauseRemainingMs>0){
-  if(rich.pauseRemainingMs>0){const used=Math.min(budget,rich.pauseRemainingMs);rich.pauseRemainingMs-=used;rich.elapsedMs+=used;budget-=used;if(rich.pauseRemainingMs>0)break;}
+  if(rich.pauseRemainingMs>0){const used=Math.min(budget,rich.pauseRemainingMs);rich.pauseRemainingMs-=used;rich.elapsedMs+=used;budget-=used;if(rich.pauseRemainingMs>0)break;delete rich.pauseIntervalMs;}
   const token=plan.tokens[rich.cursor];if(!token)break;
   if(token.kind==='confirm'){rich.waitingForClick=true;rich.remainderMs=0;break;}
-  if(token.kind==='pause'){rich.cursor++;rich.pauseRemainingMs=token.duration;rich.remainderMs=0;continue;}
+  if(token.kind==='pause.units'){rich.cursor++;rich.pauseRemainingMs=token.units*interval;rich.remainderMs=0;if(interval>0)rich.pauseIntervalMs=interval;else delete rich.pauseIntervalMs;continue;}
+  if(token.kind==='pause'){delete rich.pauseIntervalMs;rich.cursor++;rich.pauseRemainingMs=token.duration;rich.remainderMs=0;continue;}
   if(token.kind==='speed'){rich.cursor++;interval=rich.baseIntervalMs===0?0:token.intervalMs;rich.remainderMs=0;continue;}
   const needed=Math.max(0,interval-rich.remainderMs);if(budget<needed){rich.remainderMs+=budget;rich.elapsedMs+=budget;budget=0;break;}
   budget-=needed;rich.elapsedMs+=needed;rich.remainderMs=0;rich.cursor++;text.revealed++;rich.revealedAt.push(rich.elapsedMs);
@@ -38,15 +40,15 @@ export function tickRichText(text:TextState,ms:number,plan:TextPlan):void {
 }
 export function textUnitCount(text:Text):number {return text.rich?countGraphemes(text.content):Array.from(text.content).length;}
 export function isTextConfirming(text:Text):boolean {return text.rich?.waitingForClick===true;}
-function revealedEffectsComplete(text:Text):boolean {const rich=text.rich;if(!rich)return true;let at=0;for(const run of rich.runs){if(run.kind==='pause'||run.kind==='speed'||run.kind==='confirm')continue;const units=run.kind==='break'?1:countGraphemes(run.content);at+=units;const effect=run.kind==='break'?undefined:run.style?.effect,time=rich.revealedAt[Math.min(at,text.revealed)-1];if(effect?.kind==='fade'&&typeof time==='number'&&rich.elapsedMs-time<effect.duration)return false;if(at>=text.revealed)break;}return true;}
+function revealedEffectsComplete(text:Text):boolean {const rich=text.rich;if(!rich)return true;let at=0;for(const run of rich.runs){if(run.kind==='pause'||run.kind==='pause.units'||run.kind==='speed'||run.kind==='confirm')continue;const units=run.kind==='break'?1:countGraphemes(run.content);at+=units;const effect=run.kind==='break'?undefined:run.style?.effect,time=rich.revealedAt[Math.min(at,text.revealed)-1];if(effect?.kind==='fade'&&typeof time==='number'&&rich.elapsedMs-time<effect.duration)return false;if(at>=text.revealed)break;}return true;}
 export function isTextSegmentComplete(text:Text):boolean {return isTextConfirming(text)?revealedEffectsComplete(text):isTextComplete(text);}
 export function isTextComplete(text:Text):boolean {
  const rich=text.rich,count=textUnitCount(text);if(text.revealed!==count)return false;if(!rich)return true;
- const controls=rich.runs.filter(r=>r.kind==='pause'||r.kind==='speed'||r.kind==='confirm').length;if(rich.cursor!==count+controls||rich.pauseRemainingMs>0||rich.waitingForClick)return false;
+ const controls=rich.runs.filter(r=>r.kind==='pause'||r.kind==='pause.units'||r.kind==='speed'||r.kind==='confirm').length;if(rich.cursor!==count+controls||rich.pauseRemainingMs>0||rich.waitingForClick)return false;
  return revealedEffectsComplete(text);
 }
-export function revealRichText(text:TextState,plan:TextPlan):void {const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');if(rich.waitingForClick)return;let start=0;for(let i=0;i<rich.cursor;i++)if(plan.tokens[i]?.kind==='confirm')start=i+1;let end=rich.cursor;while(end<plan.tokens.length&&plan.tokens[end]?.kind!=='confirm')end++;const before=plan.tokens.slice(0,start).filter(t=>t.kind==='unit').length,count=plan.tokens.slice(start,end).filter(t=>t.kind==='unit').length;text.revealed=before+count;rich.cursor=end;rich.pauseRemainingMs=0;rich.remainderMs=0;rich.revealedAt=Array.from({length:before+count},()=>null);if(plan.tokens[end]?.kind==='confirm')rich.waitingForClick=true;}
-export function confirmRichText(text:TextState,plan:TextPlan):void {const rich=text.rich;ensure(rich?.waitingForClick&&plan.tokens[rich.cursor]?.kind==='confirm','TEXT_CONFIRM','No inline confirmation');delete rich.waitingForClick;rich.cursor++;rich.remainderMs=0;rich.pauseRemainingMs=0;tickRichText(text,0,plan);}
+export function revealRichText(text:TextState,plan:TextPlan):void {const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');if(rich.waitingForClick)return;let start=0;for(let i=0;i<rich.cursor;i++)if(plan.tokens[i]?.kind==='confirm')start=i+1;let end=rich.cursor;while(end<plan.tokens.length&&plan.tokens[end]?.kind!=='confirm')end++;const before=plan.tokens.slice(0,start).filter(t=>t.kind==='unit').length,count=plan.tokens.slice(start,end).filter(t=>t.kind==='unit').length;text.revealed=before+count;rich.cursor=end;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;rich.remainderMs=0;rich.revealedAt=Array.from({length:before+count},()=>null);if(plan.tokens[end]?.kind==='confirm')rich.waitingForClick=true;}
+export function confirmRichText(text:TextState,plan:TextPlan):void {const rich=text.rich;ensure(rich?.waitingForClick&&plan.tokens[rich.cursor]?.kind==='confirm','TEXT_CONFIRM','No inline confirmation');delete rich.waitingForClick;rich.cursor++;rich.remainderMs=0;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;tickRichText(text,0,plan);}
 export function validateRichText(text:TextState,source:RichInstruction):void {
  const rich=text.rich;ensure(rich&&!text.template&&rich.at===source.at&&rich.signature===richTextSignature(source),'RESTORE_RICH_SOURCE','Rich origin missing or changed; explicit migration required');
  const plan=compileRichText(rich.runs);ensure(text.textId===source.textId&&text.revision===source.revision&&text.content===plan.content&&rich.runs.length===source.runs.length,'RESTORE_RICH_TEXT','Rich content/identity mismatch');unicode(text.speaker);
@@ -61,9 +63,10 @@ export function validateRichText(text:TextState,source:RichInstruction):void {
   let start=0,units=0;for(let end=0;end<=plan.tokens.length;end++)if(end===plan.tokens.length||plan.tokens[end]?.kind==='confirm'){const count=plan.tokens.slice(start,end).filter(t=>t.kind==='unit').length,times=rich.revealedAt.slice(units,units+count);if(times.some(t=>t===null))ensure(times.length===count&&times.every(t=>t===null)&&rich.cursor>=end&&(rich.cursor>end||rich.pauseRemainingMs===0),'RESTORE_RICH_TIME','Instant reveal must cover a complete segment');units+=count;start=end+1;}
  }
  const before=plan.tokens[rich.cursor-1],next=plan.tokens[rich.cursor],interval=intervalAt(rich,plan);
- ensure(!!rich.waitingForClick===(next?.kind==='confirm'),'RESTORE_RICH_CONFIRM','Confirmation flag/cursor mismatch');
+ ensure(!!rich.waitingForClick===(next?.kind==='confirm'&&rich.pauseRemainingMs===0),'RESTORE_RICH_CONFIRM','Confirmation flag/cursor mismatch');
+ ensure(rich.pauseIntervalMs===undefined||rich.pauseRemainingMs>0&&before?.kind==='pause.units','RESTORE_RICH_PAUSE','Unexpected sampled interval');
  if(rich.waitingForClick)ensure(rich.pauseRemainingMs===0&&rich.remainderMs===0,'RESTORE_RICH_CONFIRM','Timed remainder at click wait');
- else if(rich.pauseRemainingMs>0)ensure(before?.kind==='pause'&&rich.pauseRemainingMs<=before.duration&&rich.remainderMs===0,'RESTORE_RICH_PAUSE','Invalid remaining pause');
+ else if(rich.pauseRemainingMs>0){ensure(rich.remainderMs===0,'RESTORE_RICH_PAUSE','Remainder during pause');if(before?.kind==='pause.units')ensure(rich.pauseIntervalMs!==undefined&&rich.pauseRemainingMs<=before.units*rich.pauseIntervalMs,'RESTORE_RICH_PAUSE','Missing/invalid sampled interval');else ensure(before?.kind==='pause'&&rich.pauseRemainingMs<=before.duration&&rich.pauseIntervalMs===undefined,'RESTORE_RICH_PAUSE','Invalid remaining pause');}
  else if(next)ensure(next.kind==='unit'&&(interval===0?rich.remainderMs===0:rich.remainderMs<interval),'RESTORE_RICH_CURSOR','Noncanonical reveal continuation');
  else ensure(rich.remainderMs===0,'RESTORE_RICH_CURSOR','Remainder after completion');
 }

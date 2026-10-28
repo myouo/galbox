@@ -6592,6 +6592,22 @@ definitions:
           - kind
         additionalProperties: false
         x-proto-tag: 6
+      - type: object
+        properties:
+          kind:
+            type: string
+            const: pause.units
+            x-proto-tag: 1
+          units:
+            type: integer
+            minimum: 1
+            maximum: 300
+            x-proto-tag: 2
+        required:
+          - kind
+          - units
+        additionalProperties: false
+        x-proto-tag: 7
   TextRun:
     oneOf:
       - type: object
@@ -6687,6 +6703,22 @@ definitions:
           - kind
         additionalProperties: false
         x-proto-tag: 6
+      - type: object
+        properties:
+          kind:
+            type: string
+            const: pause.units
+            x-proto-tag: 1
+          units:
+            type: integer
+            minimum: 1
+            maximum: 300
+            x-proto-tag: 2
+        required:
+          - kind
+          - units
+        additionalProperties: false
+        x-proto-tag: 7
   RichTextState:
     type: object
     properties:
@@ -6754,6 +6786,11 @@ definitions:
         type: boolean
         const: true
         x-proto-tag: 12
+      pauseIntervalMs:
+        type: integer
+        minimum: 1
+        maximum: 200
+        x-proto-tag: 13
     required:
       - version
       - segmentation

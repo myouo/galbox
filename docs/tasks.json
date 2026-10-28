@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G3-07",
+  "current_task": "F-01A",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2895,6 +2895,40 @@
       "evidence": [],
       "blocker": null,
       "next_action": "E1-04代码复核发现Player.publish每次通知都parseReleaseManifest并复制资源完整性列表；先在预算内按目录规模测量，再决定缓存不可变投影。不得取消入口校验或共享可变权威；尚无此热点的前后量测，不宣称提速。"
+    },
+    {
+      "id": "G2-05",
+      "milestone": "G2",
+      "title": "按文字速度采样的字符单位等待",
+      "depends_on": [
+        "G2-04",
+        "I1-01A"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "richText.pauseUnits and generated wire variants",
+        "sampled interval and remaining-time snapshot validation",
+        "real DOM/IndexedDB and packed consumer"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "character-wait-preference-sampling",
+        "character-wait-restore-and-confirm",
+        "packed-character-wait"
+      ],
+      "evidence": [
+        "docs/evidence/g2-05/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "在独立实例接入原w/wc，保留源文字/控制/窗口与多语言PO；本分支不覆盖另一会话G3-07。"
     }
   ]
 }

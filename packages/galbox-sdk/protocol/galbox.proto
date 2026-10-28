@@ -5890,6 +5890,19 @@ message Gbx_RichTextSourceRun_Case6 {
   optional Gbx_RichTextSourceRun_Case6_kind kind = 1;
 }
 
+message Gbx_RichTextSourceRun_Case7_kind {
+  // Fixed semantic value: "pause.units"
+}
+
+message Gbx_RichTextSourceRun_Case7_units {
+  optional sint64 value = 1;
+}
+
+message Gbx_RichTextSourceRun_Case7 {
+  optional Gbx_RichTextSourceRun_Case7_kind kind = 1;
+  optional Gbx_RichTextSourceRun_Case7_units units = 2;
+}
+
 message Gbx_RichTextSourceRun {
   oneof value {
     Gbx_RichTextSourceRun_Case1 v1 = 1;
@@ -5898,6 +5911,7 @@ message Gbx_RichTextSourceRun {
     Gbx_RichTextSourceRun_Case4 v4 = 4;
     Gbx_RichTextSourceRun_Case5 v5 = 5;
     Gbx_RichTextSourceRun_Case6 v6 = 6;
+    Gbx_RichTextSourceRun_Case7 v7 = 7;
   }
 }
 
@@ -5984,6 +5998,19 @@ message Gbx_TextRun_Case6 {
   optional Gbx_TextRun_Case6_kind kind = 1;
 }
 
+message Gbx_TextRun_Case7_kind {
+  // Fixed semantic value: "pause.units"
+}
+
+message Gbx_TextRun_Case7_units {
+  optional sint64 value = 1;
+}
+
+message Gbx_TextRun_Case7 {
+  optional Gbx_TextRun_Case7_kind kind = 1;
+  optional Gbx_TextRun_Case7_units units = 2;
+}
+
 message Gbx_TextRun {
   oneof value {
     Gbx_TextRun_Case1 v1 = 1;
@@ -5992,6 +6019,7 @@ message Gbx_TextRun {
     Gbx_TextRun_Case4 v4 = 4;
     Gbx_TextRun_Case5 v5 = 5;
     Gbx_TextRun_Case6 v6 = 6;
+    Gbx_TextRun_Case7 v7 = 7;
   }
 }
 
@@ -6062,6 +6090,10 @@ message Gbx_RichTextState_waitingForClick {
   // Fixed semantic value: true
 }
 
+message Gbx_RichTextState_pauseIntervalMs {
+  optional sint64 value = 1;
+}
+
 message Gbx_RichTextState {
   optional Gbx_RichTextState_version version = 1;
   optional Gbx_RichTextState_segmentation segmentation = 2;
@@ -6075,6 +6107,7 @@ message Gbx_RichTextState {
   optional Gbx_RichTextState_baseIntervalMs baseIntervalMs = 10;
   optional Gbx_RichTextState_revealedAt revealedAt = 11;
   optional Gbx_RichTextState_waitingForClick waitingForClick = 12;
+  optional Gbx_RichTextState_pauseIntervalMs pauseIntervalMs = 13;
 }
 
 message Gbx_TextFont_Case1_kind {
