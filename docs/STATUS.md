@@ -11,3 +11,5 @@ F-01E独立实例已实际运行八语完整新周目序章：44前导/OP＋每�
 F-01E仍in_progress：下一整体第一门scenario1start→zero3的15场景，先核实女中_右体空图层/角色生命周期与位置运动，统一PO/条件流/环境效果，在实际章末sf.scenario1开启原章节菜单，用同章函数和临时Store做隔离回放。通关变体、原作继续/原档认证、tft与真机仍待。主线W1-03C等任务按另一工作区继续，不覆盖其工作。
 
 原创引擎运行pnpm dev；实例从外部工程pnpm sdk:build按gitlink复现实包，公共exports消费，SDK无作品/生成载荷/日志。当前任务事实以tasks.json为准。
+
+G6-02发布后UI修复：旧0bb73f4 CI两片失败已记录；手势初始化/取消和对话框初始焦点改为layout effect，12次复验、19相关浏览器、check及strict consumer通过，新包06efd13b7f45。无Core/Program/存档ABI变化，当前源码CI由Actions继续核对；旧失败不覆盖。

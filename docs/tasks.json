@@ -1857,10 +1857,11 @@
         "touch-keyboard"
       ],
       "evidence": [
-        "docs/evidence/g6-02/REPORT.md"
+        "docs/evidence/g6-02/REPORT.md",
+        "docs/evidence/ui-initialization/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "ADR0030有限默认页面/版本化皮肤/移动布局和输入隔离验收完成；下一G7-01综合原创功能、声明规模、性能归因与独立消费。"
+      "next_action": "默认UI初始化竞态在隔离feat/chapter-runtime修复：layout effect绑定手势/焦点，12次原失败用例、19相关浏览器、check与实包consumer通过；当前分支后续CI结果单独核对，主工作区未提交修改不覆盖。完整系统UI/皮肤既定边界保持。"
     },
     {
       "id": "G7-01",
