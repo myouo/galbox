@@ -10,6 +10,15 @@ const store=new MemoryStore();await store.save('headless',save,0);assert.deepEqu
 await assert.rejects(import('galbox-sdk/runtime'),{code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});
 console.log('Independent Node headless imports and restore passed');
 
+{
+ const {parseJsonValue}=await import('galbox-sdk/protocol'),{decodeWire}=await import('galbox-sdk/wire');
+ let calls=0;const input={safe:true};Object.defineProperty(input,'toJSON',{value(){calls++;return {replaced:true};}});
+ assert.throws(()=>parseJsonValue(input),/INPUT_JSON/);assert.equal(calls,0);
+ const sparse=new Array(1);sparse.extra='lost';assert.throws(()=>parseJsonValue(sparse),/INPUT_JSON/);
+ assert.throws(()=>decodeWire('JsonValue',Uint8Array.from([8,1,122,8,34,6,10,1,97,10,1,98])),/PROTO_DUPLICATE/);
+ console.log('Packed wire boundaries reject serialization hooks, sparse arrays and duplicate scalar fields');
+}
+
 const {program1,program2,operations1,operations2,counter2,initialized}=await import('./compiled/extension.js');
 const plugin=createCore(program1(),undefined,undefined,{operations:operations1});plugin.run(100);const pluginSave=plugin.capture();
 const upgrade=createCore(program2(),undefined,pluginSave,{operations:operations2});const call=upgrade.capture().invocations.find(v=>v.phase==='waiting');assert.ok(call?.wait);

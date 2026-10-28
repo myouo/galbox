@@ -2832,6 +2832,69 @@
       ],
       "blocker": null,
       "next_action": "两仓库main已实际推送并核对远端。morgana为ccdaf3758ac27bd3faab1f1a452f81a1090c95bc单根提交、88文件/16 PO，无LICENSE/原包/解包/素材/凭据；本地旧历史已清理。后续继续执行相同边界，不擅自推其他分支。"
+    },
+    {
+      "id": "E1-04",
+      "milestone": "E1",
+      "title": "SDK复核与外部JSON/protobuf输入边界加固",
+      "depends_on": [
+        "E1-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "descriptor-owned JSON detachment without caller serialization hooks",
+        "strict singular protobuf field validation",
+        "current SDK audit and prioritized remaining work",
+        "bounded unit-test worker concurrency without relaxed assertions or timeouts",
+        "explicit background-policy, paused-frame and observable IME browser regression setup"
+      ],
+      "contracts": [
+        "C01",
+        "C12"
+      ],
+      "acceptance": [
+        "reject-input-hooks-and-sparse-decorated-arrays",
+        "reject-duplicate-protobuf-scalars-and-map-entry-fields",
+        "full-unit-browser-and-independent-consumer-regression"
+      ],
+      "evidence": [
+        "docs/decisions/0044-wire-input-isolation.md",
+        "docs/evidence/e1-04/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "check及默认42文件267单元通过；172浏览器首次169通过，修复3处测试配置/时序后相关24项及IME连续3次通过；实包consumer/包边界/3周期228输入性能门槛通过。下一G3-07；规模优化W1-03C及待量测H3-03，其他缺口见报告。"
+    },
+    {
+      "id": "H3-03",
+      "milestone": "H3",
+      "title": "Player发布与资源只读视图的目录规模测量和复用",
+      "depends_on": [
+        "H3-01",
+        "W1-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "catalog-size profiling of Player.publish",
+        "identity-invalidated immutable release/resource view reuse if profiling warrants it"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "unchanged-release-identity-and-owned-public-views",
+        "catalog-scale-before-after-profile",
+        "resource-load-eviction-and-recreation-invalidation"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "E1-04代码复核发现Player.publish每次通知都parseReleaseManifest并复制资源完整性列表；先在预算内按目录规模测量，再决定缓存不可变投影。不得取消入口校验或共享可变权威；尚无此热点的前后量测，不宣称提速。"
     }
   ]
 }

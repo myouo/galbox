@@ -90,6 +90,7 @@ test('blocked real audio startup retries the same task without repeating narrati
 test('old input epoch cannot act on an identical restored prompt; pause reasons remain independent',async({page})=>{
  await page.goto('/');await page.locator('body').click({position:{x:1,y:1}});const result=await page.evaluate(async()=>{
   const url='http://127.0.0.1:4174/sdk.js';const sdk:typeof Harness=await import(url);const p=await(await fetch('/program.json')).json();const mount=document.createElement('div');document.body.append(mount);const player=await sdk.createPlayer({program:p,provider:sdk.createHttpProvider(p,location.href),mount,saveCompatibilitySeries:'input',database:'input'});
+  await player.updatePreferences({playback:{backgroundPlayback:'pause'}});
   await player.start();const oldEpoch=player.getSnapshot().epoch;const prompt=player.getSnapshot().core?.run.wait;if(prompt?.kind!=='text')throw new Error('prompt');await player.input('reveal',prompt.prompt,oldEpoch);await player.save();await player.load();
   await player.input('advance',prompt.prompt,oldEpoch);const ignored=player.getSnapshot().core?.run.text?.textId;
   player.setPaused(true);player.setMenu(true);player.setMenu(false);const paused=player.getSnapshot().paused;player.setPaused(false);

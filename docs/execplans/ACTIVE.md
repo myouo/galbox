@@ -1,11 +1,9 @@
 # 当前计划
 
-本轮I1-01A/B、W1-05、E1-03已完成；下一current_task=G3-07。SDK258单元/17+4浏览器/strict/build/实际tarball消费者验证通过，实例3 Python+24 TS/16 PO msgfmt/8语言转换/确定性生成/本地3/最后线上20浏览器通过。
+current_task=G3-07。E1-04检查与修复已验收：JSON输入隔离/完整数组、protobuf单值唯一性，见ADR0044及evidence/e1-04/REPORT.md。生产类型与合法存档ABI保持。
 
-可编辑文本在外部locales/<BCP47>/story.po与ui.po，语言/控制为TOML，转换前应用修正并检查字体；SDK接收正式Schema/protobuf绑定数据。SDK包7873ffcbf4c082a75c2b2655ba27cfd22800080d6c72d90247b79c2df18f7355，当前实例仅44前导+22页。
+最后check/默认42文件267单元通过；全量浏览器172项首次169通过，3处既有测试配置/时序修正后相关24项及IME连续3次通过。实包consumer、包白名单和3周期228输入性能门槛通过。原始失败/修正记录均在ignored artifacts/sdk-audit。最终SDK包SHA256=85bd9d599bc969485e89230cd95dd3fc50dc7339d65ca4456a29ad53393cfc0f；独立作品仍使用前轮包，未据此重新认证实例。
 
-R2桶morgana-sdk-network-test已上传/验证304对象64355598字节。test.morgana.love为本地build预览（52文件逐字节一致），testsdk.morgana.love用于自动化回归，限速仅CDP模拟。preview版本512394da-2465-4f27-8df3-703dbde953b9，regression版本eff76469-9112-417f-ad08-06d85611d341。凭据仅外部ignored private/cloudflare/access.md。
+下一G3-07先定义绑定具体音源的淡出停止及多SE有限支持集/ADR，再Schema/真实工厂/Core/Host/完整恢复与失败反例。大作品优化优先W1-03C；新增H3-03只读发布/资源投影为待profiling候选。I1完整DefaultUI/动态目录、W1-03B2高级模块、W1-04离线/真实平台及G7综合验收仍待。
 
-GitHub已实际推送myouo/galbox main（保留SDK历史）与myouo/morgana main（单根ccdaf3758ac27bd3faab1f1a452f81a1090c95bc，88文件16 PO，无LICENSE/原包/解包/素材/凭据）；实例旧本地开发历史已清理，未推其他旧分支/tag。远端状态与证据见evidence/e1-03/REPORT.md。
-
-下一按源实现G3-07淡出停止/多剧情SE，然后普通对话/炉火/宏CFG。整作/原档/完整菜单/tft、DefaultUI完整i18n/章节文本流、离线/真实移动和多浏览器仍未完成。原曲仍完整摘要Blob，不冒充版本化渐进网络流；旧槽保留，无隐式release迁移。
+前轮I1-01A/B、W1-05、E1-03完成事实保留：实例单根ccdaf3758ac27bd3faab1f1a452f81a1090c95bc，304对象R2专桶、双域名分离和可编辑PO。当前44前导+22页，整作/原档未认证，原曲仍完整摘要Blob。SDK沿既有授权保留历史并正常快进推送，原作载荷/日志/凭据不入Git。

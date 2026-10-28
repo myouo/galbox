@@ -23,3 +23,35 @@ it('rejects corrupted UTF-8 and multiple envelope bodies before accepting a DTO'
  const duplicated=new Uint8Array(bytes.length*2-2);duplicated.set(bytes);duplicated.set(bytes.subarray(2),bytes.length);expect(()=>decodeWire('JsonValue',duplicated)).toThrow('PROTO_TYPE');
  expect(()=>encodeWire('Value',{kind:'i32',value:Number.MAX_SAFE_INTEGER+1})).toThrow('PROTO_SCHEMA');
 });
+
+// Raw messages use the public IDL's stable tags; bypass encodeWire so malformed
+// duplicate fields reach the decoder exactly as they would from external bytes.
+function message(field:number,...children:Uint8Array[]):Uint8Array {
+ const size=children.reduce((sum,child)=>sum+child.byteLength,0);
+ const header=protobuf.Writer.create().uint32(field*8+2).uint32(size).finish();
+ const bytes=new Uint8Array(header.length+size);bytes.set(header);let offset=header.length;
+ for(const child of children){bytes.set(child,offset);offset+=child.length;}
+ return bytes;
+}
+function jsonEnvelope(payload:Uint8Array):Uint8Array {return Uint8Array.from([8,1,...message(15,payload)]);}
+it.each([
+ ['string',Uint8Array.from([10,1,97,10,1,98]),4],
+ ['boolean',Uint8Array.from([8,0,8,1]),2],
+ ['integer',Uint8Array.from([8,2,8,4]),3],
+] as const)('rejects duplicate %s scalar fields instead of replacing the first value',(_name,scalar,branch)=>{
+ expect(()=>decodeWire('JsonValue',jsonEnvelope(message(branch,scalar)))).toThrow('PROTO_DUPLICATE');
+});
+it('rejects duplicate floating point fields in preference imports',()=>{
+ const scalar=protobuf.Writer.create().uint32(9).double(.5).uint32(9).double(1).finish();
+ const body=message(33,message(1,scalar),...[2,3,4].map(field=>message(field,protobuf.Writer.create().uint32(9).double(1).finish())));
+ expect(()=>decodeWire('AudioPreferences',Uint8Array.from([8,1,...body]))).toThrow('PROTO_DUPLICATE');
+});
+it('rejects duplicate map entry keys and values while accepting distinct repeated entries',()=>{
+ const nullValue=message(1,Uint8Array.from([10,0]));
+ const key=Uint8Array.from([10,1,97]);
+ const duplicateKey=message(1,key,key,message(2,nullValue));
+ const duplicateValue=message(1,key,message(2,nullValue),message(2,nullValue));
+ for(const entry of [duplicateKey,duplicateValue])expect(()=>decodeWire('JsonValue',jsonEnvelope(message(6,entry)))).toThrow('PROTO_DUPLICATE');
+ expect(decodeWire('JsonValue',encodeWire('JsonValue',{a:null,b:null}))).toEqual({a:null,b:null});
+ expect(decodeWire('JsonValue',encodeWire('JsonValue',[1,1]))).toEqual([1,1]);
+});

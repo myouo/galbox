@@ -1,17 +1,11 @@
 # galbox-sdk 当前状态
 
-2026-10-28，基线149c2d6；本轮优先I1有限文本/语言隔离与用户授权的独立R2网络试验。固定TS Core/Host、Pixi WebGL/Canvas、DOM正文、可选React、IndexedDB/protobuf；真实作品仍在仓库外，M0–M2已完成，不把本轮写成整作完成。
+2026-10-28，代码基线4cfa54f，前轮文档收尾83f1576。本轮E1-04完成，下一任务G3-07。唯一TS Core/Host、Pixi WebGL/Canvas、DOM正文、可选React、IndexedDB/protobuf边界保持。
 
-I1-01A/ADR0042已验收：ProgramTextCatalog拆分title/plain/rich/choice，带绑定模板不能直接执行；公共split/bind校验完整摘要、game/release/locale与TextId/Revision，字节还原标准Program，无Core翻译I/O。LocaleCatalog默认/别名/显式回退，InterfaceTextCatalog；locale偏好独立持久，旧记录/重新加载继承作者默认，旧剧情读档不回滚偏好。I1-01父任务仍in_progress：DefaultUI完整翻译、运行中正文/语音切换、章节文本流/跨语言已读继承未完成。
+E1-04已验收：修复外部JSON隐藏toJSON执行、稀疏数组伪装及protobuf重复单值覆盖，支持集见ADR0044。Schema/公开类型/合法存档ABI不变。check与默认42文件267单元通过；单元并发限4，原10秒超时不变。完整172浏览器首次169通过，修复后台策略/截图时序/异步IME测试后相关24项及IME连续3次通过；无删断言或skip。实际tarball消费者、包边界和3周期228输入性能通过：API P95 34.1ms，dispose最大256.3ms。新包234文件518202字节，SHA256=85bd9d599bc969485e89230cd95dd3fc50dc7339d65ca4456a29ad53393cfc0f。原始证据artifacts/sdk-audit，短报告evidence/e1-04/REPORT.md。新发现的H3-03（Player发布清单/资源投影重复校验复制）仅列待量测优化，不宣称提速。
 
-SDK check/生成/strict/纯Core/导入/仓库通过，41文件258单元；localization/preferences/loading 17浏览器及reload修正后4项复验通过。最终实包consumer播放/存档/恢复/备份和公开类型通过。独立实例包SHA256=7873ffcbf4c082a75c2b2655ba27cfd22800080d6c72d90247b79c2df18f7355，234文件518051压缩字节，无游戏/日志/证据/maps/schema。证据evidence/i1-01/REPORT.md，raw ignored artifacts/i18n。
+现有I1-01A/B、W1-05、E1-03已完成。独立实例位于/home/myo/Desktop/galbox-fata-morgana，通过精确实包依赖SDK；上一验收包SHA256=7873ffcbf4c082a75c2b2655ba27cfd22800080d6c72d90247b79c2df18f7355。本轮SDK改动尚未替换实例依赖。实例8语言PO/TOML、R2专桶304对象/64355598字节、最终20线上回归证据保留；目前仍只有44静态前导+22页。test.morgana.love保持本地build预览，testsdk.morgana.love负责自动化网络回归，限速仅CDP模拟；原曲仍完整摘要Blob。
 
-独立/home/myo/Desktop/galbox-fata-morgana安装精确tarball，8语言转换仍真实生产Core验证44前导/22页/两恢复切点。publication只取当前Program+原菜单资源闭包，atomic generated/site发布；旧public只是ignored构建暂存，不进入Vite/上传。304对象64355598字节，完整SHA路径；共享资源与BCP47语言资源隔离，剧情/UI文本单独protobuf，浏览器只加载所选语言。语言设置确认后回标题，文本/美术/字体/偏好同步，存档按语言隔离。右键/选字禁止、原菜单与后台OP策略保留。
+前轮E1-03已核对SDK保留历史的实际推送与实例单根发布，证据在evidence/e1-03；开始检查时实例head为ccdaf3758ac27bd3faab1f1a452f81a1090c95bc。
 
-W1-05：独立桶morgana-sdk-network-test含304对象64355598字节，全量公网SHA与HTTP/鉴权/HIT已验。按用户追加要求，test.morgana.love为本地build预览，testsdk.morgana.love为独立Worker/目录回归；限速仅是CDP测试模拟，无服务端下载限额。两个站点旧基线各20浏览器通过；预览52文件与本地dist逐字节一致。PO源功能更新后最终20线上项全部通过，两个站点已部署最新构建。
-
-I1-01B：用户要求贡献者能修正文本，实例新增locales/<BCP47>/story.po与ui.po、语言及控制TOML。原KS/TJS/解包与二进制仍ignored，仅整理后的PO文本按用户授权纳入Git。严格验证ID/英文来源/语言/空译文/fuzzy/控制标记，转换前应用修正并重建字体子集，修正页Revision改变；构建拒绝新PO/旧Program混用。3 Python+24 TS、16个PO GNU msgfmt、8语言真实Core/资源/恢复、strict/build、本地3浏览器通过；重复publication字节一致。最新20项线上回归已全部通过（零失败/skip/flaky）；预览与本地build逐文件一致。
-
-E1-03已完成：本轮用户授权SDK推myouo/galbox（保留历史），实例推myouo/morgana（全新单一根提交，删除原LICENSE）。原包/解包/素材/凭据不得进GitHub，整理后PO翻译可提交；SDK仅含原创fixture，保留旧历史不等于将旧日志重放进当前树。已审计并实际推送两仓库main；SDK保留历史，morgana为ccdaf3758ac27bd3faab1f1a452f81a1090c95bc单根提交，GitHub确认无LICENSE、88文件/16 PO，无原包/解包/素材，旧本地开发历史已清除。
-
-I1-01A/B、W1-05、E1-03本轮门槛完成，下一G3-07按源淡出停止/多SE、正常对话/炉火/宏CFG。I1父任务、整作/原档/完整菜单/tft/动态换语言/离线/真实多浏览器与移动设备仍未完成。当前仍44静态前导+22页；OP为完整摘要Blob，Range服务不冒充实例渐进流。旧槽保留，无隐式release迁移。资料/登录/日志都在独立工程ignored目录。
+精确下一步：G3-07先声明绑定具体音源的淡出停止/多SE有限支持集与ADR。大作品优化优先W1-03C热记录粒度/容量；随后I1-01完整DefaultUI翻译、W1-03B2高级模块闭包、W1-04持久缓存/离线/真实浏览器与移动设备、G7-01综合验收。N/F/M6真实原档和整作认证仍未完成，不以SDK通用测试替代。运行原创验证应用用pnpm dev。
