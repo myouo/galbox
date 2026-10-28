@@ -32,3 +32,12 @@ it('a failed preparation preserves the visible cut and progress, retries the sam
  await runtime.start();const first=core.capture().wait;if(first?.kind!=='text')throw new Error('text');core.accept({type:'reveal',prompt:first.prompt,inputId:'reveal'});const initial=runtime.capture(),w=initial.wait;if(w?.kind!=='text')throw new Error('text');const advance=runtime.dispatch({type:'advance',prompt:w.prompt,inputId:'advance'}).catch(e=>String(e));expect(runtime.resourceView().phase).toBe('loading');expect(runtime.view().run.text?.textId).toBe('intro');expect(()=>runtime.capture()).toThrow('RESOURCE_PREPARING');await expect(runtime.flushAll()).rejects.toThrow('RESOURCE_PREPARING');expect((await store.read()).profile.read).toEqual([]);
  const late=runtime.dispatch({type:'advance',prompt:w.prompt,inputId:'late'});gate.reject(new Error('network unavailable'));await turns();expect(await advance).toContain('network unavailable');expect(runtime.resourceView().phase).toBe('failed');expect(cancels).toBe(1);expect(effects).toBe(0);gate=deferred<void>();const failedRetry=runtime.retryResources().catch(e=>String(e));gate.resolve();await turns();expect(await failedRetry).toContain('device commit failed');expect(effects).toBe(0);expect(runtime.resourceView().phase).toBe('failed');gate=deferred<void>();const retry=runtime.retryResources();gate.resolve();await turns();scheduler.drain();await Promise.all([retry,late]);expect(runtime.capture().globals.n).toEqual(i32(1));expect(runtime.capture().history).toHaveLength(1);expect(runtime.capture().wait?.at).toBe('next');expect(prepared).toBe(3);expect(commits).toBe(1);expect(effects).toBe(1);expect(effectAsset).toBe('voice');await runtime.flushAll();expect((await store.read()).profile.read).toEqual(['intro@v1']);runtime.stop();
 });
+it('lookahead follows finite same-function labels, preserves branch fences and stops cycles',()=>{
+ const p=program(),fn=p.functions[0]!,core=createCore(p);core.run(100);const s=core.capture(),before=core.capture();
+ fn.code.splice(1,0,instruction('control.jump',{at:'source-label',target:'image'}));
+ expect(lookaheadAssets(p,s,loadingPolicy({mode:'balanced',lookahead:2}))).toEqual(['bg']);expect(core.capture()).toEqual(before);
+ fn.code.splice(2,0,instruction('control.jump',{at:'unreachable',target:'end'}));
+ expect(lookaheadAssets(p,s,loadingPolicy({mode:'balanced',lookahead:2}))).toEqual(['bg']);
+ fn.code[1]=instruction('control.jump',{at:'source-label',target:'source-label'});
+ expect(lookaheadAssets(p,s,loadingPolicy({mode:'balanced',lookahead:8}))).toEqual([]);
+});

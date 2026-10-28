@@ -66,3 +66,6 @@ export function materializeBackupRestore(plan:PreparedBackupRestore,options:Back
   const stored=plans.get(plan);ensure(stored,'BACKUP_PLAN','Expected a prepared backup handle');const operations=options.operations??emptyOperations,program=linkProgram(options.program,operations).copy();
   ensure(stored.namespace===storageNamespace(program.gameId,options.series)&&stored.signature===canonical(program)&&stored.operations===operations,'BACKUP_PLAN_STALE','Program, series or operation registry changed');return parsePortableBackup(stored.backup);
 }
+
+export {defineSavedGameMigration} from './saved-game.js';
+export type {SavedGameMigration,SavedGameMigrationDefinition,SavedGameMigrationInput,SavedGameMigrationOutput} from './saved-game.js';

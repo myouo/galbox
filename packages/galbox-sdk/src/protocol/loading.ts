@@ -15,6 +15,17 @@ export function chapterAssets(p:LoadingOptions,s:DeepReadonly<Snapshot>):string[
 function instructionAssets(p:Program,i:Instruction):string[] {switch(i.op){case 'stage.put':return [i.object.asset];case 'stage.image':case 'audio.play':case 'audio.track':case 'video.play':return [i.asset];case 'stage.transition':return [i.asset];case 'stage.rule':return [i.asset,i.rule];case 'ui.show':return p.ui?.screens.find(s=>s.id===i.screen)?.controls.flatMap(c=>c.kind==='image'?[c.asset]:[])??[];default:return [];}}
 /** Static bounded hints only: never execute expressions, plugins or branch choices. */
 export function lookaheadAssets(p:Program,s:DeepReadonly<Snapshot>,policy:LoadingOptions):string[] {
- if(policy.mode!=='balanced'||!policy.lookahead||!s.wait||!['text','delay','group','media','video'].includes(s.wait.kind))return [];const f=s.frames.at(-1),fn=p.functions.find(fn=>fn.id===f?.functionId);if(!fn)return [];const at=fn.code.findIndex(i=>i.at===f?.pc);if(at<0)return [];const ids=new Set<string>();let pages=0;
- for(const i of fn.code.slice(at+1,at+129)){if(i.op.startsWith('control.')||i.op==='choice'||i.op==='interaction.prompt'||i.op==='extension.invoke'||i.op==='ui.wait')break;for(const id of instructionAssets(p,i))ids.add(id);if(['text.page','text.template','text.rich'].includes(i.op)&&++pages>=policy.lookahead)break;if(ids.size>=16)break;}return [...ids].slice(0,16);
+ if(policy.mode!=='balanced'||!policy.lookahead||!s.wait||!['text','delay','group','media','video'].includes(s.wait.kind))return [];
+ const frame=s.frames.at(-1),fn=p.functions.find(f=>f.id===frame?.functionId);if(!fn)return [];
+ const positions=new Map(fn.code.map((i,n)=>[i.at,n]));let cursor=positions.get(frame?.pc??'');if(cursor===undefined)return [];cursor++;
+ const ids=new Set<string>(),visited=new Set<number>();let pages=0;
+ for(let scanned=0;scanned<128&&cursor<fn.code.length;scanned++){
+  if(visited.has(cursor))break;visited.add(cursor);const i=fn.code[cursor];if(!i)break;
+  if(i.op==='control.jump'){const target=positions.get(i.target);if(target===undefined)break;cursor=target;continue;}
+  if(i.op.startsWith('control.')||i.op==='choice'||i.op==='interaction.prompt'||i.op==='extension.invoke'||i.op==='ui.wait')break;
+  for(const id of instructionAssets(p,i)){if(ids.size===16)break;ids.add(id);}
+  if(['text.page','text.template','text.rich'].includes(i.op)&&++pages>=policy.lookahead||ids.size>=16)break;
+  cursor++;
+ }
+ return [...ids];
 }
