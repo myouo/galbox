@@ -1586,6 +1586,10 @@ definitions:
               - replay
               - stop
             x-proto-tag: 10
+          buffer:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 11
         required:
           - op
           - at
@@ -2233,6 +2237,79 @@ definitions:
           - vague
         additionalProperties: false
         x-proto-tag: 65
+      - type: object
+        properties:
+          op:
+            type: string
+            const: audio.source.fade
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          source:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          to:
+            $ref: "#/definitions/StageNumberExpression"
+            x-proto-tag: 5
+          duration:
+            $ref: "#/definitions/I32Expression"
+            x-proto-tag: 6
+          easing:
+            type: string
+            enum:
+              - linear
+              - ease-in
+              - ease-out
+              - ease-in-out
+            x-proto-tag: 7
+          policy:
+            type: string
+            enum:
+              - reject
+              - replace
+            x-proto-tag: 8
+          stop:
+            type: boolean
+            x-proto-tag: 9
+        required:
+          - op
+          - at
+          - task
+          - source
+          - to
+          - duration
+          - easing
+          - policy
+          - stop
+        additionalProperties: false
+        x-proto-tag: 66
+      - type: object
+        properties:
+          op:
+            type: string
+            const: audio.source.stop
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          source:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+        required:
+          - op
+          - at
+          - source
+        additionalProperties: false
+        x-proto-tag: 67
   Function:
     type: object
     properties:
@@ -2372,6 +2449,14 @@ definitions:
       textCatalogBinding:
         $ref: "#/definitions/ProgramTextBinding"
         x-proto-tag: 19
+      sfxBuffers:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        minItems: 1
+        maxItems: 8
+        x-proto-tag: 20
     required:
       - version
       - gameId
@@ -2567,6 +2652,7 @@ definitions:
           - stage
           - media
           - audio-fade
+          - audio-source-fade
           - video
         x-proto-tag: 3
       elapsed:
@@ -2639,6 +2725,13 @@ definitions:
       videoTask:
         $ref: "#/definitions/VideoTaskState"
         x-proto-tag: 20
+      buffer:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 21
+      sourceFade:
+        $ref: "#/definitions/AudioSourceFadeState"
+        x-proto-tag: 22
     required:
       - id
       - status
@@ -2980,6 +3073,10 @@ definitions:
       programModules:
         $ref: "#/definitions/ProgramModuleBinding"
         x-proto-tag: 27
+      audioSourcesSignature:
+        type: string
+        pattern: ^[^\x00]{1,2048}$
+        x-proto-tag: 28
     required:
       - version
       - release
@@ -9214,6 +9311,51 @@ definitions:
       - from
       - to
       - easing
+    additionalProperties: false
+  AudioSourceFadeState:
+    type: object
+    properties:
+      version:
+        type: integer
+        const: 1
+        x-proto-tag: 1
+      signature:
+        type: string
+        pattern: ^[^\x00]{1,65536}$
+        x-proto-tag: 2
+      source:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 3
+      from:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 4
+      to:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 5
+      easing:
+        type: string
+        enum:
+          - linear
+          - ease-in
+          - ease-out
+          - ease-in-out
+        x-proto-tag: 6
+      stop:
+        type: boolean
+        x-proto-tag: 7
+    required:
+      - version
+      - signature
+      - source
+      - from
+      - to
+      - easing
+      - stop
     additionalProperties: false
   AudioState:
     type: object

@@ -5,3 +5,5 @@ export function publishResult(input,name){
  if(!Object.hasOwn(input,'name')){assert.deepEqual(Object.keys(input),[name],'Expected one package-keyed npm result');value=input[name];}
  assert.ok(value&&typeof value==='object'&&!Array.isArray(value),'Expected package metadata');assert.equal(value.name,name);return value;
 }
+
+export function npmPublishResult(json,name){return publishResult(JSON.parse(json),name);}

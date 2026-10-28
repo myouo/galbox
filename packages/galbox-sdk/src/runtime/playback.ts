@@ -15,6 +15,7 @@ export class PlaybackController {
  private reset():void{this.eligible=false;this.elapsed=0;}
  effect(effect:Effect):void {
   if(effect.type==='audio-stop'&&effect.channel==='voice'){this.voice=null;this.reset();}
+  if(effect.type==='audio-source-stop'&&this.voice?.task===effect.task&&this.voice.attempt===effect.attempt){this.voice=null;this.reset();}
   if(effect.type==='audio'&&effect.task.channel==='voice'){this.voice={task:effect.task.id,attempt:effect.task.attempt,loop:effect.task.loop??false,state:'pending'};this.reset();}
  }
  started(task:string,attempt:number,result:'completed'|'blocked'|'failed'):void{if(this.voice?.task!==task||this.voice.attempt!==attempt||this.voice.state!=='pending')return;this.voice.state=result==='completed'?'playing':result;this.reset();}

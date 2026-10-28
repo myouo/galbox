@@ -25,9 +25,10 @@ export class InputController {
   const now=performance.now(),state=this.actions.state(),target=event.target;
   const cancel=()=>{this.wheelLast=now;this.wheelSum=0;this.wheelSpent=true;};
   if(this.bindings.wheel===false||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||!Number.isFinite(event.deltaY)||!Number.isFinite(event.deltaX)||event.deltaY===0||Math.abs(event.deltaX)>=Math.abs(event.deltaY)||![0,1,2].includes(event.deltaMode)){cancel();return;}
-  if(!state.playing||state.paused||state.menu||!state.text||state.prompt===null||!(target instanceof Element)||target.closest('button,a,input,textarea,select,[contenteditable]:not([contenteditable="false"]),[data-galbox-system-dialog]')){cancel();return;}
+  if(!state.playing||state.paused||state.menu||!(target instanceof Element)||target.closest('button,a,input,textarea,select,[contenteditable]:not([contenteditable="false"]),[data-galbox-system-dialog]')){cancel();return;}
+  const direction=Math.sign(event.deltaY);
+  if(direction>0?(!state.text||state.prompt===null):!state.history){cancel();return;}
   for(let node:Element|null=target;node&&root.contains(node);node=node.parentElement){const overflow=getComputedStyle(node).overflowY;if(node.scrollHeight>node.clientHeight+1&&['auto','scroll'].includes(overflow)){cancel();return;}if(node===root)break;}
-  const direction=Math.sign(event.deltaY);if(direction<0&&!state.history){cancel();return;}
   event.preventDefault();
   if(now-this.wheelLast>=220){this.wheelSum=0;this.wheelSpent=false;this.wheelEpoch=state.epoch;this.wheelPrompt=state.prompt;this.wheelDirection=direction;}
   this.wheelLast=now;
@@ -36,7 +37,7 @@ export class InputController {
   const unit=event.deltaMode===1?16:event.deltaMode===2?Math.max(1,root.clientHeight||root.ownerDocument.documentElement.clientHeight):1;
   this.wheelSum+=Math.min(960,Math.abs(event.deltaY)*unit);if(this.wheelSum<48)return;
   this.wheelSpent=true;
-  if(direction>0)this.actions.advance(state.prompt,state.epoch);else this.actions.history();
+  if(direction>0&&state.prompt!==null)this.actions.advance(state.prompt,state.epoch);else this.actions.history();
  }
  private editable(target:EventTarget|null):boolean{return target instanceof Element&&!!target.closest('input,textarea,select,[contenteditable="true"]');}
  private down(event:KeyboardEvent):void {

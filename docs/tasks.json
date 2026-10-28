@@ -2286,7 +2286,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "见父任务W1-03及当前ADR/STATUS；不得提前声明总体完成。"
+      "next_action": "下一先以真实IndexedDB建立profile/head/回执热根写入量与长历史/多槽位基线，定义有限逐记录布局/留存与容量ADR，再实施原子迁移；回执幂等和被取代head不可复活必须保留，不以提高4M预算冒充支持大作。"
     },
     {
       "id": "W1-03B2",
@@ -2313,7 +2313,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "在基础模块路径验证后补齐高级指令/元数据签名与恢复闭包，不用基础模块通过替代全部功能模块化。"
+      "next_action": "在基础模块路径上补齐高级指令/元数据签名与恢复闭包，包括audio.sources的具名SE和源包络；单体路径已支持不代表模块路径支持。"
     },
     {
       "id": "I1-01",
@@ -2615,9 +2615,9 @@
         "G3-02",
         "G3-06"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "source-bound fade/stop envelopes",
         "declared concurrent SFX buffers and full restore closure"
@@ -2635,9 +2635,12 @@
         "independent-story-sfx-buffers",
         "audio-buffer-restore-and-late-callbacks"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/decisions/0045-source-audio-buffers.md",
+        "docs/evidence/g3-07/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "核对原BGM.fadeOutAndStop和SE buf0/1，先ADR/有限Schema/真实工厂，再Core/Host/快照/失败原子反例；旧公共协议无完整迁移时明确拒绝并保留旧档。"
+      "next_action": "ADR0045有限源包络/8个SE缓冲、初始激活与恢复闭包完成；check/284单元/20+4相关浏览器/精确实包与备份/API/包/性能通过，代码3e31187远程CI全部success（176浏览器）。下一W1-03C；基础模块新音频归W1-03B2，真实实例迁移另验。"
     },
     {
       "id": "G1-03",
@@ -2897,6 +2900,33 @@
       "next_action": "E1-04代码复核发现Player.publish每次通知都parseReleaseManifest并复制资源完整性列表；先在预算内按目录规模测量，再决定缓存不可变投影。不得取消入口校验或共享可变权威；尚无此热点的前后量测，不宣称提速。"
     },
     {
+      "id": "E1-05",
+      "milestone": "E1",
+      "title": "远程CI反馈闭环与可复现浏览器验收",
+      "depends_on": [
+        "E1-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "remote workflow failure triage",
+        "deterministic browser evidence and exact-SHA CI completion"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "exact-pushed-head-workflow-green",
+        "no-skipped-assertions-or-weakened-timeouts"
+      ],
+      "evidence": [
+        "docs/evidence/e1-05/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "3dfd713的run40642595655六个CI任务全部success；固定50ms舞台取样保留原5秒/45秒门槛，五片176项覆盖审计和forbidOnly生效，主check含CLI/consumer/release/package全过。下一W1-03C，继续按准确SHA保留真实CI反馈。"
+    },
+    {
       "id": "G2-05",
       "milestone": "G2",
       "title": "按文字速度采样的字符单位等待",
@@ -3005,9 +3035,9 @@
         "G1-02",
         "G4-02"
       ],
-      "status": "done",
+      "status": "in_progress",
       "implementation": "complete",
-      "verification": "passed",
+      "verification": "in_progress",
       "outputs": [
         "schema-derived persistent wheel preference",
         "scoped one-gesture step/history input",
@@ -3029,7 +3059,7 @@
         "docs/evidence/g1-04/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "SDK check/271单元/真实输入与旧功能浏览器/实包consumer通过；c1960da准确SHA六个CI任务全绿（174浏览器覆盖）。独立实例本地7项及线上滚轮/移动/存档复验通过，16个剧情/发布文件保持字节一致。F-01E完整章节/回放仍未完成，网络波动超时保留为加载稳定性限制。"
+      "next_action": "复验并修复读档后历史入口，尤其ended切点；合并已提交G3-07后重验真实包与章节接入。"
     }
   ]
 }

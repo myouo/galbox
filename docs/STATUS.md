@@ -1,17 +1,13 @@
 # galbox-sdk 当前状态
 
-2026-10-28，代码基线4cfa54f，前轮文档收尾83f1576。本轮E1-04完成，下一任务G3-07。唯一TS Core/Host、Pixi WebGL/Canvas、DOM正文、可选React、IndexedDB/protobuf边界保持。
+2026-10-28，G3-07/E1-05完成，下一W1-03C。唯一TS Core/Host、Pixi WebGL/Canvas、DOM正文、可选React、IndexedDB/protobuf边界保持。
 
-E1-04已验收：修复外部JSON隐藏toJSON执行、稀疏数组伪装及protobuf重复单值覆盖，支持集见ADR0044。Schema/公开类型/合法存档ABI不变。check与默认42文件267单元通过；单元并发限4，原10秒超时不变。完整172浏览器首次169通过，修复后台策略/截图时序/异步IME测试后相关24项及IME连续3次通过；无删断言或skip。实际tarball消费者、包边界和3周期228输入性能通过：API P95 34.1ms，dispose最大256.3ms。新包234文件518202字节，SHA256=85bd9d599bc969485e89230cd95dd3fc50dc7339d65ca4456a29ad53393cfc0f。原始证据artifacts/sdk-audit，短报告evidence/e1-04/REPORT.md。新发现的H3-03（Player发布清单/资源投影重复校验复制）仅列待量测优化，不宣称提速。
+G3-07/ADR0045提供最多8个具名SE、绑定具体media ID的fade/stop、完整源/包络快照闭包、Auto语音停止与初始激活边界。旧ABI和字段号码保持；多BGM槽、延迟包络、基础代码模块新音频仍不支持。check、44文件284单元、20项相关浏览器及最后4项复验、实际tarball消费/便携备份、API/包审计通过。最终包236文件524411字节，SHA256=f5347b568396ad89ba3ac8f569afb18b0f6a99cfa394371baeb2784433eb3cbd；性能3周期228输入API P95 29.4ms、dispose最大209.2ms通过，未宣称所有场景提速。证据evidence/g3-07，raw artifacts/g3-07。
 
-现有I1-01A/B、W1-05、E1-03已完成。独立实例位于/home/myo/Desktop/galbox-fata-morgana，通过精确实包依赖SDK；上一验收包SHA256=7873ffcbf4c082a75c2b2655ba27cfd22800080d6c72d90247b79c2df18f7355。本轮SDK改动尚未替换实例依赖。实例8语言PO/TOML、R2专桶304对象/64355598字节、最终20线上回归证据保留；目前仍只有44静态前导+22页。test.morgana.love保持本地build预览，testsdk.morgana.love负责自动化网络回归，限速仅CDP模拟；原曲仍完整摘要Blob。
+E1-05完成：先后修复Canvas上下文成本、npm dry-run报告包装及stage轮询退避提前结束三处CI缺口。保持原5秒断言/45秒用例及全部断言；固定50ms取样，浏览器分五片，真实集合审计证明176项无遗漏/重复，CI禁止only。最终修正3dfd713的run40642595655六个任务全部success，主check含CLI/consumer/release/package，浏览器22+42+43+34+35全部通过。源码G3-07验证保持，证据evidence/e1-05，raw artifacts/ci-followup。
 
-前轮E1-03已核对SDK保留历史的实际推送与实例单根发布，证据在evidence/e1-03；开始检查时实例head为ccdaf3758ac27bd3faab1f1a452f81a1090c95bc。
+此前E1-04及有限SDK阶段证据保留。真实作品继续独立工程/实际tarball接入；本轮SDK提交不包含实例迁移、原作载荷或原始日志，整作/原档及真机认证仍独立。
 
-精确下一步：G3-07先声明绑定具体音源的淡出停止/多SE有限支持集与ADR。大作品优化优先W1-03C热记录粒度/容量；随后I1-01完整DefaultUI翻译、W1-03B2高级模块闭包、W1-04持久缓存/离线/真实浏览器与移动设备、G7-01综合验收。N/F/M6真实原档和整作认证仍未完成，不以SDK通用测试替代。运行原创验证应用用pnpm dev。
+精确下一步：W1-03C先测真实IndexedDB热根写入量及大历史/多槽位负载，定义逐记录布局/留存与容量ADR，再做原子迁移与失败反例。H3-03待量测发布清单投影；I1-01完整UI/动态目录、W1-03B2高级模块、W1-04离线/平台、G7综合验收仍待。运行原创应用pnpm dev；源音频专测tests/browser/audio-sources.spec.ts。
 
-本独立分支G2-05按ADR0046完成字符单位等待，check/270单元/真实DOM与IndexedDB刷新/实包consumer通过。用于独立实例接续zero2，不覆盖主工作区另一会话G3-07；当前分支基线d282bd9。源变更与采样数据缺失明确拒绝，原固定等待/合法旧快照保持。
-
-本分支后续接续：F-01D章节批量PO工具完成，F-01E整章与回放in_progress。实例首两章20959条、全主线暂存274289条，当前可玩仍32页；实际线上5项及本地26+1通过。长音乐现用正式versioned-url流，完整性等级明确。下一合入另一工作区已提交G3-07，再做完整第一门角色宏/表现/原章节菜单和隔离回放。证据evidence/f-01d；不覆盖主SDK并行存储工作。
-
-本分支G1-04/ADR0048已完成有限滚轮：InputPreferences.wheel可持久化，下滚step/上滚history，防惯性和旧切点穿透。SDK check/271单元/相关8项及新增双Player用例、实包consumer通过；c1960da的CI run40650077493六任务全绿。独立实例原历史界面、8语标签/设置、真实IndexedDB与刷新存读档本地7项通过；线上滚轮/移动4项和存档复验1项通过，保留此前网络超时证据。主工作区存储任务保持独立。
+当前隔离分支feat/chapter-runtime合入已提交主线音源/多SE，与G2-05字符等待、G1-04滚轮共同集成。主SDK工作区的未提交文档/并行存储修改未纳入。当前G1-04因用户报告读档后历史不可用重开：已复现ended切点被正文输入门禁误挡，历史本身仍保留。先修复并覆盖恢复组合，再接原功能按钮、角色宏与整章/隔离回放。当前实例仍32页，不能声称整章完成。合并验证尚待完成。

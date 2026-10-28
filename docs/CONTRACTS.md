@@ -95,3 +95,4 @@ ADR0042：带textCatalogBinding的Program模板不能直接执行；bind必须�
 ADR0046：字符单位等待在遇到控制时采样有效interval，活动剩余时长与采样值进入Snapshot；偏好变化只影响之后的等待。瞬显跳过新字符等待，显完可跳过当前等待；confirm仍是独立输入屏障。固定等待与旧合法数据语义不变，未知新变体在旧实现明确拒绝。
 
 G1-04/ADR0048的滚轮属于Web输入：InputPreferences的可选wheel字段保持v2兼容，不进入剧情Snapshot；手势绑定既有prompt/epoch，只调用现有step/history系统入口，菜单/激活/编辑/原生滚动不能穿透。缺省值与schema、protobuf新字段7和真实设置工厂一致。
+ADR0045补充C04/C05/C10：audio.sources的包络绑定解析后的逻辑media ID，具名SFX缓冲不替换其他槽；所有可达源保留在快照中，声明签名与源/包络进度需一致。自然结束、停止、替换、失败分别结算；Host停止命令核对epoch/task/attempt。初始激活不执行restore=stop的取消策略，普通存读档仍拒绝无法恢复的活动包络。旧media ABI与单体/模块支持边界保持显式。

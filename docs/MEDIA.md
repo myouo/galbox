@@ -41,3 +41,15 @@ G3-03已单独建设有限影片任务与设备路径，见VIDEO.md；本页旧a
 回傳值started僅表示原生source.start已執行；blocked表示尚需手勢，cancelled表示準備被替換/停止。自然完成另見`getSnapshot().uiSound`的state/ended。無啟用的hover不抓資源，也不在稍後自動補播過期提示音。失敗以Promise拒絕並更新獨立診斷，作品可忽略可選SE的失敗後繼續動作；不借此暫停劇情。
 
 每個Player最多一個cue，一個惰性且可清理的AudioContext，沿既有cache/摘要/解碼預算固定準備及播放資源。新cue替換舊cue，遲到租約只歸還一次；準備上限10秒，結束/停止/隱藏/blur/用戶暫停/重新啟用/dispose清理。劇情選單暫停時仍可播放；master×sfx偏好即時生效，與劇情bgm/voice/sfx及bus包絡分開。沒有承諾無限混音或所有瀏覽器/裝置；見ADR0040與evidence/g3-06/REPORT.md。
+
+## 绑定音源的淡出停止与具名SE（G3-07）
+
+`audio.sources`增加最多8个具名SFX缓冲。使用`builder.sfxBuffer('ambient')`声明，`sfxTrack(at, taskName, audioRef, bufferRef, options)`沿既有media路径播放；未声明/重复缓冲或非audio资源拒绝。无buffer的audio.track仍使用bgm/voice/默认sfx槽。角色偏好、bus和duck仍作用于对应角色，具名源共享资源缓存但各有独立设备请求与状态。
+
+`audioSourceFade(at, envelopeTask, sourceTaskName, to, duration, options)`和`audioFadeOutAndStop(at, envelopeTask, sourceTaskName, duration, options)`在执行时把任务名解析为具体活动media ID。新包络保存该ID及解析的from/to/duration/easing/elapsed，不随同名任务重用而换目标。`audioSourceStop(at, sourceTaskName)`直接停止解析到的活动源。时长支持1..3600000ms；即时停止用audioSourceStop；stop包络的终点必须为0。源不存在/不活动、冲突拒绝或表达式非法时不提交部分音轨/计数器变更。
+
+同一源支持reject/replace包络；替换从当前gain开始。包络完成可只改变gain，或将绑定源cancelled并停止真实设备；不冒充自然ended。源先结束/停止时包络cancelled，被替换则superseded，失败则failed。旧audio.gain按角色更新全部源并supersede相关源包络；旧audio.stop停止该角色全部源。audio.fade仍控制角色bus，UI cue保持独立。
+
+快照保留包络所指的完整源/结果闭包和缓冲声明签名。恢复保留逻辑ID，重新建立epoch/attempt，replay源从0启动并续跑保存的包络进度。活动包络指向restore=stop源时明确禁存/拒绝读档；初始激活仍启动该意图，不能误用读档取消策略。源停止会释放Auto的语音等待。迟到旧设备回调和旧包络不能影响替换源。
+
+这是单体Program的有限能力；基础代码模块暂不支持，新旧release没有隐式迁移。未提供多BGM槽、延迟启动包络、采样级seek或任意数量混音。设计见ADR0045；实际验收状态及远程CI结果以tasks.json和evidence/g3-07为准，不据此声称完整KAG或整作音频兼容。
