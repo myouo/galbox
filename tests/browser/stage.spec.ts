@@ -1,7 +1,9 @@
 import {test,expect} from '@playwright/test';
 import type {Page} from '@playwright/test';
 import type * as Harness from './harness/sdk.js';
-async function data(page:Page){return JSON.parse((await page.getByTestId('diagnostics').textContent())??'{}');}
+// Keep diagnostic polling a direct DOM read. The CI trace showed the locator's
+// own selector wait consuming the entire semantic deadline during live GPU work.
+async function data(page:Page){return page.evaluate(()=>JSON.parse(document.querySelector('[data-testid=diagnostics]')?.textContent??'{}'));}
 // A slow GPU/CDP response must not let the default increasing backoff discard
 // the final part of the existing five-second deadline before another frame runs.
 async function atCut(page:Page,address:string){await expect.poll(async()=>(await data(page)).wait?.at,{timeout:5000,intervals:[50]}).toBe(address);}

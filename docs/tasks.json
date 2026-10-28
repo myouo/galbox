@@ -1861,7 +1861,7 @@
         "docs/evidence/ui-initialization/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "默认UI初始化竞态在隔离feat/chapter-runtime修复：layout effect绑定手势/焦点，12次原失败用例、19相关浏览器、check与实包consumer通过；当前分支后续CI结果单独核对，主工作区未提交修改不覆盖。完整系统UI/皮肤既定边界保持。"
+      "next_action": "隔离分支已修复默认UI初始化竞态，12次原用例、19相关浏览器/consumer通过。eb11b90 CI焦点检查通过，剩余stage诊断locator等待已改同DOM直接读取，9次原场景/像素/坏档复验通过；5秒期限/50ms采样保持，生产包06efd13b7f45不变，最终CI核对中。"
     },
     {
       "id": "G7-01",
