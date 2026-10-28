@@ -34,3 +34,5 @@ Store 可选端口 `readPreferences(): Promise<PreferencesRecord|null>`、`write
 字体缩放 0.75..1.5，文本框背景透明度 0..1，默认均为 1；只作用于 SDK DOM 正文 CSS 变量，正文不随背景淡化，不改变已读、内容身份、PC 或快照。不代表自定义文本框、富文本/Ruby/NVL/自动分页已实现，仍按 G2 任务推进。
 
 `await player.resetPreferences()` 通过相同持久提交路径恢复本实例 preferencesDefaults。`player.exportPreferences()` 返回独立 v2 设置值，`await player.importPreferences(unknown)` 验证完整 v1/v2 并提交；不导入外部 revision 或剧情。默认菜单下载 protobuf（galbox-settings.pb），上传 protobuf 或兼容旧 JSON（文件导入上限 32 KiB）。坏输入/按键冲突不改变设置和修订；故事备份依旧不含设置。
+
+G1-03新增`playback.backgroundPlayback`（continue/pause，缺省continue）。继续模式失焦/隐藏后保留演出和音乐，进入后台退出Auto/快进，回来不恢复；普通正文/静态选项等待输入，作者的定时逻辑仍按定义。暂停模式冻结全部媒体/活动时钟。手动/系统页/设备/资源暂停独立。旧v1/v2偏好在规范化时补默认，设置仍与剧情/profile分开，参见ADR0041/evidence/g1-03。

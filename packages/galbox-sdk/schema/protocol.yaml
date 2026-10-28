@@ -4270,6 +4270,12 @@ definitions:
           skipUnread:
             type: boolean
             x-proto-tag: 2
+          backgroundPlayback:
+            type: string
+            enum:
+              - continue
+              - pause
+            x-proto-tag: 3
         required: []
         additionalProperties: false
         minProperties: 1
@@ -5928,6 +5934,12 @@ definitions:
       skipUnread:
         type: boolean
         x-proto-tag: 2
+      backgroundPlayback:
+        type: string
+        enum:
+          - continue
+          - pause
+        x-proto-tag: 3
     required:
       - autoDelayMs
       - skipUnread

@@ -1,10 +1,12 @@
 import {it,expect} from 'vitest';
 import {readFileSync} from 'node:fs';
-import {defaultPreferences,mergePreferences} from 'galbox-sdk/settings';
+import {defaultPreferences,mergePreferences,normalizePreferences} from 'galbox-sdk/settings';
+import {encodeWire,decodeWire} from 'galbox-sdk/wire';
 import {parsePreferencesPatch} from 'galbox-sdk/protocol';
 import {createCore} from 'galbox-sdk/core';
 import {MemoryStore,Coordinator,VirtualHost,VirtualScheduler} from 'galbox-sdk/testing';
 const program:unknown=JSON.parse(readFileSync('tests/fixtures/game-data/standard-novel/program.json','utf8'));
+it('background policy normalizes old settings, roundtrips protobuf and rejects unsupported modes',()=>{const old=defaultPreferences();delete old.playback.backgroundPlayback;expect(normalizePreferences(old).playback.backgroundPlayback).toBe('continue');for(const mode of ['continue','pause'] as const){const p=mergePreferences(old,{playback:{backgroundPlayback:mode}});expect(decodeWire('PlayerPreferences',encodeWire('PlayerPreferences',p))).toEqual(p);}expect(()=>mergePreferences(old,{playback:{backgroundPlayback:'auto'}})).toThrow();});
 function cut(){const c=createCore(program);c.run(100);return c.capture();}
 it('the preferences factory isolates defaults and strictly validates only implemented settings',()=>{
  const a=defaultPreferences();a.audio.master=0;expect(defaultPreferences().audio.master).toBe(.6);expect(mergePreferences(defaultPreferences(),{audio:{voice:.25},text:{intervalMs:0}})).toMatchObject({audio:{master:.6,voice:.25},text:{intervalMs:0}});

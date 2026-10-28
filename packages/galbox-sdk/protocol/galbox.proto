@@ -4247,9 +4247,14 @@ message Gbx_PreferencesPatch_playback_skipUnread {
   optional bool value = 1;
 }
 
+message Gbx_PreferencesPatch_playback_backgroundPlayback {
+  optional string value = 1;
+}
+
 message Gbx_PreferencesPatch_playback {
   optional Gbx_PreferencesPatch_playback_autoDelayMs autoDelayMs = 1;
   optional Gbx_PreferencesPatch_playback_skipUnread skipUnread = 2;
+  optional Gbx_PreferencesPatch_playback_backgroundPlayback backgroundPlayback = 3;
 }
 
 message Gbx_PreferencesPatch_input_advance_Item {
@@ -5564,9 +5569,14 @@ message Gbx_PlaybackPreferences_skipUnread {
   optional bool value = 1;
 }
 
+message Gbx_PlaybackPreferences_backgroundPlayback {
+  optional string value = 1;
+}
+
 message Gbx_PlaybackPreferences {
   optional Gbx_PlaybackPreferences_autoDelayMs autoDelayMs = 1;
   optional Gbx_PlaybackPreferences_skipUnread skipUnread = 2;
+  optional Gbx_PlaybackPreferences_backgroundPlayback backgroundPlayback = 3;
 }
 
 message Gbx_InputPreferences_advance_Item {

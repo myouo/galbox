@@ -2474,10 +2474,12 @@
         "docs/evidence/fata-steam/REPORT.md",
         "docs/evidence/g2-04/REPORT.md",
         "docs/evidence/g3-05/REPORT.md",
-        "docs/evidence/g3-06/REPORT.md"
+        "docs/evidence/g3-06/REPORT.md",
+        "docs/evidence/g1-03/REPORT.md",
+        "docs/evidence/f-01b/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "原按钮SE、标题离场、44次静态前导转场/等待及358秒原曲、22页和淡出已接，八语言/真实波形/刷新恢复通过。先G3-07补按源淡出停止与多SE buffers，再接正常对话/炉火/宏注册和CFG；click-skip/原菜单/glyph/textfade/tft与原档仍未完成。"
+      "next_action": "G1-03后台演出/音乐继续且Auto关闭、F-01B首页读取/设置/原外链/退出及右键选择禁用完成；仍前导+22页。下一G3-07源绑定停音/多SE，再普通对话/炉火/宏CFG；原作完整菜单/tft/原档仍未完成。"
     },
     {
       "id": "G2-04",
@@ -2635,6 +2637,75 @@
       "evidence": [],
       "blocker": null,
       "next_action": "核对原BGM.fadeOutAndStop和SE buf0/1，先ADR/有限Schema/真实工厂，再Core/Host/快照/失败原子反例；旧公共协议无完整迁移时明确拒绝并保留旧档。"
+    },
+    {
+      "id": "G1-03",
+      "milestone": "G1",
+      "title": "后台演出与音乐继续、退出自动阅读",
+      "depends_on": [
+        "G1-02",
+        "G3-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "persisted background playback policy",
+        "bounded hidden-page driver and audio mix updates",
+        "no background Auto or implicit session restart"
+      ],
+      "contracts": [
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "background-op-and-music-continue",
+        "auto-off-and-explicit-pauses",
+        "hidden-clock-capture-and-cleanup",
+        "independent-background-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/g1-03/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "后台继续/Auto退出/独立暂停与timer/绘制分离已验收；原作同epoch OP与开发更新不重开通过。下一G3-07源绑定淡出停止与多SE。"
+    },
+    {
+      "id": "F-01B",
+      "milestone": "F",
+      "title": "独立原作首页与浏览器交互",
+      "depends_on": [
+        "G6-02",
+        "G3-06"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "suppressed native context menu and selection",
+        "source title actions and original menu artwork",
+        "actual SDK load/save/settings and safe home link/exit"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "home-actions-work",
+        "no-selection-or-browser-contextmenu",
+        "actual-save-load-settings-and-focus",
+        "source-ui-with-no-experiment-chrome"
+      ],
+      "evidence": [
+        "docs/evidence/f-01b/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "有限首页全部可见入口及SDK真实读写/设置已验收；原作独立已读速度、完整书签保护/固定槽制/精确菜单转场未完成，随F-01A普通剧情与原菜单继续。"
     }
   ]
 }

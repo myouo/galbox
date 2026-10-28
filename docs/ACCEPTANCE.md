@@ -128,3 +128,5 @@ G2-04：真实richText.confirm工厂与预算1/8/100；首尾/连续控制、Uni
 G3-05：真实stageRuleTransition工厂/源签名、整数阈值与opaque像素、RGBA、预算1/8/100和protobuf恢复；两后端实际像素、IndexedDB图文保存/刷新、cancel冻结/finish/清理；尺寸/规则格式/读回与两预算失败前置拒绝保留head/槽/原画面。独立tarball消费原作800×600源规则和标题时序；不以静态页合成或源参数自洽声明原作运行对照、动态children或所有native alpha类型兼容。
 
 G3-06：實際uiSound工廠關聯資源、UISoundRequest驗證/隔離與protobuf邊界0/1；真實瀏覽器無手勢blocked且零抓取、原生buffer開始/自然結束、音量/靜音與暫停選單、劇情SFX不被覆寫、head/槽/PC不變、換音/過期租約/啟用取消/壞摘要/10秒逾時/實際31秒buffer拒絕及dispose。實包與獨立原作enterse/clickse要驗，原生波形與實際時長佐證不能拿狀態字串或虛擬Host代替。
+
+G1-03：旧偏好补默认/protobuf/非法模式；真实媒体在失焦后继续、Auto退出/不穿页、OP同epoch，禁止RAF时隐藏timer推进与当前图文捕获、实际增益包络、显式暂停不被focus解除、dispose清理。独立实包与原作OP验证；开发服务源/资源更新不再触发会话重开。

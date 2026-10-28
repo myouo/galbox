@@ -24,6 +24,7 @@ export class ImageStage {
  ruleDiagnostics(){return this.rules.diagnostics;}
  validate(snapshot:DeepReadonly<Snapshot>):void {const bytes=this.rules.validate(snapshot),canvas=this.effects?.validate(snapshot);if(canvas)ensure(bytes+canvas.bytes<=(this.maxCanvasBytes??67108864),'CANVAS_COMPOSITION_BUDGET','Combined Canvas and rule composition exceeds budget');}
  setVideo(texture:Texture|null,rect:InteractionRect|null):void {if(this.video){this.video.destroy();this.video=null;}if(texture&&rect){this.video=new Sprite(texture);this.video.label='galbox-video';this.video.position.set(rect.x,rect.y);this.video.width=rect.width;this.video.height=rect.height;this.video.zIndex=2;this.app.stage.addChild(this.video);}this.invalidate();}
+ pruneHidden(snapshot:DeepReadonly<Snapshot>):void {this.rules.prune(snapshot);this.key=null;}
  invalidate():void {this.key=null;}
  render(snapshot:DeepReadonly<Snapshot>):void {
   if(this.disposed)return;const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene});if(key===this.key)return;this.rules.prune(snapshot);

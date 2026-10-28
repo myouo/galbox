@@ -1,9 +1,9 @@
 # 当前计划
 
-G3-06已验收：uiSound/Schema/Protobuf/Player/有界Host、254单元、最终新6浏览器+媒体历史回归、精确实包与独立波形/刷新。见tasks.json、STATUS与evidence/g3-06/REPORT.md。包SHA 753b4f63e8c56f8265aeacc1faacb5bc32d115c1a4e2746525282b9c0860f718；实例/home/myo/Desktop/galbox-fata-morgana，不用workspace/私有导入。
+用户本轮优先：禁止浏览器右键/选字，补首页；后台OP/音乐继续，自动阅读退出且不恢复。G1-03/ADR0041与F-01B有限支持集已验收，见tasks与evidence/g1-03、f-01b。SDK包135464bdfce17645fe8acc23e399fdfbcc4394bfde706dbda51b8becb60e312a，独立工程/home/myo/Desktop/galbox-fata-morgana精确tarball依赖。
 
-已通过源片段接原按钮声音、标题离场、44静态转场/等待与358秒歌曲→22页→4秒淡出；真实15秒雷声尾音与Web Audio输出验证通过。有限页合成不是TJS/通用KAG VM。8语言保留原差异，未知操作/动态内容/ASD拒绝，不逆向exe。当前不能称整作兼容。
+已验证SDK255单元、新3+原7浏览器及最后新3、实包consumer；实例3 Python+20 TS/八语言Core/完整10浏览器。原图首页全部入口、设置/图文存读档/安全外链/退出实际工作。独立已读速度、原固定槽制/保护/精确菜单动画仍待，不据此声称完整菜单/整作。
 
-下一current_task=G3-07：先读原BGM.fadeOutAndStop和SE buf0/1，写有限ADR；实现按源绑定的淡出停止、多剧情SE缓冲、关联类型/快照闭包/失败反例。当前bus归零与下首替换之间可多留不出声旧element，1ms复位也不是逐采样等价；不要掩盖为已精确还原。
+开发hmr=false，源/资源更新不再自动重开会话；手动刷新仍正常启动标题。OP后台用同Core继续，失焦/隐藏清Auto与按键，显式菜单/用户暂停不被focus解除；后台timer受浏览器限制，未认证逐帧AV或所有OS后台行为。
 
-然后F-01A接正常对话/炉火与宏注册/参数/调用/变量CFG。原点击完成转场、菜单、glyph/textfade、tft/完整i18n、原档仍待做，原槽/global/继续参照缺失。I1/W1/G7保留。仅本地提交，不推送或发布。
+current_task=G3-07：核对BGM.fadeOutAndStop与SE buf0/1，先有限ADR，再源绑定停音、多剧情SE缓冲/恢复闭包/失败反例。当前bus淡出到0后下一曲才清旧element/1ms复位仍为已知近似。然后F-01A正常对话/炉火/宏CFG。原档/global/继续参照缺失，F-02未开始；I1/W1/G7保留。仅本地提交，不发布。
