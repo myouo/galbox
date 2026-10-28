@@ -3005,9 +3005,9 @@
         "G1-02",
         "G4-02"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "schema-derived persistent wheel preference",
         "scoped one-gesture step/history input",
@@ -3029,7 +3029,7 @@
         "docs/evidence/g1-04/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "SDK单元和输入浏览器通过，完成实包consumer与独立实例滚轮/历史/IndexedDB验证后更新状态；章节回放F-01E不计入。"
+      "next_action": "SDK check/271单元/真实输入与旧功能浏览器/实包consumer通过；c1960da准确SHA六个CI任务全绿（174浏览器覆盖）。独立实例本地7项及线上滚轮/移动/存档复验通过，16个剧情/发布文件保持字节一致。F-01E完整章节/回放仍未完成，网络波动超时保留为加载稳定性限制。"
     }
   ]
 }
