@@ -36,7 +36,8 @@
     "test:storage-performance": "node tests/tooling/compare-storage.mjs",
     "prepare": "pnpm generate",
     "check:repository": "node scripts/check-repository.mjs",
-    "test:package": "pnpm build:cli && node scripts/audit-package.mjs"
+    "test:package": "pnpm build:cli && node scripts/audit-package.mjs",
+    "check:browser-shards": "node scripts/check-browser-shards.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

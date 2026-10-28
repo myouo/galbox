@@ -1,7 +1,7 @@
 # 当前计划
 
-current_task=W1-03C。G3-07/E1-05已完成：ADR0045、check、44文件284单元、20+4相关浏览器、精确tarball消费/备份、API/包与性能门槛均通过。代码3e31187的run40637434057三个远程CI任务全部success（22+154=176浏览器），详见evidence/g3-07和e1-05。
+current_task=E1-05。G3-07已完成。3e31187全CI通过后，810a3a5文档重跑发现stage二次读档的默认poll退避在4.2秒CDP读取后提前耗尽取样机会。固定50ms采样，仍为5秒等待/45秒用例；TS与stage文件三次9项复验通过。
 
-下一先复核W1-03A现有冷热布局，测真实IndexedDB热根/profile/head/回执写放大和长历史/多槽位容量；先记录有限布局/留存ADR，再实现逐记录原子迁移。回执幂等、旧head失权、完整备份及损坏数据保留必须一起验证，不直接扩大4M预算。
+CI剩余浏览器再分四片，真实check:browser-shards验证22+42+43+34+35=176项无遗漏/重复，CI forbidOnly。现在提交并回收最新准确SHA六个CI任务。未回收前E1-05保持in_progress；原失败/trace在ignored artifacts/ci-followup。
 
-H3-03仍为待profiling候选；I1完整i18n、W1-03B2高级模块（含audio.sources）、W1-04离线/真实平台与G7综合验收仍待。并行实例任务记录保留，不混入本轮SDK验收结论。
+完成后下一W1-03C热记录/留存/容量。其他SDK与并行实例任务状态保留，不混用不同分支的CI结论。

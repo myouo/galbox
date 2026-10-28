@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03C",
+  "current_task": "E1-05",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2906,9 +2906,9 @@
       "depends_on": [
         "E1-04"
       ],
-      "status": "done",
+      "status": "in_progress",
       "implementation": "complete",
-      "verification": "passed",
+      "verification": "partial",
       "outputs": [
         "remote workflow failure triage",
         "deterministic browser evidence and exact-SHA CI completion"
@@ -2924,7 +2924,7 @@
         "docs/evidence/e1-05/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "3e31187的run40637434057三个CI任务全部success；Canvas上下文成本隔离和npm新旧报告格式均已复验。继续保持准确代码SHA和失败证据，不将其他并行分支结果混用。"
+      "next_action": "stage固定50ms轮询保留原5秒门槛，本地9项连续复验与类型检查通过；新增分片集合校验176项无重复/遗漏、CI forbidOnly。推送CI修正后回收六个任务的最终准确SHA结果。"
     }
   ]
 }
