@@ -2615,9 +2615,9 @@
         "G3-02",
         "G3-06"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "partial",
       "outputs": [
         "source-bound fade/stop envelopes",
         "declared concurrent SFX buffers and full restore closure"
@@ -2635,9 +2635,12 @@
         "independent-story-sfx-buffers",
         "audio-buffer-restore-and-late-callbacks"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/decisions/0045-source-audio-buffers.md",
+        "docs/evidence/g3-07/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "核对原BGM.fadeOutAndStop和SE buf0/1，先ADR/有限Schema/真实工厂，再Core/Host/快照/失败原子反例；旧公共协议无完整迁移时明确拒绝并保留旧档。"
+      "next_action": "最终check/44文件284单元、20相关浏览器、精确tarball消费/备份、API与包审计通过；推送候选后回收其准确SHA远程全CI，最后源音频与性能复验仍执行。"
     },
     {
       "id": "G1-03",
@@ -2895,6 +2898,33 @@
       "evidence": [],
       "blocker": null,
       "next_action": "E1-04代码复核发现Player.publish每次通知都parseReleaseManifest并复制资源完整性列表；先在预算内按目录规模测量，再决定缓存不可变投影。不得取消入口校验或共享可变权威；尚无此热点的前后量测，不宣称提速。"
+    },
+    {
+      "id": "E1-05",
+      "milestone": "E1",
+      "title": "远程CI反馈闭环与可复现浏览器验收",
+      "depends_on": [
+        "E1-04"
+      ],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "partial",
+      "outputs": [
+        "remote workflow failure triage",
+        "deterministic browser evidence and exact-SHA CI completion"
+      ],
+      "contracts": [
+        "C12"
+      ],
+      "acceptance": [
+        "exact-pushed-head-workflow-green",
+        "no-skipped-assertions-or-weakened-timeouts"
+      ],
+      "evidence": [
+        "docs/evidence/e1-05/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "d282bd9双浏览器任务通过；已修正其暴露的npm按包名包装dry-run结果，保留身份/版本/文件断言。最终G3-07代码SHA全CI待回收。"
     }
   ]
 }

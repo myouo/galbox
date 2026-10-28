@@ -1489,6 +1489,10 @@ message Gbx_Instruction_Case44_restore {
   optional string value = 1;
 }
 
+message Gbx_Instruction_Case44_buffer {
+  optional string value = 1;
+}
+
 message Gbx_Instruction_Case44 {
   optional Gbx_Instruction_Case44_op op = 1;
   optional Gbx_Instruction_Case44_at at = 2;
@@ -1500,6 +1504,7 @@ message Gbx_Instruction_Case44 {
   optional Gbx_Instruction_Case44_loopStartMs loopStartMs = 8;
   optional Gbx_Instruction_Case44_loopEndMs loopEndMs = 9;
   optional Gbx_Instruction_Case44_restore restore = 10;
+  optional Gbx_Instruction_Case44_buffer buffer = 11;
 }
 
 message Gbx_Instruction_Case45_op {
@@ -2108,6 +2113,72 @@ message Gbx_Instruction_Case65 {
   optional Gbx_Instruction_Case65_vague vague = 10;
 }
 
+message Gbx_Instruction_Case66_op {
+  // Fixed semantic value: "audio.source.fade"
+}
+
+message Gbx_Instruction_Case66_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case66_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case66_source {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case66_to {
+  optional Gbx_StageNumberExpression value = 1;
+}
+
+message Gbx_Instruction_Case66_duration {
+  optional Gbx_I32Expression value = 1;
+}
+
+message Gbx_Instruction_Case66_easing {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case66_policy {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case66_stop {
+  optional bool value = 1;
+}
+
+message Gbx_Instruction_Case66 {
+  optional Gbx_Instruction_Case66_op op = 1;
+  optional Gbx_Instruction_Case66_at at = 2;
+  optional Gbx_Instruction_Case66_task task = 3;
+  optional Gbx_Instruction_Case66_source source = 4;
+  optional Gbx_Instruction_Case66_to to = 5;
+  optional Gbx_Instruction_Case66_duration duration = 6;
+  optional Gbx_Instruction_Case66_easing easing = 7;
+  optional Gbx_Instruction_Case66_policy policy = 8;
+  optional Gbx_Instruction_Case66_stop stop = 9;
+}
+
+message Gbx_Instruction_Case67_op {
+  // Fixed semantic value: "audio.source.stop"
+}
+
+message Gbx_Instruction_Case67_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case67_source {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case67 {
+  optional Gbx_Instruction_Case67_op op = 1;
+  optional Gbx_Instruction_Case67_at at = 2;
+  optional Gbx_Instruction_Case67_source source = 3;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -2175,6 +2246,8 @@ message Gbx_Instruction {
     Gbx_Instruction_Case63 v63 = 63;
     Gbx_Instruction_Case64 v64 = 64;
     Gbx_Instruction_Case65 v65 = 65;
+    Gbx_Instruction_Case66 v66 = 66;
+    Gbx_Instruction_Case67 v67 = 67;
   }
 }
 
@@ -2328,6 +2401,14 @@ message Gbx_Program_textCatalogBinding {
   optional Gbx_ProgramTextBinding value = 1;
 }
 
+message Gbx_Program_sfxBuffers_Item {
+  optional string value = 1;
+}
+
+message Gbx_Program_sfxBuffers {
+  repeated Gbx_Program_sfxBuffers_Item items = 1;
+}
+
 message Gbx_Program {
   optional Gbx_Program_version version = 1;
   optional Gbx_Program_gameId gameId = 2;
@@ -2348,6 +2429,7 @@ message Gbx_Program {
   optional Gbx_Program_ui ui = 17;
   optional Gbx_Program_presentation presentation = 18;
   optional Gbx_Program_textCatalogBinding textCatalogBinding = 19;
+  optional Gbx_Program_sfxBuffers sfxBuffers = 20;
 }
 
 message Gbx_Profile_revision {
@@ -2596,6 +2678,14 @@ message Gbx_Task_videoTask {
   optional Gbx_VideoTaskState value = 1;
 }
 
+message Gbx_Task_buffer {
+  optional string value = 1;
+}
+
+message Gbx_Task_sourceFade {
+  optional Gbx_AudioSourceFadeState value = 1;
+}
+
 message Gbx_Task {
   optional Gbx_Task_id id = 1;
   optional Gbx_Task_status status = 2;
@@ -2617,6 +2707,8 @@ message Gbx_Task {
   optional Gbx_Task_mediaTask mediaTask = 18;
   optional Gbx_Task_audioFade audioFade = 19;
   optional Gbx_Task_videoTask videoTask = 20;
+  optional Gbx_Task_buffer buffer = 21;
+  optional Gbx_Task_sourceFade sourceFade = 22;
 }
 
 message Gbx_TaskGroup_id {
@@ -2982,6 +3074,10 @@ message Gbx_Snapshot_programModules {
   optional Gbx_ProgramModuleBinding value = 1;
 }
 
+message Gbx_Snapshot_audioSourcesSignature {
+  optional string value = 1;
+}
+
 message Gbx_Snapshot {
   optional Gbx_Snapshot_version version = 1;
   optional Gbx_Snapshot_release release = 2;
@@ -3010,6 +3106,7 @@ message Gbx_Snapshot {
   optional Gbx_Snapshot_replayScene replayScene = 25;
   optional Gbx_Snapshot_ui ui = 26;
   optional Gbx_Snapshot_programModules programModules = 27;
+  optional Gbx_Snapshot_audioSourcesSignature audioSourcesSignature = 28;
 }
 
 message Gbx_JsonValue_Case1 {
@@ -8389,6 +8486,44 @@ message Gbx_AudioFadeState {
   optional Gbx_AudioFadeState_from from = 3;
   optional Gbx_AudioFadeState_to to = 4;
   optional Gbx_AudioFadeState_easing easing = 5;
+}
+
+message Gbx_AudioSourceFadeState_version {
+  // Fixed semantic value: 1
+}
+
+message Gbx_AudioSourceFadeState_signature {
+  optional string value = 1;
+}
+
+message Gbx_AudioSourceFadeState_source {
+  optional string value = 1;
+}
+
+message Gbx_AudioSourceFadeState_from {
+  optional double value = 1;
+}
+
+message Gbx_AudioSourceFadeState_to {
+  optional double value = 1;
+}
+
+message Gbx_AudioSourceFadeState_easing {
+  optional string value = 1;
+}
+
+message Gbx_AudioSourceFadeState_stop {
+  optional bool value = 1;
+}
+
+message Gbx_AudioSourceFadeState {
+  optional Gbx_AudioSourceFadeState_version version = 1;
+  optional Gbx_AudioSourceFadeState_signature signature = 2;
+  optional Gbx_AudioSourceFadeState_source source = 3;
+  optional Gbx_AudioSourceFadeState_from from = 4;
+  optional Gbx_AudioSourceFadeState_to to = 5;
+  optional Gbx_AudioSourceFadeState_easing easing = 6;
+  optional Gbx_AudioSourceFadeState_stop stop = 7;
 }
 
 message Gbx_AudioState_version {

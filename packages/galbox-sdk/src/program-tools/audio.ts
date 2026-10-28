@@ -1,6 +1,6 @@
 import {parseInstruction,parseUISoundRequest,ensure} from '../protocol/index.js';
 import type {Instruction,Task} from '../protocol/index.js';
-import type {AssetRef} from './linker.js';
+import type {AssetRef,SfxBufferRef} from './linker.js';
 import type {StageNumber} from './stage.js';
 import {expr,expressionWire} from './expressions.js';
 import type {TypedExpression} from './expressions.js';
@@ -14,3 +14,8 @@ export function audioFade(at:string,task:string,channel:Channel,to:StageNumber,d
 export function audioDuck(at:string,enabled:boolean,level:StageNumber=.35,attackMs:number|TypedExpression<'i32'>=120,releaseMs:number|TypedExpression<'i32'>=240){return make('audio.duck',{at,enabled,level:numeric(level),attackMs:integer(attackMs),releaseMs:integer(releaseMs)});}
 
 export function uiSound(asset:AssetRef<'audio'>,gain=1){ensure(asset.kind==='audio','ASSET_KIND','Expected audio');return parseUISoundRequest({asset:asset.id,gain});}
+
+export function sfxTrack(at:string,task:string,asset:AssetRef<'audio'>,buffer:SfxBufferRef,options:Omit<AudioTrackOptions,'channel'>){ensure(buffer.kind==='sfx-buffer','AUDIO_BUFFER','Expected an sfx buffer');return make('audio.track',{...audioTrack(at,task,asset,{...options,channel:'sfx'}),buffer:buffer.id});}
+export function audioSourceFade(at:string,task:string,source:string,to:StageNumber,duration:number|TypedExpression<'i32'>,options:{easing?:'linear'|'ease-in'|'ease-out'|'ease-in-out';policy?:'reject'|'replace';stop?:boolean}={}){return make('audio.source.fade',{at,task,source,to:numeric(to),duration:integer(duration),easing:options.easing??'linear',policy:options.policy??'reject',stop:options.stop??false});}
+export function audioFadeOutAndStop(at:string,task:string,source:string,duration:number|TypedExpression<'i32'>,options:{easing?:'linear'|'ease-in'|'ease-out'|'ease-in-out';policy?:'reject'|'replace'}={}){return audioSourceFade(at,task,source,0,duration,{...options,stop:true});}
+export function audioSourceStop(at:string,source:string){return make('audio.source.stop',{at,source});}

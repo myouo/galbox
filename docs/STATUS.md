@@ -1,11 +1,11 @@
 # galbox-sdk 当前状态
 
-2026-10-28，代码基线4cfa54f，前轮文档收尾83f1576。本轮E1-04完成，下一任务G3-07。唯一TS Core/Host、Pixi WebGL/Canvas、DOM正文、可选React、IndexedDB/protobuf边界保持。
+2026-10-28，当前G3-07/E1-05。唯一TS Core/Host、Pixi WebGL/Canvas、DOM正文、可选React、IndexedDB/protobuf边界保持。代码基线eaa1f38，CI分组提交d282bd9。
 
-E1-04已验收：修复外部JSON隐藏toJSON执行、稀疏数组伪装及protobuf重复单值覆盖，支持集见ADR0044。Schema/公开类型/合法存档ABI不变。check与默认42文件267单元通过；单元并发限4，原10秒超时不变。完整172浏览器首次169通过，修复后台策略/截图时序/异步IME测试后相关24项及IME连续3次通过；无删断言或skip。实际tarball消费者、包边界和3周期228输入性能通过：API P95 34.1ms，dispose最大256.3ms。新包234文件518202字节，SHA256=85bd9d599bc969485e89230cd95dd3fc50dc7339d65ca4456a29ad53393cfc0f。原始证据artifacts/sdk-audit，短报告evidence/e1-04/REPORT.md。新发现的H3-03（Player发布清单/资源投影重复校验复制）仅列待量测优化，不宣称提速。
+G3-07有限实现完成：audio.sources、最多8个具名SE、绑定具体media ID的fade/stop、完整源/包络快照闭包、Auto语音停止与初始激活边界。ADR0045/MEDIA明确支持集；旧ABI和字段号码保持，不支持多BGM槽、延迟包络或基础代码模块。check、44文件284单元、20相关浏览器、精确tarball消费/便携备份、API/包审计通过；最后候选远程全CI尚待。SDK包236文件524411字节，SHA256=f5347b568396ad89ba3ac8f569afb18b0f6a99cfa394371baeb2784433eb3cbd。证据evidence/g3-07，raw artifacts/g3-07。
 
-现有I1-01A/B、W1-05、E1-03已完成。独立实例位于/home/myo/Desktop/galbox-fata-morgana，通过精确实包依赖SDK；上一验收包SHA256=7873ffcbf4c082a75c2b2655ba27cfd22800080d6c72d90247b79c2df18f7355。本轮SDK改动尚未替换实例依赖。实例8语言PO/TOML、R2专桶304对象/64355598字节、最终20线上回归证据保留；目前仍只有44静态前导+22页。test.morgana.love保持本地build预览，testsdk.morgana.love负责自动化网络回归，限速仅CDP模拟；原曲仍完整摘要Blob。
+E1-05已定位并修复CI两处缺口：Canvas与其余测试在独立runner中互补全覆盖，保留45秒/断言；npm dry-run支持单包包装与旧flat结构，继续核验身份、版本、文件清单。d282bd9双浏览器任务通过；它随后暴露的release解析问题已本地实际dry-run验证修复。下一回收G3-07候选准确SHA的全部CI结果，未提前标done。证据evidence/e1-05，raw artifacts/ci-followup。
 
-前轮E1-03已核对SDK保留历史的实际推送与实例单根发布，证据在evidence/e1-03；开始检查时实例head为ccdaf3758ac27bd3faab1f1a452f81a1090c95bc。
+E1-04及原有限SDK阶段已验收。真实作品独立工程仍通过实包消费；本轮未更新其实例依赖，整作/原档及真机认证不由SDK测试替代。并行实例任务记录继续保留。
 
-精确下一步：G3-07先声明绑定具体音源的淡出停止/多SE有限支持集与ADR。大作品优化优先W1-03C热记录粒度/容量；随后I1-01完整DefaultUI翻译、W1-03B2高级模块闭包、W1-04持久缓存/离线/真实浏览器与移动设备、G7-01综合验收。N/F/M6真实原档和整作认证仍未完成，不以SDK通用测试替代。运行原创验证应用用pnpm dev。
+精确下一步：先完成G3-07/E1-05远程闭环，再推进W1-03C热记录/容量；H3-03先量测发布清单投影，I1-01完整UI/动态目录、W1-03B2高级模块、W1-04离线/平台、G7综合验收仍待。运行原创应用pnpm dev；音频专测tests/browser/audio-sources.spec.ts。

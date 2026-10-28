@@ -67,3 +67,5 @@ G5-02鉴赏有限集见 [EXTRAS](EXTRAS.md)：CG差分/成就图标、buffer/ele
 G6-01剧本UI有限集见 [SCRIPT_UI](SCRIPT_UI.md)：ui.controls目录、六种真实控件、强类型字段提交/纯表达式更新、Core权威与恢复身份、DOM/IME/图文捕获与设备失败。状态以tasks/evidence为准；不扩张为G6-02完整皮肤/移动布局或G7规模认证。
 
 G6-02有限完整界面见 [INTERFACE](INTERFACE.md)：安全presentation配置、默认系统页面/导航与暂停、分页/焦点、移动主表单与纵向捕获、共用按压。旧未配置作品保留经典布局；状态以tasks/evidence为准，不扩大为真机/任意皮肤脚本或G7规模认证。
+
+G3-07的audio.sources有限集见[MEDIA](MEDIA.md)与ADR0045：最多8个具名SFX缓冲、具体逻辑音源的fade/stop、完整源引用与包络恢复、物理回调隔离。未支持多BGM槽或延迟包络；基础代码模块明确拒绝。实现/验收状态由tasks.json和对应证据报告决定。

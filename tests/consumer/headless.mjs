@@ -104,3 +104,5 @@ const {streamRequest}=await import('galbox-sdk/port-kit');const {parseIntegrityE
 {
  const {createModuleProgram}=await import('galbox-sdk/port-kit');const root=(await import('galbox-sdk/wire')).decodeWire('ModuleManifest',new Uint8Array(await readFile('./public/modules/manifest.pb'))),source=createModuleProgram(root);source.install((await import('galbox-sdk/wire')).decodeWire('ProgramModule',new Uint8Array(await readFile('./public/modules/code/root.pb'))));const c=createCore(source);c.run(100);assert.deepEqual(c.capture().programModules.modules,['root']);assert.equal(source.has('interior'),false);console.log('Packed headless module factory and source binding passed');
 }
+
+{const {verifySourceCore}=await import('./compiled/audio-sources.js');verifySourceCore();console.log('Packed source envelopes / independent SFX buffers / protobuf restore passed');}

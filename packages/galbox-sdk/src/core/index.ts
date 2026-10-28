@@ -1,3 +1,4 @@
+import {audioSourcesSignature,settleSourceFades,supersedeSourceFades,tickSourceFades} from '../protocol/audio-sources.js';
 import {isModuleProgram} from '../program-tools/module-program.js';
 import type {ModuleProgram} from '../program-tools/module-program.js';
 import {SnapshotProjection} from './view.js';
@@ -39,7 +40,7 @@ export type CoreEvent =
  | {type:'task'; task:string; attempt:number; result:'completed'|'blocked'|'failed'}
  | {type:'retry'; task:string}
  | {type:'flushAck'; revision:number};
-export type Effect = {type:'video';task:Task} | {type:'video-stop'} | {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
+export type Effect = {type:'audio-source-stop';task:string;attempt:number} | {type:'video';task:Task} | {type:'video-stop'} | {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
 export type ProgressChange = import('../protocol/index.js').ProgressChangeWire;
 export interface CoreView { readonly run: DeepReadonly<Snapshot>; readonly profile: DeepReadonly<Profile>; readonly dirty:number; readonly error:string|null; readonly canSave:boolean; readonly saveReason:string|null; }
 function positions(p: Position): Position { return {...p}; }
@@ -75,7 +76,7 @@ export class Core {
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.moduleSource??this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(entryScene!==undefined?sceneRoot(this.program,this.profile,entryScene):entryNode===undefined?this.program.entry:flowEntry(this.program,this.profile,entryNode)),rng=initialRng(this.program.rng,rngSeed);
-      const ui=initialUI(this.program),textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program),flow=initialFlow(this.program,entryNode??null);this.s={...(ui?{ui}:{}),...(entryScene!==undefined?{replayScene:entryScene}:{}),...(this.extrasIdentity?{extrasSignature:this.extrasIdentity}:{}),...(flow?{flow}:{}),...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
+      const ui=initialUI(this.program),textLayout=initialTextLayout(this.program),catalog=streamCatalog(this.program),flow=initialFlow(this.program,entryNode??null);this.s={...(this.program.capabilities.includes('audio.sources')?{audioSourcesSignature:audioSourcesSignature(this.program)}:{}),...(ui?{ui}:{}),...(entryScene!==undefined?{replayScene:entryScene}:{}),...(this.extrasIdentity?{extrasSignature:this.extrasIdentity}:{}),...(flow?{flow}:{}),...(catalog?{streamCatalog:catalog}:{}),...(textLayout?{textLayout}:{}),...(this.program.capabilities.includes('stage.effects')?{scene:initialScene()}:{}),...(this.program.capabilities.includes('audio.extended')?{audioState:initialAudioState()}:{}),version:1,release:this.program.release,frames:[this.frame(entry,[])],globals:values(this.program.globals),stage:[],text:null,history:[],tasks:[],groups:[],wait:null,saveAllowed:true,status:'running',counter:0,profileBasis:this.profile.revision,logicalTime:0,invocations:[],...(rng?{rng}:{})};
     }
     if(this.moduleSource)this.s.programModules=parseProgramModuleBinding({manifestSha256:this.moduleSource.identity,modules:[...this.usedModules]});
     if(snapshot===undefined)this.checkExtras();
@@ -122,7 +123,7 @@ export class Core {
     for(const t of this.s.tasks)if(t.kind==='audio'&&t.status==='completed'&&t.restore==='replay') {
       t.attempt++;this.effects.push({type:'audio',task:parseTask(t)});
     }
-    for(const t of this.s.tasks)if(t.kind==='media'&&['running','blocked'].includes(t.status)){ensure(t.mediaTask,'MEDIA_TASK','Missing media state');t.attempt++;if(t.restore==='stop'){t.status='cancelled';t.mediaTask.phase='cancelled';}else {t.status='running';t.mediaTask.phase='pending';this.effects.push({type:'audio',task:parseTask(t)});}}updateDuck(this.s);
+    for(const t of this.s.tasks)if(t.kind==='media'&&['running','blocked'].includes(t.status)){ensure(t.mediaTask,'MEDIA_TASK','Missing media state');t.attempt++;if(mode==='restore'&&t.restore==='stop'){t.status='cancelled';t.mediaTask.phase='cancelled';}else {t.status='running';t.mediaTask.phase='pending';this.effects.push({type:'audio',task:parseTask(t)});}}settleSourceFades(this.s);updateDuck(this.s);
     for(const t of this.s.tasks)if(t.kind==='video'&&['running','blocked'].includes(t.status)){ensure(t.videoTask,'VIDEO_TASK','Missing video state');t.attempt++;t.status='running';t.videoTask.phase='pending';this.effects.push({type:'video',task:parseTask(t)});}
     if(this.s.wait?.kind==='ui'){ensure(this.s.wait.attempt<2147483647,'RESTORE_UI_ATTEMPT','UI attempts exhausted');this.s.wait.attempt++;this.s.wait.phase='prepared';}
     if(this.s.wait?.kind==='interaction'){this.s.wait.attempt++;this.s.wait.phase='prepared';this.s.wait.activeAt=null;}
@@ -166,7 +167,7 @@ export class Core {
       if(this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich&&!isTextConfirming(this.s.text)){const candidate=parseTextState(this.s.text);tickRichText(candidate,event.ms,this.textPlan());if(isTextConfirming(candidate))i32(this.s.counter+1);}
       this.s.logicalTime+=event.ms;
       if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text);tickRichText(this.s.text,event.ms,this.textPlan());if(!wasWaiting&&isTextConfirming(this.s.text))this.renewTextPrompt();}else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
-      tickAudio(this.s,event.ms);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
+      tickAudio(this.s,event.ms);for(const stopped of tickSourceFades(this.s,event.ms))this.effects.push({type:'audio-source-stop',task:stopped.id,attempt:stopped.attempt});settleSourceFades(this.s);updateDuck(this.s);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
         if(t.kind==='animation') {
@@ -332,11 +333,11 @@ export class Core {
       }
       case 'wait.delay': {const t=task(i.task,'delay',i.duration);this.s.tasks.push(t);wait({kind:'delay',at:i.at,task:t.id});return;}
       case 'audio.play': {
-        this.s.tasks.filter(t=>(t.kind==='audio'||t.kind==='media')&&t.channel===i.channel&&['running','blocked','completed'].includes(t.status)).forEach(t=>{if(t.kind==='media'&&t.status==='completed')return;t.status='superseded';if(t.mediaTask)t.mediaTask.phase='superseded';});updateDuck(this.s);
+        this.s.tasks.filter(t=>(t.kind==='audio'||t.kind==='media')&&t.channel===i.channel&&t.buffer===undefined&&['running','blocked','completed'].includes(t.status)).forEach(t=>{if(t.kind==='media'&&t.status==='completed')return;t.status='superseded';if(t.mediaTask)t.mediaTask.phase='superseded';});settleSourceFades(this.s);updateDuck(this.s);
         const t:Task={...task(i.task,'audio',0),asset:i.asset,channel:i.channel,gain:i.gain,loop:i.loop,restore:i.restore};this.s.tasks.push(t);this.effects.push({type:'audio',task:parseTask(t)});break;
       }
       case 'audio.stop':stopAudioTasks(this.s,i.channel);this.effects.push({type:'audio-stop',channel:i.channel});break;
-      case 'audio.gain':this.s.tasks.filter(t=>(t.kind==='audio'||t.kind==='media')&&t.channel===i.channel).forEach(t=>{t.gain=i.gain;});this.effects.push({type:'audio-gain',channel:i.channel,gain:i.gain});break;
+      case 'audio.gain':supersedeSourceFades(this.s,i.channel);this.s.tasks.filter(t=>(t.kind==='audio'||t.kind==='media')&&t.channel===i.channel).forEach(t=>{t.gain=i.gain;});this.effects.push({type:'audio-gain',channel:i.channel,gain:i.gain});break;
       case 'profile.i32.add.checked': {const previous=this.profile.values[i.key];ensure(previous?.kind==='i32','PROFILE_KIND',i.key);this.setProfile(i.key,i32(previous.value+i.delta));break;}
       case 'profile.set':this.setProfile(i.key,i.value);break;
       case 'profile.expression':this.setProfile(i.key,this.expression(i.value));break;
@@ -394,7 +395,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
-  validateStageSnapshot(p,s);validateAudioSnapshot(p,s);restoreInteraction(p,s);validateVideo(p,s,initial);
+  validateStageSnapshot(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);
