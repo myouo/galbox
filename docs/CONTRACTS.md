@@ -93,3 +93,5 @@ W1-03B：代码I/O不进入Core。未加载call不修改PC/参数，准备失败
 ADR0042：带textCatalogBinding的Program模板不能直接执行；bind必须验证game/release/locale、完整目录摘要、槽位和TextId/Revision，再还原普通Program。偏好locale不属于剧情快照，读旧档不得回滚偏好；旧偏好缺locale时使用本Player作者默认。未声明翻译不按行配对或猜测已读继承；有限split支持集外明确unsupported。
 
 ADR0046：字符单位等待在遇到控制时采样有效interval，活动剩余时长与采样值进入Snapshot；偏好变化只影响之后的等待。瞬显跳过新字符等待，显完可跳过当前等待；confirm仍是独立输入屏障。固定等待与旧合法数据语义不变，未知新变体在旧实现明确拒绝。
+
+G1-04/ADR0048的滚轮属于Web输入：InputPreferences的可选wheel字段保持v2兼容，不进入剧情Snapshot；手势绑定既有prompt/epoch，只调用现有step/history系统入口，菜单/激活/编辑/原生滚动不能穿透。缺省值与schema、protobuf新字段7和真实设置工厂一致。

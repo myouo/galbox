@@ -134,3 +134,5 @@ G1-03：旧偏好补默认/protobuf/非法模式；真实媒体在失焦后继�
 I1-01第一步：公共工厂split→protobuf→bind必须还原原Program及字节；模板直执行、目录错locale/release/digest/槽位修订拒绝而不改输入。真实Player/IndexedDB需验证旧偏好缺locale的作者默认、reloadPreferences同规则、旧剧情读档不回滚locale、dispose重建后持久偏好。完整系统UI翻译未验收前父任务不得done。
 
 W1-05：独立R2桶只上传当前资源闭包；HTTPS全对象摘要、HEAD/Range/条件请求/缺失资源/鉴权缓存边界及真实浏览器选中语言加载、慢网、失败重试、OP/存档/刷新验证。公开原包/其他作品/离线整包/移动真实设备不据此认证。
+
+G1-04：真实Player验证三种滚轮单位、显完/推进分离、单串惯性、跨load/失焦/菜单余波拒绝、原生滚动/表单/缩放、嵌套输入根/双Player隔离及dispose；真实工厂与protobuf验证wheel布尔与旧v2默认。独立实例以实际包、原历史资源与八语UI验收历史查看和IndexedDB存档/刷新，不能冒称章节回放已接通。

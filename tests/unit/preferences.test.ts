@@ -26,3 +26,9 @@ it('current text preferences control remaining reveal without changing saved tex
 it('coordinator serializes preference changes behind a budget continuation and instant text is still unread',async()=>{
  const core=createCore(program),scheduler=new VirtualScheduler(),runtime=new Coordinator(core,new VirtualHost(),scheduler,new MemoryStore(),1,null,'preferences',1);const start=runtime.start(),setting=runtime.dispatch({type:'text.preferences',value:{intervalMs:0}});scheduler.drain();await Promise.all([start,setting]);const tick=runtime.dispatch({type:'tick',ms:0});scheduler.drain();await tick;expect(core.capture().text?.revealed).toBe(Array.from(core.capture().text?.content??'').length);expect(core.view().profile.read).toEqual([]);runtime.stop();
 });
+it('wheel preference preserves old settings and uses generated boolean wire validation',()=>{
+ const old=defaultPreferences();delete old.input.wheel;expect(normalizePreferences(old).input.wheel).toBe(true);
+ const disabled=mergePreferences(old,{input:{wheel:false}});expect(disabled.input.advance).toEqual(old.input.advance);expect(disabled.input.wheel).toBe(false);expect(decodeWire('PlayerPreferences',encodeWire('PlayerPreferences',disabled))).toEqual(disabled);
+ expect(mergePreferences(disabled,{input:{advance:['KeyD']}}).input.wheel).toBe(false);
+ for(const wheel of ['false',1,null,{},[]])expect(()=>mergePreferences(old,{input:{wheel}})).toThrow();
+});

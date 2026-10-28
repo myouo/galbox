@@ -2996,6 +2996,40 @@
         "chapter-resource-closure-over-http"
       ],
       "next_action": "当前仍44前导+32页。合并已提交G3-07后解析char_reg/角色部件与运动；按scenario1start到zero3整门编译，接chapter.ks与sf.scenario1解锁，再验回放。禁止把全文PO/SDK已具备回放API标为整章完成。"
+    },
+    {
+      "id": "G1-04",
+      "milestone": "G1",
+      "title": "滚轮阅读、手势隔离及自定义历史入口",
+      "depends_on": [
+        "G1-02",
+        "G4-02"
+      ],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "in_progress",
+      "outputs": [
+        "schema-derived persistent wheel preference",
+        "scoped one-gesture step/history input",
+        "packed consumer and source-styled history integration"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "wheel-units-and-burst-identity",
+        "no-menu-editor-scroll-or-load-leak",
+        "persistent-settings-and-indexeddb-saves",
+        "independent-eight-locale-history-ui"
+      ],
+      "evidence": [
+        "docs/evidence/g1-04/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "SDK单元和输入浏览器通过，完成实包consumer与独立实例滚轮/历史/IndexedDB验证后更新状态；章节回放F-01E不计入。"
     }
   ]
 }
