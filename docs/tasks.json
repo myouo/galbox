@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G3-07",
+  "current_task": "W1-03C",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2286,7 +2286,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "见父任务W1-03及当前ADR/STATUS；不得提前声明总体完成。"
+      "next_action": "下一先以真实IndexedDB建立profile/head/回执热根写入量与长历史/多槽位基线，定义有限逐记录布局/留存与容量ADR，再实施原子迁移；回执幂等和被取代head不可复活必须保留，不以提高4M预算冒充支持大作。"
     },
     {
       "id": "W1-03B2",
@@ -2313,7 +2313,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "在基础模块路径验证后补齐高级指令/元数据签名与恢复闭包，不用基础模块通过替代全部功能模块化。"
+      "next_action": "在基础模块路径上补齐高级指令/元数据签名与恢复闭包，包括audio.sources的具名SE和源包络；单体路径已支持不代表模块路径支持。"
     },
     {
       "id": "I1-01",
@@ -2615,9 +2615,9 @@
         "G3-02",
         "G3-06"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "partial",
+      "verification": "passed",
       "outputs": [
         "source-bound fade/stop envelopes",
         "declared concurrent SFX buffers and full restore closure"
@@ -2640,7 +2640,7 @@
         "docs/evidence/g3-07/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "最终check/44文件284单元、20相关浏览器、精确tarball消费/备份、API与包审计通过；推送候选后回收其准确SHA远程全CI，最后源音频与性能复验仍执行。"
+      "next_action": "ADR0045有限源包络/8个SE缓冲、初始激活与恢复闭包完成；check/284单元/20+4相关浏览器/精确实包与备份/API/包/性能通过，代码3e31187远程CI全部success（176浏览器）。下一W1-03C；基础模块新音频归W1-03B2，真实实例迁移另验。"
     },
     {
       "id": "G1-03",
@@ -2906,9 +2906,9 @@
       "depends_on": [
         "E1-04"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "partial",
+      "verification": "passed",
       "outputs": [
         "remote workflow failure triage",
         "deterministic browser evidence and exact-SHA CI completion"
@@ -2924,7 +2924,7 @@
         "docs/evidence/e1-05/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "d282bd9双浏览器任务通过；已修正其暴露的npm按包名包装dry-run结果，保留身份/版本/文件断言。最终G3-07代码SHA全CI待回收。"
+      "next_action": "3e31187的run40637434057三个CI任务全部success；Canvas上下文成本隔离和npm新旧报告格式均已复验。继续保持准确代码SHA和失败证据，不将其他并行分支结果混用。"
     }
   ]
 }

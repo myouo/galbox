@@ -8,4 +8,4 @@
 - d282bd9，run40635073665：两个浏览器任务均success；主任务check/单元/compatibility/CLI/实包consumer通过，继续发现test:release失败。npm dry-run返回按包名包装的对象，旧解析器假定顶层name，导致undefined不等于galbox-sdk。
 - 修复npm报告解析，同时接受旧flat报告和单一正确包名包装；错误包名/多包/空值/异常形状拒绝。原包名、版本和文件清单断言保留；新增2项负例/互通单元及实际SDK/CLI dry-run通过。不是放宽校验或实际发布npm。
 
-G3-07候选完成后将跟踪其准确提交SHA的全部CI任务；最终run/结果待补齐。任务未据局部或前一个SHA通过提前标done。
+最终代码提交3e311870f9d01971960b6ae404d329cc7141d26a，run40637434057全部success：主check任务（含CLI、独立实包、实际SDK/CLI release dry-run和包检查）及Canvas 22项/其余154项浏览器，合计176项。无放宽超时、删除断言、skip或自动重试。准确SHA/完整任务/日志保存在3e31187-result.json和3e31187.log，见[GitHub Actions](https://github.com/myouo/galbox/actions/runs/40637434057)。本轮G3-07与E1-05完成；并行文本等待分支的CI不是本报告证据。
