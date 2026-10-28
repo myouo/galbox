@@ -1,13 +1,11 @@
 # galbox-sdk 当前接续
 
-2026-10-29。隔离分支feat/chapter-runtime承担独立作品适配所需SDK功能；已合入已提交主线G3-07，保留G2-05字符等待、G1-04滚轮及恢复后choice/ended历史修复。主SDK工作区的并行未提交修改未纳入，不宣称本分支已合回主线。
+2026-10-29。隔离分支feat/chapter-runtime实际源码/测试6ec5791，CI run40770926373六任务success：301单元、184浏览器、CLI/consumer/release/package。实包c398a36e07822cf6d5c5b6ab9a4eb491c8acc621a216b65653846d62cbca0889，独立实例通过公开exports消费；主SDK工作区并行改动未覆盖/自动合并。
 
-本次G4-01/ADR0049增加SavePolicy.autoAt（经典Program合法text/choice、最多256唯一地址；省略保持原行为、空数组不匹配、模块程序显式拒绝）。读档不再次覆盖自动槽；原合法切点/资源屏障/同切点图片/原子存储和head权威保持。DOM文字窗口在空正文/结束时仍继承主题字体。
+本轮完成ADR0050稳定标签预取/预算与引用交接/版本化音乐URL缓存，ADR0051已知发行版自动读档迁移，ADR0052同段正文续接/自动结束/用户字速及显式终态任务/历史回收。旧32页实际IndexedDB自动迁移保留原槽，未知版本/旧recipe/模块仍明确拒绝；这不是KRKR原生存档codec。证据evidence/reading-prefetch、saved-game-migration、text-continuations。
 
-当前生产代码包含eb11b90的默认UI焦点/手势初始化修复，最终测试提交4afbeb2。CI run40721872087 attempt2六任务success，181浏览器、289单元、CLI/consumer/release/package通过；原失败和复验分别保留。实包SHA256=06efd13b7f452f76c1f206792798e8669bc01fa321d534eaa5881c6c6d354331，独立实例已升级，52前端文件5013691字节与已上线构建逐字节相同。文档归档不改生产/测试代码。证据evidence/authored-autosave及evidence/ui-initialization。
+外部实例公开预览test.morgana.love已更新，最终包完整序章公网95次推进P95 930→59ms、资源等待暂停12→3，仍有冷转场等待。实例3 Python+76 TS、最终包本地4/公网4浏览器；68前端文件6424255字节与本地build相同。原472个R2媒体未变，原KS/TJS/提取/媒体/日志不进入本次Git。SDK此前远端历史含606个.log引用，按保留历史要求未重写，本轮没有新增。
 
-F-01E独立实例已实际运行八语完整新周目序章：44前导/OP＋每条选择路线93页，人物/对白/源BGM/具名SE/原转场及自动点。实例3 Python+57 TS、46本地浏览器、18项网络覆盖通过，原32页存档保留并提示不兼容。test.morgana.love匿名预览已更新，472资源闭包在授权R2桶；缓存改动有真实workerd/R2/Cache及公网证据。未把网络重试/总时限复验算作无抖动认证，详见evidence/f-01e和实例docs/evidence/PROLOGUE.md。
+F-01E仍in_progress：线上为完整新周目序章93页/路线。第一门八语全文控制IR/PO与正文边界已编译，但动态角色/前后台组转场/逐轴运动/雨樱粒子/双BGM、完整2478段主线、sf.scenario1和原菜单隔离回放未交付。下一按实例docs/DOOR1_IMPLEMENTATION.md补stage.motion及其页复制/恢复，再整门lowering和八语完整路径/中途保存/HTTP/隔离回放，不用局部片段替代整章。高级代码模块、原档/原作继续、tft与真机另验。
 
-F-01E仍in_progress：下一整体第一门scenario1start→zero3的15场景，先核实女中_右体空图层/角色生命周期与位置运动，统一PO/条件流/环境效果，在实际章末sf.scenario1开启原章节菜单，用同章函数和临时Store做隔离回放。通关变体、原作继续/原档认证、tft与真机仍待。主线W1-03C等任务按另一工作区继续，不覆盖其工作。
-
-原创引擎运行pnpm dev；实例从外部工程pnpm sdk:build按gitlink复现实包，公共exports消费，SDK无作品/生成载荷/日志。当前任务事实以tasks.json为准。
+运行pnpm dev；独立实例pnpm sdk:build从gitlink复现实包，pnpm test:reading对比真实序章加载。任务事实以tasks.json为准。

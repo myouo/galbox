@@ -1661,10 +1661,11 @@
       ],
       "evidence": [
         "docs/evidence/g4-01/REPORT.md",
-        "docs/evidence/authored-autosave/REPORT.md"
+        "docs/evidence/authored-autosave/REPORT.md",
+        "docs/evidence/saved-game-migration/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "ADR0049补充可选作者自动点过滤，已由真实工厂/Schema/protobuf、浏览器与实包消费验收；模块程序autoAt仍拒绝。原G4-01/G4-02边界保持。"
+      "next_action": "ADR0049自动点与ADR0051精确发行版自动load迁移已验收，原槽/previous不覆盖，完整旧/新Core验证和持久head/CAS保持。实际旧32页八语及IndexedDB迁移已验；未知版本/旧recipe/模块路径仍明确拒绝。"
     },
     {
       "id": "G4-02",
@@ -2120,10 +2121,11 @@
       "evidence": [
         "docs/LOADING.md",
         "docs/decisions/0033-resource-loading-strategies.md",
-        "docs/evidence/w1-02/REPORT.md"
+        "docs/evidence/w1-02/REPORT.md",
+        "docs/evidence/reading-prefetch/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "四种策略、驻留缓存、资源屏障/重试/取消/跨刷新与跨策略恢复、可见CG引用均已验收；下一W1-03模块/存储，W1-04持久字节缓存/离线/平台。保持有限支持范围，不宣称整部大作或全部设备完成。"
+      "next_action": "ADR0050已完成跨同函数无条件标签的有界预取、引用交接、预算前缀和稳定版本化媒体URL；完整真实序章公网对照930→59ms、12→3暂停，仍有冷转场等待。CI184浏览器通过。继续高级模块/离线任务，不宣称所有网络或全作无卡顿。"
     },
     {
       "id": "W1-03",
@@ -3004,7 +3006,10 @@
       ],
       "evidence": [
         "docs/evidence/f-01d/REPORT.md",
-        "docs/evidence/f-01e/REPORT.md"
+        "docs/evidence/f-01e/REPORT.md",
+        "docs/evidence/reading-prefetch/REPORT.md",
+        "docs/evidence/saved-game-migration/REPORT.md",
+        "docs/evidence/text-continuations/REPORT.md"
       ],
       "blocker": null,
       "id": "F-01E",
@@ -3032,7 +3037,7 @@
         "replay-does-not-change-main-head-profile",
         "chapter-resource-closure-over-http"
       ],
-      "next_action": "八语完整新周目序章已上线：44前导/OP、每条真实问候路线93页；正式SDK06efd13b7f45，实例3 Python+57 TS/46本地浏览器/18项线上覆盖通过。SDK4afbeb2 CI attempt2六任务/181浏览器通过，旧失败与复验分开记录。下一整体第一门scenario1start→zero3的15场景：女中_右体空图层/角色生命周期与位移、完整PO/条件流/源音频/环境效果、章末sf.scenario1和原章节隔离回放；通关变体/tft/原作继续及原档互通未完成。"
+      "next_action": "整章仍未完成。SDK6ec5791实包c398a36e0782已上线：标签跳转预取/稳定音乐URL、旧32页自动迁移、正文续段和state.collect；CI301单元/184浏览器全绿，实例3 Python+76 TS及最终包本地4/公网4浏览器通过。完整序章公网P95 930→59ms、资源暂停12→3。下一按DOOR1_IMPLEMENTATION补stage.motion逐轴offset/页复制、雨樱粒子/组转场/双BGM，再整体编译2478段第一门、真实sf.scenario1与原菜单隔离回放。"
     },
     {
       "id": "G1-04",

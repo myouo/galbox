@@ -96,3 +96,9 @@ ADR0046：字符单位等待在遇到控制时采样有效interval，活动剩�
 
 G1-04/ADR0048的滚轮属于Web输入：InputPreferences的可选wheel字段保持v2兼容，不进入剧情Snapshot；手势绑定既有prompt/epoch，只调用现有step/history系统入口，菜单/激活/编辑/原生滚动不能穿透。缺省值与schema、protobuf新字段7和真实设置工厂一致。
 ADR0045补充C04/C05/C10：audio.sources的包络绑定解析后的逻辑media ID，具名SFX缓冲不替换其他槽；所有可达源保留在快照中，声明签名与源/包络进度需一致。自然结束、停止、替换、失败分别结算；Host停止命令核对epoch/task/attempt。初始激活不执行restore=stop的取消策略，普通存读档仍拒绝无法恢复的活动包络。旧media ABI与单体/模块支持边界保持显式。
+
+ADR0050补充C07/C10：balanced只沿同函数无条件jump做有界静态资源提示，不执行表达式、不猜分支/选择；引用交接先acquire后cancel。预取受事实成本预算约束，流URI可稳定缓存，但租约身份/取消与启动版本校验不得合并。
+
+ADR0051补充C06/C11：已登记source release的自动load迁移须取得并验证旧Program/快照，私有冻结输入，目标Program完整验证输出；只允许当前持久profile的显式已读别名增量。原槽/previous不覆盖，沿既有freeze/dirty交接/准备/activation CAS提交；失败/取消保留当前会话和来源记录，未知版/模块/旧recipe明确拒绝。
+
+ADR0052补充C03/C04/C05：text.rich continuation保持同逻辑段落及已揭示前缀，显完后的continue不读入历史，finish才确认；appendFrom须同身份/说话者/ADV窗口且合法前缀。state.collect保留活动任务、未消费组和音源引用闭包，以及明确保留的最新结果；仅清理其余终态记录/超出保留窗口的历史，不缩减已读/解锁/counter，不产生保存切点。
