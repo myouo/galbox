@@ -7,3 +7,5 @@
 实际pnpm check通过生成/strict/headless/导入/仓库边界；43文件270单元通过。独立动态端口浏览器使用真实Canvas/DOM/IndexedDB，验证跨刷新恢复、当前采样与新速度、确认与显完；原始日志browser.log通过。pnpm test:consumer使用实际tarball运行新公开工厂/protobuf恢复，以及既有播放/保存/恢复/备份，全部通过。raw仅artifacts/character-waits。
 
 浏览器脚本第一次因未服务拆分JS块失败，补完整静态依赖；第二次误读容器aria-label，改读真实story-text节点后通过，没有删除语义断言。当前仅通用文本等待，不宣称原KAG VM、所有源宏或整作迁移完成。
+
+首次远程CI的两个浏览器job均通过，check在npm发布dry-run结果解析失败：新npm输出按包名包裹对象。已下载实际CI产物确认格式，支持旧平面/新单包映射两种结果，名称/版本/文件断言保留；未知/多包/错误身份拒绝。只修本分支验收工具，不做实际npm发布。
