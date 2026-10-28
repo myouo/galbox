@@ -9256,10 +9256,19 @@ message Gbx_SavePolicy_auto {
   optional string value = 1;
 }
 
+message Gbx_SavePolicy_autoAt_Item {
+  optional string value = 1;
+}
+
+message Gbx_SavePolicy_autoAt {
+  repeated Gbx_SavePolicy_autoAt_Item items = 1;
+}
+
 message Gbx_SavePolicy {
   optional Gbx_SavePolicy_manualSlots manualSlots = 1;
   optional Gbx_SavePolicy_autoSlots autoSlots = 2;
   optional Gbx_SavePolicy_auto auto = 3;
+  optional Gbx_SavePolicy_autoAt autoAt = 4;
 }
 
 message Gbx_SaveGameOptions_slot {

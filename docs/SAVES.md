@@ -33,3 +33,5 @@ Player 与激活共用串行屏障，等合法边界后 freeze，同步捕获 Co
 保存的完整 payload 规范化后计算 SHA-256（固定 @noble/hashes 2.4.0），数据库事务同时写当前/上一快照、元数据/PNG 和固定大小回执。重试同 ID 只接受原 payload，避免每个回执再保留一份整图/快照。保存不会接管 head。丢回复先读回执，已提交返回 `committed:true,reconciled:true`；无法核验抛 `SaveOutcomeError`（outcome=unknown，含 commitId/slot），不假报无副作用。当前实例 `saveSystem.pending` 和 `retrySave(id)` 保留原 payload；刷新后凭已记录 ID 用 `inspectSave(id)` 核验历史提交。跨刷新不自动重发尚未确认的内存 payload。已知未提交失败和修订冲突保持原槽/上一修订与回执不变。
 
 IndexedDB 和 MemoryStore 都在完整事务候选上修改并隔离输入/输出。命名空间最多4 MB JSON；便携备份原有1 MB限额保留，超限明确拒绝，不能截断图片、删旧档或报成功。缩略图 Schema/头部/尺寸/编码上限检查不等同对任意不可信 PNG 的完整解码认证；实际新图由浏览器编码，显示/合成还需浏览器解码。暂不含云存档、图片编辑或无限槽位/无限规模承诺。
+
+ADR0049：`autoAt?: string[]`可把on-prompt限制在作者声明的正文/选择地址。省略保持原行为；空列表不匹配任何点，off仍不保存。经典Program前置验证地址种类，模块暂不支持此过滤器。沿用合法切点、原子图文保存及加载后抑制重复自动槽规则。

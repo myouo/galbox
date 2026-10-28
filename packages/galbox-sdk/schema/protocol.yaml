@@ -10081,6 +10081,14 @@ definitions:
           - off
           - on-prompt
         x-proto-tag: 3
+      autoAt:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9_.:@/-]{0,127}$
+        maxItems: 256
+        uniqueItems: true
+        x-proto-tag: 4
     required:
       - manualSlots
       - autoSlots
