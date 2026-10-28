@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "F-01A",
+  "current_task": "F-01E",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-28",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2929,6 +2929,73 @@
       ],
       "blocker": null,
       "next_action": "在独立实例接入原w/wc，保留源文字/控制/窗口与多语言PO；本分支不覆盖另一会话G3-07。"
+    },
+    {
+      "milestone": "F",
+      "contracts": [
+        "C01",
+        "C10",
+        "C12"
+      ],
+      "evidence": [
+        "docs/evidence/f-01d/REPORT.md"
+      ],
+      "blocker": null,
+      "id": "F-01D",
+      "title": "真实KAG章节批量KS到PO及来源/修订保护",
+      "depends_on": [
+        "G2-05",
+        "E1-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "external chapter-catalog converter",
+        "editable prologue/door1 catalogs in eight locales",
+        "explicit unmatched/control/macro inventory"
+      ],
+      "acceptance": [
+        "batch-real-source-catalogs",
+        "stable-label-and-native-control-preservation",
+        "translation-edit-safe-merge",
+        "generated-payload-exclusion"
+      ],
+      "next_action": "13范围八语274289候选已批处理；首两章20959条可编辑。文本提取不等于可玩，F-01E继续完整序章/第一门和原作章节回放。"
+    },
+    {
+      "milestone": "F",
+      "contracts": [
+        "C01",
+        "C10",
+        "C12"
+      ],
+      "evidence": [
+        "docs/evidence/f-01d/REPORT.md"
+      ],
+      "blocker": null,
+      "id": "F-01E",
+      "title": "完整序章/第一扇门与原作章节回放",
+      "depends_on": [
+        "F-01D",
+        "G3-07"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "partial",
+      "outputs": [
+        "whole-chapter source lowering",
+        "source chapter menu and durable unlock",
+        "same-production-engine isolated replay"
+      ],
+      "acceptance": [
+        "whole-chapter-start-to-end-eight-locales",
+        "source-effects-and-choice-fidelity",
+        "save-refresh-continue-inside-chapter",
+        "replay-does-not-change-main-head-profile",
+        "chapter-resource-closure-over-http"
+      ],
+      "next_action": "当前仍44前导+32页。合并已提交G3-07后解析char_reg/角色部件与运动；按scenario1start到zero3整门编译，接chapter.ks与sf.scenario1解锁，再验回放。禁止把全文PO/SDK已具备回放API标为整章完成。"
     }
   ]
 }
