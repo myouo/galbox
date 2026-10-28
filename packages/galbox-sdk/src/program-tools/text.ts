@@ -13,6 +13,7 @@ export const richText=Object.freeze({
  confirm:()=>run('confirm',{kind:'confirm'}),
  pause:(duration:number)=>run('pause',{kind:'pause',duration}),
  pauseUnits:(units:number)=>run('pause.units',{kind:'pause.units',units}),
- speed:(intervalMs:number)=>run('speed',{kind:'speed',intervalMs})
+ speed:(intervalMs:number)=>run('speed',{kind:'speed',intervalMs}),
+ userSpeed:()=>run('speed',{kind:'speed',intervalMs:0,user:true})
 });
-export function richPage(at:string,textId:string,revision:string,speaker:Content,runs:readonly RichTextSourceRun[]):Extract<Instruction,{op:'text.rich'}> {const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return instruction('text.rich',{at,textId,revision,speaker:expression(speaker),runs:[first,...rest]});}
+export function richPage(at:string,textId:string,revision:string,speaker:Content,runs:readonly RichTextSourceRun[],options:{completion?:'input'|'continue'|'finish';appendFrom?:string}={}):Extract<Instruction,{op:'text.rich'}> {const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return instruction('text.rich',{at,textId,revision,speaker:expression(speaker),runs:[first,...rest],...options});}

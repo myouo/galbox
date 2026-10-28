@@ -964,6 +964,14 @@ message Gbx_Instruction_Case28_runs {
   repeated Gbx_Instruction_Case28_runs_Item items = 1;
 }
 
+message Gbx_Instruction_Case28_completion {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case28_appendFrom {
+  optional string value = 1;
+}
+
 message Gbx_Instruction_Case28 {
   optional Gbx_Instruction_Case28_at at = 1;
   optional Gbx_Instruction_Case28_op op = 2;
@@ -971,6 +979,8 @@ message Gbx_Instruction_Case28 {
   optional Gbx_Instruction_Case28_revision revision = 4;
   optional Gbx_Instruction_Case28_speaker speaker = 5;
   optional Gbx_Instruction_Case28_runs runs = 6;
+  optional Gbx_Instruction_Case28_completion completion = 7;
+  optional Gbx_Instruction_Case28_appendFrom appendFrom = 8;
 }
 
 message Gbx_Instruction_Case29_at {
@@ -2179,6 +2189,33 @@ message Gbx_Instruction_Case67 {
   optional Gbx_Instruction_Case67_source source = 3;
 }
 
+message Gbx_Instruction_Case68_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case68_op {
+  // Fixed semantic value: "state.collect"
+}
+
+message Gbx_Instruction_Case68_retainTasks_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case68_retainTasks {
+  repeated Gbx_Instruction_Case68_retainTasks_Item items = 1;
+}
+
+message Gbx_Instruction_Case68_historyLimit {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case68 {
+  optional Gbx_Instruction_Case68_at at = 1;
+  optional Gbx_Instruction_Case68_op op = 2;
+  optional Gbx_Instruction_Case68_retainTasks retainTasks = 3;
+  optional Gbx_Instruction_Case68_historyLimit historyLimit = 4;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -2248,6 +2285,7 @@ message Gbx_Instruction {
     Gbx_Instruction_Case65 v65 = 65;
     Gbx_Instruction_Case66 v66 = 66;
     Gbx_Instruction_Case67 v67 = 67;
+    Gbx_Instruction_Case68 v68 = 68;
   }
 }
 
@@ -5984,9 +6022,14 @@ message Gbx_RichTextSourceRun_Case5_intervalMs {
   optional sint64 value = 1;
 }
 
+message Gbx_RichTextSourceRun_Case5_user {
+  optional bool value = 1;
+}
+
 message Gbx_RichTextSourceRun_Case5 {
   optional Gbx_RichTextSourceRun_Case5_kind kind = 1;
   optional Gbx_RichTextSourceRun_Case5_intervalMs intervalMs = 2;
+  optional Gbx_RichTextSourceRun_Case5_user user = 3;
 }
 
 message Gbx_RichTextSourceRun_Case6_kind {
@@ -6092,9 +6135,14 @@ message Gbx_TextRun_Case5_intervalMs {
   optional sint64 value = 1;
 }
 
+message Gbx_TextRun_Case5_user {
+  optional bool value = 1;
+}
+
 message Gbx_TextRun_Case5 {
   optional Gbx_TextRun_Case5_kind kind = 1;
   optional Gbx_TextRun_Case5_intervalMs intervalMs = 2;
+  optional Gbx_TextRun_Case5_user user = 3;
 }
 
 message Gbx_TextRun_Case6_kind {

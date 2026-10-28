@@ -1021,6 +1021,17 @@ definitions:
             minItems: 1
             maxItems: 128
             x-proto-tag: 6
+          completion:
+            type: string
+            enum:
+              - input
+              - continue
+              - finish
+            x-proto-tag: 7
+          appendFrom:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 8
         required:
           - at
           - op
@@ -2310,6 +2321,36 @@ definitions:
           - source
         additionalProperties: false
         x-proto-tag: 67
+      - type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          op:
+            type: string
+            const: state.collect
+            x-proto-tag: 2
+          retainTasks:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            maxItems: 256
+            uniqueItems: true
+            x-proto-tag: 3
+          historyLimit:
+            type: integer
+            minimum: 1
+            maximum: 10000
+            x-proto-tag: 4
+        required:
+          - at
+          - op
+          - retainTasks
+          - historyLimit
+        additionalProperties: false
+        x-proto-tag: 68
   Function:
     type: object
     properties:
@@ -6680,6 +6721,9 @@ definitions:
             minimum: 0
             maximum: 200
             x-proto-tag: 2
+          user:
+            type: boolean
+            x-proto-tag: 3
         required:
           - kind
           - intervalMs
@@ -6791,6 +6835,9 @@ definitions:
             minimum: 0
             maximum: 200
             x-proto-tag: 2
+          user:
+            type: boolean
+            x-proto-tag: 3
         required:
           - kind
           - intervalMs

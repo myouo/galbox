@@ -35,5 +35,5 @@ export function validateWindowState(p:Program,s:Snapshot):void {
   for(const entry of w.entries){ensure(entry.window?.id===w.id&&isTextComplete(entry)&&!entryPrompts.has(entry.prompt)&&s.history.some(t=>t.prompt===entry.prompt&&canonicalWireJSON(t)===canonicalWireJSON(entry)),'RESTORE_TEXT_ENTRIES','Invalid/unconfirmed/duplicate window entry');entryPrompts.add(entry.prompt);}
  }
  if(s.wait?.kind==='text'){const w=state.windows.find(w=>w.id===state.active);ensure(w?.visible&&s.text?.window?.id===w.id&&s.text.window.at===s.wait.at&&!entryPrompts.has(s.text.prompt),'RESTORE_TEXT_WINDOW','Current prompt belongs to the visible active window');}
- else if(s.text)ensure(s.history.some(t=>t.prompt===s.text?.prompt&&canonicalWireJSON(t)===canonicalWireJSON(s.text)),'RESTORE_TEXT_ENTRIES','Visible retained text must be confirmed');
+ else if(s.text)ensure(s.history.some(t=>t.prompt===s.text?.prompt&&canonicalWireJSON(t)===canonicalWireJSON(s.text))||isTextComplete(s.text)&&code.some(i=>i.op==='text.rich'&&i.at===s.text?.rich?.at&&i.completion==='continue'),'RESTORE_TEXT_ENTRIES','Retained text must be confirmed or an explicit completed continuation');
 }

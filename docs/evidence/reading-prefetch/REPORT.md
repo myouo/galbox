@@ -5,3 +5,5 @@
 相关单元和类型检查已通过。浏览器loading/reading-prefetch/streams 19项通过，含四种策略、失败保旧帧重试、LRU跨刷新、真实HTTP渐进播放、版本漂移/取消/双实例隔离。受控图像读取延迟400ms、阅读间隔600ms下，demand实际AudioContext暂停，balanced两次推进均无暂停、共享预取各一次；这是负对照而非仅看配置名。真实作品远程复验与默认策略更新继续，不据此声称所有网络下无卡顿。
 
 raw在ignored artifacts/door-loading、artifacts/door-prefetch及对应log；独立实例正在整章迁移，正式包不包含其资产。
+
+真实实例验证补充：b6c9d43实际包eac6512fecb9，pnpm check、294单元和consumer通过。实例3 Python+76 TS、旧32页实际IndexedDB自动迁移浏览器通过。完整源序章固定路线、95次推进（含页内确认）、每次阅读600ms、CDP延迟180ms/750000 B/s：本地demand→balanced的P95为853→68ms、资源暂停12→2；testsdk实际R2公网为916→62ms、12→3，媒体waiting事件均为0。两组中位约38–42ms；仍有冷转场停顿，不能称零卡顿。原OP在218592/5122568字节时已实际playing。11项公网覆盖10项首轮通过，旧档测试在快速推进虚拟时钟时抢先触发真实HTTP媒体握手超时；测试改为等待真实媒体启动回执后快进动画，原15秒边界保持，旧档单项15.6秒通过。该测试修复不是生产性能提升，首次失败留存。

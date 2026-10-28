@@ -13,11 +13,11 @@ import {initialAudioState,isAudioInstruction,audioExpressions,tickAudio,updateDu
 import {executeAudio,replayVoice,validateAudioSnapshot} from './audio.js';
 import {isStageInstruction,initialScene,applyStageTask,taskObject,taskLocks,validateStageGraph} from '../protocol/stage.js';
 import {executeStage,removeStageObject,validateStageSnapshot} from './stage.js';
-import { ensure,parseProgramModuleBinding, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,parseInteractionEvent,parseFlowProgress,parseExtrasProgress } from '../protocol/index.js';
+import { ensure,parseProgramModuleBinding, parseSnapshot, parseProfile, parseValue, emptyProfile, i32, readUnit, GalboxError, parseOperationResume, parseSavedInvocation, parseRestoreRecipe, recoveryOpcodes, parseInstruction, parseTextPreferences, parseTextState,parseTask,canonicalWireJSON,parseInteractionEvent,parseFlowProgress,parseExtrasProgress } from '../protocol/index.js';
 import type { Program, Snapshot, Profile, Frame, Value, Operand, Task, Instruction, DeepReadonly, Position, Function as ProgramFunction, SavedInvocation, OperationResume,InteractionEvent } from '../protocol/index.js';
 import {extendedValue,equalValues,orderValues} from '../protocol/values.js';
 import {initialTextLayout,prepareWindowText,commitWindowText,confirmWindowText,activeTextWindow,clearTextWindow,validateWindowState} from '../protocol/layout.js';
-import {compileRichText,richTextSignature,textSegmentation,tickRichText,revealRichText,confirmRichText,isTextConfirming,isTextComplete,validateRichText} from '../protocol/text.js';
+import {compileRichText,richTextSignature,richContinuationSources,textSegmentation,tickRichText,revealRichText,confirmRichText,isTextConfirming,isTextComplete,validateRichText} from '../protocol/text.js';
 import type {TextPlan} from '../protocol/text.js';
 import {evaluateExpression,templateSignature} from '../protocol/expressions.js';
 import {sampleI32,initialRng} from './rng.js';
@@ -83,6 +83,23 @@ export class Core {
     if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
   private textPlan():TextPlan {const rich=this.s.text?.rich;ensure(rich,'TEXT_STATE','No structured text');return this.richPlan??=compileRichText(rich.runs);}
+  private finishText(record=true):void {
+    ensure(this.s.text&&this.s.wait?.kind==='text','TEXT_STATE','No active text');
+    if(record){this.read();if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}const text=parseTextState(this.s.text);if(Object.isFrozen(this.s.history))this.s.history=[...this.s.history,text];else this.s.history.push(text);confirmWindowText(this.s);}
+    this.top().pc=this.next();this.s.wait=null;this.s.status='running';
+  }
+  private finishAutomaticText():void {
+    if(this.s.wait?.kind!=='text'||!this.s.text||!isTextComplete(this.s.text))return;
+    const source=this.op();if(source.op==='text.rich'&&source.completion&&source.completion!=='input')this.finishText(source.completion==='finish');
+  }
+  private collectState(retain:readonly string[],limit:number):void {
+    const ids=new Set(this.s.tasks.filter(t=>t.status==='running'||t.status==='blocked'||t.kind==='audio'&&t.status==='completed'&&t.restore==='replay').map(t=>t.id));
+    for(const name of retain){const t=[...this.s.tasks].reverse().find(t=>t.name===name);if(t)ids.add(t.id);}
+    const groups=this.s.groups.filter(g=>!g.consumed);for(const g of groups)for(const id of g.members)ids.add(id);
+    let changed=true;while(changed){changed=false;for(const t of this.s.tasks)if(ids.has(t.id)&&t.sourceFade&&!ids.has(t.sourceFade.source)){ids.add(t.sourceFade.source);changed=true;}}
+    const prompts=new Set(this.s.history.slice(-limit).map(t=>t.prompt));if(this.s.text)prompts.add(this.s.text.prompt);for(const w of this.s.textLayout?.windows??[])for(const t of w.entries)prompts.add(t.prompt);
+    this.s.tasks=this.s.tasks.filter(t=>ids.has(t.id));this.s.groups=groups;this.s.history=this.s.history.filter(t=>prompts.has(t.prompt));
+  }
   private renewTextPrompt():void {const w=this.s.wait,text=this.s.text;ensure(w?.kind==='text'&&text,'TEXT_STATE','No active text prompt');const prompt=this.s.counter+1;i32(prompt);this.s.counter=prompt;text.prompt=prompt;w.prompt=prompt;}
   private definition(id:string){const result=this.functions.get(id);ensure(result,'FUNCTION',id);return result;}
   private fn(id:string):ProgramFunction {return this.definition(id).definition;}
@@ -154,11 +171,10 @@ export class Core {
         if(this.s.wait.kind!=='choice')return;const choice=this.s.wait.options.find(o=>o.id===event.option);if(!choice)return;
         this.put(this.s.wait.dest,{kind:'string',value:choice.id});this.top().pc=choice.target;this.s.wait=null;this.s.status='running';
       } else if(this.s.wait.kind==='text'&&this.s.text) {
-        if(event.type!=='reveal'&&isTextConfirming(this.s.text)){confirmRichText(this.s.text,this.textPlan());this.renewTextPrompt();return;}
-        if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich){const changed=!isTextComplete(this.s.text)&&!isTextConfirming(this.s.text),plan=this.textPlan();revealRichText(this.s.text,plan);if(changed&&plan.tokens.some(t=>t.kind==='confirm'))this.renewTextPrompt();}else this.s.text.revealed=length(this.s.text.content);return;}
+        if(event.type!=='reveal'&&isTextConfirming(this.s.text)){confirmRichText(this.s.text,this.textPlan());this.renewTextPrompt();this.finishAutomaticText();return;}
+        if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich){const changed=!isTextComplete(this.s.text)&&!isTextConfirming(this.s.text),plan=this.textPlan();revealRichText(this.s.text,plan);if(changed&&plan.tokens.some(t=>t.kind==='confirm'))this.renewTextPrompt();}else this.s.text.revealed=length(this.s.text.content);this.finishAutomaticText();return;}
         if(!isTextComplete(this.s.text))return;
-        try{this.read();}catch(error){this.consumed.delete(event.inputId);throw error;}
-        if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}const confirmed=parseTextState(this.s.text);if(Object.isFrozen(this.s.history))this.s.history=[...this.s.history,confirmed];else this.s.history.push(confirmed);confirmWindowText(this.s);this.top().pc=this.next();this.s.wait=null;this.s.status='running';
+        try{this.finishText();}catch(error){this.consumed.delete(event.inputId);throw error;}
       }
       return;
     }
@@ -178,6 +194,7 @@ export class Core {
         if(t.kind==='stage')applyStageTask(this.s,t);
         if(t.elapsed===t.duration)t.status='completed';
       }
+      this.finishAutomaticText();
     } else if(event.type==='task') {
       if(videoReport(this.s,event.task,event.attempt,event.result)||mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
       const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.kind!=='audio'||t.attempt!==event.attempt||t.status!=='running')return;
@@ -302,13 +319,18 @@ export class Core {
       case 'text.rich': {
         const speaker=this.expression(i.speaker);ensure(speaker.kind==='string','EXPRESSION_KIND','Speaker requires a string');
         const textValue=(expression:import('../protocol/index.js').StringExpression)=>{const value=this.expression(expression);ensure(value.kind==='string'&&value.value.length>0,'TEMPLATE_EMPTY','Rich content/reading must not be empty');return value.value;};
-        const runs=i.runs.map(run=>run.kind==='text'?{...run,content:textValue(run.content)}:run.kind==='ruby'?{...run,content:textValue(run.content),reading:textValue(run.reading)}:{...run});
+        const prior=i.appendFrom?this.s.text:null,prefixes=richContinuationSources(this.program,i),prefix=prefixes[0];
+        if(i.appendFrom)ensure(prior?.rich?.at===i.appendFrom&&prior.textId===i.textId&&prior.revision===i.revision&&prior.speaker===speaker.value&&isTextComplete(prior)&&(!this.s.textLayout||prior.window?.id===this.s.textLayout.active&&this.program.textLayout?.windows.find(w=>w.id===prior.window?.id)?.mode==='adv'),'TEXT_APPEND_STATE','Continue only the complete matching ADV text');
+        const prefixCount=prefix?.runs.length??0;
+        const runs=[...(prior?.rich?.runs??[]),...i.runs.slice(prefixCount).map(run=>run.kind==='text'?{...run,content:textValue(run.content)}:run.kind==='ruby'?{...run,content:textValue(run.content),reading:textValue(run.reading)}:{...run})];
         const plan=compileRichText(runs),signature=richTextSignature(i),prompt=this.s.counter+1;i32(prompt);
         const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:i.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:this.textInterval,revealedAt:[]}});
-        tickRichText(text,0,plan);validateRichText(text,i);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});return;
+        if(prior?.rich&&text.rich){text.revealed=prior.revealed;text.rich.cursor=compileRichText(prior.rich.runs).tokens.length;text.rich.elapsedMs=prior.rich.elapsedMs;text.rich.revealedAt=[...prior.rich.revealedAt];}
+        tickRichText(text,0,plan);validateRichText(text,i,prefixes);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;bindVoice(this.s,text);if(prior?.historyId)text.historyId=prior.historyId;else if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});this.finishAutomaticText();return;
       }
       case 'random.i32': {ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');const min=this.expression(i.min),max=this.expression(i.max);ensure(min.kind==='i32'&&max.kind==='i32','EXPRESSION_KIND','Random bounds require i32');const result=sampleI32(this.s.rng,min.value,max.value);this.put(i.dest,result.value);this.s.rng=result.rng;break;}
       case 'rng.seed': ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');this.s.rng={algorithm:'lcg32@1',state:i.seed,draws:0};break;
+      case 'state.collect':this.collectState(i.retainTasks,i.historyLimit);break;
       case 'text.clear':if(this.s.textLayout)clearTextWindow(this.s,this.s.textLayout.active);else this.s.text=null;break;
       case 'text.window.select': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w&&this.s.textLayout,'TEXT_WINDOW',i.window);this.s.textLayout.active=w.id;w.visible=true;break;}
       case 'text.window.clear':clearTextWindow(this.s,i.window);break;
@@ -365,7 +387,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   ensure(!!p.rng===!!s.rng&&(!s.rng||s.rng.algorithm===p.rng?.algorithm),'RESTORE_RNG','RNG state missing or unavailable; explicit migration required');
   ensure(s.release===p.release,'RELEASE_MISMATCH','Snapshot release unavailable; migration required');
   const richSources=p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich');
-  for(const text of [...(s.text?[s.text]:[]),...s.history,...(s.textLayout?.windows.flatMap(w=>w.entries)??[])]){if(text.rich){const source=richSources.find(i=>i.at===text.rich?.at);ensure(source,'RESTORE_RICH_SOURCE','Rich source unavailable; explicit migration required');validateRichText(text,source);}else ensure(!richSources.some(i=>i.textId===text.textId&&i.revision===text.revision),'RESTORE_RICH_SOURCE','Missing structured text continuation');}
+  for(const text of [...(s.text?[s.text]:[]),...s.history,...(s.textLayout?.windows.flatMap(w=>w.entries)??[])]){if(text.rich){const source=richSources.find(i=>i.at===text.rich?.at);ensure(source,'RESTORE_RICH_SOURCE','Rich source unavailable; explicit migration required');validateRichText(text,source,richContinuationSources(p,source));}else ensure(!richSources.some(i=>i.textId===text.textId&&i.revision===text.revision),'RESTORE_RICH_SOURCE','Missing structured text continuation');}
   if(s.text?.template){const text=s.text,origin=text.template,source=p.functions.flatMap(f=>f.code).find(i=>i.at===origin?.at);ensure(source?.op==='text.template'&&text.textId===source.textId&&text.revision===source.revision&&text.revealed<=length(text.content)&&origin?.signature===templateSignature(source.speaker,source.content),'RESTORE_TEMPLATE','Displayed template changed; explicit migration required');}
   validateUIRestore(p,s);validateWindowState(p,s);
   ensure(s.status==='waiting'||s.status==='ended','RESTORE_PHASE','Only semantic waits and end are restorable');
