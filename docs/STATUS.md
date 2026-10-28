@@ -12,6 +12,6 @@ F-01E仍in_progress：下一整体第一门scenario1start→zero3的15场景，�
 
 原创引擎运行pnpm dev；实例从外部工程pnpm sdk:build按gitlink复现实包，公共exports消费，SDK无作品/生成载荷/日志。当前任务事实以tasks.json为准。
 
-G6-02发布后UI修复：旧0bb73f4 CI两片失败已记录；手势初始化/取消和对话框初始焦点改为layout effect，12次复验、19相关浏览器、check及strict consumer通过，新包06efd13b7f45。无Core/Program/存档ABI变化，当前源码CI由Actions继续核对；旧失败不覆盖。
+G6-02发布后UI修复完成：最终源码/测试提交4afbeb2，CI run40721872087 attempt2六任务success，浏览器22+44+43+34+38=181项；check包含289单元、CLI、consumer、release和package检查。首轮Canvas流程图locator超时及本地3次复验保留，未以复验结果抹掉首次失败。 生产包06efd13b7f45，实例已升级且52前端文件逐字节不变。
 
-2026-10-29续验：eb11b90已修复默认UI焦点/手势，CI仅stage诊断读取仍失败；完整trace定位到locator等待，改同DOM直接读取且5秒期限/50ms采样不变，9次stage复验通过。生产包06efd13b7f45不变，最终CI正在核对。
+2026-10-29最终接续：最终源码/测试提交4afbeb2，CI run40721872087 attempt2六任务success，浏览器22+44+43+34+38=181项；check包含289单元、CLI、consumer、release和package检查。首轮Canvas流程图locator超时及本地3次复验保留，未以复验结果抹掉首次失败。 第一门/原回放按F-01E继续。

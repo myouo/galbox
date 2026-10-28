@@ -11,3 +11,5 @@ PO为story/prologue/choices/ui四类；日文原源没有选择处autosave，其
 网络原先Ogg尾部/初始准备15秒失败保留；Worker缓存命中不再强制R2.head，Range复用完整不可变对象。真实HTTP初始版本102新对象41682786字节摘要通过、370身份复用前证据；缓存改动后重新验证HEAD-HIT/RANGE-HIT及暖缓存401。冷法文标题2525615字节，OP在220382/5122568字节时已播放。最终18项为16项加两条整体预算复验；每资源15秒/界面5秒不变，不据此认证公网无抖动或真机/原生像素。
 
 最终匿名预览cd735bb7-7bb0-4fb2-922b-a5961e1d78bd，回归c15f19a0-c6a3-4da3-b772-a51c1547183f；预览52文件5013691字节与本地build逐一相同，Range与回归401保持。
+
+2026-10-29收尾：默认UI修复后实例已升级06efd13b7f45，52个前端文件与公开预览逐字节相同，原序章验收继续适用。最终源码/测试提交4afbeb2，CI run40721872087 attempt2六任务success，浏览器22+44+43+34+38=181项；check包含289单元、CLI、consumer、release和package检查。首轮Canvas流程图locator超时及本地3次复验保留，未以复验结果抹掉首次失败。 详见evidence/ui-initialization。
