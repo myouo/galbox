@@ -21,7 +21,6 @@ jobs:
       - run: pnpm check
       - run: pnpm test
       - run: pnpm test:compatibility
-      - run: pnpm test:browser
       - run: pnpm test:cli
       - run: pnpm test:consumer
       - run: pnpm test:release
@@ -30,6 +29,42 @@ jobs:
         if: always()
         with:
           name: verification-evidence
+          path: |
+            artifacts/
+            test-results/
+          if-no-files-found: ignore
+  browser:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: canvas
+            filter: --grep=[Cc]anvas
+          - group: remaining
+            filter: --grep-invert=[Cc]anvas
+    env:
+      GALBOX_EVIDENCE_DIR: artifacts/ci-browser
+      TMPDIR: /dev/shm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.28.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build && pnpm build:harness
+      # Complementary filters execute every test once, in separate browser processes.
+      # Keep the same timeouts/assertions; isolate software-GPU context teardown costs.
+      - run: pnpm exec playwright test "${{ matrix.filter }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-evidence-${{ matrix.group }}
           path: |
             artifacts/
             test-results/
