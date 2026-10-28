@@ -1,7 +1,7 @@
 # 当前计划
 
-current_task=E1-05。G3-07已完成。3e31187全CI通过后，810a3a5文档重跑发现stage二次读档的默认poll退避在4.2秒CDP读取后提前耗尽取样机会。固定50ms采样，仍为5秒等待/45秒用例；TS与stage文件三次9项复验通过。
+current_task=W1-03C。G3-07及E1-05完成：源包络/8个具名SE、初始激活与恢复闭包，check/284单元/实际tarball与备份/API/包/性能已验。CI进一步修复Canvas上下文成本、npm报告包装、stage默认poll提前结束，保持原超时与断言；3dfd713的run40642595655六个任务全部success，五片176项有集合覆盖保护。
 
-CI剩余浏览器再分四片，真实check:browser-shards验证22+42+43+34+35=176项无遗漏/重复，CI forbidOnly。现在提交并回收最新准确SHA六个CI任务。未回收前E1-05保持in_progress；原失败/trace在ignored artifacts/ci-followup。
+下一W1-03C先测真实IndexedDB profile/head/回执热根写入量与大历史/多槽位基线，定义有限逐记录布局/留存ADR，再实施原子迁移和失败反例；不得靠提高4M预算或删除回执冒充大作容量。
 
-完成后下一W1-03C热记录/留存/容量。其他SDK与并行实例任务状态保留，不混用不同分支的CI结论。
+I1完整i18n、W1-03B2高级模块（含audio.sources）、W1-04离线/真实平台、G7综合及原档认证仍待。并行实例记录保留，CI证据按对应准确SHA区分。

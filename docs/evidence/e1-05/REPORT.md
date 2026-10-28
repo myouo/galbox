@@ -13,4 +13,7 @@
 
 810a3a5（仅验收文档）的run40639300311复跑进一步暴露stage用例的轮询退避边界：第二次读档后一次textContent RPC耗时4232ms，返回调用开始时的join状态；默认100/250/500/1000ms退避在剩余约400ms时提前停止。已核对固定Playwright版本的pollAgainstDeadline实现。改为固定50ms取样，保留原5000ms等待与45000ms用例门槛及全部双路线/像素/恢复断言；本地stage全文件连续3次共9项通过，TS检查通过。
 
-为减少长时间软件GPU进程的累计压力，互补的剩余浏览器集再分四片，单worker/每例超时保持。新增真实check:browser-shards，用Playwright发现全部测试并逐片比对ID集合，拒绝遗漏/重复/空片；当前22+42+43+34+35=176。CI禁止test.only，分片artifacts独立。该次CI修正仍待最终SHA远程复验，E1-05恢复in_progress，不能用上一绿灯替代。
+为减少长时间软件GPU进程的累计压力，互补的剩余浏览器集再分四片，单worker/每例超时保持。新增真实check:browser-shards，用Playwright发现全部测试并逐片比对ID集合，拒绝遗漏/重复/空片；当前22+42+43+34+35=176。CI禁止test.only，分片artifacts独立。该次修正先恢复in_progress，取得以下准确SHA的最终结果后才重新完成。
+
+
+最终CI修正提交3dfd7130e741ad537e9a285e813c6187d7508e6a，run40642595655六个任务全部success：主check含strict/284单元/真实分片集合校验/compatibility/CLI/独立consumer/release/package；五个浏览器任务覆盖22+42+43+34+35=176项。无增大超时、skip、retry或删断言。完整结果/日志见ignored 3dfd713-result.json和3dfd713.log；[最终修正验证](https://github.com/myouo/galbox/actions/runs/40642595655)。SDK生产源码与已验收3e31187相同，本轮新增的是测试取样/CI分片与覆盖保护；E1-05完成。
