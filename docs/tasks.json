@@ -3016,7 +3016,10 @@
       "outputs": [
         "whole-chapter source lowering",
         "source chapter menu and durable unlock",
-        "same-production-engine isolated replay"
+        "same-production-engine isolated replay",
+        "source character-part composition and standard stage lowering",
+        "per-source audio macro lowering with named SE buffers",
+        "source completion gate and isolated replay adapter"
       ],
       "acceptance": [
         "whole-chapter-start-to-end-eight-locales",
@@ -3025,7 +3028,7 @@
         "replay-does-not-change-main-head-profile",
         "chapter-resource-closure-over-http"
       ],
-      "next_action": "当前仍44前导+32页。合并已提交G3-07后解析char_reg/角色部件与运动；按scenario1start到zero3整门编译，接chapter.ks与sf.scenario1解锁，再验回放。禁止把全文PO/SDK已具备回放API标为整章完成。"
+      "next_action": "整合G3-07/G2-05/G1-04已验证。实例已批量解析第一门八语各1005人物图像调用/86候选/73图片，含1处原空图层回退待建模；图片转场存档和源音频/回放策略有正式SDK测试。原作主线仍32页，下一接完整章控制流、角色位置/运动、PO回填和原章节UI；隐藏文本框须先拆分合成框。"
     },
     {
       "id": "G1-04",
@@ -3035,9 +3038,9 @@
         "G1-02",
         "G4-02"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "schema-derived persistent wheel preference",
         "scoped one-gesture step/history input",
@@ -3059,7 +3062,7 @@
         "docs/evidence/g1-04/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "复验并修复读档后历史入口，尤其ended切点；合并已提交G3-07后重验真实包与章节接入。"
+      "next_action": "读档后的choice/ended只读历史门禁已修复；仍严格限制下滚推进。a5248fc CI179浏览器全绿，独立4种存档恢复后历史线上通过；原快捷栏6项与手动保存页复验通过。继续F-01E完整章，不把策略fixture称作原作回放完成。"
     }
   ]
 }
