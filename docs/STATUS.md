@@ -12,6 +12,6 @@ W1-05：独立桶morgana-sdk-network-test含304对象64355598字节，全量公�
 
 I1-01B：用户要求贡献者能修正文本，实例新增locales/<BCP47>/story.po与ui.po、语言及控制TOML。原KS/TJS/解包与二进制仍ignored，仅整理后的PO文本按用户授权纳入Git。严格验证ID/英文来源/语言/空译文/fuzzy/控制标记，转换前应用修正并重建字体子集，修正页Revision改变；构建拒绝新PO/旧Program混用。3 Python+24 TS、16个PO GNU msgfmt、8语言真实Core/资源/恢复、strict/build、本地3浏览器通过；重复publication字节一致。最新20项线上回归已全部通过（零失败/skip/flaky）；预览与本地build逐文件一致。
 
-E1-03：本轮用户授权SDK推myouo/galbox（保留历史），实例推myouo/morgana（全新单一根提交，删除原LICENSE）。原包/解包/素材/凭据不得进GitHub，整理后PO翻译可提交；SDK仅含原创fixture，保留旧历史不等于将旧日志重放进当前树。已添加remote并审计历史，尚未提交推送，完成最新验收后执行明确SHA的force-with-lease，仅替换morgana旧LICENSE分支。
+E1-03已完成：本轮用户授权SDK推myouo/galbox（保留历史），实例推myouo/morgana（全新单一根提交，删除原LICENSE）。原包/解包/素材/凭据不得进GitHub，整理后PO翻译可提交；SDK仅含原创fixture，保留旧历史不等于将旧日志重放进当前树。已审计并实际推送两仓库main；SDK保留历史，morgana为ccdaf3758ac27bd3faab1f1a452f81a1090c95bc单根提交，GitHub确认无LICENSE、88文件/16 PO，无原包/解包/素材，旧本地开发历史已清除。
 
-I1-01B/W1-05本轮门槛完成，E1-03正执行实际推送；之后回G3-07按源淡出停止/多SE、正常对话/炉火/宏CFG。I1父任务、整作/原档/完整菜单/tft/动态换语言/离线/真实多浏览器与移动设备仍未完成。当前仍44静态前导+22页；OP为完整摘要Blob，Range服务不冒充实例渐进流。旧槽保留，无隐式release迁移。资料/登录/日志都在独立工程ignored目录。
+I1-01A/B、W1-05、E1-03本轮门槛完成，下一G3-07按源淡出停止/多SE、正常对话/炉火/宏CFG。I1父任务、整作/原档/完整菜单/tft/动态换语言/离线/真实多浏览器与移动设备仍未完成。当前仍44静态前导+22页；OP为完整摘要Blob，Range服务不冒充实例渐进流。旧槽保留，无隐式release迁移。资料/登录/日志都在独立工程ignored目录。
