@@ -1,4 +1,5 @@
-import {ensure,GalboxError,parseSnapshot,parseProfile,parseJsonValue,canonicalWireJSON} from '../protocol/index.js';
+import {detached} from '../protocol/wire-input.js';
+import {ensure,GalboxError,parseSnapshot,parseProfile,canonicalWireJSON} from '../protocol/index.js';
 import type {Snapshot,Profile,Program,DeepReadonly} from '../protocol/index.js';
 import {freezeJson} from '../protocol/codecs.js';
 import {linkProgram} from '../program-tools/linker.js';
@@ -36,9 +37,9 @@ export async function migrateSavedGame(handle:SavedGameMigration,program:Program
  const old=validateRestore(source,snapshot,d.sourceOperations??emptyOperations),ownedProfile=parseProfile(profile);
  const output=await cancellable(d.migrate(Object.freeze({source:freezeJson(source),target:freezeJson(linkProgram(program,operations).copy()),snapshot:freezeJson(old),profile:freezeJson(ownedProfile),cancellation})),cancellation);check();
  // Reparse before inspecting; callback-owned aliases and snapshots never enter the live state.
- const data=parseJsonValue(output);ensure(data&&typeof data==='object'&&!Array.isArray(data)&&Object.keys(data).every(k=>k==='snapshot'||k==='readAliases'),'SAVE_MIGRATION_RESULT','Unexpected migration result');
- const candidate=validateRestore(program,parseSnapshot(data.snapshot),operations);ensure(!candidate.replayScene&&!old.replayScene,'SAVE_MIGRATION_REPLAY','Gallery snapshots are temporary');
- const aliases=data.readAliases??[];ensure(Array.isArray(aliases)&&aliases.length<=10000,'SAVE_MIGRATION_READS','Read aliases must be bounded');const from=units(source),to=units(program),seen=new Set<string>(),reads=new Set<string>();
+ const data=detached(output);ensure(data&&typeof data==='object'&&!Array.isArray(data)&&Object.keys(data).every(k=>k==='snapshot'||k==='readAliases'),'SAVE_MIGRATION_RESULT','Unexpected migration result');
+ const candidate=validateRestore(program,parseSnapshot(Reflect.get(data,'snapshot')),operations);ensure(!candidate.replayScene&&!old.replayScene,'SAVE_MIGRATION_REPLAY','Gallery snapshots are temporary');
+ const aliases=Reflect.get(data,'readAliases')??[];ensure(Array.isArray(aliases)&&aliases.length<=10000,'SAVE_MIGRATION_READS','Read aliases must be bounded');const from=units(source),to=units(program),seen=new Set<string>(),reads=new Set<string>();
  for(const pair of aliases){ensure(pair&&typeof pair==='object'&&!Array.isArray(pair)&&Object.keys(pair).length===2&&typeof pair.from==='string'&&typeof pair.to==='string'&&from.has(pair.from)&&to.has(pair.to)&&!seen.has(pair.from),'SAVE_MIGRATION_READS','Aliases must name declared source and target read units');seen.add(pair.from);if(profile.read.includes(pair.from)&&!profile.read.includes(pair.to))reads.add(pair.to);}
  // Callback cannot restore its captured profile; only explicit monotonic aliases are returned.
  ensure(canonicalWireJSON(profile)===canonicalWireJSON(ownedProfile),'SAVE_MIGRATION_PROFILE','Caller progress changed unexpectedly');
