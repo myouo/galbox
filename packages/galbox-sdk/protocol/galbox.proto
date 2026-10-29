@@ -249,6 +249,10 @@ message Gbx_StageObject_ruleTransition {
   optional Gbx_RuleTransition value = 1;
 }
 
+message Gbx_StageObject_motion {
+  optional Gbx_MotionOffset value = 1;
+}
+
 message Gbx_StageObject {
   optional Gbx_StageObject_id id = 1;
   optional Gbx_StageObject_asset asset = 2;
@@ -263,6 +267,97 @@ message Gbx_StageObject {
   optional Gbx_StageObject_layers layers = 11;
   optional Gbx_StageObject_shake shake = 12;
   optional Gbx_StageObject_ruleTransition ruleTransition = 13;
+  optional Gbx_StageObject_motion motion = 14;
+}
+
+message Gbx_MotionOffset_x {
+  optional double value = 1;
+}
+
+message Gbx_MotionOffset_y {
+  optional double value = 1;
+}
+
+message Gbx_MotionOffset {
+  optional Gbx_MotionOffset_x x = 1;
+  optional Gbx_MotionOffset_y y = 2;
+}
+
+message Gbx_MotionTrack_axis {
+  optional string value = 1;
+}
+
+message Gbx_MotionTrack_from {
+  optional double value = 1;
+}
+
+message Gbx_MotionTrack_segments_Item_to {
+  optional double value = 1;
+}
+
+message Gbx_MotionTrack_segments_Item_duration {
+  optional sint64 value = 1;
+}
+
+message Gbx_MotionTrack_segments_Item_easing {
+  optional string value = 1;
+}
+
+message Gbx_MotionTrack_segments_Item {
+  optional Gbx_MotionTrack_segments_Item_to to = 1;
+  optional Gbx_MotionTrack_segments_Item_duration duration = 2;
+  optional Gbx_MotionTrack_segments_Item_easing easing = 3;
+}
+
+message Gbx_MotionTrack_segments {
+  repeated Gbx_MotionTrack_segments_Item items = 1;
+}
+
+message Gbx_MotionTrack {
+  optional Gbx_MotionTrack_axis axis = 1;
+  optional Gbx_MotionTrack_from from = 2;
+  optional Gbx_MotionTrack_segments segments = 3;
+}
+
+message Gbx_MotionTaskState_signature {
+  optional string value = 1;
+}
+
+message Gbx_MotionTaskState_key {
+  optional string value = 1;
+}
+
+message Gbx_MotionTaskState_targets_Item {
+  optional string value = 1;
+}
+
+message Gbx_MotionTaskState_targets {
+  repeated Gbx_MotionTaskState_targets_Item items = 1;
+}
+
+message Gbx_MotionTaskState_tracks_Item {
+  optional Gbx_MotionTrack value = 1;
+}
+
+message Gbx_MotionTaskState_tracks {
+  repeated Gbx_MotionTaskState_tracks_Item items = 1;
+}
+
+message Gbx_MotionTaskState_loop {
+  optional bool value = 1;
+}
+
+message Gbx_MotionTaskState_intervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_MotionTaskState {
+  optional Gbx_MotionTaskState_signature signature = 1;
+  optional Gbx_MotionTaskState_key key = 2;
+  optional Gbx_MotionTaskState_targets targets = 3;
+  optional Gbx_MotionTaskState_tracks tracks = 4;
+  optional Gbx_MotionTaskState_loop loop = 5;
+  optional Gbx_MotionTaskState_intervalMs intervalMs = 6;
 }
 
 message Gbx_Option_id {
@@ -2216,6 +2311,120 @@ message Gbx_Instruction_Case68 {
   optional Gbx_Instruction_Case68_historyLimit historyLimit = 4;
 }
 
+message Gbx_Instruction_Case69_op {
+  // Fixed semantic value: "stage.motion"
+}
+
+message Gbx_Instruction_Case69_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case69_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case69_key {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case69_targets_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case69_targets {
+  repeated Gbx_Instruction_Case69_targets_Item items = 1;
+}
+
+message Gbx_Instruction_Case69_tracks_Item {
+  optional Gbx_MotionTrack value = 1;
+}
+
+message Gbx_Instruction_Case69_tracks {
+  repeated Gbx_Instruction_Case69_tracks_Item items = 1;
+}
+
+message Gbx_Instruction_Case69_loop {
+  optional bool value = 1;
+}
+
+message Gbx_Instruction_Case69_intervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case69_policy {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case69 {
+  optional Gbx_Instruction_Case69_op op = 1;
+  optional Gbx_Instruction_Case69_at at = 2;
+  optional Gbx_Instruction_Case69_task task = 3;
+  optional Gbx_Instruction_Case69_key key = 4;
+  optional Gbx_Instruction_Case69_targets targets = 5;
+  optional Gbx_Instruction_Case69_tracks tracks = 6;
+  optional Gbx_Instruction_Case69_loop loop = 7;
+  optional Gbx_Instruction_Case69_intervalMs intervalMs = 8;
+  optional Gbx_Instruction_Case69_policy policy = 9;
+}
+
+message Gbx_Instruction_Case70_op {
+  // Fixed semantic value: "stage.clone"
+}
+
+message Gbx_Instruction_Case70_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case70_mapping_Item_from {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case70_mapping_Item_to {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case70_mapping_Item {
+  optional Gbx_Instruction_Case70_mapping_Item_from from = 1;
+  optional Gbx_Instruction_Case70_mapping_Item_to to = 2;
+}
+
+message Gbx_Instruction_Case70_mapping {
+  repeated Gbx_Instruction_Case70_mapping_Item items = 1;
+}
+
+message Gbx_Instruction_Case70 {
+  optional Gbx_Instruction_Case70_op op = 1;
+  optional Gbx_Instruction_Case70_at at = 2;
+  optional Gbx_Instruction_Case70_mapping mapping = 3;
+}
+
+message Gbx_Instruction_Case71_op {
+  // Fixed semantic value: "stage.motion.stop"
+}
+
+message Gbx_Instruction_Case71_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case71_targets_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case71_targets {
+  repeated Gbx_Instruction_Case71_targets_Item items = 1;
+}
+
+message Gbx_Instruction_Case71_key {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case71 {
+  optional Gbx_Instruction_Case71_op op = 1;
+  optional Gbx_Instruction_Case71_at at = 2;
+  optional Gbx_Instruction_Case71_targets targets = 3;
+  optional Gbx_Instruction_Case71_key key = 4;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -2286,6 +2495,9 @@ message Gbx_Instruction {
     Gbx_Instruction_Case66 v66 = 66;
     Gbx_Instruction_Case67 v67 = 67;
     Gbx_Instruction_Case68 v68 = 68;
+    Gbx_Instruction_Case69 v69 = 69;
+    Gbx_Instruction_Case70 v70 = 70;
+    Gbx_Instruction_Case71 v71 = 71;
   }
 }
 
@@ -2724,6 +2936,10 @@ message Gbx_Task_sourceFade {
   optional Gbx_AudioSourceFadeState value = 1;
 }
 
+message Gbx_Task_motionTask {
+  optional Gbx_MotionTaskState value = 1;
+}
+
 message Gbx_Task {
   optional Gbx_Task_id id = 1;
   optional Gbx_Task_status status = 2;
@@ -2747,6 +2963,7 @@ message Gbx_Task {
   optional Gbx_Task_videoTask videoTask = 20;
   optional Gbx_Task_buffer buffer = 21;
   optional Gbx_Task_sourceFade sourceFade = 22;
+  optional Gbx_Task_motionTask motionTask = 23;
 }
 
 message Gbx_TaskGroup_id {
@@ -4330,6 +4547,10 @@ message Gbx_PlayerPreferences_locale {
   optional string value = 1;
 }
 
+message Gbx_PlayerPreferences_prefetchPages {
+  optional sint64 value = 1;
+}
+
 message Gbx_PlayerPreferences {
   optional Gbx_PlayerPreferences_version version = 1;
   optional Gbx_PlayerPreferences_audio audio = 2;
@@ -4338,6 +4559,7 @@ message Gbx_PlayerPreferences {
   optional Gbx_PlayerPreferences_input input = 5;
   optional Gbx_PlayerPreferences_display display = 6;
   optional Gbx_PlayerPreferences_locale locale = 7;
+  optional Gbx_PlayerPreferences_prefetchPages prefetchPages = 8;
 }
 
 message Gbx_PreferencesRecord_revision {
@@ -4481,6 +4703,10 @@ message Gbx_PreferencesPatch_locale {
   optional string value = 1;
 }
 
+message Gbx_PreferencesPatch_prefetchPages {
+  optional sint64 value = 1;
+}
+
 message Gbx_PreferencesPatch {
   optional Gbx_PreferencesPatch_audio audio = 1;
   optional Gbx_PreferencesPatch_text text = 2;
@@ -4488,6 +4714,7 @@ message Gbx_PreferencesPatch {
   optional Gbx_PreferencesPatch_input input = 4;
   optional Gbx_PreferencesPatch_display display = 5;
   optional Gbx_PreferencesPatch_locale locale = 6;
+  optional Gbx_PreferencesPatch_prefetchPages prefetchPages = 7;
 }
 
 message Gbx_I32Expression_Case1_kind {

@@ -1,3 +1,5 @@
+import {isMotionInstruction,validateMotion} from '../protocol/motion.js';
+import {executeMotion,tickMotion} from './motion.js';
 import {audioSourcesSignature,settleSourceFades,supersedeSourceFades,tickSourceFades} from '../protocol/audio-sources.js';
 import {isModuleProgram} from '../program-tools/module-program.js';
 import type {ModuleProgram} from '../program-tools/module-program.js';
@@ -194,7 +196,7 @@ export class Core {
         if(t.kind==='stage')applyStageTask(this.s,t);
         if(t.elapsed===t.duration)t.status='completed';
       }
-      this.finishAutomaticText();
+      tickMotion(this.s,event.ms);this.finishAutomaticText();
     } else if(event.type==='task') {
       if(videoReport(this.s,event.task,event.attempt,event.result)||mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
       const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.kind!=='audio'||t.attempt!==event.attempt||t.status!=='running')return;
@@ -288,6 +290,7 @@ export class Core {
     if(i.op==='interaction.prompt'){ensure(!this.recovering,'RECIPE_OPCODE','Interaction cannot be guessed');const w=prepareInteraction(i,this.s.counter+1,e=>this.expression(e));this.s.counter=w.prompt;this.s.wait=w;this.s.status='waiting';return;}
     if(i.op==='video.play'){ensure(!this.recovering,'RECIPE_OPCODE','Video cannot be guessed');this.effects.push(startVideo(this.program,this.s,i));return;}
     if(isAudioInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Media tasks are not recovery guesses');this.effects.push(...executeAudio(this.program,this.s,i,e=>this.expression(e)));if(i.op==='audio.wait'){this.resolveWait();return;}this.top().pc=this.next();return;}
+    if(isMotionInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Motion is not a recovery guess');executeMotion(this.program,this.s,i);this.top().pc=this.next();return;}
     if(isStageInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Stage tasks are not recovery guesses');try{executeStage(this.program,this.s,i,e=>this.expression(e));}catch(error){if(error instanceof GalboxError)throw new GalboxError(error.code,error.reason,{...error.location,address:i.at});throw error;}this.top().pc=this.next();return;}
     const wait=(w:NonNullable<Snapshot['wait']>)=>{this.s.wait=w;this.s.status='waiting';};
     const task=(name:string,kind:Task['kind'],duration:number):Task=>({id:`task:${++this.s.counter}`,name,kind,status:'running',elapsed:0,duration,attempt:1,at:i.at});
@@ -417,7 +420,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
-  validateStageSnapshot(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
+  validateStageSnapshot(p,s);validateMotion(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);

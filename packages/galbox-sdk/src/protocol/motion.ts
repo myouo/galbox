@@ -1,0 +1,28 @@
+import {ensure,canonicalWireJSON} from './index.js';
+import type {Instruction,MotionTrack,DeepReadonly,Task,Snapshot,Program} from './index.js';
+import {ease,sourceSignature} from './stage.js';
+export type MotionInstruction=Extract<Instruction,{op:'stage.motion'|'stage.clone'|'stage.motion.stop'}>;
+export function isMotionInstruction(i:Instruction):i is MotionInstruction{return i.op==='stage.motion'||i.op==='stage.clone'||i.op==='stage.motion.stop';}
+const total=(t:DeepReadonly<MotionTrack>)=>t.segments.reduce((sum,s)=>sum+s.duration,0);
+export function motionDuration(tracks:readonly DeepReadonly<MotionTrack>[],loop:boolean,interval:number):number {
+ ensure(new Set(tracks.map(t=>t.axis)).size===tracks.length,'MOTION_AXIS','Each axis occurs once');
+ const lengths=tracks.map(t=>{ensure(t.segments.at(-1)?.to===0,'MOTION_ENDPOINT','Supported motions settle at zero offset');if(loop)ensure(t.from===0,'MOTION_LOOP','Loop must start and finish at zero');const n=total(t);ensure(n<=3600000,'MOTION_DURATION','Axis exceeds one hour');return n;});
+ const gcd=(a:number,b:number):number=>b?gcd(b,a%b):a;
+ let duration=loop?lengths.reduce((a,b)=>a/gcd(a,b)*b,1):Math.max(...lengths);if(!loop)duration=Math.ceil(duration/interval)*interval;
+ ensure(Number.isSafeInteger(duration)&&duration>0&&duration<=3600000,'MOTION_DURATION','Common cycle must fit one hour');return duration;
+}
+export function motionOffset(t:DeepReadonly<Task>){const m=t.motionTask;ensure(m,'MOTION_STATE','Missing motion');const out={x:0,y:0},elapsed=Math.floor(t.elapsed/m.intervalMs)*m.intervalMs;for(const track of m.tracks){let time=m.loop?elapsed%total(track):Math.min(elapsed,total(track)),from=track.from;for(const segment of track.segments){if(time<=segment.duration){out[track.axis]=from+(segment.to-from)*ease(segment.easing,time/segment.duration);break;}time-=segment.duration;from=segment.to;}}return out;}
+export function syncMotion(s:Snapshot):void {const offsets=new Map<string,{x:number;y:number}>();for(const t of s.tasks)if(t.kind==='motion'&&t.status==='running'&&t.motionTask){const offset=motionOffset(t);for(const id of t.motionTask.targets){const sum=offsets.get(id)??{x:0,y:0};sum.x+=offset.x;sum.y+=offset.y;ensure(Math.abs(sum.x)<=65536&&Math.abs(sum.y)<=65536,'MOTION_OFFSET_LIMIT','Too many additive motions');offsets.set(id,sum);}}for(const o of s.stage){const offset=offsets.get(o.id);if(offset)o.motion=offset;else delete o.motion;}}
+export function motionTargets(ids:string[]):[string,...string[]]{const [first,...rest]=ids;ensure(first!==undefined,'MOTION_TARGET','Empty active target set');return [first,...rest];}
+export function motionBudget(s:Snapshot):void {const sums=new Map<string,{x:number;y:number}>();for(const t of s.tasks)if(t.kind==='motion'&&t.status==='running'&&t.motionTask)for(const id of t.motionTask.targets){const sum=sums.get(id)??{x:0,y:0};for(const track of t.motionTask.tracks)sum[track.axis]+=Math.max(Math.abs(track.from),...track.segments.map(v=>Math.abs(v.to)));ensure(sum.x<=65536&&sum.y<=65536,'MOTION_OFFSET_LIMIT','Additive envelope budget exceeded');sums.set(id,sum);}}
+export function removeMotionTargets(s:Snapshot,ids:ReadonlySet<string>):void {for(const t of s.tasks)if(t.kind==='motion'&&t.status==='running'&&t.motionTask){const targets=t.motionTask.targets.filter(id=>!ids.has(id));if(targets.length)t.motionTask.targets=motionTargets(targets);else t.status='cancelled';}}
+export function validateMotion(p:Program,s:Snapshot):void {
+ const code=p.functions.flatMap(f=>f.code),locks=new Set<string>();
+ for(const t of s.tasks){if(t.kind!=='motion'){ensure(!t.motionTask,'RESTORE_MOTION','Mixed motion payload');continue;}const m=t.motionTask,i=code.find(i=>i.at===t.at);ensure(p.capabilities.includes('stage.motion')&&m&&i?.op==='stage.motion'&&m.signature===sourceSignature(i),'RESTORE_MOTION_SOURCE','Motion source changed');
+ ensure(!t.stageTask&&!t.mediaTask&&!t.videoTask&&!t.sourceFade&&!t.audioFade&&t.target===undefined&&t.from===undefined&&t.to===undefined&&t.asset===undefined&&t.channel===undefined&&t.gain===undefined&&t.loop===undefined&&t.restore===undefined&&t.buffer===undefined,'RESTORE_MOTION','Mixed task payload');
+ ensure(['running','completed','cancelled','superseded'].includes(t.status)&&m.key===i.key&&m.loop===i.loop&&m.intervalMs===i.intervalMs&&canonicalWireJSON(m.tracks)===canonicalWireJSON(i.tracks)&&t.duration===motionDuration(m.tracks,m.loop,m.intervalMs),'RESTORE_MOTION','Motion arguments changed');
+ const allowed=new Set(i.targets);let changed=true;while(changed){changed=false;for(const c of code)if(c.op==='stage.clone')for(const pair of c.mapping)if(allowed.has(pair.from)&&!allowed.has(pair.to)){allowed.add(pair.to);changed=true;}}ensure(m.targets.every(id=>allowed.has(id)),'RESTORE_MOTION_TARGET','Undeclared target copy');
+ if(t.status==='running')for(const id of m.targets){ensure(s.stage.some(o=>o.id===id),'RESTORE_MOTION_TARGET','Target absent');const lock=id+'\0'+m.key;ensure(!locks.has(lock),'RESTORE_MOTION_CONFLICT','Overlapping same-key motion');locks.add(lock);}
+ }
+ motionBudget(s);const copy={...s,stage:s.stage.map(o=>({...o}))};syncMotion(copy);for(let n=0;n<s.stage.length;n++)ensure(canonicalWireJSON(s.stage[n]?.motion??null)===canonicalWireJSON(copy.stage[n]?.motion??null),'RESTORE_MOTION_OFFSET','Motion contribution differs from active task');
+}

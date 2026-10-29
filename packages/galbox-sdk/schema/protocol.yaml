@@ -260,11 +260,123 @@ definitions:
       ruleTransition:
         $ref: "#/definitions/RuleTransition"
         x-proto-tag: 13
+      motion:
+        $ref: "#/definitions/MotionOffset"
+        x-proto-tag: 14
     required:
       - id
       - asset
       - position
       - z
+    additionalProperties: false
+  MotionOffset:
+    type: object
+    properties:
+      x:
+        type: number
+        minimum: -65536
+        maximum: 65536
+        x-proto-tag: 1
+      y:
+        type: number
+        minimum: -65536
+        maximum: 65536
+        x-proto-tag: 2
+    required:
+      - x
+      - y
+    additionalProperties: false
+  MotionTrack:
+    type: object
+    properties:
+      axis:
+        type: string
+        enum:
+          - x
+          - y
+        x-proto-tag: 1
+      from:
+        type: number
+        minimum: -4096
+        maximum: 4096
+        x-proto-tag: 2
+      segments:
+        type: array
+        items:
+          type: object
+          properties:
+            to:
+              type: number
+              minimum: -4096
+              maximum: 4096
+              x-proto-tag: 1
+            duration:
+              type: integer
+              minimum: 1
+              maximum: 3600000
+              x-proto-tag: 2
+            easing:
+              type: string
+              enum:
+                - linear
+                - ease-in
+                - ease-out
+              x-proto-tag: 3
+          required:
+            - to
+            - duration
+            - easing
+          additionalProperties: false
+        minItems: 1
+        maxItems: 32
+        x-proto-tag: 3
+    required:
+      - axis
+      - from
+      - segments
+    additionalProperties: false
+  MotionTaskState:
+    type: object
+    properties:
+      signature:
+        type: string
+        pattern: ^[^\x00]{1,65536}$
+        x-proto-tag: 1
+      key:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 2
+      targets:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        minItems: 1
+        maxItems: 128
+        uniqueItems: true
+        x-proto-tag: 3
+      tracks:
+        type: array
+        items:
+          $ref: "#/definitions/MotionTrack"
+        minItems: 1
+        maxItems: 2
+        x-proto-tag: 4
+      loop:
+        type: boolean
+        x-proto-tag: 5
+      intervalMs:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        x-proto-tag: 6
+    required:
+      - signature
+      - key
+      - targets
+      - tracks
+      - loop
+      - intervalMs
     additionalProperties: false
   Option:
     type: object
@@ -2351,6 +2463,131 @@ definitions:
           - historyLimit
         additionalProperties: false
         x-proto-tag: 68
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.motion
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          key:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          targets:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            minItems: 1
+            maxItems: 8
+            uniqueItems: true
+            x-proto-tag: 5
+          tracks:
+            type: array
+            items:
+              $ref: "#/definitions/MotionTrack"
+            minItems: 1
+            maxItems: 2
+            x-proto-tag: 6
+          loop:
+            type: boolean
+            x-proto-tag: 7
+          intervalMs:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            x-proto-tag: 8
+          policy:
+            type: string
+            enum:
+              - replace
+              - reject
+            x-proto-tag: 9
+        required:
+          - op
+          - at
+          - task
+          - key
+          - targets
+          - tracks
+          - loop
+          - intervalMs
+          - policy
+        additionalProperties: false
+        x-proto-tag: 69
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.clone
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          mapping:
+            type: array
+            items:
+              type: object
+              properties:
+                from:
+                  type: string
+                  pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+                  x-proto-tag: 1
+                to:
+                  type: string
+                  pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+                  x-proto-tag: 2
+              required:
+                - from
+                - to
+              additionalProperties: false
+            minItems: 1
+            maxItems: 128
+            x-proto-tag: 3
+        required:
+          - op
+          - at
+          - mapping
+        additionalProperties: false
+        x-proto-tag: 70
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.motion.stop
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          targets:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            minItems: 1
+            maxItems: 128
+            uniqueItems: true
+            x-proto-tag: 3
+          key:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+        required:
+          - op
+          - at
+          - targets
+        additionalProperties: false
+        x-proto-tag: 71
   Function:
     type: object
     properties:
@@ -2695,6 +2932,7 @@ definitions:
           - audio-fade
           - audio-source-fade
           - video
+          - motion
         x-proto-tag: 3
       elapsed:
         type: integer
@@ -2773,6 +3011,9 @@ definitions:
       sourceFade:
         $ref: "#/definitions/AudioSourceFadeState"
         x-proto-tag: 22
+      motionTask:
+        $ref: "#/definitions/MotionTaskState"
+        x-proto-tag: 23
     required:
       - id
       - status
@@ -4339,6 +4580,11 @@ definitions:
         type: string
         pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
         x-proto-tag: 7
+      prefetchPages:
+        type: integer
+        minimum: 0
+        maximum: 8
+        x-proto-tag: 8
     required:
       - version
       - audio
@@ -4846,6 +5092,11 @@ definitions:
         type: string
         pattern: ^(?=[\s\S]{0,63}$)[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$
         x-proto-tag: 6
+      prefetchPages:
+        type: integer
+        minimum: 0
+        maximum: 8
+        x-proto-tag: 7
     required: []
     additionalProperties: false
     minProperties: 1
