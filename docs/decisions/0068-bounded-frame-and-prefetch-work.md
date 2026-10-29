@@ -7,3 +7,5 @@
 balanced 在当前窗口滚动时先接续新窗口再取消旧窗口；普通前台准备不清空所有未来预取。只保留预算内的声明资源，进入新 epoch/取消/销毁必须释放。静态 lookahead 索引只缓存引擎独占 Program；模块函数变化须重建。分支不猜用户选择。快速点击、前台优先、取消、预算淘汰、音乐时间连续与长时间内存需要真实浏览器验收。
 
 舞台原子候选只复用已封存 history；stage/tasks/scene/counter 等仍隔离复制并执行原 schema 与语义检查。复用前缓存完整 history footprint，输入/输出均将其计入聚合节点、深度、字符预算，不以清空 history 绕过存档预算。只有只写舞台的内部事务使用此路径；通用 reducer/迁移/未知输入不使用。
+
+Canvas只写back buffer不强制willReadFrequently。经实际像素探测支持时，brightness/grayscale走原生Canvas filter（先灰度后亮度，保持现有矩阵顺序），复用已有color workspace的预算为单个scratch surface；不新增预算额度。功能缺失/探测不符仍用CPU逐像素路径，CPU读回失败仍终止设备且保留旧输出。原生滤镜保留Alpha/组隔离、嵌套与CPU后备像素对照。依据MDN CanvasRenderingContext2D.filter及HTMLCanvasElement.getContext，2026-10-29核对。

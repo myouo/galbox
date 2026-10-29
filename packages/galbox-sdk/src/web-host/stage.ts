@@ -3,6 +3,7 @@ import {SpriteFrames} from './sprite-frames.js';
 import {RuleTransitions} from './rule-transition.js';
 import {Container,Sprite,Graphics,BlurFilter,ColorMatrixFilter,AlphaFilter} from 'pixi.js';
 import {CanvasEffects} from './canvas-effects.js';
+import {canvasColors} from './canvas-color.js';
 import {WebGLRenderer,CanvasRenderer} from 'pixi.js';
 import type {Texture,Filter} from 'pixi.js';
 import type {GraphicsApplication} from './graphics.js';
@@ -13,7 +14,7 @@ class Filters {
  private blur:BlurFilter|null=null;private color:ColorMatrixFilter|null=null;private key='';
  apply(node:Container,state:DeepReadonly<StageFilters>):void {const key=JSON.stringify(state);if(key===this.key)return;this.key=key;const filters:Filter[]=[];
   if(state.blur>0){this.blur??=new BlurFilter({strength:state.blur,quality:4});this.blur.strength=state.blur;filters.push(this.blur);}
-  if(state.brightness!==1||state.grayscale!==0){this.color??=new ColorMatrixFilter();const g=state.grayscale,b=state.brightness,r=.2126*g,k=.7152*g,l=.0722*g;this.color.matrix=[(1-g+r)*b,k*b,l*b,0,0,r*b,(1-g+k)*b,l*b,0,0,r*b,k*b,(1-g+l)*b,0,0,0,0,0,1,0];filters.push(this.color);}
+  if(state.brightness!==1||state.grayscale!==0){this.color??=new ColorMatrixFilter();const g=state.grayscale,b=state.brightness,r=.2126*g,k=.7152*g,l=.0722*g;this.color.matrix=[(1-g+r)*b,k*b,l*b,0,0,r*b,(1-g+k)*b,l*b,0,0,r*b,k*b,(1-g+l)*b,0,0,0,0,0,1,0];canvasColors.set(this.color,{brightness:b,grayscale:g});filters.push(this.color);}
   node.filters=filters;
  }
  dispose():void {this.blur?.destroy(false);this.color?.destroy(false);this.blur=null;this.color=null;}
