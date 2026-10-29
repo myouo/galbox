@@ -3010,7 +3010,8 @@
         "docs/evidence/reading-prefetch/REPORT.md",
         "docs/evidence/saved-game-migration/REPORT.md",
         "docs/evidence/text-continuations/REPORT.md",
-        "docs/evidence/chapter-runtime/REPORT.md"
+        "docs/evidence/chapter-runtime/REPORT.md",
+        "docs/evidence/first-door-delivery/REPORT.md"
       ],
       "blocker": null,
       "id": "F-01E",
@@ -3019,9 +3020,9 @@
         "F-01D",
         "G3-07"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "partial",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "whole-chapter source lowering",
         "source chapter menu and durable unlock",
@@ -3038,7 +3039,7 @@
         "replay-does-not-change-main-head-profile",
         "chapter-resource-closure-over-http"
       ],
-      "next_action": "八语完整序章/第一门已编译并通过完整Core及七个存档恢复点，原32/93迁移17项、八语隔离回放和真实演出/刷新14浏览器通过；910 R2资产HTTPS校验完成。正常浏览器主线到章末但统计漏计原自动结束段，已修为核对真实history并复跑。下一最终实包消费/主线浏览器/公网回归，再发布预览和按授权推送。"
+      "next_action": "完整序章/第一门与原章节隔离回放已交付；继续第二门、通关变体及高级代码模块组合。原版tft/原作继续对照仍由F-01独立认证，不把SDK内部旧档迁移称为原档兼容。"
     },
     {
       "id": "G1-04",
