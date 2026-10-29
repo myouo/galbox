@@ -15,10 +15,10 @@ export {richText,richPage} from './text.js';
 
 export {textTheme,textWindow,textLayout,textFont} from './layout.js';
 
-export {stageImage,stageTween,stageFilter,stageCamera,stageFade,stageTransition,stageRuleTransition,stageShake,stageStyle,stageMotion,stageClone,stopStageMotion} from './stage.js';
-export type {StageNumber,StagePoseInput,StageFilterInput,StageCameraInput,StageStyleInput,StageTiming} from './stage.js';
+export {stageImage,stageTween,stageFilter,stageCamera,stageFade,stageTransition,stageRuleTransition,stageShake,stageStyle,stageAsset,stageMix,stageMotion,stageClone,stopStageMotion} from './stage.js';
+export type {StageNumber,StagePoseInput,StageFilterInput,StageCameraInput,StageStyleInput,StageTiming,StageMixOptions} from './stage.js';
 
-export {audioTrack,audioFade,audioDuck,uiSound,sfxTrack,audioSourceFade,audioFadeOutAndStop,audioSourceStop} from './audio.js';
+export {audioTrack,audioFade,audioDuck,uiSound,sfxTrack,audioSourceFade,audioFadeOutAndStop,audioSourceStop,audioSourceGain,bgmTrack} from './audio.js';
 export type {AudioTrackOptions} from './audio.js';
 
 export {interactionPrompt,videoPlay} from './interaction.js';
@@ -51,3 +51,6 @@ export {compileProgramModules} from './module-compiler.js';
 export type {CompiledModules} from './module-compiler.js';
 
 export {splitProgramText,bindProgramText,localeCatalog,resolveLocale,interfaceTextCatalog,createTranslator} from './localization.js';
+
+export {stageParticles,stopStageParticles} from './particles.js';
+export type {ParticleConfigInput,ParticleStyleInput} from './particles.js';

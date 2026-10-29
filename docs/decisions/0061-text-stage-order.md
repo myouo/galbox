@@ -1,0 +1,7 @@
+# ADR0061：单舞台与DOM正文的分层输出
+
+TextLayout可选stageZ声明DOM正文位于根图像层的哪个z之间，默认保持正文在整个Pixi输出之上。仍只有一个Core、一个Pixi Application/renderer和同一场景图；有声明时同一图像舞台分两次绘制，底部结果拷贝到一个有界Canvas输出面，原Pixi canvas显示透明前景，DOM正文位于两者之间。没有第二个场景解释器或独立Pixi舞台，Canvas是既有合成机制的输出面。
+
+图文保存严格按底图→DOM正文→前景→系统UI顺序组合。额外RGBA输出面计入Canvas预算并在dispose释放；透明设备能力在创建时准备。根子树不能横跨stageZ（子层z仅对本树排序）。组转场仍只操作图像；KAG适配必须证明此时正文为空或两页相同，不声称通用跨DOM异文页合成。
+
+真实来源：MainWindow.reorderLayers中message0=1000000、history=2000000；rain=1999999，leaf最低message-1与背景前两种深度，flash=999999。实例按相对顺序映射，不把原数值写进Core特判。需两后端遮挡/镜像/存档截图、无声明旧行为、预算和生命周期验证及性能测量。

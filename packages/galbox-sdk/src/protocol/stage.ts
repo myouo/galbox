@@ -1,7 +1,8 @@
+import {mixState} from './composition.js';
 import {ensure,canonicalWireJSON,parseStagePose,parseStageFilters,parseStageCamera} from './index.js';
 import type {StageObject,StagePose,StageFilters,StageCamera,StageScene,StageLayer,StageTaskState,StageTarget,Task,Snapshot,Instruction,DeepReadonly,Expression} from './index.js';
-export type StageInstruction=Extract<Instruction,{op:'stage.image'|'stage.pose'|'stage.filter'|'stage.camera'|'stage.fade'|'stage.transition'|'stage.rule'|'stage.shake'|'stage.style'|'task.cancel'|'task.finish'}>;
-export function isStageInstruction(i:Instruction):i is StageInstruction {return ['stage.image','stage.pose','stage.filter','stage.camera','stage.fade','stage.transition','stage.rule','stage.shake','stage.style','task.cancel','task.finish'].includes(i.op);}
+export type StageInstruction=Extract<Instruction,{op:'stage.image'|'stage.pose'|'stage.filter'|'stage.camera'|'stage.fade'|'stage.transition'|'stage.rule'|'stage.shake'|'stage.style'|'stage.asset'|'stage.mix'|'task.cancel'|'task.finish'}>;
+export function isStageInstruction(i:Instruction):i is StageInstruction {return ['stage.image','stage.pose','stage.filter','stage.camera','stage.fade','stage.transition','stage.rule','stage.shake','stage.style','stage.asset','stage.mix','task.cancel','task.finish'].includes(i.op);}
 export function stageExpressions(i:StageInstruction):Expression[] {
  const out:Expression[]=[];if('duration'in i)out.push(i.duration);if('pose'in i)out.push(...Object.values(i.pose).filter((e):e is NonNullable<typeof e>=>e!==undefined));if('to'in i&&typeof i.to==='object')out.push(...Object.values(i.to).filter((e):e is NonNullable<typeof e>=>e!==undefined));if('style'in i&&i.style?.z)out.push(i.style.z);if(i.op==='stage.fade')out.push(i.alpha);if(i.op==='stage.shake')out.push(i.amplitudeX,i.amplitudeY,i.periodMs);return out;
 }
@@ -20,16 +21,17 @@ export function currentLayers(o:DeepReadonly<StageObject>):[StageLayer,...StageL
 function targetKey(target:DeepReadonly<StageTarget>):string {return target.kind==='camera'?'camera':`object:${target.id}`;}
 export function taskLocks(t:DeepReadonly<Task>):string[] {
  if(t.kind==='animation')return ['x','y','alpha'].map(k=>`object:${t.target}:pose:${k}`);const v=t.stageTask;if(t.kind!=='stage'||!v)return [];
- switch(v.type){case 'pose':return v.fields.map(k=>`object:${v.target}:pose:${k}`);case 'filter':return v.fields.map(k=>`${targetKey(v.target)}:filter:${k}`);case 'camera':return v.fields.map(k=>`camera:pose:${k}`);case 'fade':return ['scene:overlay'];case 'rule':case 'transition':return [`object:${v.target}:asset`];case 'shake':return [`${targetKey(v.target)}:shake`];}
+ switch(v.type){case 'mix':return ['scene:mix'];case 'pose':return v.fields.map(k=>`object:${v.target}:pose:${k}`);case 'filter':return v.fields.map(k=>`${targetKey(v.target)}:filter:${k}`);case 'camera':return v.fields.map(k=>`camera:pose:${k}`);case 'fade':return ['scene:overlay'];case 'rule':case 'transition':return [`object:${v.target}:asset`];case 'shake':return [`${targetKey(v.target)}:shake`];}
 }
 export function taskObject(t:DeepReadonly<Task>):string|undefined {if(t.kind==='animation')return t.target;const v=t.stageTask;if(!v)return;return v.type==='pose'||v.type==='transition'||v.type==='rule'?v.target:(v.type==='filter'||v.type==='shake')&&v.target.kind==='object'?v.target.id:undefined;}
 export function sourceSignature(i:DeepReadonly<Instruction>):string {const value=canonicalWireJSON(i);ensure(value.length<=65536,'STAGE_SOURCE_SIZE','Stage source signature exceeds 65536 characters');return value;}
 export function stageRatio(t:DeepReadonly<Task>):number {return ease(t.stageTask?.easing??'linear',t.elapsed/t.duration);}
 function triangle(phase:number):number {const p=phase%1;return p<.25?p*4:p<.75?2-p*4:p*4-4;}
-export function shakeOffset(t:DeepReadonly<Task>,v:Extract<DeepReadonly<StageTaskState>,{type:'shake'}>){const envelope=1-stageRatio(t);return {x:triangle(t.elapsed/v.periodMs)*v.amplitudeX*envelope,y:triangle(t.elapsed/v.periodMs*2)*v.amplitudeY*envelope};}
+export function shakeOffset(t:DeepReadonly<Task>,v:Extract<DeepReadonly<StageTaskState>,{type:'shake'}>){if(v.samples)return {...v.samples[Math.min(v.samples.length-1,Math.floor(t.elapsed/v.periodMs))]!};const envelope=1-stageRatio(t);return {x:triangle(t.elapsed/v.periodMs)*v.amplitudeX*envelope,y:triangle(t.elapsed/v.periodMs*2)*v.amplitudeY*envelope};}
 export function applyStageTask(s:Snapshot,t:Task):void {
  const v=t.stageTask;ensure(t.kind==='stage'&&v&&s.scene,'STAGE_TASK','Missing stage task/scene');const p=stageRatio(t),object=(id:string)=>{const o=s.stage.find(o=>o.id===id);ensure(o,'STAGE_OBJECT',id);return o;};
  switch(v.type){
+  case 'mix':{if(t.elapsed===t.duration){for(const id of v.sourceRoots)object(id).visible=false;delete s.scene.mix;}else s.scene.mix=mixState(v,p);break;}
   case 'pose':{const o=object(v.target),pose=objectPose(o);for(const k of v.fields)pose[k]=lerp(v.from[k],v.to[k],p);setObjectPose(o,parseStagePose(pose));break;}
   case 'filter':{const out=v.target.kind==='camera'?s.scene.filters:object(v.target.id).filters??{...identityFilters};for(const k of v.fields)out[k]=lerp(v.from[k],v.to[k],p);const value=parseStageFilters(out);if(v.target.kind==='camera')s.scene.filters=value;else object(v.target.id).filters=value;break;}
   case 'camera':{for(const k of v.fields)s.scene.camera[k]=lerp(v.from[k],v.to[k],p);s.scene.camera=parseStageCamera(s.scene.camera);break;}

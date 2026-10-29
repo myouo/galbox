@@ -6,7 +6,7 @@ export function audioSlot(task:Pick<Task,'channel'|'buffer'>):string {
  return task.buffer===undefined?task.channel??'':`${task.channel}:${task.buffer}`;
 }
 export function audioSourcesSignature(program:Program):string {
- return canonicalWireJSON({version:1,buffers:program.sfxBuffers??[]});
+ return canonicalWireJSON({version:1,buffers:program.sfxBuffers??[],...(program.bgmBuffers?{bgmBuffers:program.bgmBuffers}:{})});
 }
 export function settleSourceFades(snapshot:Snapshot):void {
  if(snapshot.audioSourcesSignature===undefined)return;
@@ -27,7 +27,7 @@ export function tickSourceFades(snapshot:Snapshot,ms:number):Task[] {
  for(const task of snapshot.tasks)if(task.kind==='audio-source-fade'&&task.status==='running'){
   const fade=task.sourceFade,source=snapshot.tasks.find(t=>t.id===fade?.source);
   ensure(fade&&source?.mediaTask,'AUDIO_SOURCE','Missing source envelope');
-  task.elapsed=Math.min(task.duration,task.elapsed+ms);const fraction=ease(fade.easing,task.elapsed/task.duration);
+  task.elapsed=Math.min(task.duration,task.elapsed+ms);const delay=fade.delayMs??0,fraction=ease(fade.easing,Math.max(0,task.elapsed-delay)/(task.duration-delay));
   source.gain=fraction===1?fade.to:fade.from+(fade.to-fade.from)*fraction;
   if(task.elapsed===task.duration){task.status='completed';if(fade.stop){source.status='cancelled';source.mediaTask.phase='cancelled';stopped.push(source);}}
  }

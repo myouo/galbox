@@ -253,6 +253,10 @@ message Gbx_StageObject_motion {
   optional Gbx_MotionOffset value = 1;
 }
 
+message Gbx_StageObject_frame {
+  optional Gbx_ImageFrame value = 1;
+}
+
 message Gbx_StageObject {
   optional Gbx_StageObject_id id = 1;
   optional Gbx_StageObject_asset asset = 2;
@@ -268,6 +272,7 @@ message Gbx_StageObject {
   optional Gbx_StageObject_shake shake = 12;
   optional Gbx_StageObject_ruleTransition ruleTransition = 13;
   optional Gbx_StageObject_motion motion = 14;
+  optional Gbx_StageObject_frame frame = 15;
 }
 
 message Gbx_MotionOffset_x {
@@ -358,6 +363,294 @@ message Gbx_MotionTaskState {
   optional Gbx_MotionTaskState_tracks tracks = 4;
   optional Gbx_MotionTaskState_loop loop = 5;
   optional Gbx_MotionTaskState_intervalMs intervalMs = 6;
+}
+
+message Gbx_ImageFrame_x {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFrame_y {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFrame_width {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFrame_height {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFrame {
+  optional Gbx_ImageFrame_x x = 1;
+  optional Gbx_ImageFrame_y y = 2;
+  optional Gbx_ImageFrame_width width = 3;
+  optional Gbx_ImageFrame_height height = 4;
+}
+
+message Gbx_ParticleRange_min {
+  optional double value = 1;
+}
+
+message Gbx_ParticleRange_max {
+  optional double value = 1;
+}
+
+message Gbx_ParticleRange {
+  optional Gbx_ParticleRange_min min = 1;
+  optional Gbx_ParticleRange_max max = 2;
+}
+
+message Gbx_ParticleStyle_asset {
+  optional string value = 1;
+}
+
+message Gbx_ParticleStyle_frames_Item {
+  optional Gbx_ImageFrame value = 1;
+}
+
+message Gbx_ParticleStyle_frames {
+  repeated Gbx_ParticleStyle_frames_Item items = 1;
+}
+
+message Gbx_ParticleStyle_alpha {
+  optional double value = 1;
+}
+
+message Gbx_ParticleStyle_velocityY {
+  optional Gbx_ParticleRange value = 1;
+}
+
+message Gbx_ParticleStyle_initialAccelerationX {
+  optional Gbx_ParticleRange value = 1;
+}
+
+message Gbx_ParticleStyle_accelerationNoise {
+  optional double value = 1;
+}
+
+message Gbx_ParticleStyle_velocityXLimit {
+  optional double value = 1;
+}
+
+message Gbx_ParticleStyle_accelerationXLimit {
+  optional double value = 1;
+}
+
+message Gbx_ParticleStyle_wrap {
+  optional string value = 1;
+}
+
+message Gbx_ParticleStyle {
+  optional Gbx_ParticleStyle_asset asset = 1;
+  optional Gbx_ParticleStyle_frames frames = 2;
+  optional Gbx_ParticleStyle_alpha alpha = 3;
+  optional Gbx_ParticleStyle_velocityY velocityY = 4;
+  optional Gbx_ParticleStyle_initialAccelerationX initialAccelerationX = 5;
+  optional Gbx_ParticleStyle_accelerationNoise accelerationNoise = 6;
+  optional Gbx_ParticleStyle_velocityXLimit velocityXLimit = 7;
+  optional Gbx_ParticleStyle_accelerationXLimit accelerationXLimit = 8;
+  optional Gbx_ParticleStyle_wrap wrap = 9;
+}
+
+message Gbx_ParticleConfig_count {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleConfig_intervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleConfig_width {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleConfig_height {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleConfig_styles_Item {
+  optional Gbx_ParticleStyle value = 1;
+}
+
+message Gbx_ParticleConfig_styles {
+  repeated Gbx_ParticleConfig_styles_Item items = 1;
+}
+
+message Gbx_ParticleConfig_groups_Item_parents_Item {
+  optional string value = 1;
+}
+
+message Gbx_ParticleConfig_groups_Item_parents {
+  repeated Gbx_ParticleConfig_groups_Item_parents_Item items = 1;
+}
+
+message Gbx_ParticleConfig_groups_Item {
+  optional Gbx_ParticleConfig_groups_Item_parents parents = 1;
+}
+
+message Gbx_ParticleConfig_groups {
+  repeated Gbx_ParticleConfig_groups_Item items = 1;
+}
+
+message Gbx_ParticleConfig_seed {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleConfig_initiallySpawned {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleConfig_spawnProbability {
+  optional double value = 1;
+}
+
+message Gbx_ParticleConfig_positionMode {
+  optional string value = 1;
+}
+
+message Gbx_ParticleConfig {
+  optional Gbx_ParticleConfig_count count = 1;
+  optional Gbx_ParticleConfig_intervalMs intervalMs = 2;
+  optional Gbx_ParticleConfig_width width = 3;
+  optional Gbx_ParticleConfig_height height = 4;
+  optional Gbx_ParticleConfig_styles styles = 5;
+  optional Gbx_ParticleConfig_groups groups = 6;
+  optional Gbx_ParticleConfig_seed seed = 7;
+  optional Gbx_ParticleConfig_initiallySpawned initiallySpawned = 8;
+  optional Gbx_ParticleConfig_spawnProbability spawnProbability = 9;
+  optional Gbx_ParticleConfig_positionMode positionMode = 10;
+}
+
+message Gbx_ParticleState_style {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleState_group {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleState_spawned {
+  optional bool value = 1;
+}
+
+message Gbx_ParticleState_x {
+  optional double value = 1;
+}
+
+message Gbx_ParticleState_y {
+  optional double value = 1;
+}
+
+message Gbx_ParticleState_vx {
+  optional double value = 1;
+}
+
+message Gbx_ParticleState_vy {
+  optional double value = 1;
+}
+
+message Gbx_ParticleState_ax {
+  optional double value = 1;
+}
+
+message Gbx_ParticleState_frame {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleState_updates {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleState {
+  optional Gbx_ParticleState_style style = 1;
+  optional Gbx_ParticleState_group group = 2;
+  optional Gbx_ParticleState_spawned spawned = 3;
+  optional Gbx_ParticleState_x x = 4;
+  optional Gbx_ParticleState_y y = 5;
+  optional Gbx_ParticleState_vx vx = 6;
+  optional Gbx_ParticleState_vy vy = 7;
+  optional Gbx_ParticleState_ax ax = 8;
+  optional Gbx_ParticleState_frame frame = 9;
+  optional Gbx_ParticleState_updates updates = 10;
+}
+
+message Gbx_ParticleTaskState_signature {
+  optional string value = 1;
+}
+
+message Gbx_ParticleTaskState_prefix {
+  optional string value = 1;
+}
+
+message Gbx_ParticleTaskState_config {
+  optional Gbx_ParticleConfig value = 1;
+}
+
+message Gbx_ParticleTaskState_rng {
+  optional Gbx_RngState value = 1;
+}
+
+message Gbx_ParticleTaskState_ticks {
+  optional sint64 value = 1;
+}
+
+message Gbx_ParticleTaskState_particles_Item {
+  optional Gbx_ParticleState value = 1;
+}
+
+message Gbx_ParticleTaskState_particles {
+  repeated Gbx_ParticleTaskState_particles_Item items = 1;
+}
+
+message Gbx_ParticleTaskState {
+  optional Gbx_ParticleTaskState_signature signature = 1;
+  optional Gbx_ParticleTaskState_prefix prefix = 2;
+  optional Gbx_ParticleTaskState_config config = 3;
+  optional Gbx_ParticleTaskState_rng rng = 4;
+  optional Gbx_ParticleTaskState_ticks ticks = 5;
+  optional Gbx_ParticleTaskState_particles particles = 6;
+}
+
+message Gbx_StageMixState_sourceRoots_Item {
+  optional string value = 1;
+}
+
+message Gbx_StageMixState_sourceRoots {
+  repeated Gbx_StageMixState_sourceRoots_Item items = 1;
+}
+
+message Gbx_StageMixState_targetRoots_Item {
+  optional string value = 1;
+}
+
+message Gbx_StageMixState_targetRoots {
+  repeated Gbx_StageMixState_targetRoots_Item items = 1;
+}
+
+message Gbx_StageMixState_method {
+  optional string value = 1;
+}
+
+message Gbx_StageMixState_rule {
+  optional string value = 1;
+}
+
+message Gbx_StageMixState_vague {
+  optional sint64 value = 1;
+}
+
+message Gbx_StageMixState_progress {
+  optional double value = 1;
+}
+
+message Gbx_StageMixState {
+  optional Gbx_StageMixState_sourceRoots sourceRoots = 1;
+  optional Gbx_StageMixState_targetRoots targetRoots = 2;
+  optional Gbx_StageMixState_method method = 3;
+  optional Gbx_StageMixState_rule rule = 4;
+  optional Gbx_StageMixState_vague vague = 5;
+  optional Gbx_StageMixState_progress progress = 6;
 }
 
 message Gbx_Option_id {
@@ -715,11 +1008,16 @@ message Gbx_Instruction_Case14_members {
   repeated Gbx_Instruction_Case14_members_Item items = 1;
 }
 
+message Gbx_Instruction_Case14_skippable {
+  optional bool value = 1;
+}
+
 message Gbx_Instruction_Case14 {
   optional Gbx_Instruction_Case14_at at = 1;
   optional Gbx_Instruction_Case14_op op = 2;
   optional Gbx_Instruction_Case14_group group = 3;
   optional Gbx_Instruction_Case14_members members = 4;
+  optional Gbx_Instruction_Case14_skippable skippable = 5;
 }
 
 message Gbx_Instruction_Case15_at {
@@ -738,11 +1036,16 @@ message Gbx_Instruction_Case15_duration {
   optional sint64 value = 1;
 }
 
+message Gbx_Instruction_Case15_skippable {
+  optional bool value = 1;
+}
+
 message Gbx_Instruction_Case15 {
   optional Gbx_Instruction_Case15_at at = 1;
   optional Gbx_Instruction_Case15_op op = 2;
   optional Gbx_Instruction_Case15_task task = 3;
   optional Gbx_Instruction_Case15_duration duration = 4;
+  optional Gbx_Instruction_Case15_skippable skippable = 5;
 }
 
 message Gbx_Instruction_Case16_at {
@@ -1471,6 +1774,14 @@ message Gbx_Instruction_Case40_periodMs {
   optional Gbx_I32Expression value = 1;
 }
 
+message Gbx_Instruction_Case40_samples_Item {
+  optional Gbx_StageOffset value = 1;
+}
+
+message Gbx_Instruction_Case40_samples {
+  repeated Gbx_Instruction_Case40_samples_Item items = 1;
+}
+
 message Gbx_Instruction_Case40 {
   optional Gbx_Instruction_Case40_op op = 1;
   optional Gbx_Instruction_Case40_at at = 2;
@@ -1482,6 +1793,7 @@ message Gbx_Instruction_Case40 {
   optional Gbx_Instruction_Case40_amplitudeX amplitudeX = 8;
   optional Gbx_Instruction_Case40_amplitudeY amplitudeY = 9;
   optional Gbx_Instruction_Case40_periodMs periodMs = 10;
+  optional Gbx_Instruction_Case40_samples samples = 11;
 }
 
 message Gbx_Instruction_Case41_op {
@@ -1718,10 +2030,15 @@ message Gbx_Instruction_Case48_task {
   optional string value = 1;
 }
 
+message Gbx_Instruction_Case48_inactive {
+  optional string value = 1;
+}
+
 message Gbx_Instruction_Case48 {
   optional Gbx_Instruction_Case48_op op = 1;
   optional Gbx_Instruction_Case48_at at = 2;
   optional Gbx_Instruction_Case48_task task = 3;
+  optional Gbx_Instruction_Case48_inactive inactive = 4;
 }
 
 message Gbx_Instruction_Case49_at {
@@ -2254,6 +2571,14 @@ message Gbx_Instruction_Case66_stop {
   optional bool value = 1;
 }
 
+message Gbx_Instruction_Case66_inactive {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case66_delayMs {
+  optional Gbx_I32Expression value = 1;
+}
+
 message Gbx_Instruction_Case66 {
   optional Gbx_Instruction_Case66_op op = 1;
   optional Gbx_Instruction_Case66_at at = 2;
@@ -2264,6 +2589,8 @@ message Gbx_Instruction_Case66 {
   optional Gbx_Instruction_Case66_easing easing = 7;
   optional Gbx_Instruction_Case66_policy policy = 8;
   optional Gbx_Instruction_Case66_stop stop = 9;
+  optional Gbx_Instruction_Case66_inactive inactive = 10;
+  optional Gbx_Instruction_Case66_delayMs delayMs = 11;
 }
 
 message Gbx_Instruction_Case67_op {
@@ -2278,10 +2605,15 @@ message Gbx_Instruction_Case67_source {
   optional string value = 1;
 }
 
+message Gbx_Instruction_Case67_inactive {
+  optional string value = 1;
+}
+
 message Gbx_Instruction_Case67 {
   optional Gbx_Instruction_Case67_op op = 1;
   optional Gbx_Instruction_Case67_at at = 2;
   optional Gbx_Instruction_Case67_source source = 3;
+  optional Gbx_Instruction_Case67_inactive inactive = 4;
 }
 
 message Gbx_Instruction_Case68_at {
@@ -2425,6 +2757,169 @@ message Gbx_Instruction_Case71 {
   optional Gbx_Instruction_Case71_key key = 4;
 }
 
+message Gbx_Instruction_Case72_op {
+  // Fixed semantic value: "stage.particles"
+}
+
+message Gbx_Instruction_Case72_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case72_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case72_prefix {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case72_config {
+  optional Gbx_ParticleConfig value = 1;
+}
+
+message Gbx_Instruction_Case72 {
+  optional Gbx_Instruction_Case72_op op = 1;
+  optional Gbx_Instruction_Case72_at at = 2;
+  optional Gbx_Instruction_Case72_task task = 3;
+  optional Gbx_Instruction_Case72_prefix prefix = 4;
+  optional Gbx_Instruction_Case72_config config = 5;
+}
+
+message Gbx_Instruction_Case73_op {
+  // Fixed semantic value: "stage.particles.stop"
+}
+
+message Gbx_Instruction_Case73_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case73_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case73 {
+  optional Gbx_Instruction_Case73_op op = 1;
+  optional Gbx_Instruction_Case73_at at = 2;
+  optional Gbx_Instruction_Case73_task task = 3;
+}
+
+message Gbx_Instruction_Case74_op {
+  // Fixed semantic value: "stage.mix"
+}
+
+message Gbx_Instruction_Case74_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_sourceRoots_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_sourceRoots {
+  repeated Gbx_Instruction_Case74_sourceRoots_Item items = 1;
+}
+
+message Gbx_Instruction_Case74_targetRoots_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_targetRoots {
+  repeated Gbx_Instruction_Case74_targetRoots_Item items = 1;
+}
+
+message Gbx_Instruction_Case74_method {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_rule {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_vague {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case74_duration {
+  optional Gbx_I32Expression value = 1;
+}
+
+message Gbx_Instruction_Case74_easing {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case74_policy {
+  // Fixed semantic value: "reject"
+}
+
+message Gbx_Instruction_Case74 {
+  optional Gbx_Instruction_Case74_op op = 1;
+  optional Gbx_Instruction_Case74_at at = 2;
+  optional Gbx_Instruction_Case74_task task = 3;
+  optional Gbx_Instruction_Case74_sourceRoots sourceRoots = 4;
+  optional Gbx_Instruction_Case74_targetRoots targetRoots = 5;
+  optional Gbx_Instruction_Case74_method method = 6;
+  optional Gbx_Instruction_Case74_rule rule = 7;
+  optional Gbx_Instruction_Case74_vague vague = 8;
+  optional Gbx_Instruction_Case74_duration duration = 9;
+  optional Gbx_Instruction_Case74_easing easing = 10;
+  optional Gbx_Instruction_Case74_policy policy = 11;
+}
+
+message Gbx_Instruction_Case75_op {
+  // Fixed semantic value: "stage.asset"
+}
+
+message Gbx_Instruction_Case75_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case75_id {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case75_asset {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case75 {
+  optional Gbx_Instruction_Case75_op op = 1;
+  optional Gbx_Instruction_Case75_at at = 2;
+  optional Gbx_Instruction_Case75_id id = 3;
+  optional Gbx_Instruction_Case75_asset asset = 4;
+}
+
+message Gbx_Instruction_Case76_op {
+  // Fixed semantic value: "audio.source.gain"
+}
+
+message Gbx_Instruction_Case76_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case76_source {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case76_gain {
+  optional Gbx_StageNumberExpression value = 1;
+}
+
+message Gbx_Instruction_Case76_inactive {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case76 {
+  optional Gbx_Instruction_Case76_op op = 1;
+  optional Gbx_Instruction_Case76_at at = 2;
+  optional Gbx_Instruction_Case76_source source = 3;
+  optional Gbx_Instruction_Case76_gain gain = 4;
+  optional Gbx_Instruction_Case76_inactive inactive = 5;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -2498,6 +2993,11 @@ message Gbx_Instruction {
     Gbx_Instruction_Case69 v69 = 69;
     Gbx_Instruction_Case70 v70 = 70;
     Gbx_Instruction_Case71 v71 = 71;
+    Gbx_Instruction_Case72 v72 = 72;
+    Gbx_Instruction_Case73 v73 = 73;
+    Gbx_Instruction_Case74 v74 = 74;
+    Gbx_Instruction_Case75 v75 = 75;
+    Gbx_Instruction_Case76 v76 = 76;
   }
 }
 
@@ -2659,6 +3159,14 @@ message Gbx_Program_sfxBuffers {
   repeated Gbx_Program_sfxBuffers_Item items = 1;
 }
 
+message Gbx_Program_bgmBuffers_Item {
+  optional string value = 1;
+}
+
+message Gbx_Program_bgmBuffers {
+  repeated Gbx_Program_bgmBuffers_Item items = 1;
+}
+
 message Gbx_Program {
   optional Gbx_Program_version version = 1;
   optional Gbx_Program_gameId gameId = 2;
@@ -2680,6 +3188,7 @@ message Gbx_Program {
   optional Gbx_Program_presentation presentation = 18;
   optional Gbx_Program_textCatalogBinding textCatalogBinding = 19;
   optional Gbx_Program_sfxBuffers sfxBuffers = 20;
+  optional Gbx_Program_bgmBuffers bgmBuffers = 21;
 }
 
 message Gbx_Profile_revision {
@@ -2940,6 +3449,10 @@ message Gbx_Task_motionTask {
   optional Gbx_MotionTaskState value = 1;
 }
 
+message Gbx_Task_particleTask {
+  optional Gbx_ParticleTaskState value = 1;
+}
+
 message Gbx_Task {
   optional Gbx_Task_id id = 1;
   optional Gbx_Task_status status = 2;
@@ -2964,6 +3477,7 @@ message Gbx_Task {
   optional Gbx_Task_buffer buffer = 21;
   optional Gbx_Task_sourceFade sourceFade = 22;
   optional Gbx_Task_motionTask motionTask = 23;
+  optional Gbx_Task_particleTask particleTask = 24;
 }
 
 message Gbx_TaskGroup_id {
@@ -3050,10 +3564,15 @@ message Gbx_Wait_Case3_group {
   optional string value = 1;
 }
 
+message Gbx_Wait_Case3_prompt {
+  optional sint64 value = 1;
+}
+
 message Gbx_Wait_Case3 {
   optional Gbx_Wait_Case3_kind kind = 1;
   optional Gbx_Wait_Case3_at at = 2;
   optional Gbx_Wait_Case3_group group = 3;
+  optional Gbx_Wait_Case3_prompt prompt = 4;
 }
 
 message Gbx_Wait_Case4_kind {
@@ -3068,10 +3587,15 @@ message Gbx_Wait_Case4_task {
   optional string value = 1;
 }
 
+message Gbx_Wait_Case4_prompt {
+  optional sint64 value = 1;
+}
+
 message Gbx_Wait_Case4 {
   optional Gbx_Wait_Case4_kind kind = 1;
   optional Gbx_Wait_Case4_at at = 2;
   optional Gbx_Wait_Case4_task task = 3;
+  optional Gbx_Wait_Case4_prompt prompt = 4;
 }
 
 message Gbx_Wait_Case5_kind {
@@ -6679,11 +7203,21 @@ message Gbx_TextLayout_windows {
   repeated Gbx_TextLayout_windows_Item items = 1;
 }
 
+message Gbx_TextLayout_followStage {
+  optional bool value = 1;
+}
+
+message Gbx_TextLayout_stageZ {
+  optional double value = 1;
+}
+
 message Gbx_TextLayout {
   optional Gbx_TextLayout_version version = 1;
   optional Gbx_TextLayout_initialWindow initialWindow = 2;
   optional Gbx_TextLayout_themes themes = 3;
   optional Gbx_TextLayout_windows windows = 4;
+  optional Gbx_TextLayout_followStage followStage = 5;
+  optional Gbx_TextLayout_stageZ stageZ = 6;
 }
 
 message Gbx_TextLayoutState_version {
@@ -8217,12 +8751,17 @@ message Gbx_StageScene_shake {
   optional Gbx_StageOffset value = 1;
 }
 
+message Gbx_StageScene_mix {
+  optional Gbx_StageMixState value = 1;
+}
+
 message Gbx_StageScene {
   optional Gbx_StageScene_version version = 1;
   optional Gbx_StageScene_camera camera = 2;
   optional Gbx_StageScene_filters filters = 3;
   optional Gbx_StageScene_overlay overlay = 4;
   optional Gbx_StageScene_shake shake = 5;
+  optional Gbx_StageScene_mix mix = 6;
 }
 
 message Gbx_StageTarget_Case1_kind {
@@ -8591,6 +9130,14 @@ message Gbx_StageTaskState_Case6_periodMs {
   optional sint64 value = 1;
 }
 
+message Gbx_StageTaskState_Case6_samples_Item {
+  optional Gbx_StageOffset value = 1;
+}
+
+message Gbx_StageTaskState_Case6_samples {
+  repeated Gbx_StageTaskState_Case6_samples_Item items = 1;
+}
+
 message Gbx_StageTaskState_Case6 {
   optional Gbx_StageTaskState_Case6_type type = 1;
   optional Gbx_StageTaskState_Case6_signature signature = 2;
@@ -8599,6 +9146,7 @@ message Gbx_StageTaskState_Case6 {
   optional Gbx_StageTaskState_Case6_amplitudeX amplitudeX = 5;
   optional Gbx_StageTaskState_Case6_amplitudeY amplitudeY = 6;
   optional Gbx_StageTaskState_Case6_periodMs periodMs = 7;
+  optional Gbx_StageTaskState_Case6_samples samples = 8;
 }
 
 message Gbx_StageTaskState_Case7_type {
@@ -8644,6 +9192,57 @@ message Gbx_StageTaskState_Case7 {
   optional Gbx_StageTaskState_Case7_vague vague = 8;
 }
 
+message Gbx_StageTaskState_Case8_type {
+  // Fixed semantic value: "mix"
+}
+
+message Gbx_StageTaskState_Case8_signature {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case8_easing {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case8_sourceRoots_Item {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case8_sourceRoots {
+  repeated Gbx_StageTaskState_Case8_sourceRoots_Item items = 1;
+}
+
+message Gbx_StageTaskState_Case8_targetRoots_Item {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case8_targetRoots {
+  repeated Gbx_StageTaskState_Case8_targetRoots_Item items = 1;
+}
+
+message Gbx_StageTaskState_Case8_method {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case8_rule {
+  optional string value = 1;
+}
+
+message Gbx_StageTaskState_Case8_vague {
+  optional sint64 value = 1;
+}
+
+message Gbx_StageTaskState_Case8 {
+  optional Gbx_StageTaskState_Case8_type type = 1;
+  optional Gbx_StageTaskState_Case8_signature signature = 2;
+  optional Gbx_StageTaskState_Case8_easing easing = 3;
+  optional Gbx_StageTaskState_Case8_sourceRoots sourceRoots = 4;
+  optional Gbx_StageTaskState_Case8_targetRoots targetRoots = 5;
+  optional Gbx_StageTaskState_Case8_method method = 6;
+  optional Gbx_StageTaskState_Case8_rule rule = 7;
+  optional Gbx_StageTaskState_Case8_vague vague = 8;
+}
+
 message Gbx_StageTaskState {
   oneof value {
     Gbx_StageTaskState_Case1 v1 = 1;
@@ -8653,6 +9252,7 @@ message Gbx_StageTaskState {
     Gbx_StageTaskState_Case5 v5 = 5;
     Gbx_StageTaskState_Case6 v6 = 6;
     Gbx_StageTaskState_Case7 v7 = 7;
+    Gbx_StageTaskState_Case8 v8 = 8;
   }
 }
 
@@ -8698,12 +9298,33 @@ message Gbx_StageStyle_visible {
   optional bool value = 1;
 }
 
+message Gbx_StageStyle_frame_Case1 {
+  optional Gbx_ImageFrame value = 1;
+}
+
+message Gbx_StageStyle_frame_Case2 {
+
+}
+
+message Gbx_StageStyle_frame {
+  oneof value {
+    Gbx_StageStyle_frame_Case1 v1 = 1;
+    Gbx_StageStyle_frame_Case2 v2 = 2;
+  }
+}
+
+message Gbx_StageStyle_filters {
+  optional Gbx_StageFilters value = 1;
+}
+
 message Gbx_StageStyle {
   optional Gbx_StageStyle_parent parent = 1;
   optional Gbx_StageStyle_z z = 2;
   optional Gbx_StageStyle_blend blend = 3;
   optional Gbx_StageStyle_clip clip = 4;
   optional Gbx_StageStyle_visible visible = 5;
+  optional Gbx_StageStyle_frame frame = 6;
+  optional Gbx_StageStyle_filters filters = 7;
 }
 
 message Gbx_VoiceRecipe_asset {
@@ -8834,6 +9455,10 @@ message Gbx_AudioSourceFadeState_stop {
   optional bool value = 1;
 }
 
+message Gbx_AudioSourceFadeState_delayMs {
+  optional sint64 value = 1;
+}
+
 message Gbx_AudioSourceFadeState {
   optional Gbx_AudioSourceFadeState_version version = 1;
   optional Gbx_AudioSourceFadeState_signature signature = 2;
@@ -8842,6 +9467,7 @@ message Gbx_AudioSourceFadeState {
   optional Gbx_AudioSourceFadeState_to to = 5;
   optional Gbx_AudioSourceFadeState_easing easing = 6;
   optional Gbx_AudioSourceFadeState_stop stop = 7;
+  optional Gbx_AudioSourceFadeState_delayMs delayMs = 8;
 }
 
 message Gbx_AudioState_version {
@@ -8942,10 +9568,15 @@ message Gbx_GraphicsOptions_maxRuleBytes {
   optional sint64 value = 1;
 }
 
+message Gbx_GraphicsOptions_background {
+  optional string value = 1;
+}
+
 message Gbx_GraphicsOptions {
   optional Gbx_GraphicsOptions_renderer renderer = 1;
   optional Gbx_GraphicsOptions_maxCanvasBytes maxCanvasBytes = 2;
   optional Gbx_GraphicsOptions_maxRuleBytes maxRuleBytes = 3;
+  optional Gbx_GraphicsOptions_background background = 4;
 }
 
 message Gbx_InteractionRect_x {

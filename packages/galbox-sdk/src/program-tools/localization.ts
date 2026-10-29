@@ -6,9 +6,10 @@ import {richText} from './text.js';
 import {linkProgram} from './linker.js';
 import type {OperationRegistry} from '../core/operations.js';
 const placeholder='@text-catalog';
-function supported(p:Program):void {ensure(!p.ui&&!p.presentation&&!p.flowchart&&!p.extras&&!p.functions.some(f=>f.code.some(i=>i.op==='text.template'||i.op==='interaction.prompt')),'TEXT_CATALOG_UNSUPPORTED','This text split profile supports title/pages/rich pages/choices only');}
+function supported(p:Program):void {ensure(!p.ui&&!p.presentation&&!p.flowchart&&!p.functions.some(f=>f.code.some(i=>i.op==='text.template'||i.op==='interaction.prompt')),'TEXT_CATALOG_UNSUPPORTED','This text split profile supports title/pages/rich pages/choices only');}
 export function splitProgramText(input:unknown,locale:string):{template:Program;catalog:ProgramTextCatalog}{
  const p=parseProgram(input);ensure(!p.textCatalogBinding,'TEXT_CATALOG_BOUND','Program already requires a text catalog');supported(p);const entries:ProgramTextEntry[]=[{kind:'title',at:'program:title',text:p.title}];p.title=placeholder;
+ for(const e of p.extras?.entries??[]){for(const field of ['title','description']as const){entries.push({kind:'title',at:`extras:${e.id}:${field}`,text:e[field]});e[field]=placeholder;}}
  for(const f of p.functions)for(const i of f.code){
   if(i.op==='text.page'){entries.push({kind:'page',at:i.at,textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content});i.speaker=placeholder;i.content=placeholder;}
   if(i.op==='text.rich'){entries.push({kind:'rich',at:i.at,textId:i.textId,revision:i.revision,speaker:i.speaker,runs:i.runs});i.speaker={op:'literal',kind:'string',value:placeholder};i.runs=[richText.text(placeholder)];}
@@ -20,6 +21,7 @@ export function bindProgramText(input:unknown,textInput:unknown,operations?:Oper
  const p=parseProgram(input),catalog=parseProgramTextCatalog(textInput),binding=p.textCatalogBinding;ensure(binding,'TEXT_CATALOG_REQUIRED','Expected a bound program template');supported(p);ensure(catalog.gameId===p.gameId&&catalog.release===p.release&&catalog.locale===binding.locale,'TEXT_CATALOG_IDENTITY','Text catalog game/release/locale differs');ensure(byteDigest(encodeWire('ProgramTextCatalog',catalog))===binding.sha256,'TEXT_CATALOG_DIGEST','Text catalog bytes differ from the template binding');
  const entries=new Map<string,ProgramTextEntry>();for(const e of catalog.entries){ensure(!entries.has(e.at),'TEXT_CATALOG_DUPLICATE',e.at);entries.set(e.at,e);}
  const title=entries.get('program:title');ensure(title?.kind==='title','TEXT_CATALOG_SLOT','Missing program title');p.title=title.text;entries.delete('program:title');
+ for(const item of p.extras?.entries??[])for(const field of ['title','description']as const){const key=`extras:${item.id}:${field}`,e=entries.get(key);ensure(e?.kind==='title','TEXT_CATALOG_SLOT','Missing extra '+key);item[field]=e.text;entries.delete(key);}
  for(const f of p.functions)for(const i of f.code){if(i.op!=='text.page'&&i.op!=='text.rich'&&i.op!=='choice')continue;const e=entries.get(i.at);ensure(e,'TEXT_CATALOG_SLOT','Missing '+i.at);
   if(i.op==='text.page'){ensure(e.kind==='page'&&e.textId===i.textId&&e.revision===i.revision,'TEXT_CATALOG_SLOT','Page identity differs');i.speaker=e.speaker;i.content=e.content;}
   if(i.op==='text.rich'){ensure(e.kind==='rich'&&e.textId===i.textId&&e.revision===i.revision,'TEXT_CATALOG_SLOT','Rich page identity differs');i.speaker=e.speaker;i.runs=e.runs;}

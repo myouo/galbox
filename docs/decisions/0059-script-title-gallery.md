@@ -1,0 +1,5 @@
+# ADR0059：脚本标题的隔离回放入口
+
+PlayerOptions.galleryAt可声明最多256个经典Program choice地址。其余切点仍要求canSave；声明点在仅由save.policy禁止普通保存时，可打开鉴赏。资格不是绕过快照检查：临时副本仅将saveAllowed置true并经完整validateRestore验证，资源必须idle；freeze/dirty交接后再检查同一声明点与恢复闭包。当前Core的禁存标志不改，主head不重写，仍用已有MemoryStore子Player回放和关闭权威核验。
+
+列表在Player创建前私有化/验证，未知/重复/非choice拒绝，模块Program本阶段拒绝。此规则允许原脚本标题禁止普通存档但可打开原章节回放，不让实例复制回放系统。回放子会话允许只读history/story系统页，其它持久/导航权限保持禁止。

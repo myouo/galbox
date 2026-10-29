@@ -1,3 +1,7 @@
+# 当前本地活动检查点
+
+2026-10-29，feat/chapter-runtime。ADR0053–0062通用演出/加载能力与实包消费已实现，证据见evidence/chapter-runtime/REPORT.md。正式预览仍是下述旧序章版本，本轮未推送/部署；F-01E尚未整章交付。下一继续独立实例lower-door全章编译/八语/迁移/原章节菜单回放与公网加载。主SDK目录已有修改不覆盖。
+
 # galbox-sdk 当前接续
 
 2026-10-29。隔离分支feat/chapter-runtime实际源码/测试6ec5791，CI run40770926373六任务success：301单元、184浏览器、CLI/consumer/release/package。实包c398a36e07822cf6d5c5b6ab9a4eb491c8acc621a216b65653846d62cbca0889，独立实例通过公开exports消费；主SDK工作区并行改动未覆盖/自动合并。

@@ -17,7 +17,7 @@ export function validateCanvasSnapshot(snapshot:DeepReadonly<Snapshot>,map:Blend
 }
 // Application has no renderer until asynchronous initialization succeeds.
 export function destroyGraphicsApplication(app:GraphicsApplication|null):void {if(app?.renderer)app.destroy({removeView:true,releaseGlobalResources:false},{children:true});}
-export async function prepareGraphics(options:GraphicsOptions,cancelled:()=>boolean,own:(app:GraphicsApplication)=>void):Promise<{app:GraphicsApplication;backend:GraphicsBackend;fallback:string|null}> {
+export async function prepareGraphics(options:GraphicsOptions,cancelled:()=>boolean,own:(app:GraphicsApplication)=>void,transparent=false):Promise<{app:GraphicsApplication;backend:GraphicsBackend;fallback:string|null}> {
  let fallback:string|null=null;
  for(const backend of options.renderer==='auto'?['webgl','canvas'] as const:[options.renderer]){
   ensure(!cancelled(),'HOST_DISPOSED','Graphics initialization cancelled');const canvas=document.createElement('canvas');let gl:WebGL2RenderingContext|null=null;
@@ -25,7 +25,7 @@ export async function prepareGraphics(options:GraphicsOptions,cancelled:()=>bool
   if(backend==='webgl'&&!gl){if(options.renderer!=='auto')throw new GalboxError('GRAPHICS_UNAVAILABLE','WebGL is unavailable; use auto or canvas mode');fallback='WebGL context unavailable';continue;}
   const app:GraphicsApplication=new Application<WebGLRenderer|CanvasRenderer>();own(app);
   try{
-   await app.init({width:1280,height:720,canvas,...(gl?{context:gl}:{}),preference:[backend],background:'#122c44',antialias:true,autoStart:false});
+   await app.init({width:1280,height:720,canvas,...(gl?{context:gl}:{}),preference:[backend],backgroundAlpha:transparent?0:1,background:options.background??'#122c44',antialias:true,autoStart:false});
    if(cancelled()){destroyGraphicsApplication(app);throw new GalboxError('HOST_DISPOSED','Graphics initialization cancelled');}
    ensure(backend==='webgl'?app.renderer instanceof WebGLRenderer:app.renderer instanceof CanvasRenderer,'GRAPHICS_UNAVAILABLE','Selected graphics backend did not initialize');
    return {app,backend,fallback};

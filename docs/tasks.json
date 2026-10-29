@@ -3009,7 +3009,8 @@
         "docs/evidence/f-01e/REPORT.md",
         "docs/evidence/reading-prefetch/REPORT.md",
         "docs/evidence/saved-game-migration/REPORT.md",
-        "docs/evidence/text-continuations/REPORT.md"
+        "docs/evidence/text-continuations/REPORT.md",
+        "docs/evidence/chapter-runtime/REPORT.md"
       ],
       "blocker": null,
       "id": "F-01E",
@@ -3037,7 +3038,7 @@
         "replay-does-not-change-main-head-profile",
         "chapter-resource-closure-over-http"
       ],
-      "next_action": "整章仍未完成。SDK6ec5791实包c398a36e0782已上线：标签跳转预取/稳定音乐URL、旧32页自动迁移、正文续段和state.collect；CI301单元/184浏览器全绿，实例3 Python+76 TS及最终包本地4/公网4浏览器通过。完整序章公网P95 930→59ms、资源暂停12→3。下一按DOOR1_IMPLEMENTATION补stage.motion逐轴offset/页复制、雨樱粒子/组转场/双BGM，再整体编译2478段第一门、真实sf.scenario1与原菜单隔离回放。"
+      "next_action": "ADR0053–0062通用运动/复制、镜像粒子、实时组转场、双BGM延迟包络、可跳过视觉等待、标题隔离回放、持久0..8页预取与静态call/return扫描已落地。独立实例正在编译整门（door-stage/character/particles/lower-door），尚未整章验证或发布。下一先完整英文Core路径与保存，再八语/真实浏览器/旧93升级/源章节菜单/资源闭包。"
     },
     {
       "id": "G1-04",

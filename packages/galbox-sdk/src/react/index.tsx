@@ -20,7 +20,7 @@ import type { Player } from '../player/index.js';
 export function usePlayer(player:Player){return useSyncExternalStore(player.subscribe,player.getSnapshot,player.getSnapshot);}
 export function DefaultUI({player}:{player:Player}) {const view=usePlayer(player);return view.context==='gallery'?<ReplayUI player={player}/>:view.presentation?<GameUI player={player}/>:<StoryUI player={player}/>;}
 function StoryUI({player}:{player:Player}) {
-  const view=usePlayer(player),run=view.core?.run,wait=run?.wait;const [notice,setNotice]=useState('');const [history,setHistory]=useState(false);
+  const view=usePlayer(player),run=view.core?.run,wait=run?.wait;const skipPrompt=(wait?.kind==='group'||wait?.kind==='delay')?wait.prompt:undefined;const [notice,setNotice]=useState('');const [history,setHistory]=useState(false);
   const inputRoot=useRef<HTMLDivElement>(null);useEffect(()=>{if(inputRoot.current)return player.attachInput(inputRoot.current);},[player]);
   const invoke=(work:Promise<unknown>,success='')=>{void work.then(()=>setNotice(success),e=>setNotice(e instanceof Error?e.message:String(e)));};
   useEffect(()=>{const blur=()=>player.setFast(false);window.addEventListener('blur',blur);return()=>window.removeEventListener('blur',blur);},[player]);
@@ -30,6 +30,7 @@ function StoryUI({player}:{player:Player}) {
     {view.lifecycle==='preparing'&&<div className="busy" role="status">准备故事…</div>}
     {(view.lifecycle==='committed-pending'||view.lifecycle==='commit-unknown')&&<div className="modal"><p>{view.lifecycle==='commit-unknown'?'提交结果尚未确认，请先核验持久记录。':'存储已提交，等待接管。'}</p><button onClick={()=>invoke(player.resumeCommitted())}>恢复当前激活</button><button onClick={()=>invoke(player.start())}>开始新游戏</button></div>}
     {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='text'&&<PressButton className="advance" data-testid="advance" aria-label={run?.text&&isTextConfirming(run.text)?'确认并继续':'显完或下一页'} identity={`${view.epoch}:${wait.prompt}:${view.paused}:${view.menu}`} activate={()=>invoke(player.step(wait.prompt,view.epoch))}>{run?.text&&isTextConfirming(run.text)?'继续':'下一页'} <span>◇</span></PressButton>}
+    {view.lifecycle==='playing'&&!view.menu&&!view.paused&&skipPrompt!==undefined&&<PressButton className="advance" aria-label="完成演出" identity={`${view.epoch}:${skipPrompt}`} activate={()=>invoke(player.step(skipPrompt,view.epoch))}>继续 ◇</PressButton>}
     {view.lifecycle==='playing'&&!view.menu&&!view.paused&&wait?.kind==='choice'&&<div className="choices">{wait.options.map(o=><PressButton key={`${wait.prompt}:${o.id}`} identity={`${view.epoch}:${wait.prompt}:${o.id}:${view.paused}:${view.menu}`} activate={()=>invoke(player.input('choose',wait.prompt,view.epoch,o.id))}>{o.text}</PressButton>)}</div>}
     <InteractionPanel player={player} view={view}/>
     {view.lifecycle==='playing'&&wait?.kind==='video'&&!view.menu&&!view.paused&&<div className="video-controls">{run?.tasks.find(t=>t.id===wait.task)?.videoTask?.skippable&&<button key={`${view.epoch}:${wait.prompt}`} onClick={()=>invoke(player.skipVideo(wait.prompt,view.epoch))}>跳過影片</button>}{run?.tasks.find(t=>t.id===wait.task)?.status==='blocked'&&<button onClick={()=>invoke(player.retryVideo())}>重試影片播放</button>}</div>}

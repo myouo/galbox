@@ -1,4 +1,7 @@
-import {isMotionInstruction,validateMotion} from '../protocol/motion.js';
+import {validateComposition} from '../protocol/composition.js';
+import {isParticleInstruction,validateParticles,ownsParticle} from '../protocol/particles.js';
+import {executeParticles,tickParticles,checkParticleTick} from './particles.js';
+import {isMotionInstruction,validateMotion,syncMotion} from '../protocol/motion.js';
 import {executeMotion,tickMotion} from './motion.js';
 import {audioSourcesSignature,settleSourceFades,supersedeSourceFades,tickSourceFades} from '../protocol/audio-sources.js';
 import {isModuleProgram} from '../program-tools/module-program.js';
@@ -164,6 +167,10 @@ export class Core {
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
       if(this.consumed.has(event.inputId)||!this.s.wait||!('prompt'in this.s.wait)||event.prompt!==this.s.wait.prompt)return;
+      if(this.s.wait.kind==='group'||this.s.wait.kind==='delay'){
+        if(event.type!=='advance'&&event.type!=='step')return;const candidate=parseSnapshot(this.s),w=candidate.wait;ensure(w&&(w.kind==='group'||w.kind==='delay'),'WAIT_SKIP','Wait changed');const ids=w.kind==='delay'?[w.task]:candidate.groups.find(g=>g.id===w.group)?.members;ensure(ids,'WAIT_SKIP','Missing wait members');const tasks=ids.map(id=>candidate.tasks.find(t=>t.id===id));ensure(tasks.every(t=>t&&(w.kind==='delay'?t.kind==='delay':t.kind==='stage'||t.kind==='animation'||t.kind==='motion'&&!t.motionTask?.loop)&&['running','completed'].includes(t.status)),'WAIT_SKIP_TASK','Only finite visual tasks can be finished');
+        for(const t of tasks){if(!t||t.status==='completed')continue;t.elapsed=t.duration;if(t.kind==='stage')applyStageTask(candidate,t);else if(t.kind==='animation'){const object=candidate.stage.find(o=>o.id===t.target);ensure(object&&t.to,'WAIT_SKIP_TASK','Animation target absent');object.position={...t.to};}t.status='completed';}syncMotion(candidate);validateComposition(candidate);this.s=candidate;this.consumed.add(event.inputId);this.resolveWait();return;
+      }
       if(this.s.wait.kind==='text'&&this.s.text&&event.type!=='choose'){
         const confirming=isTextConfirming(this.s.text),revealing=(event.type==='reveal'||event.type==='step')&&!confirming&&!isTextComplete(this.s.text);
         if((confirming&&event.type!=='reveal')||(revealing&&this.s.text.rich&&this.textPlan().tokens.some(t=>t.kind==='confirm')))i32(this.s.counter+1);
@@ -183,7 +190,7 @@ export class Core {
     if(event.type==='tick') {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
       if(this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich&&!isTextConfirming(this.s.text)){const candidate=parseTextState(this.s.text);tickRichText(candidate,event.ms,this.textPlan());if(isTextConfirming(candidate))i32(this.s.counter+1);}
-      this.s.logicalTime+=event.ms;
+      checkParticleTick(this.s,event.ms);this.s.logicalTime+=event.ms;
       if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text);tickRichText(this.s.text,event.ms,this.textPlan());if(!wasWaiting&&isTextConfirming(this.s.text))this.renewTextPrompt();}else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
       tickAudio(this.s,event.ms);for(const stopped of tickSourceFades(this.s,event.ms))this.effects.push({type:'audio-source-stop',task:stopped.id,attempt:stopped.attempt});settleSourceFades(this.s);updateDuck(this.s);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
@@ -196,7 +203,7 @@ export class Core {
         if(t.kind==='stage')applyStageTask(this.s,t);
         if(t.elapsed===t.duration)t.status='completed';
       }
-      tickMotion(this.s,event.ms);this.finishAutomaticText();
+      tickParticles(this.s,event.ms);tickMotion(this.s,event.ms);this.finishAutomaticText();
     } else if(event.type==='task') {
       if(videoReport(this.s,event.task,event.attempt,event.result)||mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
       const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.kind!=='audio'||t.attempt!==event.attempt||t.status!=='running')return;
@@ -289,7 +296,8 @@ export class Core {
     if(isUIInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','UI input cannot be guessed');if(!executeUI(this.program,this.s,i,e=>this.expression(e)))this.top().pc=this.next();return;}
     if(i.op==='interaction.prompt'){ensure(!this.recovering,'RECIPE_OPCODE','Interaction cannot be guessed');const w=prepareInteraction(i,this.s.counter+1,e=>this.expression(e));this.s.counter=w.prompt;this.s.wait=w;this.s.status='waiting';return;}
     if(i.op==='video.play'){ensure(!this.recovering,'RECIPE_OPCODE','Video cannot be guessed');this.effects.push(startVideo(this.program,this.s,i));return;}
-    if(isAudioInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Media tasks are not recovery guesses');this.effects.push(...executeAudio(this.program,this.s,i,e=>this.expression(e)));if(i.op==='audio.wait'){this.resolveWait();return;}this.top().pc=this.next();return;}
+    if(isAudioInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Media tasks are not recovery guesses');this.effects.push(...executeAudio(this.program,this.s,i,e=>this.expression(e)));if(i.op==='audio.wait'){if(this.s.wait?.kind==='media')this.resolveWait();else this.top().pc=this.next();return;}this.top().pc=this.next();return;}
+    if(isParticleInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Particles are not a recovery guess');executeParticles(this.program,this.s,i);this.top().pc=this.next();return;}
     if(isMotionInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Motion is not a recovery guess');executeMotion(this.program,this.s,i);this.top().pc=this.next();return;}
     if(isStageInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Stage tasks are not recovery guesses');try{executeStage(this.program,this.s,i,e=>this.expression(e));}catch(error){if(error instanceof GalboxError)throw new GalboxError(error.code,error.reason,{...error.location,address:i.at});throw error;}this.top().pc=this.next();return;}
     const wait=(w:NonNullable<Snapshot['wait']>)=>{this.s.wait=w;this.s.status='waiting';};
@@ -340,9 +348,9 @@ export class Core {
       case 'text.window.visible': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.visible=i.visible;break;}
       case 'text.window.theme': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.theme=i.theme;break;}
       case 'choice':wait({kind:'choice',at:i.at,prompt:++this.s.counter,options:i.options.map(o=>({...o})),dest:i.dest});return;
-      case 'stage.put': {
+      case 'stage.put': {ensure(!ownsParticle(this.s,i.object.id)&&(!i.object.parent||!ownsParticle(this.s,i.object.parent)),'PARTICLE_OWNERSHIP','Emitter owns this object');
         ensure(!this.s.tasks.some(t=>taskObject(t)===i.object.id&&t.status==='running'),'STAGE_BUSY',i.object.id);
-        const owned=parseInstruction(i);ensure(owned.op==='stage.put','STAGE_OBJECT','Object copy failed');const stage=[...this.s.stage.filter(o=>o.id!==i.object.id),owned.object];validateStageGraph(stage);this.s.stage=stage;break;
+        const owned=parseInstruction(i);ensure(owned.op==='stage.put','STAGE_OBJECT','Object copy failed');const stage=[...this.s.stage.filter(o=>o.id!==i.object.id),owned.object];validateStageGraph(stage);validateComposition({...this.s,stage});this.s.stage=stage;syncMotion(this.s);break;
       }
       case 'stage.remove':removeStageObject(this.s,i.id);break;
       case 'stage.animate': {
@@ -353,10 +361,10 @@ export class Core {
       }
       case 'task.join': {
         const members=i.members.map(name=>{const t=[...this.s.tasks].reverse().find(t=>t.name===name);ensure(t,'TASK',name);ensure(t.kind!=='media'||!t.loop,'MEDIA_LOOP_WAIT','A looping track cannot be joined');return t.id;});
-        ensure(new Set(members).size===members.length,'GROUP_DUPLICATE',i.at);
-        const group={id:`group:${++this.s.counter}`,members,consumed:false};this.s.groups.push(group);wait({kind:'group',at:i.at,group:group.id});this.resolveWait();return;
+        ensure(new Set(members).size===members.length,'GROUP_DUPLICATE',i.at);if(i.skippable)ensure(members.every(id=>{const t=this.s.tasks.find(t=>t.id===id);return t?.kind==='stage'||t?.kind==='animation'||t?.kind==='motion'&&!t.motionTask?.loop;}),'WAIT_SKIP_TASK','Only finite visual groups are skippable');
+        const group={id:`group:${++this.s.counter}`,members,consumed:false};this.s.groups.push(group);wait({kind:'group',at:i.at,group:group.id,...(i.skippable?{prompt:this.s.counter}:{})});this.resolveWait();return;
       }
-      case 'wait.delay': {const t=task(i.task,'delay',i.duration);this.s.tasks.push(t);wait({kind:'delay',at:i.at,task:t.id});return;}
+      case 'wait.delay': {const t=task(i.task,'delay',i.duration);this.s.tasks.push(t);wait({kind:'delay',at:i.at,task:t.id,...(i.skippable?{prompt:this.s.counter}:{})});return;}
       case 'audio.play': {
         this.s.tasks.filter(t=>(t.kind==='audio'||t.kind==='media')&&t.channel===i.channel&&t.buffer===undefined&&['running','blocked','completed'].includes(t.status)).forEach(t=>{if(t.kind==='media'&&t.status==='completed')return;t.status='superseded';if(t.mediaTask)t.mediaTask.phase='superseded';});settleSourceFades(this.s);updateDuck(this.s);
         const t:Task={...task(i.task,'audio',0),asset:i.asset,channel:i.channel,gain:i.gain,loop:i.loop,restore:i.restore};this.s.tasks.push(t);this.effects.push({type:'audio',task:parseTask(t)});break;
@@ -420,7 +428,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
-  validateStageSnapshot(p,s);validateMotion(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
+  validateStageSnapshot(p,s);validateMotion(p,s);validateParticles(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);
@@ -432,6 +440,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
     if(t.kind==='audio')ensure(p.assets.find(a=>a.id===t.asset)?.kind==='audio'&&t.channel&&t.gain!==undefined&&t.loop!==undefined&&t.restore,'RESTORE_AUDIO',t.id);
   }
   for(const g of s.groups)ensure(new Set(g.members).size===g.members.length&&g.members.every(id=>s.tasks.some(t=>t.id===id)),'RESTORE_GROUP',g.id);
+  if(w&&(w.kind==='group'||w.kind==='delay')){ensure((op.op==='task.join'||op.op==='wait.delay')&&!!op.skippable===(w.prompt!==undefined),'RESTORE_WAIT_SKIP','Wait permission differs');if(w.prompt!==undefined)ensure(p.capabilities.includes('wait.skippable')&&w.prompt<=s.counter,'RESTORE_WAIT_SKIP','Invalid wait prompt');}
   if(w?.kind==='group'){
     const g=s.groups.find(g=>g.id===w.group);ensure(g&&!g.consumed&&op.op==='task.join','RESTORE_GROUP',w.group);
     const tasks=g.members.map(id=>s.tasks.find(t=>t.id===id));

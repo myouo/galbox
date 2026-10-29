@@ -263,6 +263,9 @@ definitions:
       motion:
         $ref: "#/definitions/MotionOffset"
         x-proto-tag: 14
+      frame:
+        $ref: "#/definitions/ImageFrame"
+        x-proto-tag: 15
     required:
       - id
       - asset
@@ -377,6 +380,341 @@ definitions:
       - tracks
       - loop
       - intervalMs
+    additionalProperties: false
+  ImageFrame:
+    type: object
+    properties:
+      x:
+        type: integer
+        minimum: 0
+        maximum: 8192
+        x-proto-tag: 1
+      y:
+        type: integer
+        minimum: 0
+        maximum: 8192
+        x-proto-tag: 2
+      width:
+        type: integer
+        minimum: 1
+        maximum: 8192
+        x-proto-tag: 3
+      height:
+        type: integer
+        minimum: 1
+        maximum: 8192
+        x-proto-tag: 4
+    required:
+      - x
+      - y
+      - width
+      - height
+    additionalProperties: false
+  ParticleRange:
+    type: object
+    properties:
+      min:
+        type: number
+        minimum: -4096
+        maximum: 4096
+        x-proto-tag: 1
+      max:
+        type: number
+        minimum: -4096
+        maximum: 4096
+        x-proto-tag: 2
+    required:
+      - min
+      - max
+    additionalProperties: false
+  ParticleStyle:
+    type: object
+    properties:
+      asset:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 1
+      frames:
+        type: array
+        items:
+          $ref: "#/definitions/ImageFrame"
+        minItems: 1
+        maxItems: 32
+        x-proto-tag: 2
+      alpha:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 3
+      velocityY:
+        $ref: "#/definitions/ParticleRange"
+        x-proto-tag: 4
+      initialAccelerationX:
+        $ref: "#/definitions/ParticleRange"
+        x-proto-tag: 5
+      accelerationNoise:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 6
+      velocityXLimit:
+        type: number
+        minimum: 0
+        maximum: 8
+        x-proto-tag: 7
+      accelerationXLimit:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 8
+      wrap:
+        type: string
+        enum:
+          - top
+          - random-top
+        x-proto-tag: 9
+    required:
+      - asset
+      - frames
+      - alpha
+      - velocityY
+      - initialAccelerationX
+      - accelerationNoise
+      - velocityXLimit
+      - accelerationXLimit
+      - wrap
+    additionalProperties: false
+  ParticleConfig:
+    type: object
+    properties:
+      count:
+        type: integer
+        minimum: 1
+        maximum: 32
+        x-proto-tag: 1
+      intervalMs:
+        type: integer
+        minimum: 16
+        maximum: 1000
+        x-proto-tag: 2
+      width:
+        type: integer
+        minimum: 1
+        maximum: 4096
+        x-proto-tag: 3
+      height:
+        type: integer
+        minimum: 1
+        maximum: 4096
+        x-proto-tag: 4
+      styles:
+        type: array
+        items:
+          $ref: "#/definitions/ParticleStyle"
+        minItems: 1
+        maxItems: 32
+        x-proto-tag: 5
+      groups:
+        type: array
+        items:
+          type: object
+          properties:
+            parents:
+              type: array
+              items:
+                type: string
+                pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              minItems: 1
+              maxItems: 2
+              uniqueItems: true
+              x-proto-tag: 1
+          required:
+            - parents
+          additionalProperties: false
+        minItems: 1
+        maxItems: 4
+        x-proto-tag: 6
+      seed:
+        type: integer
+        minimum: 0
+        maximum: 4294967295
+        x-proto-tag: 7
+      initiallySpawned:
+        type: integer
+        minimum: 0
+        maximum: 32
+        x-proto-tag: 8
+      spawnProbability:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 9
+      positionMode:
+        type: string
+        enum:
+          - subpixel
+          - truncate
+        x-proto-tag: 10
+    required:
+      - count
+      - intervalMs
+      - width
+      - height
+      - styles
+      - groups
+      - seed
+      - initiallySpawned
+      - spawnProbability
+      - positionMode
+    additionalProperties: false
+  ParticleState:
+    type: object
+    properties:
+      style:
+        type: integer
+        minimum: 0
+        maximum: 31
+        x-proto-tag: 1
+      group:
+        type: integer
+        minimum: 0
+        maximum: 3
+        x-proto-tag: 2
+      spawned:
+        type: boolean
+        x-proto-tag: 3
+      x:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 4
+      y:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 5
+      vx:
+        type: number
+        minimum: -8
+        maximum: 8
+        x-proto-tag: 6
+      vy:
+        type: number
+        minimum: 0.1
+        maximum: 4096
+        x-proto-tag: 7
+      ax:
+        type: number
+        minimum: -8
+        maximum: 8
+        x-proto-tag: 8
+      frame:
+        type: integer
+        minimum: 0
+        maximum: 31
+        x-proto-tag: 9
+      updates:
+        type: integer
+        minimum: 0
+        maximum: 2147483647
+        x-proto-tag: 10
+    required:
+      - style
+      - group
+      - spawned
+      - x
+      - y
+      - vx
+      - vy
+      - ax
+      - frame
+      - updates
+    additionalProperties: false
+  ParticleTaskState:
+    type: object
+    properties:
+      signature:
+        type: string
+        pattern: ^[^\x00]{1,65536}$
+        x-proto-tag: 1
+      prefix:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 2
+      config:
+        $ref: "#/definitions/ParticleConfig"
+        x-proto-tag: 3
+      rng:
+        $ref: "#/definitions/RngState"
+        x-proto-tag: 4
+      ticks:
+        type: integer
+        minimum: 0
+        maximum: 2147483647
+        x-proto-tag: 5
+      particles:
+        type: array
+        items:
+          $ref: "#/definitions/ParticleState"
+        minItems: 1
+        maxItems: 32
+        x-proto-tag: 6
+    required:
+      - signature
+      - prefix
+      - config
+      - rng
+      - ticks
+      - particles
+    additionalProperties: false
+  StageMixState:
+    type: object
+    properties:
+      sourceRoots:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        minItems: 1
+        maxItems: 32
+        uniqueItems: true
+        x-proto-tag: 1
+      targetRoots:
+        type: array
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        minItems: 1
+        maxItems: 32
+        uniqueItems: true
+        x-proto-tag: 2
+      method:
+        type: string
+        enum:
+          - crossfade
+          - rule
+          - scroll-top
+        x-proto-tag: 3
+      rule:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 4
+      vague:
+        type: integer
+        minimum: 1
+        maximum: 256
+        x-proto-tag: 5
+      progress:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 6
+    required:
+      - sourceRoots
+      - targetRoots
+      - method
+      - vague
+      - progress
     additionalProperties: false
   Option:
     type: object
@@ -755,6 +1093,9 @@ definitions:
               pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
             maxItems: 64
             x-proto-tag: 4
+          skippable:
+            type: boolean
+            x-proto-tag: 5
         required:
           - at
           - op
@@ -781,6 +1122,9 @@ definitions:
             minimum: 1
             maximum: 3600000
             x-proto-tag: 4
+          skippable:
+            type: boolean
+            x-proto-tag: 5
         required:
           - at
           - op
@@ -1585,6 +1929,13 @@ definitions:
           periodMs:
             $ref: "#/definitions/I32Expression"
             x-proto-tag: 10
+          samples:
+            type: array
+            minItems: 1
+            maxItems: 32
+            items:
+              $ref: "#/definitions/StageOffset"
+            x-proto-tag: 11
         required:
           - op
           - at
@@ -1842,6 +2193,12 @@ definitions:
             type: string
             pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
             x-proto-tag: 3
+          inactive:
+            type: string
+            enum: &a1
+              - error
+              - ignore
+            x-proto-tag: 4
         required:
           - op
           - at
@@ -2401,6 +2758,13 @@ definitions:
           stop:
             type: boolean
             x-proto-tag: 9
+          inactive:
+            type: string
+            enum: *a1
+            x-proto-tag: 10
+          delayMs:
+            $ref: "#/definitions/I32Expression"
+            x-proto-tag: 11
         required:
           - op
           - at
@@ -2427,6 +2791,10 @@ definitions:
             type: string
             pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
             x-proto-tag: 3
+          inactive:
+            type: string
+            enum: *a1
+            x-proto-tag: 4
         required:
           - op
           - at
@@ -2588,6 +2956,184 @@ definitions:
           - targets
         additionalProperties: false
         x-proto-tag: 71
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.particles
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          prefix:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          config:
+            $ref: "#/definitions/ParticleConfig"
+            x-proto-tag: 5
+        required:
+          - op
+          - at
+          - task
+          - prefix
+          - config
+        additionalProperties: false
+        x-proto-tag: 72
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.particles.stop
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+        required:
+          - op
+          - at
+          - task
+        additionalProperties: false
+        x-proto-tag: 73
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.mix
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          sourceRoots:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            minItems: 1
+            maxItems: 32
+            uniqueItems: true
+            x-proto-tag: 4
+          targetRoots:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            minItems: 1
+            maxItems: 32
+            uniqueItems: true
+            x-proto-tag: 5
+          method:
+            type: string
+            enum:
+              - crossfade
+              - rule
+              - scroll-top
+            x-proto-tag: 6
+          rule:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 7
+          vague:
+            type: integer
+            minimum: 1
+            maximum: 256
+            x-proto-tag: 8
+          duration:
+            $ref: "#/definitions/I32Expression"
+            x-proto-tag: 9
+          easing:
+            type: string
+            enum:
+              - linear
+              - ease-in
+              - ease-out
+              - ease-in-out
+            x-proto-tag: 10
+          policy:
+            type: string
+            const: reject
+            x-proto-tag: 11
+        required:
+          - op
+          - at
+          - task
+          - sourceRoots
+          - targetRoots
+          - method
+          - vague
+          - duration
+          - easing
+          - policy
+        additionalProperties: false
+        x-proto-tag: 74
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.asset
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          id:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          asset:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+        required:
+          - op
+          - at
+          - id
+          - asset
+        additionalProperties: false
+        x-proto-tag: 75
+      - type: object
+        properties:
+          op:
+            type: string
+            const: audio.source.gain
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          source:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          gain:
+            $ref: "#/definitions/StageNumberExpression"
+            x-proto-tag: 4
+          inactive:
+            type: string
+            enum: *a1
+            x-proto-tag: 5
+        required:
+          - op
+          - at
+          - source
+          - gain
+        additionalProperties: false
+        x-proto-tag: 76
   Function:
     type: object
     properties:
@@ -2735,6 +3281,15 @@ definitions:
         minItems: 1
         maxItems: 8
         x-proto-tag: 20
+      bgmBuffers:
+        type: array
+        minItems: 1
+        maxItems: 2
+        uniqueItems: true
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 21
     required:
       - version
       - gameId
@@ -2933,6 +3488,7 @@ definitions:
           - audio-source-fade
           - video
           - motion
+          - particles
         x-proto-tag: 3
       elapsed:
         type: integer
@@ -3014,6 +3570,9 @@ definitions:
       motionTask:
         $ref: "#/definitions/MotionTaskState"
         x-proto-tag: 23
+      particleTask:
+        $ref: "#/definitions/ParticleTaskState"
+        x-proto-tag: 24
     required:
       - id
       - status
@@ -3115,6 +3674,11 @@ definitions:
             type: string
             pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
             x-proto-tag: 3
+          prompt:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            x-proto-tag: 4
         required:
           - kind
           - at
@@ -3135,6 +3699,11 @@ definitions:
             type: string
             pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
             x-proto-tag: 3
+          prompt:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            x-proto-tag: 4
         required:
           - kind
           - at
@@ -7420,6 +7989,14 @@ definitions:
         minItems: 1
         maxItems: 8
         x-proto-tag: 4
+      followStage:
+        type: boolean
+        x-proto-tag: 5
+      stageZ:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 6
     required:
       - version
       - initialWindow
@@ -9007,6 +9584,9 @@ definitions:
       shake:
         $ref: "#/definitions/StageOffset"
         x-proto-tag: 5
+      mix:
+        $ref: "#/definitions/StageMixState"
+        x-proto-tag: 6
     required:
       - version
       - camera
@@ -9396,6 +9976,13 @@ definitions:
             minimum: 16
             maximum: 10000
             x-proto-tag: 7
+          samples:
+            type: array
+            minItems: 1
+            maxItems: 32
+            items:
+              $ref: "#/definitions/StageOffset"
+            x-proto-tag: 8
         required:
           - type
           - signature
@@ -9456,6 +10043,68 @@ definitions:
           - vague
         additionalProperties: false
         x-proto-tag: 7
+      - type: object
+        properties:
+          type:
+            type: string
+            const: mix
+            x-proto-tag: 1
+          signature:
+            type: string
+            pattern: ^[^\x00]{1,65536}$
+            x-proto-tag: 2
+          easing:
+            type: string
+            enum:
+              - linear
+              - ease-in
+              - ease-out
+              - ease-in-out
+            x-proto-tag: 3
+          sourceRoots:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            minItems: 1
+            maxItems: 32
+            uniqueItems: true
+            x-proto-tag: 4
+          targetRoots:
+            type: array
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            minItems: 1
+            maxItems: 32
+            uniqueItems: true
+            x-proto-tag: 5
+          method:
+            type: string
+            enum:
+              - crossfade
+              - rule
+              - scroll-top
+            x-proto-tag: 6
+          rule:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 7
+          vague:
+            type: integer
+            minimum: 1
+            maximum: 256
+            x-proto-tag: 8
+        required:
+          - type
+          - signature
+          - easing
+          - sourceRoots
+          - targetRoots
+          - method
+          - vague
+        additionalProperties: false
+        x-proto-tag: 8
   StageStyle:
     type: object
     properties:
@@ -9488,6 +10137,16 @@ definitions:
       visible:
         type: boolean
         x-proto-tag: 5
+      frame:
+        anyOf:
+          - $ref: "#/definitions/ImageFrame"
+            x-proto-tag: 1
+          - type: "null"
+            x-proto-tag: 2
+        x-proto-tag: 6
+      filters:
+        $ref: "#/definitions/StageFilters"
+        x-proto-tag: 7
     required: []
     additionalProperties: false
     minProperties: 1
@@ -9646,6 +10305,11 @@ definitions:
       stop:
         type: boolean
         x-proto-tag: 7
+      delayMs:
+        type: integer
+        minimum: 0
+        maximum: 3600000
+        x-proto-tag: 8
     required:
       - version
       - signature
@@ -9778,6 +10442,10 @@ definitions:
         minimum: 1
         maximum: 268435456
         x-proto-tag: 3
+      background:
+        type: string
+        pattern: ^#[0-9a-fA-F]{6}$
+        x-proto-tag: 4
   InteractionRect:
     type: object
     properties:
