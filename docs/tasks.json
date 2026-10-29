@@ -3038,7 +3038,7 @@
         "replay-does-not-change-main-head-profile",
         "chapter-resource-closure-over-http"
       ],
-      "next_action": "ADR0053–0062通用运动/复制、镜像粒子、实时组转场、双BGM延迟包络、可跳过视觉等待、标题隔离回放、持久0..8页预取与静态call/return扫描已落地。独立实例正在编译整门（door-stage/character/particles/lower-door），尚未整章验证或发布。下一先完整英文Core路径与保存，再八语/真实浏览器/旧93升级/源章节菜单/资源闭包。"
+      "next_action": "八语完整序章/第一门已编译并通过完整Core及七个存档恢复点，原32/93迁移17项、八语隔离回放和真实演出/刷新14浏览器通过；910 R2资产HTTPS校验完成。正常浏览器主线到章末但统计漏计原自动结束段，已修为核对真实history并复跑。下一最终实包消费/主线浏览器/公网回归，再发布预览和按授权推送。"
     },
     {
       "id": "G1-04",

@@ -17,3 +17,5 @@ d93e30c之后最终loading/resident共14浏览器和独立consumer复验全部�
 ADR0065/0066新增alpha运动使一次wflash对应一个有限任务/一次跳过，离散文字淡入与用户字速门禁、可保存阴影。pnpm check、关联25单元、Canvas/WebGL不透明度保存像素及真实DOM文字/阴影共3浏览器通过；本轮实包消费仍需复验。整门八语/真实浏览器/旧93升级/源菜单与公网发布仍未完成。
 
 ADR0065/0066最终全58文件346单元与实包consumer通过（fidelity-all-units.log / fidelity-consumer.log）；原3项浏览器及check通过。实例将消费该实包再重验全章，未把仅SDK验证标作F-01E完成。
+
+完整SDK浏览器分片29/49/43/40/43共204项执行，第四组初始39通过/1失败：旧系统设置缺省prefetchPages，导入后错误保留重置产生的覆盖值。保持partial update语义，完整import在同一CAS队列中清除缺省预取覆盖；随后playback/prefetch五项全部通过，末组43项通过。无字段旧设置恢复作者lookahead，新增明确回归。最终check与consumer复验通过，记录preferences-browser2/preferences-consumer。CLI69命令、release/package及compatibility工具通过；真实原档认证仍为not-verified，不与内部存档迁移混淆。
