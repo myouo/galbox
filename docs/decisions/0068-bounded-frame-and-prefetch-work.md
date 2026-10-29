@@ -11,3 +11,5 @@ balanced 在当前窗口滚动时先接续新窗口再取消旧窗口；普通�
 Canvas只写back buffer不强制willReadFrequently。经实际像素探测支持时，brightness/grayscale走原生Canvas filter（先灰度后亮度，保持现有矩阵顺序），复用已有color workspace的预算为单个scratch surface；不新增预算额度。功能缺失/探测不符仍用CPU逐像素路径，CPU读回失败仍终止设备且保留旧输出。原生滤镜保留Alpha/组隔离、嵌套与CPU后备像素对照。依据MDN CanvasRenderingContext2D.filter及HTMLCanvasElement.getContext，2026-10-29核对。
 
 DOM正文分层时，Canvas下层从同一Pixi离屏提交直接写入已有下层输出canvas，避免经上层canvas中转；上层画面按可见子树/相机/滤镜/overlay/mix缓存，视频仍每帧绘制。两路输出没有增加canvas或renderer。源状态变化、epoch、截图和显式invalidate仍失效；失败前不覆盖上一提交输出。WebGL保持原路径。
+
+实际采样发现下层整屏drawImage提交仍是热点，Canvas分层输出改为完成渲染后交换已有离屏back与下层DOM canvas：旧下层成为下一次离屏back，不增加surface/renderer/驻留额度，不在渲染成功前替换可见内容。DOM输出canvas身份不稳定；公开截图始终读取当前输出。上层Pixi canvas身份保持。双输出像素、运动/隐藏失效、保存恢复与设备失败须重验。
