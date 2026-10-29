@@ -2,6 +2,40 @@ $id: https://galbox.local/protocol-v1
 $schema: http://json-schema.org/draft-07/schema#
 title: Wire
 definitions:
+  DialoguePresentation:
+    type: object
+    properties:
+      objects:
+        type: array
+        maxItems: 128
+        uniqueItems: true
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 1
+      images:
+        type: array
+        maxItems: 128
+        items:
+          type: object
+          properties:
+            source:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 1
+            hidden:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 2
+          required:
+            - source
+            - hidden
+          additionalProperties: false
+        x-proto-tag: 2
+    required:
+      - objects
+      - images
+    additionalProperties: false
   Value:
     oneOf:
       - type: object
@@ -13654,3 +13688,4 @@ x-proto-envelope:
   ProgramTextCatalog: 118
   LocaleCatalog: 119
   InterfaceTextCatalog: 120
+  DialoguePresentation: 121

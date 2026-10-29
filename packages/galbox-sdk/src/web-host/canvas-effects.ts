@@ -9,7 +9,7 @@ type Context=CanvasRenderer['canvasContext']['activeContext']&CanvasRenderingCon
 interface Surface {canvas:HTMLCanvasElement;context:Context;}
 interface Frame {surface:Surface;parent:CanvasRenderer['canvasContext']['activeContext'];projection:Matrix;blend:CanvasRenderer['canvasContext']['_activeBlendMode'];filters:Filter[];}
 export interface CanvasDiagnostics {bytesEstimated:number;peakBytesEstimated:number;surfaces:number;blur:'native'|'cpu';}
-function surface(width:number,height:number):Surface {const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const context=canvas.getContext('2d',{willReadFrequently:true});if(!context){canvas.width=canvas.height=0;throw new GalboxError('GRAPHICS_UNAVAILABLE','Canvas composition context unavailable');}return {canvas,context:Object.assign(context,{webkitImageSmoothingEnabled:false,mozImageSmoothingEnabled:false,oImageSmoothingEnabled:false,msImageSmoothingEnabled:false})};}
+function surface(width:number,height:number,readFrequently=true):Surface {const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const context=canvas.getContext('2d',{willReadFrequently:readFrequently});if(!context){canvas.width=canvas.height=0;throw new GalboxError('GRAPHICS_UNAVAILABLE','Canvas composition context unavailable');}return {canvas,context:Object.assign(context,{webkitImageSmoothingEnabled:false,mozImageSmoothingEnabled:false,oImageSmoothingEnabled:false,msImageSmoothingEnabled:false})};}
 function nativeBlur():boolean {const s=surface(3,3);try{if(!('filter'in s.context))return false;s.context.filter='blur(1px)';s.context.fillStyle='#ffffff';s.context.fillRect(1,1,1,1);return s.context.getImageData(0,0,1,1).data[3]!>0;}finally{s.canvas.width=s.canvas.height=0;}}
 function clear(s:Surface):void {s.context.setTransform(1,0,0,1,0,0);s.context.globalAlpha=1;s.context.globalCompositeOperation='source-over';s.context.filter='none';s.context.clearRect(0,0,s.canvas.width,s.canvas.height);}
 export class CanvasEffects {
@@ -20,7 +20,7 @@ export class CanvasEffects {
  validate(snapshot:DeepReadonly<Snapshot>):CanvasPlan {return canvasPlan(snapshot,this.diagnostics.blur==='native',this.limit);}
  private releaseComposition():void {for(const s of [...this.pool,...(this.scratch?[this.scratch]:[])])s.canvas.width=s.canvas.height=0;this.pool=[];this.scratch=undefined;this.a=this.b=undefined;}
  private prepare(snapshot:DeepReadonly<Snapshot>):void {
-  const p=this.validate(snapshot);ensure(!this.frames.length,'CANVAS_STACK','Unfinished previous frame');if(!this.back)this.back=surface(1280,720);
+  const p=this.validate(snapshot);ensure(!this.frames.length,'CANVAS_STACK','Unfinished previous frame');if(!this.back)this.back=surface(1280,720,false);
   if(!this.plan||p.width!==this.plan.width||p.height!==this.plan.height||p.depth!==this.plan.depth||p.blur!==this.plan.blur){this.releaseComposition();try{for(let n=0;n<p.depth;n++)this.pool.push(surface(p.width,p.height));if(p.blur){if(this.diagnostics.blur==='native')this.scratch=surface(p.width,p.height);else{this.a=new Float32Array(p.width*p.height*4);this.b=new Float32Array(p.width*p.height*4);}}}catch(error){this.releaseComposition();this.plan=undefined;this.diagnostics.bytesEstimated=1280*720*4;this.diagnostics.surfaces=1;throw error;}}
   this.plan=p;this.diagnostics.bytesEstimated=p.bytes;this.diagnostics.peakBytesEstimated=Math.max(this.diagnostics.peakBytesEstimated,p.bytes);this.diagnostics.surfaces=1+this.pool.length+(this.scratch?1:0);
  }

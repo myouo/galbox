@@ -30,7 +30,7 @@ const player = await createPlayer({
 });
 ```
 
-`concurrency`为1–8，eager默认1以保留旧项目请求时序，其余默认3；`lookahead`为0–8页，默认2，只对balanced生效；每次最多扫描128条直线指令和16个资产，不执行变量、随机数、插件或选择，不跨越未知控制流猜测分支。当前文字、舞台（含转场两端）、活动/重放媒体意图、剧本UI图像都先准备，再提交表现。
+`concurrency`为1–8，eager默认1以保留旧项目请求时序，其余默认3；`lookahead`为0–8页，默认2，只对balanced生效；每次最多扫描512条已知控制流指令和16个资产，不执行变量、随机数、插件或选择，不跨越未知控制流猜测分支。当前文字、舞台（含转场两端）、活动/重放媒体意图、剧本UI图像都先准备，再提交表现。
 
 chapter还需`chapters: [{id: 'prologue', functions: ['prologue', 'prologueHelper'], assets: ['room', 'hero', 'openingMusic']}]`。函数不得同时属于两组；资源/函数必须存在。按活动栈从内到外找到最近的声明组，未声明函数仍有按需安全路径。它不是Program网络分模块，也不自动推导所有章节资源。
 
@@ -59,3 +59,9 @@ CG/音乐/历史语音/场景回放沿既有会话隔离处理。deferred CG借�
 浏览器的`saveData`提示不是普遍可用的能力，不能依靠它替所有人选择策略。应用可在创建前结合用户选择做推荐，但应保留明确选择和不支持提示。[MDN saveData](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/saveData)
 
 试玩：`pnpm dev`后使用`?loading=eager|demand|balanced|chapter`，可与`demo=interface`或`renderer=canvas`组合。playground章节示例将其小型样例整体声明为一章；真实作品应按实际章节声明。验收与限制以tasks.json及evidence/w1-02为准。
+
+## 连续阅读与音频（ADR0068）
+
+普通翻页先取得当前资源，再滚动后续预取窗口；重叠下载继续，当前依赖提升为前台优先。静态地址索引按引擎拥有的函数表复用；新旧显示资源与编码暂存都计入预取可用预算。窗口不会为命中当前资源重复收费。仍不猜选择分支、不扩大驻留预算。
+
+`createPlayer({resourceAudio:'continue'})`为默认：资源等待冻结剧情时钟、输入和提交，已播放音乐继续。作品需要同步冻结媒体时显式设为`pause`。暂停菜单另用`menuAudio: 'continue' | 'pause'`（默认pause）；用户/device/background暂停继续有效。自然结束事件仍入队，不用假事件跨过等待。`loading.phase`可用于延迟显示加载提示，快速缓存命中不必闪烁。

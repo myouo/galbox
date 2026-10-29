@@ -41,7 +41,7 @@ export type CoreEvent =
  | {type:'text.preferences';value:import('../protocol/index.js').TextPreferences}
  | {type:'reveal' | 'advance' | 'step'; prompt:number; inputId:string}
  | {type:'choose'; prompt:number; inputId:string; option:string}
- | {type:'tick'; ms:number}
+ | {type:'tick'; ms:number;text?:boolean}
  | {type:'task'; task:string; attempt:number; result:'completed'|'blocked'|'failed'}
  | {type:'retry'; task:string}
  | {type:'flushAck'; revision:number};
@@ -189,9 +189,10 @@ export class Core {
     }
     if(event.type==='tick') {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
-      if(this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich&&!isTextConfirming(this.s.text)){const candidate=parseTextState(this.s.text);tickRichText(candidate,event.ms,this.textPlan());if(isTextConfirming(candidate))i32(this.s.counter+1);}
+      ensure(event.text===undefined||typeof event.text==='boolean','TIME','Invalid text tick policy');
+      if(event.text!==false&&this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich&&!isTextConfirming(this.s.text)){const candidate=parseTextState(this.s.text);tickRichText(candidate,event.ms,this.textPlan());if(isTextConfirming(candidate))i32(this.s.counter+1);}
       checkParticleTick(this.s,event.ms);this.s.logicalTime+=event.ms;
-      if(this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text);tickRichText(this.s.text,event.ms,this.textPlan());if(!wasWaiting&&isTextConfirming(this.s.text))this.renewTextPrompt();}else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
+      if(event.text!==false&&this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text);tickRichText(this.s.text,event.ms,this.textPlan());if(!wasWaiting&&isTextConfirming(this.s.text))this.renewTextPrompt();}else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
       tickAudio(this.s,event.ms);for(const stopped of tickSourceFades(this.s,event.ms))this.effects.push({type:'audio-source-stop',task:stopped.id,attempt:stopped.attempt});settleSourceFades(this.s);updateDuck(this.s);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
@@ -203,7 +204,7 @@ export class Core {
         if(t.kind==='stage')applyStageTask(this.s,t);
         if(t.elapsed===t.duration)t.status='completed';
       }
-      tickParticles(this.s,event.ms);tickMotion(this.s,event.ms);this.finishAutomaticText();
+      tickParticles(this.s,event.ms);tickMotion(this.s,event.ms);if(event.text!==false)this.finishAutomaticText();
     } else if(event.type==='task') {
       if(videoReport(this.s,event.task,event.attempt,event.result)||mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
       const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.kind!=='audio'||t.attempt!==event.attempt||t.status!=='running')return;

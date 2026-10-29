@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "F-01E",
+  "current_task": "H3-03",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-29",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2881,9 +2881,9 @@
         "H3-01",
         "W1-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
       "outputs": [
         "catalog-size profiling of Player.publish",
         "identity-invalidated immutable release/resource view reuse if profiling warrants it"
@@ -2901,7 +2901,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "E1-04代码复核发现Player.publish每次通知都parseReleaseManifest并复制资源完整性列表；先在预算内按目录规模测量，再决定缓存不可变投影。不得取消入口校验或共享可变权威；尚无此热点的前后量测，不宣称提速。"
+      "next_action": "ADR0068已实现只读静态目录/未变Core分支复用、显示树复用；真实存档基线已采样，先完成新旧弱设备/长时间内存对照及全回归，再标done。"
     },
     {
       "id": "E1-05",
@@ -3074,6 +3074,101 @@
       ],
       "blocker": null,
       "next_action": "读档后的choice/ended只读历史门禁已修复；仍严格限制下滚推进。a5248fc CI179浏览器全绿，独立4种存档恢复后历史线上通过；原快捷栏6项与手动保存页复验通过。继续F-01E完整章，不把策略fixture称作原作回放完成。"
+    },
+    {
+      "id": "G1-05",
+      "milestone": "G1",
+      "title": "原作式取消/消息隐藏与菜单音频策略",
+      "depends_on": [
+        "G1-04",
+        "G2-02"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "pending",
+      "outputs": [
+        "owned view-only message visibility",
+        "explicit menu audio policy",
+        "independent read text preferences"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "no PC advance on unhide",
+        "source settings and cancel hierarchy",
+        "history keeps real BGM playing",
+        "capture and restore remain authoritative"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按原KS/TJS配置逐项落实，实例继续以实际SDK包消费。"
+    },
+    {
+      "id": "F-01F",
+      "milestone": "F",
+      "title": "完整第二门与章节接续/回放",
+      "depends_on": [
+        "F-01E",
+        "G1-05"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "pending",
+      "outputs": [
+        "eight-locale complete door2",
+        "source interludes and persistent unlock",
+        "shared same-engine chapter replay"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "whole source paths and media closure",
+        "save migration and refresh",
+        "actual browser and R2",
+        "original config and secondary input"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "按原KS/TJS配置逐项落实，实例继续以实际SDK包消费。"
+    },
+    {
+      "id": "W1-06",
+      "milestone": "W1",
+      "title": "连续阅读预取接续与等待期间媒体连续性",
+      "depends_on": [
+        "W1-02"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "bounded prefetch handoff",
+        "explicit resourceAudio policy",
+        "rapid real reading comparison"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "in-flight-lookahead-not-restarted",
+        "foreground-loading-audio-continuity",
+        "save-retry-and-memory-budget-preserved",
+        "rapid-reading-real-browser-evidence"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "受控浏览器接续和音频不断流通过；完成独立实包、实际序章100ms连续推进、配置持久化及部署检查。"
     }
   ]
 }

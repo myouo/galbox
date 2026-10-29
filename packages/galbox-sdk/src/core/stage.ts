@@ -1,8 +1,9 @@
+import {stageCandidate} from './stage-candidate.js';
 import {validateComposition,compositionMembers,mixState,sameMix} from '../protocol/composition.js';
 import {ownsParticle} from '../protocol/particles.js';
 import {finishMotion} from './motion.js';
 import {syncMotion,removeMotionTargets} from '../protocol/motion.js';
-import {ensure,parseSnapshot,parseStagePose,parseStageFilters,parseStageCamera,parseStageTaskState,f64Number,canonicalWireJSON} from '../protocol/index.js';
+import {ensure,parseStagePose,parseStageFilters,parseStageCamera,parseStageTaskState,f64Number,canonicalWireJSON} from '../protocol/index.js';
 import type {Instruction,Snapshot,Program,Expression,Value,StageTaskState,StageTarget,StagePose,StageObject,Task} from '../protocol/index.js';
 import {isStageInstruction,stageExpressions} from '../protocol/stage.js';
 import type {StageInstruction} from '../protocol/stage.js';
@@ -11,7 +12,7 @@ function nonempty<T>(input:T[]):[T,...T[]] {const [first,...rest]=input;ensure(f
 function numeric(expression:Expression,evaluate:(e:Expression)=>Value):number {const value=evaluate(expression);ensure(value.kind==='i32'||value.kind==='f64','STAGE_NUMBER','Expected i32/f64');const n=value.kind==='i32'?value.value:f64Number(value);ensure(Number.isFinite(n),'STAGE_NUMBER','Stage parameters must be finite');return n;}
 function duration(expression:Expression,evaluate:(e:Expression)=>Value):number {const value=evaluate(expression);ensure(value.kind==='i32'&&value.value>=1&&value.value<=3600000,'STAGE_DURATION','Duration must be 1..3600000 ms');return value.value;}
 export function executeStage(p:Program,s:Snapshot,i:StageInstruction,evaluate:(e:Expression)=>Value):void {
- const candidate=parseSnapshot(s);ensure(candidate.scene,'STAGE_STATE','Stage effects need scene state');const number=(e:Expression)=>numeric(e,evaluate),object=(id:string)=>{const o=candidate.stage.find(o=>o.id===id);ensure(o,'STAGE_OBJECT',id);ensure(!ownsParticle(candidate,id),'PARTICLE_OWNERSHIP','Emitter owns this object');return o;},target=(t:StageTarget)=>{if(t.kind==='object')object(t.id);};
+ const candidate=stageCandidate(s);ensure(candidate.scene,'STAGE_STATE','Stage effects need scene state');const number=(e:Expression)=>numeric(e,evaluate),object=(id:string)=>{const o=candidate.stage.find(o=>o.id===id);ensure(o,'STAGE_OBJECT',id);ensure(!ownsParticle(candidate,id),'PARTICLE_OWNERSHIP','Emitter owns this object');return o;},target=(t:StageTarget)=>{if(t.kind==='object')object(t.id);};
  if(i.op==='task.cancel'||i.op==='task.finish'){
   const task=[...candidate.tasks].reverse().find(t=>t.name===i.task);ensure(task&&(task.kind==='animation'||task.kind==='stage'||task.kind==='motion'),'STAGE_TASK_KIND','Cancel/finish needs a stage or animation task');ensure(i.op!=='task.cancel'||task.stageTask?.type!=='mix','STAGE_MIX_CANCEL_UNSUPPORTED','Finish a composition explicitly');if(task.kind==='motion')finishMotion(candidate,task,i.op==='task.finish');else if(task.status==='running'){if(i.op==='task.finish'){task.elapsed=task.duration;if(task.kind==='stage')applyStageTask(candidate,task);else {const o=object(task.target??'');ensure(task.to,'STAGE_TASK','Animation target absent');o.position={...task.to};}task.status='completed';}else {task.status='cancelled';clearShake(candidate,task);}}
  }else if(i.op==='stage.asset'){const o=object(i.id);ensure(!candidate.tasks.some(t=>t.status==='running'&&taskLocks(t).includes('object:'+i.id+':asset')),'STAGE_BUSY','Image transition owns this asset');o.asset=i.asset;delete o.layers;delete o.ruleTransition;}else if(i.op==='stage.style'||i.op==='stage.image'){

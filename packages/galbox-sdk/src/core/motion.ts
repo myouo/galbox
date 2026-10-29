@@ -1,12 +1,13 @@
+import {stageCandidate} from './stage-candidate.js';
 import {compositionMembers,validateComposition} from '../protocol/composition.js';
 import {ownsParticle} from '../protocol/particles.js';
-import {ensure,parseSnapshot,parseTask} from '../protocol/index.js';
+import {ensure,parseTask} from '../protocol/index.js';
 import type {Snapshot,Task,Program} from '../protocol/index.js';
 import {sourceSignature,taskObject,validateStageGraph} from '../protocol/stage.js';
 import {motionDuration,syncMotion,removeMotionTargets,motionTargets,motionBudget} from '../protocol/motion.js';
 import type {MotionInstruction} from '../protocol/motion.js';
 export function executeMotion(p:Program,state:Snapshot,i:MotionInstruction):void {
- ensure(p.capabilities.includes('stage.motion')&&state.scene,'MOTION_CAPABILITY','Declare stage.motion');const s=parseSnapshot(state);
+ ensure(p.capabilities.includes('stage.motion')&&state.scene,'MOTION_CAPABILITY','Declare stage.motion');const s=stageCandidate(state);
  if(i.op==='stage.motion'){if(i.tracks.some(t=>t.axis==='alpha'))ensure(p.capabilities.includes('stage.motion.alpha'),'MOTION_ALPHA_CAPABILITY','Declare opacity motion');
   ensure(i.targets.every(id=>s.stage.some(o=>o.id===id)),'MOTION_TARGET','Target absent');const duration=motionDuration(i.tracks,i.loop,i.intervalMs),targets=new Set(i.targets),conflicts=s.tasks.filter(t=>t.kind==='motion'&&t.status==='running'&&t.motionTask?.key===i.key&&t.motionTask.targets.some(id=>targets.has(id)));ensure(i.policy==='replace'||!conflicts.length,'MOTION_CONFLICT','Same-key motion is active');ensure(s.tasks.length<256&&s.counter<2147483647,'TASK_LIMIT','Motion task bound');
   for(const t of conflicts){const m=t.motionTask!;const next=m.targets.filter(id=>!targets.has(id));if(next.length)m.targets=motionTargets(next);else t.status='superseded';}
@@ -19,7 +20,7 @@ export function executeMotion(p:Program,state:Snapshot,i:MotionInstruction):void
   s.stage=s.stage.filter(o=>!targets.has(o.id));for(const o of source){const copy={...o,id:mapping.get(o.id)!};if(copy.parent&&mapping.has(copy.parent))copy.parent=mapping.get(copy.parent)!;s.stage.push(copy);}ensure(s.stage.length<=128,'STAGE_LIMIT','At most 128 objects');
   for(const {task,targets:copies}of motions)if(copies.length){const m=task.motionTask!;m.targets=motionTargets([...new Set([...m.targets.filter(id=>s.stage.some(o=>o.id===id)),...copies])]);task.status='running';}
  }
- motionBudget(s);syncMotion(s);validateStageGraph(s.stage);validateComposition(s);const committed=parseSnapshot(s);state.stage=committed.stage;state.tasks=committed.tasks;state.counter=committed.counter;
+ motionBudget(s);syncMotion(s);validateStageGraph(s.stage);validateComposition(s);const committed=stageCandidate(s);state.stage=committed.stage;state.tasks=committed.tasks;state.counter=committed.counter;
 }
 export function finishMotion(s:Snapshot,t:Task,finish:boolean):void {ensure(t.motionTask,'MOTION_STATE','Missing motion');if(t.status==='running'){t.status=finish?'completed':'cancelled';if(finish)t.elapsed=t.duration;syncMotion(s);}}
 export function tickMotion(s:Snapshot,ms:number):void {for(const t of s.tasks)if(t.kind==='motion'&&t.status==='running'&&t.motionTask){if(t.motionTask.loop)t.elapsed=(t.elapsed+ms)%t.duration;else{t.elapsed=Math.min(t.duration,t.elapsed+ms);if(t.elapsed===t.duration)t.status='completed';}}syncMotion(s);}

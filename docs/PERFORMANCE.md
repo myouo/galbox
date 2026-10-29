@@ -30,3 +30,5 @@ W1-01/ADR0032继续处理长指令串和Web响应性：Core对私有Program建�
 W1-02加载策略用`pnpm profile:loading`和`pnpm test:loading-performance`复现，说明见LOADING及evidence/w1-02。18图/每HTTP响应60ms/阅读停留150ms/显式并发3/16MiB估算预算，before来自fe86769独立构建；四策略最终逻辑与真实存读档一致。计时不含SDK模块冷加载，每配置一次观测，不称P95。报告分别显示createPlayer、start、推进、实际请求和纹理估算，不能只挑首屏速度掩盖按需/章节后移的等待。缓存工作集估算不等于整个浏览器heap；持久离线与模块规模仍另验。
 
 W1-03A增加`pnpm profile:storage`及`pnpm test:storage-performance`：真实Core快照、IndexedDB 0/16/48槽位，get/put逻辑字符量与时间分列。相同snapshot/profile/head与同driver验证；热操作不读写冷槽位/历史。探针增加序列化开销，不能当无探针玩家延迟。当前热head/profile/回执及4M预算仍是后续边界，见STORAGE和evidence/w1-03a。
+
+H3-03/ADR0068：Player复用不可变release、preferences、slot与integrity视图，仅在来源替换时失效。Core投影以值比较复用未变化且冻结的分支，仍执行Schema与完整wire预算，不改变可写capture或外部输入校验。舞台事务保留封存历史，隔离复制可变舞台；Pixi仅在对象/父子关系/组成员变化时重挂显示树。数值结论以evidence/h3-03/REPORT.md的真实采样为准；64MiB驻留估算不等于浏览器总内存。
