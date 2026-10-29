@@ -8,14 +8,14 @@ const record=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='obje
 /** Core-owned, normalized JSON only. Never accepts an external input or caches a mutable alias. */
 function reconcile(source:unknown,previous:unknown,depth:number):unknown {
  ensure(depth<=wireBudget.depth,'INPUT_SIZE','JSON tree exceeds the supported bound');
- if(source===null||typeof source!=='object')return source;
+ if(source===null||typeof source!=='object')return typeof source==='number'&&source===0?0:source;
  if(isDeeplyFrozenJSON(source))return source;
  if(Array.isArray(source)){
   const old:readonly unknown[]=Array.isArray(previous)?previous:[];let out:unknown[]|undefined=Array.isArray(previous)&&old.length===source.length?undefined:[];
   for(let i=0;i<source.length;i++){const child=reconcile(source[i],old[i],depth+1);if(!out&&child!==old[i])out=old.slice();if(out)out[i]=child;}
   return out??previous;
  }
- ensure(record(source),'OWNERSHIP','Expected Core JSON');const old=record(previous)?previous:{},keys=Object.keys(source),oldKeys=Object.keys(old);let out:Record<string,unknown>|undefined=record(previous)&&keys.length===oldKeys.length?undefined:{};
+ ensure(record(source),'OWNERSHIP','Expected Core JSON');const old=record(previous)?previous:{},keys=Object.keys(source),oldKeys=Object.keys(old);let out:Record<string,unknown>|undefined=record(previous)&&keys.length===oldKeys.length&&keys.every((key,i)=>key===oldKeys[i])?undefined:{};
  for(const key of keys){const child=reconcile(source[key],old[key],depth+1);if(!out&&(!Object.hasOwn(old,key)||child!==old[key]))out={...old};if(out)Object.defineProperty(out,key,{value:child,enumerable:true,configurable:true,writable:true});}
  if(out)for(const key of oldKeys)if(!Object.hasOwn(source,key))delete out[key];return out??previous;
 }

@@ -1,6 +1,6 @@
 import {expect,it} from 'vitest';
 import {createCore} from 'galbox-sdk/core';
-import {ProgramBuilder,instruction,defineRestoreRecipe,slot,literal,stageImage,stageMotion,stageStyle} from 'galbox-sdk/port-kit';
+import {ProgramBuilder,instruction,defineRestoreRecipe,slot,literal,stageImage,stageMotion,stageStyle,stageShake} from 'galbox-sdk/port-kit';
 import {bool,string,i32,parseSnapshot,parseHistoryRecord,parseHistoryCommit,canonicalWireJSON} from 'galbox-sdk/protocol';
 import type {Value} from 'galbox-sdk/protocol';
 import {HistoryJournal,historyPolicy,MemoryStore} from 'galbox-sdk/testing';
@@ -25,3 +25,5 @@ it('history parent parsers retain nested semantic checks and reject damaged cuts
 it('history projection caches cannot authorize a changed mutable input or retain an incorrect legacy position',()=>{
  const {c}=seeded(0);c.accept({type:'history.session',id:'point'});const cut=c.capture(),text=cut.text;if(!text)throw new Error('text');const h=new HistoryJournal(historyPolicy(),{revision:0,entries:[]},'main',null,'scope',new MemoryStore());h.confirmed(cut,text,null,'v1');const mutable=parseSnapshot(cut).text!;expect(h.items([mutable],true,null,'v1')[0]?.canRollback).toBe(true);mutable.content='different';expect(h.items([mutable],true,null,'v1')[0]?.canRollback).toBe(false);const frozen=freezeJson(text),first=h.items([frozen],true,null,'v1')[0]!;expect(Reflect.set(first,'canRollback',false)).toBe(false);expect(h.items([frozen],false,'SAVE_POLICY','v1')[0]?.canRollback).toBe(false);expect(h.items([frozen],true,null,'other')[0]?.rollbackReason).toBe('RELEASE_UNAVAILABLE');const legacy={...text};delete legacy.historyId;const sealed=freezeJson(legacy);expect(h.items([sealed],true,null)[0]?.id).toBe(`legacy:0:${text.prompt}`);expect(h.items([frozen,sealed],true,null)[1]?.id).toBe(`legacy:1:${text.prompt}`);expect(canonicalWireJSON(c.capture())).toBe(canonicalWireJSON(cut));
 });
+
+it('owned projection keeps wire-normalized zero in computed shake offsets',()=>{const b=new ProgramBuilder({gameId:'view-zero',release:'v1',entry:'main'}),image=b.asset('image',{id:'image',path:'image.svg',mime:'image/svg+xml',sha256:'a'.repeat(64)}),p=b.function({id:'main',entry:'put',layout:1,params:[],locals:[],returns:'void',code:[stageImage('put','sprite',image),stageShake('shake','shake',{kind:'object',id:'sprite'},0,0,100,{duration:1000}),instruction('text.page',{at:'page',textId:'page',revision:'v1',speaker:'',content:'Zero'}),instruction('control.end',{at:'end'})]}).build(),c=createCore(p);c.run(100);c.accept({type:'tick',ms:75});const view=c.view().run.stage[0]?.shake,captured=c.capture().stage[0]?.shake;expect(view).toEqual(captured);expect(Object.is(view?.x,-0)||Object.is(view?.y,-0)).toBe(false);});

@@ -32,7 +32,7 @@ export class ImageStage {
  invalidate():void {this.key=null;this.backgroundKey=null;this.foregroundKey=null;}
  render(snapshot:DeepReadonly<Snapshot>):void {
   if(this.disposed)return;const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene});if(key===this.key)return;this.rules.prune(snapshot);this.frames.begin();
-  const hierarchyKey=JSON.stringify([snapshot.stage.map(o=>[o.id,o.parent??null]),snapshot.scene?.mix?.sourceRoots,snapshot.scene?.mix?.targetRoots]),hierarchyChanged=hierarchyKey!==this.hierarchyKey;
+  const hierarchyKey=JSON.stringify([snapshot.stage.map(o=>[o.id,o.parent??null,o.z]),snapshot.scene?.mix?.sourceRoots,snapshot.scene?.mix?.targetRoots]),hierarchyChanged=hierarchyKey!==this.hierarchyKey;
   if(hierarchyChanged)for(const display of this.displays.values())display.root.removeFromParent();
   for(const [id,d]of this.displays)if(!snapshot.stage.some(o=>o.id===id)){d.filters.dispose();d.compositor?.destroy(false);d.root.destroy({children:true});this.displays.delete(id);}
   for(const o of snapshot.stage){let d=this.displays.get(o.id);if(!d){const root=new Container();root.label=`galbox:${o.id}`;root.sortableChildren=true;const image=new Container();root.addChild(image);d={root,image,compositor:null,sprites:[],mask:null,clipKey:'',filters:new Filters()};this.displays.set(o.id,d);}const pose=objectPose(o),layers=o.layers??[{asset:o.asset,weight:1}];
