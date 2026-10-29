@@ -1,9 +1,10 @@
 import {ensure,GalboxError} from './index.js';
+import type {WireLimit} from './budget.js';
 import {wireBudget} from './budget.js';
-export function detached(input: unknown): unknown {
+export function detached(input: unknown,limit:WireLimit=wireBudget): unknown {
   let nodes=0;const ancestors=new Set<object>();
   function visit(value:unknown,depth:number):unknown {
-    ensure(++nodes<=wireBudget.nodes&&depth<=wireBudget.depth,'INPUT_SIZE','JSON tree exceeds the supported bound');
+    ensure(++nodes<=limit.nodes&&depth<=limit.depth,'INPUT_SIZE','JSON tree exceeds the supported bound');
     if(value===null||typeof value==='boolean'||typeof value==='string')return value;
     if(typeof value==='number'){ensure(Number.isFinite(value),'INPUT_JSON','Non-finite number');return value===0?0:value;}
     ensure(typeof value==='object','INPUT_JSON','Expected plain JSON');
@@ -32,6 +33,6 @@ export function detached(input: unknown): unknown {
     }
     ancestors.delete(value);return owned;
   }
-  try {const owned=visit(input,0),text=JSON.stringify(owned);ensure(text&&text.length<=wireBudget.characters,'INPUT_SIZE','At most 4 MB of finite JSON');return owned;}
+  try {const owned=visit(input,0),text=JSON.stringify(owned);ensure(text&&text.length<=limit.characters,'INPUT_SIZE','Finite JSON exceeds its type budget');return owned;}
   catch(error){if(error instanceof GalboxError)throw error;throw new GalboxError('INPUT_JSON','Expected plain acyclic JSON');}
 }

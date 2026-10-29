@@ -1,8 +1,8 @@
 import {ensure,parseFlowProgress,parseFlowRun,parseProgram,parseFlowchart,parseExpression,parseValue,canonicalWireJSON} from './index.js';
 import type {Program,Profile,FlowProgress,FlowNode,FlowRun,DeepReadonly,BoolExpression} from './index.js';
-import {wireDigest} from './digest.js';
+import {wireDigest,programClosureDigest} from './digest.js';
 import {validateExpressionTree,evaluateExpression} from './expressions.js';
-export function flowSignature(p:DeepReadonly<Program>):string|null {return p.flowchart?wireDigest({graph:p.flowchart,globals:p.globals,functions:p.functions,assets:p.assets,rng:p.rng??null}):null;}
+export function flowSignature(p:DeepReadonly<Program>):string|null {return p.flowchart?programClosureDigest({graph:p.flowchart,globals:p.globals,functions:p.functions,assets:p.assets,rng:p.rng??null}):null;}
 export function flowchartProgressFingerprint(input:unknown):string {return wireDigest(parseFlowchart(input));}
 export function flowchartFingerprint(input:unknown):string|null {return flowSignature(parseProgram(input));}
 export function validateFlowchart(p:Program):void {

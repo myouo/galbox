@@ -4996,6 +4996,10 @@ message Gbx_ReleaseManifest_limits {
   optional Gbx_ResourceBudget value = 1;
 }
 
+message Gbx_ReleaseManifest_resourceScope {
+  // Fixed semantic value: "resident"
+}
+
 message Gbx_ReleaseManifest {
   optional Gbx_ReleaseManifest_format format = 1;
   optional Gbx_ReleaseManifest_version version = 2;
@@ -5010,6 +5014,7 @@ message Gbx_ReleaseManifest {
   optional Gbx_ReleaseManifest_assetsSha256 assetsSha256 = 11;
   optional Gbx_ReleaseManifest_resources resources = 12;
   optional Gbx_ReleaseManifest_limits limits = 13;
+  optional Gbx_ReleaseManifest_resourceScope resourceScope = 14;
 }
 
 message Gbx_AudioPreferences_master {

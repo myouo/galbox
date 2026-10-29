@@ -3219,7 +3219,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Asset"
-        maxItems: 256
+        maxItems: 512
         x-proto-tag: 6
       globals:
         type: array
@@ -5063,11 +5063,15 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/ResourceFact"
-        maxItems: 256
+        maxItems: 512
         x-proto-tag: 12
       limits:
         $ref: "#/definitions/ResourceBudget"
         x-proto-tag: 13
+      resourceScope:
+        type: string
+        const: resident
+        x-proto-tag: 14
     required:
       - format
       - version
@@ -12972,7 +12976,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Asset"
-        maxItems: 256
+        maxItems: 512
         x-proto-tag: 6
       globals:
         type: array

@@ -1,5 +1,5 @@
 import {detached} from './wire-input.js';
-import {wireBudget} from './budget.js';
+import {wireBudget,programWireBudget} from './budget.js';
 import {canonicalParsedJSON} from './canonical.js';
 import {isTextComplete} from './text.js';
 import {normalizeNativeValue} from './values.js';
@@ -22,7 +22,7 @@ export function ensure(condition: unknown, code: string, message: string): asser
 }
 export function canonicalWireJSON(input:unknown):string {return canonicalParsedJSON(detached(input));}
 export function parseProgram(input: unknown): Program {
-  const data = detached(input);if(!validateProgram(data)){const path=validateProgram.errors?.find(e=>/\/functions\/\d+\/code\/\d+/.test(e.instancePath))?.instancePath??validateProgram.errors?.[0]?.instancePath??'';const address=rawInstructionAddress(data,path);throw new GalboxError('SCHEMA_PROGRAM',JSON.stringify(validateProgram.errors),{path,...(address?{address}:{})});}return normalizeProgram(data);
+  const data = detached(input,programWireBudget);if(!validateProgram(data)){const path=validateProgram.errors?.find(e=>/\/functions\/\d+\/code\/\d+/.test(e.instancePath))?.instancePath??validateProgram.errors?.[0]?.instancePath??'';const address=rawInstructionAddress(data,path);throw new GalboxError('SCHEMA_PROGRAM',JSON.stringify(validateProgram.errors),{path,...(address?{address}:{})});}return normalizeProgram(data);
 }
 export function parseSnapshot(input: unknown): Snapshot {
   const data = detached(input); ensure(validateSnapshot(data), 'SCHEMA_SNAPSHOT', JSON.stringify(validateSnapshot.errors)); return normalizeSnapshot(data);
@@ -239,7 +239,7 @@ export function parseProgramTextBinding(input:unknown):ProgramTextBinding {const
 
 export function parseProgramTextEntry(input:unknown):ProgramTextEntry {const data=detached(input);ensure(validateProgramTextEntry(data),'SCHEMA_LOCALIZATION',JSON.stringify(validateProgramTextEntry.errors));return data;}
 
-export function parseProgramTextCatalog(input:unknown):ProgramTextCatalog {const data=detached(input);ensure(validateProgramTextCatalog(data),'SCHEMA_LOCALIZATION',JSON.stringify(validateProgramTextCatalog.errors));return data;}
+export function parseProgramTextCatalog(input:unknown):ProgramTextCatalog {const data=detached(input,programWireBudget);ensure(validateProgramTextCatalog(data),'SCHEMA_LOCALIZATION',JSON.stringify(validateProgramTextCatalog.errors));return data;}
 
 export function parseLocaleCatalog(input:unknown):LocaleCatalog {const data=detached(input);ensure(validateLocaleCatalog(data),'SCHEMA_LOCALIZATION',JSON.stringify(validateLocaleCatalog.errors));return data;}
 
