@@ -9,3 +9,5 @@ AssetCache 增加仅删除 ready 且 refs=0 的有界 trim，保留当前前看�
 页面隐藏时仅释放本实例 Canvas 滤镜池、颜色 scratch 和 CPU blur 数组，保留可见输出与 back buffer；下次显示先按原预算重新分配并使分层绘制缓存失效。身份滤镜解除后销毁本实例不用的 filter 对象。不能用清除当前像素、活动任务、原存档或全局 Pixi 池换内存数字。浏览器内部/GPU 回收时机仍由设备决定。
 
 验证：真实连续滚轮、手势惯性/返回尾部/读档、多实例；引用竞争、准备/取消和后续重载；Canvas 隐藏/恢复像素及保存；真实作品实际回收和驻留变化。原始资料留独立实例 ignored artifacts。
+
+HTTP provider 仍先完整验证/私有化输入 Program，再只让返回闭包捕获 assets、gameId、release 和 base URL；目录能力不保留未使用的 functions/textLayout 等整章对象。不得改成只验证资产而跳过未知 Program 的 schema。版本摘要、身份比对、取消和 bytes 限制不变。用合成大 Program 的独立 provider GC 采样与真实作品验证持有量，原始堆记录不提交。

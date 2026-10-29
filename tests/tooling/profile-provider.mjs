@@ -1,0 +1,16 @@
+import {createServer} from 'node:http';
+import {readFile,readdir,mkdir,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {chromium} from '@playwright/test';
+const root=process.env.GALBOX_EVIDENCE_DIR??'artifacts/provider-retention';await mkdir(root,{recursive:true});
+const paths=[...(process.argv[2]?[{label:'before',path:process.argv[2]}]:[]),{label:'after',path:'tests/browser/harness/dist/sdk.js'}],sources=new Map();
+for(const row of paths)sources.set('/'+row.label+'.js',await readFile(row.path));
+for(const file of await readdir('tests/browser/harness/dist'))if(file.endsWith('.js'))sources.set('/'+file,await readFile('tests/browser/harness/dist/'+file));
+const server=createServer((request,response)=>{const source=sources.get(request.url);if(source){response.writeHead(200,{'Content-Type':'text/javascript'}).end(source);return;}if(request.url==='/'){response.writeHead(200,{'Content-Type':'text/html'}).end('<!doctype html><title>Provider memory fixture</title>');return;}response.writeHead(404).end();});
+await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const address=server.address();if(!address||typeof address==='string')throw new Error('Server address');const base=`http://127.0.0.1:${address.port}`,rows=[];
+try{for(const row of paths){const browser=await chromium.launch({headless:true});try{const page=await browser.newPage();await page.goto(base);const cdp=await page.context().newCDPSession(page);await cdp.send('HeapProfiler.enable');await page.evaluate(async label=>{window.__providerSDK=await import('/'+label+'.js');const s=window.__providerSDK,b=new s.ProgramBuilder({gameId:'warm-provider',release:'v1',entry:'main'});b.function({id:'main',entry:'end',layout:1,params:[],locals:[],returns:'void',code:[s.instruction('control.end',{at:'end'})]});s.createHttpProvider(b.build(),location.href);},row.label);
+ const collect=async()=>{await cdp.send('HeapProfiler.collectGarbage');await cdp.send('HeapProfiler.collectGarbage');return cdp.send('Runtime.getHeapUsage');},baseline=await collect();
+ await page.evaluate(()=>{const s=window.__providerSDK,b=new s.ProgramBuilder({gameId:'provider-memory',release:'v1',entry:'main'});b.function({id:'main',entry:'line0',layout:1,params:[],locals:[],returns:'void',code:[...Array.from({length:9999},(_,i)=>s.instruction('text.page',{at:'line'+i,textId:'line'+i,revision:'v1',speaker:'',content:'Synthetic provider fixture '+i+': '+'x'.repeat(64)})),s.instruction('control.end',{at:'end'})]});window.__heldProvider=s.createHttpProvider(b.build(),location.href);});
+ const held=await collect();await page.evaluate(()=>{delete window.__heldProvider;});const released=await collect();rows.push({label:row.label,browser:browser.version(),instructions:10000,bundleSha256:createHash('sha256').update(sources.get('/'+row.label+'.js')).digest('hex'),baseline,held,released,retainedBytes:held.usedSize-released.usedSize});
+ }finally{await browser.close();}}await writeFile(root+'/provider-retention.json',JSON.stringify({driverSha256:createHash('sha256').update(await readFile(new URL(import.meta.url))).digest('hex'),rows},null,2));console.log(JSON.stringify(rows.map(r=>({label:r.label,instructions:r.instructions,retainedBytes:r.retainedBytes,held:r.held.usedSize,released:r.released.usedSize}))));
+}finally{await new Promise(resolve=>server.close(resolve));}
