@@ -11,3 +11,9 @@ Canvas/WebGL分层像素测试发现透明清屏保留非零RGB，导致存档�
 本轮14项最终关联浏览器通过（browser-final5.log），实际实包消费通过；先前29项关联浏览器与2项分层像素分别通过。原始日志、trace与图片仅本地ignored artifacts/door2。完整第一门转换、整章八语运行、迁移/回放/公网媒体与真机尚未验收，F-01E仍in_progress；不能把通用能力测试称作游戏整章完成。
 
 后续ADR0063/0064：英文整门压缩差分style后218021节点/3610054字符/247资产，新增类型专用程序预算与resident发行资源范围。已通过pnpm check、全56文件343单元（含3500段原创大程序Wire/文本绑定/Release/保存恢复/超限拒绝）。发现并修正ResourceLoader驱逐后累计旧资源事实的问题，先Cache驱逐再检查实际驻留事实。最终loading/resident浏览器及consumer复验仍进行中。
+
+d93e30c之后最终loading/resident共14浏览器和独立consumer复验全部通过。英文真实第一门使用该实包完整跑通2478段/2492正文切片、7次中途protobuf恢复，7862步；媒体由明确虚拟started/ended事件驱动，未作为实际音频验证。整章验收修正了实例KAG默认exchange=false复制语义与同时对齐后等待被取消的旧前页任务，不修改Core伪造完成。
+
+ADR0065/0066新增alpha运动使一次wflash对应一个有限任务/一次跳过，离散文字淡入与用户字速门禁、可保存阴影。pnpm check、关联25单元、Canvas/WebGL不透明度保存像素及真实DOM文字/阴影共3浏览器通过；本轮实包消费仍需复验。整门八语/真实浏览器/旧93升级/源菜单与公网发布仍未完成。
+
+ADR0065/0066最终全58文件346单元与实包consumer通过（fidelity-all-units.log / fidelity-consumer.log）；原3项浏览器及check通过。实例将消费该实包再重验全章，未把仅SDK验证标作F-01E完成。

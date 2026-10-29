@@ -285,6 +285,11 @@ definitions:
         minimum: -65536
         maximum: 65536
         x-proto-tag: 2
+      alpha:
+        type: number
+        minimum: -1
+        maximum: 1
+        x-proto-tag: 3
     required:
       - x
       - y
@@ -297,6 +302,7 @@ definitions:
         enum:
           - x
           - y
+          - alpha
         x-proto-tag: 1
       from:
         type: number
@@ -363,7 +369,7 @@ definitions:
         items:
           $ref: "#/definitions/MotionTrack"
         minItems: 1
-        maxItems: 2
+        maxItems: 3
         x-proto-tag: 4
       loop:
         type: boolean
@@ -2863,7 +2869,7 @@ definitions:
             items:
               $ref: "#/definitions/MotionTrack"
             minItems: 1
-            maxItems: 2
+            maxItems: 3
             x-proto-tag: 6
           loop:
             type: boolean
@@ -7393,6 +7399,20 @@ definitions:
             minimum: 1
             maximum: 10000
             x-proto-tag: 2
+          samples:
+            type: array
+            minItems: 2
+            maxItems: 16
+            items:
+              type: number
+              minimum: 0
+              maximum: 1
+            x-proto-tag: 3
+          minimumIntervalMs:
+            type: integer
+            minimum: 0
+            maximum: 200
+            x-proto-tag: 4
         required:
           - kind
           - duration
@@ -7466,6 +7486,35 @@ definitions:
       effect:
         $ref: "#/definitions/TextEffect"
         x-proto-tag: 6
+      shadow:
+        type: object
+        properties:
+          color:
+            type: string
+            pattern: ^#[0-9a-fA-F]{6}$
+            x-proto-tag: 1
+          xEm:
+            type: number
+            minimum: -1
+            maximum: 1
+            x-proto-tag: 2
+          yEm:
+            type: number
+            minimum: -1
+            maximum: 1
+            x-proto-tag: 3
+          blurEm:
+            type: number
+            minimum: 0
+            maximum: 1
+            x-proto-tag: 4
+        required:
+          - color
+          - xEm
+          - yEm
+          - blurEm
+        additionalProperties: false
+        x-proto-tag: 7
     required: []
     additionalProperties: false
   RichTextSourceRun:

@@ -1,6 +1,6 @@
 import type { DeepReadonly, TextState,TextStyle,TextTheme } from '../protocol/index.js';
 import {parseDisplayPreferences} from '../protocol/index.js';
-import {compileRichText} from '../protocol/text.js';
+import {compileRichText,fadeOpacity} from '../protocol/text.js';
 export class TextController {
   private readonly box=document.createElement('section');
   private readonly speaker=document.createElement('div');
@@ -17,12 +17,12 @@ export class TextController {
     const rich=text.rich,key=JSON.stringify([text.prompt,text.textId,text.revision,rich.runs]);
     if(key!==this.key){this.key=key;this.units=[];this.rubies=[];this.content.replaceChildren();const plan=compileRichText(rich.runs);
       rich.runs.forEach((r,index)=>{if(r.kind==='pause'||r.kind==='pause.units'||r.kind==='speed'||r.kind==='confirm')return;const root=r.kind==='ruby'?document.createElement('ruby'):this.content;
-        for(const token of plan.tokens){if(token.kind!=='unit'||token.run!==index)continue;const node=document.createElement('span'),style=token.style;node.className='galbox-text-unit';node.textContent=token.text;if(style.color)node.style.color=style.color;if(style.bold)node.style.fontWeight='bold';if(style.italic)node.style.fontStyle='italic';if(style.underline)node.style.textDecoration='underline';if(style.scale)node.style.fontSize=`${style.scale}em`;if(style.effect)node.dataset.effect=style.effect.kind;root.append(node);this.units.push({node,effect:style.effect});}
+        for(const token of plan.tokens){if(token.kind!=='unit'||token.run!==index)continue;const node=document.createElement('span'),style=token.style;node.className='galbox-text-unit';node.textContent=token.text;if(style.color)node.style.color=style.color;if(style.shadow)node.style.textShadow=style.shadow.xEm||style.shadow.yEm||style.shadow.blurEm?`${style.shadow.xEm}em ${style.shadow.yEm}em ${style.shadow.blurEm}em ${style.shadow.color}`:'none';if(style.bold)node.style.fontWeight='bold';if(style.italic)node.style.fontStyle='italic';if(style.underline)node.style.textDecoration='underline';if(style.scale)node.style.fontSize=`${style.scale}em`;if(style.effect)node.dataset.effect=style.effect.kind;root.append(node);this.units.push({node,effect:style.effect});}
         if(r.kind==='ruby'){const reading=document.createElement('rt');reading.textContent=r.reading;if(r.style?.color)reading.style.color=r.style.color;root.append(reading);this.content.append(root);this.rubies.push({node:reading,end:this.units.length});}
       });
     }
     this.units.forEach(({node,effect},index)=>{const visible=index<text.revealed,time=rich.revealedAt[index];node.style.visibility=visible?'visible':'hidden';node.setAttribute('aria-hidden',String(!visible));
-      node.style.opacity=String(!visible?0:effect?.kind==='fade'&&typeof time==='number'?Math.min(1,Math.max(0,(rich.elapsedMs-time)/effect.duration)):1);
+      node.style.opacity=String(!visible?0:effect?.kind==='fade'&&typeof time==='number'?fadeOpacity(effect,rich.elapsedMs-time,rich.baseIntervalMs):1);
       if(effect?.kind==='wave')node.style.transform=`translateY(${Math.sin(rich.elapsedMs/effect.periodMs*Math.PI*2+index*.6)*effect.amplitude}px)`;
       else if(effect?.kind==='shake'){const phase=rich.elapsedMs/effect.periodMs*Math.PI*2+index*1.7;node.style.transform=`translate(${Math.sin(phase*3)*effect.amplitude}px,${Math.sin(phase*5)*effect.amplitude}px)`;}
       else node.style.transform='';

@@ -7,7 +7,7 @@ import {motionDuration,syncMotion,removeMotionTargets,motionTargets,motionBudget
 import type {MotionInstruction} from '../protocol/motion.js';
 export function executeMotion(p:Program,state:Snapshot,i:MotionInstruction):void {
  ensure(p.capabilities.includes('stage.motion')&&state.scene,'MOTION_CAPABILITY','Declare stage.motion');const s=parseSnapshot(state);
- if(i.op==='stage.motion'){
+ if(i.op==='stage.motion'){if(i.tracks.some(t=>t.axis==='alpha'))ensure(p.capabilities.includes('stage.motion.alpha'),'MOTION_ALPHA_CAPABILITY','Declare opacity motion');
   ensure(i.targets.every(id=>s.stage.some(o=>o.id===id)),'MOTION_TARGET','Target absent');const duration=motionDuration(i.tracks,i.loop,i.intervalMs),targets=new Set(i.targets),conflicts=s.tasks.filter(t=>t.kind==='motion'&&t.status==='running'&&t.motionTask?.key===i.key&&t.motionTask.targets.some(id=>targets.has(id)));ensure(i.policy==='replace'||!conflicts.length,'MOTION_CONFLICT','Same-key motion is active');ensure(s.tasks.length<256&&s.counter<2147483647,'TASK_LIMIT','Motion task bound');
   for(const t of conflicts){const m=t.motionTask!;const next=m.targets.filter(id=>!targets.has(id));if(next.length)m.targets=motionTargets(next);else t.status='superseded';}
   s.tasks.push(parseTask({id:'task:'+ ++s.counter,name:i.task,kind:'motion',at:i.at,status:'running',elapsed:0,duration,attempt:1,motionTask:{signature:sourceSignature(i),key:i.key,targets:i.targets,tracks:i.tracks,loop:i.loop,intervalMs:i.intervalMs}}));

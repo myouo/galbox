@@ -283,9 +283,14 @@ message Gbx_MotionOffset_y {
   optional double value = 1;
 }
 
+message Gbx_MotionOffset_alpha {
+  optional double value = 1;
+}
+
 message Gbx_MotionOffset {
   optional Gbx_MotionOffset_x x = 1;
   optional Gbx_MotionOffset_y y = 2;
+  optional Gbx_MotionOffset_alpha alpha = 3;
 }
 
 message Gbx_MotionTrack_axis {
@@ -6626,9 +6631,23 @@ message Gbx_TextEffect_Case1_duration {
   optional sint64 value = 1;
 }
 
+message Gbx_TextEffect_Case1_samples_Item {
+  optional double value = 1;
+}
+
+message Gbx_TextEffect_Case1_samples {
+  repeated Gbx_TextEffect_Case1_samples_Item items = 1;
+}
+
+message Gbx_TextEffect_Case1_minimumIntervalMs {
+  optional sint64 value = 1;
+}
+
 message Gbx_TextEffect_Case1 {
   optional Gbx_TextEffect_Case1_kind kind = 1;
   optional Gbx_TextEffect_Case1_duration duration = 2;
+  optional Gbx_TextEffect_Case1_samples samples = 3;
+  optional Gbx_TextEffect_Case1_minimumIntervalMs minimumIntervalMs = 4;
 }
 
 message Gbx_TextEffect_Case2_kind {
@@ -6699,6 +6718,29 @@ message Gbx_TextStyle_effect {
   optional Gbx_TextEffect value = 1;
 }
 
+message Gbx_TextStyle_shadow_color {
+  optional string value = 1;
+}
+
+message Gbx_TextStyle_shadow_xEm {
+  optional double value = 1;
+}
+
+message Gbx_TextStyle_shadow_yEm {
+  optional double value = 1;
+}
+
+message Gbx_TextStyle_shadow_blurEm {
+  optional double value = 1;
+}
+
+message Gbx_TextStyle_shadow {
+  optional Gbx_TextStyle_shadow_color color = 1;
+  optional Gbx_TextStyle_shadow_xEm xEm = 2;
+  optional Gbx_TextStyle_shadow_yEm yEm = 3;
+  optional Gbx_TextStyle_shadow_blurEm blurEm = 4;
+}
+
 message Gbx_TextStyle {
   optional Gbx_TextStyle_color color = 1;
   optional Gbx_TextStyle_bold bold = 2;
@@ -6706,6 +6748,7 @@ message Gbx_TextStyle {
   optional Gbx_TextStyle_underline underline = 4;
   optional Gbx_TextStyle_scale scale = 5;
   optional Gbx_TextStyle_effect effect = 6;
+  optional Gbx_TextStyle_shadow shadow = 7;
 }
 
 message Gbx_RichTextSourceRun_Case1_kind {

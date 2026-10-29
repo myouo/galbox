@@ -40,7 +40,7 @@ export function tickRichText(text:TextState,ms:number,plan:TextPlan):void {
 }
 export function textUnitCount(text:Text):number {return text.rich?countGraphemes(text.content):Array.from(text.content).length;}
 export function isTextConfirming(text:Text):boolean {return text.rich?.waitingForClick===true;}
-function revealedEffectsComplete(text:Text):boolean {const rich=text.rich;if(!rich)return true;let at=0;for(const run of rich.runs){if(run.kind==='pause'||run.kind==='pause.units'||run.kind==='speed'||run.kind==='confirm')continue;const units=run.kind==='break'?1:countGraphemes(run.content);at+=units;const effect=run.kind==='break'?undefined:run.style?.effect,time=rich.revealedAt[Math.min(at,text.revealed)-1];if(effect?.kind==='fade'&&typeof time==='number'&&rich.elapsedMs-time<effect.duration)return false;if(at>=text.revealed)break;}return true;}
+function revealedEffectsComplete(text:Text):boolean {const rich=text.rich;if(!rich)return true;let at=0;for(const run of rich.runs){if(run.kind==='pause'||run.kind==='pause.units'||run.kind==='speed'||run.kind==='confirm')continue;const units=run.kind==='break'?1:countGraphemes(run.content);at+=units;const effect=run.kind==='break'?undefined:run.style?.effect,time=rich.revealedAt[Math.min(at,text.revealed)-1];if(effect?.kind==='fade'&&rich.baseIntervalMs>=(effect.minimumIntervalMs??0)&&typeof time==='number'&&rich.elapsedMs-time<effect.duration)return false;if(at>=text.revealed)break;}return true;}
 export function isTextSegmentComplete(text:Text):boolean {return isTextConfirming(text)?revealedEffectsComplete(text):isTextComplete(text);}
 export function isTextComplete(text:Text):boolean {
  const rich=text.rich,count=textUnitCount(text);if(text.revealed!==count)return false;if(!rich)return true;
@@ -75,3 +75,5 @@ export function validateRichText(text:TextState,source:RichInstruction,prefixes:
  else if(next)ensure(next.kind==='unit'&&(interval===0?rich.remainderMs===0:rich.remainderMs<interval),'RESTORE_RICH_CURSOR','Noncanonical reveal continuation');
  else ensure(rich.remainderMs===0,'RESTORE_RICH_CURSOR','Remainder after completion');
 }
+
+export function fadeOpacity(effect:DeepReadonly<Extract<import('./index.js').TextEffect,{kind:'fade'}>>,age:number,baseIntervalMs:number):number {if(baseIntervalMs<(effect.minimumIntervalMs??0))return 1;const progress=Math.min(1,Math.max(0,age/effect.duration)),samples=effect.samples;return samples?samples[Math.min(samples.length-1,Math.floor(progress*(samples.length-1)))]!:progress;}
