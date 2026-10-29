@@ -9,3 +9,5 @@ balanced 在当前窗口滚动时先接续新窗口再取消旧窗口；普通�
 舞台原子候选只复用已封存 history；stage/tasks/scene/counter 等仍隔离复制并执行原 schema 与语义检查。复用前缓存完整 history footprint，输入/输出均将其计入聚合节点、深度、字符预算，不以清空 history 绕过存档预算。只有只写舞台的内部事务使用此路径；通用 reducer/迁移/未知输入不使用。
 
 Canvas只写back buffer不强制willReadFrequently。经实际像素探测支持时，brightness/grayscale走原生Canvas filter（先灰度后亮度，保持现有矩阵顺序），复用已有color workspace的预算为单个scratch surface；不新增预算额度。功能缺失/探测不符仍用CPU逐像素路径，CPU读回失败仍终止设备且保留旧输出。原生滤镜保留Alpha/组隔离、嵌套与CPU后备像素对照。依据MDN CanvasRenderingContext2D.filter及HTMLCanvasElement.getContext，2026-10-29核对。
+
+DOM正文分层时，Canvas下层从同一Pixi离屏提交直接写入已有下层输出canvas，避免经上层canvas中转；上层画面按可见子树/相机/滤镜/overlay/mix缓存，视频仍每帧绘制。两路输出没有增加canvas或renderer。源状态变化、epoch、截图和显式invalidate仍失效；失败前不覆盖上一提交输出。WebGL保持原路径。
