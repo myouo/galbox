@@ -13,3 +13,5 @@ Canvas只写back buffer不强制willReadFrequently。经实际像素探测支持
 DOM正文分层时，Canvas下层从同一Pixi离屏提交直接写入已有下层输出canvas，避免经上层canvas中转；上层画面按可见子树/相机/滤镜/overlay/mix缓存，视频仍每帧绘制。两路输出没有增加canvas或renderer。源状态变化、epoch、截图和显式invalidate仍失效；失败前不覆盖上一提交输出。WebGL保持原路径。
 
 实际采样发现下层整屏drawImage提交仍是热点，Canvas分层输出改为完成渲染后交换已有离屏back与下层DOM canvas：旧下层成为下一次离屏back，不增加surface/renderer/驻留额度，不在渲染成功前替换可见内容。DOM输出canvas身份不稳定；公开截图始终读取当前输出。上层Pixi canvas身份保持。双输出像素、运动/隐藏失效、保存恢复与设备失败须重验。
+
+Canvas颜色工作面可保留上一份结果，仅对深冻结、无parent/子对象、单图且仅ColorMatrixFilter的根对象生效；对象或scene引用变化、池重建、任意其他滤镜使用该工作面立即失效。不增加缓存画布，最多每个既有滤镜深度保留一个结果。缓存命中时对子对象绘制使用空裁剪，再合成原工作面；未知/可变对象和复杂组合不走此路径。
