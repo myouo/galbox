@@ -1,16 +1,17 @@
 import {parseInputPreferences} from '../protocol/index.js';
 import type {InputPreferences} from '../protocol/index.js';
 interface InputState {epoch:number;prompt:number|null;text:boolean;playing:boolean;paused:boolean;menu:boolean;history:boolean;}
-export interface InputActions {state():InputState;advance(prompt:number,epoch:number):void;menu():void;auto():void;skip(value:boolean):void;quickSave():void;quickLoad():void;history():void;}
+export interface InputActions {state():InputState;advance(prompt:number,epoch:number):void|Promise<void>;menu():void;auto():void;skip(value:boolean):void;quickSave():void;quickLoad():void;history():void;}
 const keyboardActions=['advance','menu','auto','skip','quickSave','quickLoad'] as const;
 type Action=typeof keyboardActions[number];
 export class InputController {
  private readonly roots=new Map<HTMLElement,{refs:number;remove:()=>void}>();
  private wheelLast=-Infinity;private wheelSum=0;private wheelSpent=true;private wheelEpoch=-1;private wheelPrompt:number|null=null;private wheelDirection=0;
+ private stepPending=false;private stepGeneration=0;private wheelBlockedUntil=0;
  private held=new Map<string,{action:Action;epoch:number;prompt:number|null}>();private skips=new Set<string>();private bindings:InputPreferences;
- constructor(private readonly actions:InputActions,bindings:InputPreferences){this.bindings=parseInputPreferences(bindings);}
- configure(input:InputPreferences):void {this.clear();this.bindings=parseInputPreferences(input);}
- clear():void {this.wheelSum=0;this.wheelSpent=true;this.held.clear();if(this.skips.size){this.skips.clear();this.actions.skip(false);}}
+ constructor(private readonly actions:InputActions,bindings:InputPreferences,private readonly defaultWheelMode:'gesture'|'step'='gesture'){this.bindings=parseInputPreferences(bindings);}
+ configure(input:InputPreferences):void {this.clear(true);this.bindings=parseInputPreferences(input);}
+ clear(protectWheel=false):void {this.wheelSum=0;this.wheelSpent=true;this.stepPending=false;++this.stepGeneration;this.wheelBlockedUntil=protectWheel||(this.bindings.wheelMode??this.defaultWheelMode)==='step'?performance.now()+150:0;this.held.clear();if(this.skips.size){this.skips.clear();this.actions.skip(false);}}
  attach(root:HTMLElement):()=>void {
   const existing=this.roots.get(root);if(existing)existing.refs++;else {
    const assigned=!root.hasAttribute('tabindex');if(assigned)root.tabIndex=0;
@@ -30,6 +31,18 @@ export class InputController {
   if(direction>0?(!state.text||state.prompt===null):!state.history){cancel();return;}
   for(let node:Element|null=target;node&&root.contains(node);node=node.parentElement){const overflow=getComputedStyle(node).overflowY;if(node.scrollHeight>node.clientHeight+1&&['auto','scroll'].includes(overflow)){cancel();return;}if(node===root)break;}
   event.preventDefault();
+  if(now<this.wheelBlockedUntil){cancel();return;}
+  if((this.bindings.wheelMode??this.defaultWheelMode)==='step'){
+   const unit=event.deltaMode===1?16:event.deltaMode===2?Math.max(1,root.clientHeight||root.ownerDocument.documentElement.clientHeight):1;
+   if(this.stepPending){cancel();return;}
+   if(now-this.wheelLast>=220||direction!==this.wheelDirection||state.epoch!==this.wheelEpoch||state.prompt!==this.wheelPrompt)this.wheelSum=0;
+   this.wheelLast=now;this.wheelEpoch=state.epoch;this.wheelPrompt=state.prompt;this.wheelDirection=direction;
+   this.wheelSum+=Math.min(960,Math.abs(event.deltaY)*unit);if(this.wheelSum<48)return;this.wheelSum=0;
+   if(direction<0){this.actions.history();return;}if(state.prompt===null)return;
+   const generation=this.stepGeneration;this.stepPending=true;
+   try{const pending=this.actions.advance(state.prompt,state.epoch);if(pending)void pending.finally(()=>{if(generation===this.stepGeneration)this.stepPending=false;}).catch(()=>{});else this.stepPending=false;}catch(error){this.stepPending=false;throw error;}
+   return;
+  }
   if(now-this.wheelLast>=220){this.wheelSum=0;this.wheelSpent=false;this.wheelEpoch=state.epoch;this.wheelPrompt=state.prompt;this.wheelDirection=direction;}
   this.wheelLast=now;
   if(this.wheelSpent)return;

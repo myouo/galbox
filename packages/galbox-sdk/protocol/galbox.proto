@@ -5240,6 +5240,10 @@ message Gbx_PreferencesPatch_input_wheel {
   optional bool value = 1;
 }
 
+message Gbx_PreferencesPatch_input_wheelMode {
+  optional string value = 1;
+}
+
 message Gbx_PreferencesPatch_input {
   optional Gbx_PreferencesPatch_input_advance advance = 1;
   optional Gbx_PreferencesPatch_input_menu menu = 2;
@@ -5248,6 +5252,7 @@ message Gbx_PreferencesPatch_input {
   optional Gbx_PreferencesPatch_input_quickSave quickSave = 5;
   optional Gbx_PreferencesPatch_input_quickLoad quickLoad = 6;
   optional Gbx_PreferencesPatch_input_wheel wheel = 7;
+  optional Gbx_PreferencesPatch_input_wheelMode wheelMode = 8;
 }
 
 message Gbx_PreferencesPatch_display_fontScale {
@@ -6577,6 +6582,10 @@ message Gbx_InputPreferences_wheel {
   optional bool value = 1;
 }
 
+message Gbx_InputPreferences_wheelMode {
+  optional string value = 1;
+}
+
 message Gbx_InputPreferences {
   optional Gbx_InputPreferences_advance advance = 1;
   optional Gbx_InputPreferences_menu menu = 2;
@@ -6585,6 +6594,7 @@ message Gbx_InputPreferences {
   optional Gbx_InputPreferences_quickSave quickSave = 5;
   optional Gbx_InputPreferences_quickLoad quickLoad = 6;
   optional Gbx_InputPreferences_wheel wheel = 7;
+  optional Gbx_InputPreferences_wheelMode wheelMode = 8;
 }
 
 message Gbx_DisplayPreferences_fontScale {

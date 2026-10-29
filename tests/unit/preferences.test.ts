@@ -32,3 +32,11 @@ it('wheel preference preserves old settings and uses generated boolean wire vali
  expect(mergePreferences(disabled,{input:{advance:['KeyD']}}).input.wheel).toBe(false);
  for(const wheel of ['false',1,null,{},[]])expect(()=>mergePreferences(old,{input:{wheel}})).toThrow();
 });
+
+it('wheel device mode is optional, generated on wire and independent of an old reading preference',()=>{
+ const old=defaultPreferences();expect(normalizePreferences(old).input.wheelMode).toBeUndefined();
+ const step=mergePreferences(old,{input:{wheelMode:'step'}});expect(decodeWire('PlayerPreferences',encodeWire('PlayerPreferences',step))).toEqual(step);
+ expect(mergePreferences(step,{input:{wheel:false}}).input).toMatchObject({wheelMode:'step',wheel:false});
+ expect(mergePreferences(step,{input:{wheelMode:'gesture'}}).input.wheelMode).toBe('gesture');
+ for(const wheelMode of ['auto',true,null,{},[]])expect(()=>mergePreferences(old,{input:{wheelMode}})).toThrow();
+});

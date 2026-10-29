@@ -5680,6 +5680,12 @@ definitions:
           wheel:
             type: boolean
             x-proto-tag: 7
+          wheelMode:
+            type: string
+            enum:
+              - gesture
+              - step
+            x-proto-tag: 8
         required: []
         additionalProperties: false
         minProperties: 1
@@ -7356,6 +7362,12 @@ definitions:
       wheel:
         type: boolean
         x-proto-tag: 7
+      wheelMode:
+        type: string
+        enum:
+          - gesture
+          - step
+        x-proto-tag: 8
     required:
       - advance
       - menu

@@ -42,3 +42,13 @@ it('lookahead follows finite same-function labels, preserves branch fences and s
  expect(lookaheadAssets(p,s,loadingPolicy({mode:'balanced',lookahead:8}))).toEqual([]);
 });
 it('static prefetch follows loaded helpers and returns without changing narrative, and stops at missing code',()=>{const p=program(),c=createCore(p);c.run(100);const s=c.capture(),main=p.functions[0]!;main.code.splice(1,0,instruction('control.call',{at:'helper-call',function:'helper',args:[]}));p.functions.push({id:'helper',entry:'helper-image',layout:1,params:[],locals:[],returns:'void',code:[instruction('stage.put',{at:'helper-image',object:{id:'hint',asset:'bg',z:0,position:{x:0,y:0,alpha:1}}}),instruction('control.return',{at:'helper-return'})]});expect(lookaheadAssets(p,s,loadingPolicy({mode:'balanced',lookahead:4}))).toEqual(['bg']);expect(c.capture()).toEqual(s);main.code[1]=instruction('control.call',{at:'helper-call',function:'unloaded',args:[]});expect(lookaheadAssets(p,s,loadingPolicy({mode:'balanced',lookahead:4}))).toEqual([]);});
+
+it('idle trim releases only unleased ready resources, protects hints and pending consumers, and permits a fresh reload',async()=>{
+ const controller=new AbortController(),gates=new Map<string,ReturnType<typeof deferred<void>>>(),disposed:string[]=[],started:string[]=[];
+ const cache=new AssetCache(4,100,async(id,_signal,reserve)=>{started.push(id);reserve(10);if(id==='pending'){const g=deferred<void>();gates.set(id,g);await g.promise;}return {bytes:10,dispose(){disposed.push(id);}};});
+ const current=cache.acquire(['current'],controller.signal),future=cache.acquire(['future'],controller.signal),old=cache.acquire(['old'],controller.signal),pending=cache.acquire(['pending'],controller.signal);await Promise.all([current.ready,future.ready,old.ready]);await turns();future.release();old.release();
+ expect(cache.trim(new Set(['future']),1)).toBe(1);expect(disposed).toEqual(['old']);expect(cache.has(['current','future'])).toBe(true);expect(cache.stats.active).toBe(1);
+ const shared=cache.acquire(['future'],controller.signal);await shared.ready;expect(cache.trim(new Set())).toBe(0);gates.get('pending')!.resolve();await pending.ready;expect(cache.trim(new Set())).toBe(0);
+ shared.release();expect(cache.trim(new Set())).toBe(1);const reload=cache.acquire(['old'],controller.signal);await reload.ready;expect(started.filter(id=>id==='old')).toHaveLength(2);
+ current.release();pending.release();reload.release();expect(cache.trim(new Set(),2)).toBe(2);expect(cache.trim(new Set(),2)).toBe(1);expect(cache.stats.residentBytes).toBe(0);expect(cache.stats.evictions).toBe(5);cache.dispose();expect(cache.trim(new Set())).toBe(0);
+});

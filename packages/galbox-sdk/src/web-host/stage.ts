@@ -16,6 +16,8 @@ class Filters {
   if(state.blur>0){this.blur??=new BlurFilter({strength:state.blur,quality:4});this.blur.strength=state.blur;filters.push(this.blur);}
   if(state.brightness!==1||state.grayscale!==0){this.color??=new ColorMatrixFilter();const g=state.grayscale,b=state.brightness,r=.2126*g,k=.7152*g,l=.0722*g;this.color.matrix=[(1-g+r)*b,k*b,l*b,0,0,r*b,(1-g+k)*b,l*b,0,0,r*b,k*b,(1-g+l)*b,0,0,0,0,0,1,0];canvasColors.set(this.color,{brightness:b,grayscale:g});filters.push(this.color);}
   node.filters=filters;
+  if(state.blur===0&&this.blur){this.blur.destroy(false);this.blur=null;}
+  if(state.brightness===1&&state.grayscale===0&&this.color){this.color.destroy(false);this.color=null;}
  }
  dispose():void {this.blur?.destroy(false);this.color?.destroy(false);this.blur=null;this.color=null;}
 }
@@ -28,7 +30,7 @@ export class ImageStage {
  ruleDiagnostics(){return this.rules.diagnostics;}
  validate(snapshot:DeepReadonly<Snapshot>):void {this.frames.validate(snapshot,this.textures);const bytes=this.rules.validate(snapshot)+this.composition.validate(snapshot),canvas=this.effects?.validate(snapshot);ensure(bytes<=this.ruleLimit,'RULE_COMPOSITION_BUDGET','Combined rule workspace exceeds budget');if(canvas)ensure(bytes+canvas.bytes+(this.background?1280*720*4:0)<=(this.maxCanvasBytes??67108864),'CANVAS_COMPOSITION_BUDGET','Combined Canvas and rule composition exceeds budget');}
  setVideo(texture:Texture|null,rect:InteractionRect|null):void {if(this.video){this.video.destroy();this.video=null;}if(texture&&rect){this.video=new Sprite(texture);this.video.label='galbox-video';this.video.position.set(rect.x,rect.y);this.video.width=rect.width;this.video.height=rect.height;this.video.zIndex=2;this.app.stage.addChild(this.video);}this.invalidate();}
- pruneHidden(snapshot:DeepReadonly<Snapshot>):void {this.rules.prune(snapshot);this.key=null;}
+ pruneHidden(snapshot:DeepReadonly<Snapshot>):void {this.rules.prune(snapshot);if(this.effects?.releaseTransient())this.invalidate();else this.key=null;}
  invalidate():void {this.key=null;this.backgroundKey=null;this.foregroundKey=null;}
  render(snapshot:DeepReadonly<Snapshot>):void {
   if(this.disposed)return;const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene});if(key===this.key)return;this.rules.prune(snapshot);this.frames.begin();

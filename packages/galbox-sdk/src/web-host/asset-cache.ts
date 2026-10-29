@@ -6,12 +6,18 @@ interface Entry {id:string;refs:number;priority:number;order:number;used:number;
 export class AssetCache {
  private readonly entries=new Map<string,Entry>();private active=0;private order=0;private used=0;private disposed=false;private bytes=0;
  readonly stats={residentBytes:0,peakResidentBytes:0,hits:0,misses:0,evictions:0,active:0,queued:0};
- constructor(private readonly concurrency:number,private readonly maximum:number,private readonly load:(id:string,signal:AbortSignal,reserve:(bytes:number)=>void)=>Promise<ResidentAsset>){}
+ constructor(private readonly concurrency:number,private readonly maximum:number,private readonly load:(id:string,signal:AbortSignal,reserve:(bytes:number)=>void)=>Promise<ResidentAsset>,private readonly onUnused?:()=>void){}
  has(ids:readonly string[]):boolean {return ids.every(id=>this.entries.get(id)?.state==='ready');}
+ /** Never invalidate a lease, in-flight load, or an explicitly protected lookahead. */
+ trim(protectedIds:ReadonlySet<string>,maximum=2):number {
+  if(this.disposed)return 0;ensure(Number.isSafeInteger(maximum)&&maximum>=0,'RESOURCE_TRIM_BUDGET','Invalid trim batch');let count=0;
+  for(const entry of [...this.entries.values()].sort((a,b)=>a.used-b.used))if(count<maximum&&entry.state==='ready'&&entry.refs===0&&!protectedIds.has(entry.id)){this.remove(entry);this.stats.evictions++;count++;}
+  return count;
+ }
  acquire(ids:readonly string[],signal:AbortSignal,priority=0):AssetUse {
   ensure(!this.disposed&&!signal.aborted,'ASSET_CANCELLED','Resource request cancelled');const entries:Entry[]=[];
   for(const id of new Set(ids)){let entry=this.entries.get(id);if(entry){entry.priority=Math.min(entry.priority,priority);entry.refs++;entry.used=++this.used;this.stats.hits++;}else{let resolve=()=>{},reject:(e:unknown)=>void=()=>{};const promise=new Promise<void>((a,b)=>{resolve=a;reject=b;});entry={id,refs:1,priority,order:++this.order,used:++this.used,state:'queued',bytes:0,abort:new AbortController(),promise,resolve,reject};this.entries.set(id,entry);this.stats.misses++;}entries.push(entry);}
-  let released=false,rejectAbort:(e:unknown)=>void=()=>{};const cancelled=new Promise<never>((_r,reject)=>{rejectAbort=reject;}),release=()=>{if(released)return;released=true;signal.removeEventListener('abort',abort);for(const entry of entries){entry.refs--;if(entry.refs===0&&entry.state!=='ready'){entry.abort.abort();entry.reject(new GalboxError('ASSET_CANCELLED',entry.id));if(this.entries.get(entry.id)===entry)this.entries.delete(entry.id);}}this.update();},abort=()=>{rejectAbort(new GalboxError('ASSET_CANCELLED','Resource use cancelled'));release();};
+  let released=false,rejectAbort:(e:unknown)=>void=()=>{};const cancelled=new Promise<never>((_r,reject)=>{rejectAbort=reject;}),release=()=>{if(released)return;released=true;signal.removeEventListener('abort',abort);let unused=false;for(const entry of entries){entry.refs--;if(entry.refs===0&&entry.state==='ready')unused=true;if(entry.refs===0&&entry.state!=='ready'){entry.abort.abort();entry.reject(new GalboxError('ASSET_CANCELLED',entry.id));if(this.entries.get(entry.id)===entry)this.entries.delete(entry.id);}}this.update();if(unused)this.onUnused?.();},abort=()=>{rejectAbort(new GalboxError('ASSET_CANCELLED','Resource use cancelled'));release();};
   signal.addEventListener('abort',abort,{once:true});let failed=false,failure:unknown;const ready=Promise.race([Promise.all(entries.map(e=>e.promise.catch(error=>{if(!failed){failed=true;failure=error;}release();throw failure;}))).then(()=>{}),cancelled]);this.pump();return {ready,release};
  }
  private update():void {this.stats.residentBytes=this.bytes;this.stats.peakResidentBytes=Math.max(this.stats.peakResidentBytes,this.bytes);this.stats.active=this.active;this.stats.queued=[...this.entries.values()].filter(e=>e.state==='queued').length;}

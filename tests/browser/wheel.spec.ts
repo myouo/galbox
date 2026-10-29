@@ -1,5 +1,18 @@
 import {test,expect} from '@playwright/test';
 import type * as Harness from './harness/sdk.js';
+test('step wheel accepts successive notches, bounds pending input, protects menu/load tails and allows an explicit gesture preference',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();
+ const result=await page.evaluate(async()=>{
+  const url='http://127.0.0.1:4174/sdk.js',s:typeof Harness=await import(url),b=new s.ProgramBuilder({gameId:'wheel-steps',release:'v1',entry:'main'}),store=new s.MemoryStore(),defaults=s.defaultPreferences();await store.writePreferences(defaults,0);
+  b.function({id:'main',entry:'line0',layout:1,params:[],locals:[],returns:'void',code:[...Array.from({length:12},(_,i)=>s.instruction('text.page',{at:'line'+i,textId:'line'+i,revision:'v1',speaker:'',content:'Successive physical wheel notches.'})),s.instruction('control.end',{at:'end'})]});
+  const mount=document.createElement('div');document.body.append(mount);const p=await s.createPlayer({program:b.build(),mount,provider:{async acquire(){throw new Error('No assets');}},store,saveCompatibilitySeries:'1',graphics:{renderer:'canvas'},preferencesDefaults:{...defaults,input:{...defaults.input,wheelMode:'step'}}}),delay=(ms=50)=>new Promise<void>(r=>setTimeout(r,ms)),id=()=>p.capture().text?.textId,wheel=()=>mount.dispatchEvent(new WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true}));
+  try{await p.updatePreferences({text:{intervalMs:200}});await p.start();await delay(180);wheel();await delay();const revealed={id:id(),complete:s.isTextComplete(p.capture().text!)};wheel();await delay();const second=id();wheel();await delay();const third={id:id(),complete:s.isTextComplete(p.capture().text!)};wheel();await delay();const fourth=id();for(let i=0;i<20;i++)wheel();await delay();const burst=id();
+   await p.updatePreferences({text:{intervalMs:0}});await delay(180);await p.showSystemScreen('history');await p.showSystemScreen('story');wheel();await delay(30);const menuTail=id();await delay(170);wheel();await delay();const resumed=id();await p.save('cut');await p.load('cut');wheel();await delay(30);const loadTail=id();await delay(170);wheel();await delay();const loadedNext=id();
+   await p.updatePreferences({input:{wheelMode:'gesture'}});await delay(240);wheel();await delay(40);const one=id();wheel();await delay(40);wheel();await delay();const inertia=id(),stored=(await store.readPreferences())?.value.input.wheelMode;return {revealed,second,third,fourth,burst,menuTail,resumed,loadTail,loadedNext,one,inertia,stored,error:p.getSnapshot().error};
+  }finally{p.dispose();mount.remove();}
+ });
+ expect(result).toEqual({revealed:{id:'line0',complete:true},second:'line1',third:{id:'line1',complete:true},fourth:'line2',burst:'line2',menuTail:'line2',resumed:'line3',loadTail:'line3',loadedNext:'line4',one:'line5',inertia:'line5',stored:'gesture',error:null});
+});
 test('wheel input binds one gesture to one prompt and protects menus, edits, nested roots, reloads and other players',async({page})=>{
  await page.goto('/');await page.getByRole('button',{name:'开始阅读',exact:true}).waitFor();
  const result=await page.evaluate(async()=>{
