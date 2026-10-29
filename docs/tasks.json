@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "H3-03",
+  "current_task": "G1-05",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-30",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3087,7 +3087,7 @@
       ],
       "status": "in_progress",
       "implementation": "in_progress",
-      "verification": "pending",
+      "verification": "in_progress",
       "outputs": [
         "owned view-only message visibility",
         "explicit menu audio policy",
@@ -3105,9 +3105,11 @@
         "history keeps real BGM playing",
         "capture and restore remain authoritative"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/h3-04/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "按原KS/TJS配置逐项落实，实例继续以实际SDK包消费。"
+      "next_action": "已消费逐次滚轮/触控板偏好、历史到底返回与150ms保护、存读档循环翻页及顶层右键取消；继续原config已读字速/nonstop、历史富样式/姓名、无框图片变体和阅读右键隐藏，不标整体完成。"
     },
     {
       "id": "F-01F",
@@ -3137,9 +3139,11 @@
         "actual browser and R2",
         "original config and secondary input"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/h3-04/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "按原KS/TJS配置逐项落实，实例继续以实际SDK包消费。"
+      "next_action": "八语前置间章79–80段/第二门含尾间章3672–3682段IR及全部源控制/跳转已验证，未编译Program。下一实现有限条件/选择、noise/heartbeat/eyecatch等源宏与W1-03B2组合，量真实闭包，不普遍抬预算。"
     },
     {
       "id": "W1-06",
@@ -3173,6 +3177,42 @@
       ],
       "blocker": null,
       "next_action": "已完成有限不可变视图/Canvas复用、预取和预备音频交接验证；普通CPU改善有限、弱设备和公网尾延迟仍存在，详见证据。继续G1-05和F-01F，不扩大为全设备或整作性能认证。"
+    },
+    {
+      "id": "H3-04",
+      "milestone": "H3",
+      "title": "回收无引用资源与后台Canvas工作面、收窄HTTP目录持有",
+      "depends_on": [
+        "H3-03",
+        "W1-06"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "lease-safe bounded idle resource trim",
+        "background Canvas transient release and reconstruction",
+        "validated HTTP provider catalog ownership",
+        "real cut and synthetic provider memory comparison"
+      ],
+      "contracts": [
+        "C01",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "no leased or in-flight resource eviction",
+        "lookahead and active media remain valid",
+        "visible pixels and save restoration preserved",
+        "provider retains catalog without bypassing full validation",
+        "actual paired memory evidence"
+      ],
+      "evidence": [
+        "docs/evidence/h3-04/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "有限回收已验；OS/GPU回收时机与真机/长期认证仍独立。继续G1-05及F-01F的源语义/模块组合，不破坏当前状态闭包来降低数字。"
     }
   ]
 }
