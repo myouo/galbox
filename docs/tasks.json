@@ -20,7 +20,7 @@
   ],
   "current_task": "H3-03",
   "engine_status": "web_delivery_scaling",
-  "last_updated": "2026-10-29",
+  "last_updated": "2026-10-30",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -2881,9 +2881,9 @@
         "H3-01",
         "W1-02"
       ],
-      "status": "in_progress",
-      "implementation": "implemented",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "catalog-size profiling of Player.publish",
         "identity-invalidated immutable release/resource view reuse if profiling warrants it"
@@ -2899,9 +2899,11 @@
         "catalog-scale-before-after-profile",
         "resource-load-eviction-and-recreation-invalidation"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/h3-03/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "ADR0068已实现只读静态目录/未变Core分支复用、显示树复用；真实存档基线已采样，先完成新旧弱设备/长时间内存对照及全回归，再标done。"
+      "next_action": "已完成有限不可变视图/Canvas复用、预取和预备音频交接验证；普通CPU改善有限、弱设备和公网尾延迟仍存在，详见证据。继续G1-05和F-01F，不扩大为全设备或整作性能认证。"
     },
     {
       "id": "E1-05",
@@ -3146,9 +3148,9 @@
       "depends_on": [
         "W1-02"
       ],
-      "status": "in_progress",
-      "implementation": "implemented",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "bounded prefetch handoff",
         "explicit resourceAudio policy",
@@ -3166,9 +3168,11 @@
         "save-retry-and-memory-budget-preserved",
         "rapid-reading-real-browser-evidence"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/h3-03/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "受控浏览器接续和音频不断流通过；完成独立实包、实际序章100ms连续推进、配置持久化及部署检查。"
+      "next_action": "已完成有限不可变视图/Canvas复用、预取和预备音频交接验证；普通CPU改善有限、弱设备和公网尾延迟仍存在，详见证据。继续G1-05和F-01F，不扩大为全设备或整作性能认证。"
     }
   ]
 }
