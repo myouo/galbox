@@ -5,7 +5,7 @@ import {inspectResource,resourceUsage,canonicalReleaseJSON} from '../release/ind
 import {audioPlayback} from '../release/audio.js';
 import {verifiedBytes} from './assets.js';
 import type {AssetProvider} from './assets.js';
-import {prepareMedia,prepareMediaURI} from './media.js';
+import {streamAudioWarmBytes,prepareMedia,prepareMediaURI} from './media.js';
 import type {PreparedMedia} from './media.js';
 import {openStream} from './streams.js';
 import {streamRequest} from '../runtime/stream-ports.js';
@@ -18,12 +18,12 @@ export class ResourceLoader {
  expectedFact(id:string):ResourceFact|undefined{return this.facts.get(id)??this.known.get(id);}
  async load(id:string,signal:AbortSignal,reserve:(n:number)=>void):Promise<LoadedResource> {
   const asset=this.assets.get(id);ensure(asset,'LOADING_ASSET',id);ensure(!signal.aborted,'ASSET_CANCELLED',id);let texture:Texture|undefined,image:HTMLImageElement|undefined,buffer:AudioBuffer|undefined,media:PreparedMedia|undefined,stream:PreparedStream|undefined,font:FontFace|undefined,fontCSS:string|undefined;let disposed=false,committedFact:ResourceFact|undefined;
-  const dispose=()=>{if(disposed)return;disposed=true;if(committedFact&&this.known.get(id)===committedFact)this.known.delete(id);texture?.destroy(true);image?.remove();image?.removeAttribute('src');if(media?.kind==='blob')URL.revokeObjectURL(media.url);stream?.release();if(font)document.fonts.delete(font);};
+  const dispose=()=>{if(disposed)return;disposed=true;if(committedFact&&this.known.get(id)===committedFact)this.known.delete(id);texture?.destroy(true);image?.remove();image?.removeAttribute('src');media?.dispose?.();if(media?.kind==='blob')URL.revokeObjectURL(media.url);stream?.release();if(font)document.fonts.delete(font);};
   try {
    const expected=this.facts.get(id);let fact:ResourceFact,bytes:Uint8Array|undefined,integrity:IntegrityEvidence;
    if(asset.transport){ensure(expected&&this.streaming&&this.provider.streams,'STREAM_POLICY','Streaming needs release facts, explicit policy and a provider');fact={...expected};}
    else {bytes=await verifiedBytes(this.provider,this.program,asset,signal,this.limits.maxAssetBytes);fact=inspectResource(asset,bytes,b=>new TextDecoder('utf-8',{fatal:true}).decode(b));if(expected)ensure(canonicalReleaseJSON(expected)===canonicalReleaseJSON(fact),'RELEASE_RESOURCE_FACTS',id);}
-   let cost=fact.kind==='image'?fact.width*fact.height*8:fact.kind==='video'?fact.width*fact.height*8+(asset.transport?0:fact.bytes):fact.kind==='font'?fact.bytes*4:fact.playback==='element'?(asset.transport?0:fact.bytes):Math.ceil(fact.frames*this.context.sampleRate/fact.sampleRate)*fact.channels*4;
+   let cost=fact.kind==='image'?fact.width*fact.height*8:fact.kind==='video'?fact.width*fact.height*8+(asset.transport?0:fact.bytes):fact.kind==='font'?fact.bytes*4:fact.playback==='element'?(asset.transport?streamAudioWarmBytes(fact):fact.bytes):Math.ceil(fact.frames*this.context.sampleRate/fact.sampleRate)*fact.channels*4;
    // Reserve encoded input plus decoded/device estimates while decoding; no unbounded parallel allocation.
    reserve(cost+(bytes?.byteLength??0));resourceUsage([...this.known.values()].filter(f=>f.id!==id).concat(fact),this.limits,this.context.sampleRate);ensure(!signal.aborted,'ASSET_CANCELLED',id);
    if(asset.transport){ensure(this.provider.streams&&(fact.kind==='audio'||fact.kind==='video')&&asset.kind===fact.kind,'STREAM_FACT',id);this.catalogHash??=crypto.subtle.digest('SHA-256',new TextEncoder().encode(canonicalWireJSON(this.program.assets))).then(b=>[...new Uint8Array(b)].map(n=>n.toString(16).padStart(2,'0')).join(''));const identity=parseResolvedStreamIdentity({gameId:this.program.gameId,release:this.program.release,catalogSha256:await this.catalogHash,assetId:id,expectedSha256:asset.sha256,kind:asset.kind,mime:asset.mime,version:asset.transport.version});const request=identity.kind==='audio'&&fact.kind==='audio'?streamRequest(identity,fact):identity.kind==='video'&&fact.kind==='video'?streamRequest(identity,fact):null;ensure(request,'STREAM_IDENTITY',id);stream=await openStream(this.provider.streams,request,signal);media=await prepareMediaURI(asset,fact,stream.uri,signal);const lease=stream;media.validate=input=>lease.validate(input);integrity=stream.evidence;
