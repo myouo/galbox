@@ -51,3 +51,13 @@ test('hanging wrap spaces do not shrink readable text that already fits',async({
   try{await p.start();const root=mount.querySelector<HTMLElement>('[data-text-window]')!,paragraph=root.querySelector('p')!,space=[...root.querySelectorAll<HTMLElement>('.galbox-text-unit')].find(e=>e.textContent===' ')!;return {factor:Number(root.style.getPropertyValue('--galbox-fit-scale')),font:parseFloat(getComputedStyle(paragraph).fontSize),content:paragraph.textContent,expected:content,hanging:space.offsetLeft+space.offsetWidth>root.clientWidth,overflow:root.scrollHeight-root.clientHeight};}finally{p.dispose();mount.remove();}
  });expect(result.hanging).toBe(true);expect(result.factor).toBe(1);expect(result.font).toBe(10);expect(result.content).toBe(result.expected);expect(result.overflow).toBe(0);
 });
+
+test('blank first lines that rewrap during fitting reserve the current candidate font bounds',async({page})=>{
+ await page.goto('/');const result=await page.evaluate(async()=>{
+  const url='http://127.0.0.1:4174/sdk.js',s:typeof Harness=await import(url),b=new s.ProgramBuilder({gameId:'blank-first-line',release:'v1',entry:'main'});
+  b.textLayout(s.textLayout('body',[s.textTheme('theme',{font:{kind:'system',family:'monospace'},fontSize:30,lineHeight:1,letterSpacing:0,padding:0,borderWidth:0})],[s.textWindow('body','adv','theme',{x:0,y:0,width:400,height:70})]));
+  const content=' '.repeat(24)+'A'.repeat(40),program=b.function({id:'main',entry:'text',layout:1,params:[],locals:[],returns:'void',code:[s.richPage('text','text','v1','',[s.richText.text(content)]),s.instruction('control.end',{at:'end'})]}).build(),mount=document.createElement('div');mount.style.cssText='position:relative;width:640px;height:360px';document.body.append(mount);
+  const p=await s.createPlayer({program,provider:{async acquire(){throw new Error('no assets');}},mount,store:new s.MemoryStore(),saveCompatibilitySeries:'v1',graphics:{renderer:'canvas'}});p.setPaused(true);
+  try{await p.start();const root=mount.querySelector<HTMLElement>('[data-text-window]')!,box=root.getBoundingClientRect(),ink=[...root.querySelectorAll<HTMLElement>('.galbox-text-unit')].filter(e=>e.textContent?.trim());return {fit:Number(root.style.getPropertyValue('--galbox-fit-scale')),content:root.querySelector('p')?.textContent,expected:content,overflow:root.scrollHeight-root.clientHeight,escaped:ink.some(e=>{const r=e.getBoundingClientRect();return r.top<box.top-1||r.bottom>box.bottom+1||r.right>box.right+1;})};}finally{p.dispose();mount.remove();}
+ });expect(result.fit).toBeGreaterThan(.5);expect(result.fit).toBeLessThan(1);expect(result.content).toBe(result.expected);expect(result.overflow).toBe(0);expect(result.escaped).toBe(false);
+});

@@ -31,15 +31,14 @@ class DomTextRenderer implements TextRenderer {
  private fitPage(root:HTMLElement):void {
   root.style.setProperty('--galbox-fit-scale','1');root.style.setProperty('--galbox-fit-leading','0px');root.scrollTop=0;root.scrollLeft=0;
   if(root.clientWidth===0||root.clientHeight===0)return;
-  // Offset boxes are layout coordinates, unaffected by the stage camera.
-  // Some fonts extend above the first line box despite a matching scrollHeight.
-  // Hanging wrap whitespace has no ink; keep its line layout without fitting its box.
-  const units=[...root.querySelectorAll<HTMLElement>('.galbox-text-unit,ruby,rt,.galbox-speaker,p>span')].filter(e=>!e.classList.contains('galbox-text-unit')||!!e.textContent?.trim()||!!e.style.textDecoration),top=Math.min(0,...units.filter(e=>e.offsetHeight>0).map(e=>e.offsetTop));
-  if(top<0)root.style.setProperty('--galbox-fit-leading',`${1-top}px`);
+  // Layout offsets are independent of the stage camera. Wrapped blank leading
+  // can become an ink-bearing first line at a different candidate size.
+  const all=[...root.querySelectorAll<HTMLElement>('.galbox-text-unit,ruby,rt,.galbox-speaker,p>span')],units=all.filter(e=>!e.classList.contains('galbox-text-unit')||!!e.textContent?.trim()||!!e.style.textDecoration);
+  const setScale=(value:number)=>{root.style.setProperty('--galbox-fit-scale',String(value));root.style.setProperty('--galbox-fit-leading','0px');const top=Math.min(0,...all.filter(e=>e.offsetHeight>0).map(e=>e.offsetTop));if(top<0)root.style.setProperty('--galbox-fit-leading',`${(1-top)/value}px`);};
   const fits=()=>root.scrollHeight<=root.clientHeight&&root.scrollWidth<=root.clientWidth&&units.every(e=>e.offsetHeight===0||e.offsetTop>=0&&e.offsetTop+e.offsetHeight<=root.clientHeight&&e.offsetLeft>=0&&e.offsetLeft+e.offsetWidth<=root.clientWidth);
-  if(fits())return;
-  let low=0,high=1;for(let i=0;i<12;i++){const middle=(low+high)/2;root.style.setProperty('--galbox-fit-scale',String(middle));if(fits())low=middle;else high=middle;}
-  root.style.setProperty('--galbox-fit-scale',String(low||1/4096));root.scrollTop=0;root.scrollLeft=0;
+  setScale(1);if(fits())return;
+  let low=0,high=1;for(let i=0;i<12;i++){const middle=(low+high)/2;setScale(middle);if(fits())low=middle;else high=middle;}
+  setScale(low||1/4096);root.scrollTop=0;root.scrollLeft=0;
  }
  dispose():void {if(this.disposed)return;this.disposed=true;this.last=null;this.observer?.disconnect();document.fonts?.removeEventListener('loadingdone',this.fontsChanged);this.legacy?.dispose();for(const w of this.windows.values()){for(const entry of w.entries.values())entry.dispose();w.root.remove();}this.windows.clear();this.layer?.remove();this.layer=null;this.transformed=null;}
 }

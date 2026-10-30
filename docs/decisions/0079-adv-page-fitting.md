@@ -5,7 +5,9 @@ authored font size whenever the complete page fits. On overflow, reduce a shared
 typographic factor with a bounded twelve-step measurement search; preserve the
 relative sizes of ruby, speaker and authored rich spans. Measure inline font
 boxes as well as scroll extents, reserving missing leading above the first line;
-layout offsets keep this independent of stage camera transforms. Hanging wrap
+layout offsets keep this independent of stage camera transforms. Recalculate
+leading for every candidate size, since blank first lines can rewrap into visible
+text during fitting. Hanging wrap
 whitespace has no painted glyph box, so it participates in line layout but is
 excluded from ink bounds unless it is underlined. Wrap otherwise
 unbreakable text. Reset fitting for each page, theme, display preference, font
