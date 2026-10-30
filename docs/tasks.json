@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "F-01F",
+  "current_task": "W1-03B2",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-30",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -2315,9 +2315,13 @@
       "acceptance": [
         "advanced-module-closure"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/decisions/0077-advanced-module-composition.md",
+        "docs/decisions/0078-rule-presentation.md",
+        "docs/evidence/f-01f/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "ADR0077 v2有界组合/分段资源目录、源音频声明、历史与活动任务恢复闭包、稳定鉴赏身份和显式旧档目标已实现，check/370单元通过。下一独立实包验证第一门至完整二门、图文旧档及回放；脚本UI/流程图/视频等超出当前v2支持集，仍明确拒绝，不标done。"
+      "next_action": "ADR0077/0078有限v2组合/分段资源、富文/窗口/舞台/源音频/鉴赏与完整恢复闭包已消费真实tarball，check/371单元、6模块及2规则浏览器、八语正式两门/旧档/回放/实际R2通过。下一为脚本UI/流程图/视频/扩展operations建立有限协议和失败反例，再逐项实施模块执行/恢复闭包；当前明确拒绝，跨v2发行版仍要求显式迁移，保持in_progress。"
     },
     {
       "id": "I1-01",
@@ -3119,9 +3123,9 @@
         "F-01E",
         "G1-05"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "partial",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "eight-locale complete door2",
         "source interludes and persistent unlock",
@@ -3145,7 +3149,7 @@
         "docs/evidence/f-01f/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "八语独立完整二门/memory1双选项/返回与scenario3边界、16源路径/确认/备份和中英浏览器已通过；74函数，无预算放宽。下一W1-03B2高级模块生产/执行/恢复闭包，正式第一门接续/旧档/同引擎回放/R2；脚本输入限制/历史注记/首行定位/glyph仍有差异。保持in_progress，不把独立内容验收冒充正式接续。"
+      "next_action": "既定输出已验收：正式第一门→间章→完整二门/memory1双选项→第三门入口；八语16路线/48旧切点/64冻结URI切点、中英旧档/图文刷新/同引擎原生回放、实际R2及隔离公开/受保护部署通过。第三门正文、整作/原生tft/逐像素/真机长期另验；后续通用模块能力继续W1-03B2，不反复强推。"
     },
     {
       "id": "W1-06",
