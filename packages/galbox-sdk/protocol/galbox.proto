@@ -12270,6 +12270,69 @@ message Gbx_StoredSlotSummary {
   optional Gbx_StoredSlotSummary_metadata metadata = 4;
 }
 
+message Gbx_SequencePose_x {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_y {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_alpha {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_scaleX {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_scaleY {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_rotation {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_skewX {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_skewY {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_pivotX {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_pivotY {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_anchorX {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose_anchorY {
+  optional double value = 1;
+}
+
+message Gbx_SequencePose {
+  optional Gbx_SequencePose_x x = 1;
+  optional Gbx_SequencePose_y y = 2;
+  optional Gbx_SequencePose_alpha alpha = 3;
+  optional Gbx_SequencePose_scaleX scaleX = 4;
+  optional Gbx_SequencePose_scaleY scaleY = 5;
+  optional Gbx_SequencePose_rotation rotation = 6;
+  optional Gbx_SequencePose_skewX skewX = 7;
+  optional Gbx_SequencePose_skewY skewY = 8;
+  optional Gbx_SequencePose_pivotX pivotX = 9;
+  optional Gbx_SequencePose_pivotY pivotY = 10;
+  optional Gbx_SequencePose_anchorX anchorX = 11;
+  optional Gbx_SequencePose_anchorY anchorY = 12;
+}
+
 message Gbx_SequenceFrame_duration {
   optional sint64 value = 1;
 }
@@ -12279,7 +12342,7 @@ message Gbx_SequenceFrame_frame {
 }
 
 message Gbx_SequenceFrame_pose {
-  optional Gbx_StagePose value = 1;
+  optional Gbx_SequencePose value = 1;
 }
 
 message Gbx_SequenceFrame {

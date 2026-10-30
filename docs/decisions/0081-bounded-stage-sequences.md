@@ -19,3 +19,13 @@ data-only source definitions. It must report sampling/random-sequence fidelity
 limits separately. Unsupported schedule bodies and malformed clocks fail.
 Verify variable durations, delay, loop/stop, page copy, asset replacement,
 modular cold restore and actual Canvas/WebGL pixels/capture.
+
+Sampled additive motion also accepts `step-end` easing on existing bounded
+MotionTrack segments. It holds the previous sample until the boundary, then
+applies the next one. Existing 32-segment, offset and duration limits remain;
+converters can fold redundant hold samples while preserving their boundaries.
+
+Pose samples contain only their declared numeric channels. Every step must use
+the same frame/pose channel set, so a large tick and a sequence of small ticks
+project the same result; omitted historical channels cannot make phase depend
+on device tick granularity. Unmentioned transforms remain unchanged.

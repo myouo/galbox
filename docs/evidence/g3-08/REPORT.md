@@ -17,3 +17,12 @@ in progress until those complete.
 
 The synthetic tests establish SDK semantics, not native-game pixel equivalence.
 Source-specific sampled randomness/rasterization must be reported by its converter.
+
+Follow-up source integration exposed two bounded requirements: partial pose
+channels and sampled additive step-end motion. Sequence schedules now require a
+uniform channel set across frames, preventing tick-granularity-dependent state.
+Existing motion target/segment bounds remain unchanged; converters split target
+batches and fold redundant hold samples. `pnpm check` passed on these changes;
+the shape/negative-source and step-end restore tests are included in the final
+unit suite. The isolated packed consumer passed before this follow-up and is
+rechecked on the final package by the independent instance.

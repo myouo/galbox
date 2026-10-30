@@ -413,6 +413,7 @@ definitions:
                 - linear
                 - ease-in
                 - ease-out
+                - step-end
               x-proto-tag: 3
           required:
             - to
@@ -13196,6 +13197,71 @@ definitions:
       - hasPrevious
       - metadata
     additionalProperties: false
+  SequencePose:
+    type: object
+    properties:
+      x:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 1
+      y:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 2
+      alpha:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 3
+      scaleX:
+        type: number
+        minimum: -100
+        maximum: 100
+        x-proto-tag: 4
+      scaleY:
+        type: number
+        minimum: -100
+        maximum: 100
+        x-proto-tag: 5
+      rotation:
+        type: number
+        minimum: -360000
+        maximum: 360000
+        x-proto-tag: 6
+      skewX:
+        type: number
+        minimum: -85
+        maximum: 85
+        x-proto-tag: 7
+      skewY:
+        type: number
+        minimum: -85
+        maximum: 85
+        x-proto-tag: 8
+      pivotX:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 9
+      pivotY:
+        type: number
+        minimum: -1000000
+        maximum: 1000000
+        x-proto-tag: 10
+      anchorX:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 11
+      anchorY:
+        type: number
+        minimum: 0
+        maximum: 1
+        x-proto-tag: 12
+    additionalProperties: false
+    minProperties: 1
   SequenceFrame:
     type: object
     properties:
@@ -13208,7 +13274,7 @@ definitions:
         $ref: "#/definitions/ImageFrame"
         x-proto-tag: 2
       pose:
-        $ref: "#/definitions/StagePose"
+        $ref: "#/definitions/SequencePose"
         x-proto-tag: 3
     required:
       - duration
@@ -14133,3 +14199,4 @@ x-proto-envelope:
   RulePresentation: 125
   SequenceFrame: 126
   SequenceTaskState: 127
+  SequencePose: 128
