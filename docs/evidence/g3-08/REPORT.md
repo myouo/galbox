@@ -26,3 +26,14 @@ batches and fold redundant hold samples. `pnpm check` passed on these changes;
 the shape/negative-source and step-end restore tests are included in the final
 unit suite. The isolated packed consumer passed before this follow-up and is
 rechecked on the final package by the independent instance.
+
+Directional composition follow-up (ADR0082/G3-09): the three additional scroll
+edges use the same authoritative composition task. A fixed local viewport mask
+keeps camera-exposed borders identical in Canvas and WebGL; it uses the existing
+mask path and adds no offscreen surface. `pnpm exec vitest run` passed 393 unit
+cases; the final sequence/composition subset passed 26, including rejection of
+premature forged sequence completion. Final `pnpm build:harness` and
+`pnpm exec playwright test tests/browser/composition.spec.ts tests/browser/sequence.spec.ts`
+passed all 14 real pixel/save/restore cases across both backends. Earlier mask
+attempts failed and were repaired before this successful run. Final package and
+source acceptance below supersede the preliminary package figures above.

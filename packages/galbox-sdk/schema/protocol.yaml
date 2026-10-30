@@ -784,6 +784,9 @@ definitions:
           - crossfade
           - rule
           - scroll-top
+          - scroll-right
+          - scroll-bottom
+          - scroll-left
         x-proto-tag: 3
       rule:
         type: string
@@ -3142,6 +3145,9 @@ definitions:
               - crossfade
               - rule
               - scroll-top
+              - scroll-right
+              - scroll-bottom
+              - scroll-left
             x-proto-tag: 6
           rule:
             type: string
@@ -10395,6 +10401,9 @@ definitions:
               - crossfade
               - rule
               - scroll-top
+              - scroll-right
+              - scroll-bottom
+              - scroll-left
             x-proto-tag: 6
           rule:
             type: string

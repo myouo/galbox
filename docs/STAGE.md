@@ -44,3 +44,5 @@ H2-01设备兼容扩展见 GRAPHICS.md：Canvas复用上述逻辑状态与基础
 ## Bounded frame/pose sequences (ADR0081)
 
 `stageSequence` declares 1–128 duration-bearing frames, 1–64 explicit stage targets, a required image identity, optional initial delay and finite/loop policy. Core projects the current frame/pose on its active clock, including page copies; targets showing another asset are left alone. The schedule does not restart when restored. `stopStageSequence` and target removal cancel it. Pose/frame ownership conflicts require explicit replacement. Finite sequences can be joined; sequence waits are not implicitly skippable. Source signature, clock and projected state are validated on restore, including v2 code modules. Object/task/texture/resident limits remain unchanged. Converter-prepared random or sampled schedules need their own fidelity report.
+
+ADR0082 extends group scroll to top/right/bottom/left. The incoming group enters from the named edge, while the source exits at the opposite edge. Existing composition membership, camera and independent child motion remain authoritative through save/restore.

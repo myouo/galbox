@@ -3329,6 +3329,38 @@
       ],
       "blocker": null,
       "next_action": "Finish actual tarball independent consumer and third-door source acceptance; native random/pixel fidelity is a separate claim."
+    },
+    {
+      "id": "G3-09",
+      "milestone": "G3",
+      "title": "四向组卷动转场",
+      "depends_on": [
+        "G3-08"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "scroll-top/right/bottom/left public stage.mix methods",
+        "existing composition and source/phase restore contract"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "all directions mid-transition protobuf restore",
+        "Canvas/WebGL real pixels including independent motion and camera",
+        "check and actual package consumption"
+      ],
+      "evidence": [
+        "docs/evidence/g3-08/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Finish directional browser pixels and the third-door independent consumer."
     }
   ]
 }
