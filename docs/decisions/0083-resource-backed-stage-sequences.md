@@ -15,3 +15,10 @@ images, subject to its existing remaining-budget calculation; no Host timer or
 second timeline advances a frame. Slow/missing/corrupt resources keep the previous
 committed view and use the normal retry/cancel path. Restore prepares the exact
 saved phase, without loading a monolithic atlas or restarting the sequence.
+
+Sequence source schedules are immutable Core-owned data. Readonly projection
+validates/seals that subtree once and reuses it; exact JSON footprint still counts
+the entire data and capture/restore still parse complete detached snapshots.
+Period/shape computation is cached only for deeply frozen schedules, never mutable
+external arrays. Elapsed time, stage projection and the remaining snapshot stay
+validated on each view. This avoids repeating source-shape work at display ticks.

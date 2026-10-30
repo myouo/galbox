@@ -47,3 +47,13 @@ subset passed all 16 Canvas/WebGL cases, including six image phases within a
 16MiB two-image working set, failed-frame preservation of the live head, retry,
 eviction and illustrated pixels. This supersedes using large resident atlases
 for the independent instance's long trails; final source/64MiB evidence follows.
+
+Sequence hot-path follow-up: immutable source schedules are sealed/reused by
+readonly projection; full-size accounting and detached capture/restore checks
+remain. Shape/period caching only accepts deeply frozen arrays. Actual synthetic
+`node tests/tooling/profile-sequence.mjs` (20 tasks × 128 steps, 500 ticks) measured
+2458.38ms before and 258.13ms after. Both final snapshots are 296784 JSON chars and
+SHA-256 `62229d1402d39315cd1b7276414ba96e1476ceddc36e30628d1cc2ce03fc3c6c`.
+These are headless synthetic timings, not a claimed native-game FPS result.
+`pnpm exec vitest run` passed 397 cases, including metadata view identity and
+mutable detached-capture isolation. Final browser/check results follow.

@@ -1,6 +1,6 @@
 import {ensure} from '../protocol/index.js';
 import type {Snapshot,DeepReadonly} from '../protocol/index.js';
-import {validateSnapshot} from '../protocol/generated/validators.js';
+import {validateSnapshot,validateSequenceTaskState} from '../protocol/generated/validators.js';
 import {freezeJson,isDeeplyFrozenJSON} from '../protocol/codecs.js';
 import {wireBudget} from '../protocol/budget.js';
 import type {WireFootprint} from '../protocol/budget.js';
@@ -33,10 +33,11 @@ class FrozenFootprints {
 export class SnapshotProjection {
  private previous:DeepReadonly<Snapshot>|undefined;
  private readonly sizes=new FrozenFootprints();
+ private readonly sequences=new WeakSet<object>();
  read(source:Snapshot):DeepReadonly<Snapshot> {
-  // Sealed history is replaced, never edited, by the Core. Other branches are compared by value.
-  freezeJson(source.history);const view=reconcile(source,this.previous,0);
-  const checked=(value:unknown):value is Snapshot=>validateSnapshot(this.previous?.history===source.history&&record(value)?{...value,history:[]}:value);
+  // Sealed history and sequence source schedules are replaced, never edited, by the Core. Other branches are compared by value.
+  freezeJson(source.history);for(const task of source.tasks){const metadata=task.sequenceTask;if(metadata&&!this.sequences.has(metadata)){ensure(validateSequenceTaskState(metadata),'SCHEMA_SEQUENCE_TASK_STATE',JSON.stringify(validateSequenceTaskState.errors));freezeJson(metadata);this.sequences.add(metadata);}}const view=reconcile(source,this.previous,0);
+  const checked=(value:unknown):value is Snapshot=>{if(!record(value))return false;const tasks=Array.isArray(value.tasks)?value.tasks.map(task=>{if(record(task)&&record(task.sequenceTask)&&this.sequences.has(task.sequenceTask)){const {sequenceTask,...fields}=task;return fields;}return task;}):value.tasks;return validateSnapshot({...value,tasks,...(this.previous?.history===source.history?{history:[]}:{})});};
   ensure(checked(view),'SCHEMA_SNAPSHOT',JSON.stringify(validateSnapshot.errors));
   const frozen=freezeJson(view);this.sizes.read(frozen);this.previous=frozen;return frozen;
  }
