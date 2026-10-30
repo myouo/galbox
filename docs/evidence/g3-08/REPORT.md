@@ -1,59 +1,42 @@
-# G3-08 bounded frame/pose schedules
+# G3-08 / G3-09 / G3-10 bounded sequence and scroll acceptance
 
-2026-10-31, Linux x64 / Node 22+ / locked pnpm. ADR0081 defines a bounded,
-pure-data sequence task with source/clock/projection validation and v2 modular
-closure. No object/task/texture/resident limits were raised.
+2026-10-31, Linux x64 / Node 24.15.0 / pnpm 11.28.5 / locked Playwright 1.64.1.
+ADR0081 defines bounded atlas/pose schedules; ADR0082 adds four scroll edges;
+ADR0083 adds typed resource frames and ordinary preparation/retry/lease ownership.
+Core owns phase, exact source, explicit targets and saved projection. Snapshot,
+object/task/texture/resident limits remain unchanged. v1 module capability limits
+were not widened; advanced v2 accepts the declared new capabilities.
 
-Actual commands: `pnpm test` passed 380 tests (before adding two ownership/finite
-join cases); `pnpm exec vitest run tests/unit/sequence.test.ts` passed all five
-sequence cases. `pnpm check` passed. `pnpm build:harness` and
-`pnpm exec playwright test tests/browser/sequence.spec.ts` passed both Canvas
-and WebGL real atlas-pixel, illustrated-save and restored-phase cases.
-`pnpm test:package` passed: 272 SDK files / 613501 compressed bytes, no game,
-test, evidence, log or schema JSON payload in the package. Raw logs remain in
-independent-instance ignored artifacts/door3. Independent packed consumer and
-third-door source consumption are the final integration checks; task remains
-in progress until those complete.
+Actual final checks:
 
-The synthetic tests establish SDK semantics, not native-game pixel equivalence.
-Source-specific sampled randomness/rasterization must be reported by its converter.
+- `pnpm check`: generated/types/headless/import/repository checks passed.
+- `pnpm exec vitest run`: 397 tests passed, including detached mutable captures,
+  immutable metadata views, source/kind/phase/ownership negatives and cold modules.
+- `pnpm build:harness` then asset-sequence/sequence/composition browser specs:
+  16 Canvas/WebGL cases passed. Six resource phases fit a 16MiB two-image budget;
+  a failed image preserves the old live head/pixels, retries and evicts correctly.
+  Four scroll directions retain camera/independent motion and illustrated pixels.
+- `pnpm test:consumer`: strict isolated tarball TypeScript/build/browser playback,
+  save/restore/backup and existing common-feature suite passed.
+- `node scripts/audit-package.mjs`: 272 files, 616215 compressed bytes; no game,
+  tests, logs, evidence, maps or JSON schemas in the actual package.
+- `node scripts/check-browser-shards.mjs`: all 245 discovered cases covered once
+  across five CI groups. This is discovery, not a claim of running all 245 cases.
 
-Follow-up source integration exposed two bounded requirements: partial pose
-channels and sampled additive step-end motion. Sequence schedules now require a
-uniform channel set across frames, preventing tick-granularity-dependent state.
-Existing motion target/segment bounds remain unchanged; converters split target
-batches and fold redundant hold samples. `pnpm check` passed on these changes;
-the shape/negative-source and step-end restore tests are included in the final
-unit suite. The isolated packed consumer passed before this follow-up and is
-rechecked on the final package by the independent instance.
+Independent source consumption is in myouo/morgana docs/evidence/THIRD_DOOR.md:
+eight fresh third-door routes/23066 text parts/80 cold cuts, real bilingual
+illustrated refresh, eight-language no-scroll geometry, and consecutive trail
+handoffs under the existing 64MiB policy. Its game payload is not in this SDK.
 
-Directional composition follow-up (ADR0082/G3-09): the three additional scroll
-edges use the same authoritative composition task. A fixed local viewport mask
-keeps camera-exposed borders identical in Canvas and WebGL; it uses the existing
-mask path and adds no offscreen surface. `pnpm exec vitest run` passed 393 unit
-cases; the final sequence/composition subset passed 26, including rejection of
-premature forged sequence completion. Final `pnpm build:harness` and
-`pnpm exec playwright test tests/browser/composition.spec.ts tests/browser/sequence.spec.ts`
-passed all 14 real pixel/save/restore cases across both backends. Earlier mask
-attempts failed and were repaired before this successful run. Final package and
-source acceptance below supersede the preliminary package figures above.
+`node tests/tooling/profile-sequence.mjs` measured the same synthetic 20 tasks ×
+128 steps / 500 ticks: 2458.38ms before, 258.13ms after immutable schedule/period
+reuse. Both detached final snapshots contain 296784 JSON chars and SHA-256
+`62229d1402d39315cd1b7276414ba96e1476ceddc36e30628d1cc2ce03fc3c6c`.
+This is a headless synthetic measurement, not native-game FPS or device evidence.
 
-ADR0083/G3-10 resource frames address real atlas handoff pressure without raising
-loading limits. Each step may name a typed image; Core and cold module restore
-bind its exact phase. Only the projected image is required, with optional future
-hints using existing cache budget/retry/leases. `pnpm exec vitest run` passed 396
-units. `pnpm build:harness` plus the asset-sequence/composition/sequence browser
-subset passed all 16 Canvas/WebGL cases, including six image phases within a
-16MiB two-image working set, failed-frame preservation of the live head, retry,
-eviction and illustrated pixels. This supersedes using large resident atlases
-for the independent instance's long trails; final source/64MiB evidence follows.
-
-Sequence hot-path follow-up: immutable source schedules are sealed/reused by
-readonly projection; full-size accounting and detached capture/restore checks
-remain. Shape/period caching only accepts deeply frozen arrays. Actual synthetic
-`node tests/tooling/profile-sequence.mjs` (20 tasks × 128 steps, 500 ticks) measured
-2458.38ms before and 258.13ms after. Both final snapshots are 296784 JSON chars and
-SHA-256 `62229d1402d39315cd1b7276414ba96e1476ceddc36e30628d1cc2ce03fc3c6c`.
-These are headless synthetic timings, not a claimed native-game FPS result.
-`pnpm exec vitest run` passed 397 cases, including metadata view identity and
-mutable detached-capture isolation. Final browser/check results follow.
+Large resident trail atlases failed real handoff pressure and were replaced by
+resource frames; preliminary atlas figures are not the accepted delivery. Source
+converters still report sampled randomness/long-effect/rasterization limits.
+Raw evidence remains in independent-instance ignored artifacts/door3. Cross-
+manifest migration/recipe/SaveBridge/history remain W1-03B3; native tft, complete
+work/pixel/mobile certification remain separate and unclaimed.

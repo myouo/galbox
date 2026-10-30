@@ -3371,9 +3371,9 @@
         "G3-08",
         "G3-09"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "implemented",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "scenario3 21-scene source lowering through search.ks entry",
         "eight locale PO and standard SDK module releases",
@@ -3398,7 +3398,7 @@
         "docs/evidence/g3-08/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "八语首轮全程与中英效果恢复已验；缩减残像图集后重验实际64MiB驻留、最终八语与全文排版。正式1→2→3及旧模块档衔接仍需W1-03B3。"
+      "next_action": "第三门独立八语21场景→search入口已验收：23066文本片段/80冷切点、13浏览器场景/输入检查及22985页八语无滚动；长残像等有限表现差异显式记录。正式1→2→3/回放须先W1-03B3，不覆盖旧清单；后续search/原生tft/逐像素另验。"
     },
     {
       "id": "G3-10",
@@ -3408,9 +3408,9 @@
         "G3-08",
         "W1-02"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "implemented",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "typed stageAssetSequence and stage.sequence.assets capability",
         "current-frame resource preparation and bounded future hints",
@@ -3436,7 +3436,7 @@
         "docs/evidence/g3-08/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "396单元已过，完成双后端预算/失败帧回归与独立实例64MiB交接。"
+      "next_action": "397单元/16相关双后端/严格隔离实包与第三门64MiB连续交接通过；逐帧准备和有界预取不扩大预算。继续W1-03B3。"
     }
   ]
 }
