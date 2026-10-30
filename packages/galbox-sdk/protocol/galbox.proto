@@ -12208,6 +12208,27 @@ message Gbx_ModuleFunction_addresses {
   repeated Gbx_ModuleFunction_addresses_Item items = 1;
 }
 
+message Gbx_ModuleFunction_entryMarker_kind {
+  optional string value = 1;
+}
+
+message Gbx_ModuleFunction_entryMarker_id {
+  optional string value = 1;
+}
+
+message Gbx_ModuleFunction_entryMarker {
+  optional Gbx_ModuleFunction_entryMarker_kind kind = 1;
+  optional Gbx_ModuleFunction_entryMarker_id id = 2;
+}
+
+message Gbx_ModuleFunction_audioSources_Item {
+  optional string value = 1;
+}
+
+message Gbx_ModuleFunction_audioSources {
+  repeated Gbx_ModuleFunction_audioSources_Item items = 1;
+}
+
 message Gbx_ModuleFunction {
   optional Gbx_ModuleFunction_id id = 1;
   optional Gbx_ModuleFunction_layout layout = 2;
@@ -12216,6 +12237,8 @@ message Gbx_ModuleFunction {
   optional Gbx_ModuleFunction_returns returns = 5;
   optional Gbx_ModuleFunction_entry entry = 6;
   optional Gbx_ModuleFunction_addresses addresses = 7;
+  optional Gbx_ModuleFunction_entryMarker entryMarker = 8;
+  optional Gbx_ModuleFunction_audioSources audioSources = 9;
 }
 
 message Gbx_ModuleHeader_version {
@@ -12286,6 +12309,51 @@ message Gbx_ModuleHeader_presentation {
   optional Gbx_GamePresentation value = 1;
 }
 
+message Gbx_ModuleHeader_rng {
+  optional Gbx_RngConfig value = 1;
+}
+
+message Gbx_ModuleHeader_textLayout {
+  optional Gbx_TextLayout value = 1;
+}
+
+message Gbx_ModuleHeader_extras {
+  optional Gbx_ExtrasCatalog value = 1;
+}
+
+message Gbx_ModuleHeader_sfxBuffers_Item {
+  optional string value = 1;
+}
+
+message Gbx_ModuleHeader_sfxBuffers {
+  repeated Gbx_ModuleHeader_sfxBuffers_Item items = 1;
+}
+
+message Gbx_ModuleHeader_bgmBuffers_Item {
+  optional string value = 1;
+}
+
+message Gbx_ModuleHeader_bgmBuffers {
+  repeated Gbx_ModuleHeader_bgmBuffers_Item items = 1;
+}
+
+message Gbx_ModuleHeader_textStyles_Item_id {
+  optional string value = 1;
+}
+
+message Gbx_ModuleHeader_textStyles_Item_style {
+  optional Gbx_TextStyle value = 1;
+}
+
+message Gbx_ModuleHeader_textStyles_Item {
+  optional Gbx_ModuleHeader_textStyles_Item_id id = 1;
+  optional Gbx_ModuleHeader_textStyles_Item_style style = 2;
+}
+
+message Gbx_ModuleHeader_textStyles {
+  repeated Gbx_ModuleHeader_textStyles_Item items = 1;
+}
+
 message Gbx_ModuleHeader {
   optional Gbx_ModuleHeader_version version = 1;
   optional Gbx_ModuleHeader_gameId gameId = 2;
@@ -12299,6 +12367,12 @@ message Gbx_ModuleHeader {
   optional Gbx_ModuleHeader_obligations obligations = 10;
   optional Gbx_ModuleHeader_behaviorMappings behaviorMappings = 11;
   optional Gbx_ModuleHeader_presentation presentation = 12;
+  optional Gbx_ModuleHeader_rng rng = 13;
+  optional Gbx_ModuleHeader_textLayout textLayout = 14;
+  optional Gbx_ModuleHeader_extras extras = 15;
+  optional Gbx_ModuleHeader_sfxBuffers sfxBuffers = 16;
+  optional Gbx_ModuleHeader_bgmBuffers bgmBuffers = 17;
+  optional Gbx_ModuleHeader_textStyles textStyles = 18;
 }
 
 message Gbx_ModulePartition_Item_id {
@@ -12351,12 +12425,21 @@ message Gbx_CodeModuleDescriptor_bytes {
   optional sint64 value = 1;
 }
 
+message Gbx_CodeModuleDescriptor_dependencies_Item {
+  optional string value = 1;
+}
+
+message Gbx_CodeModuleDescriptor_dependencies {
+  repeated Gbx_CodeModuleDescriptor_dependencies_Item items = 1;
+}
+
 message Gbx_CodeModuleDescriptor {
   optional Gbx_CodeModuleDescriptor_id id = 1;
   optional Gbx_CodeModuleDescriptor_uri uri = 2;
   optional Gbx_CodeModuleDescriptor_functions functions = 3;
   optional Gbx_CodeModuleDescriptor_sha256 sha256 = 4;
   optional Gbx_CodeModuleDescriptor_bytes bytes = 5;
+  optional Gbx_CodeModuleDescriptor_dependencies dependencies = 6;
 }
 
 message Gbx_ProgramModule_format {
@@ -12391,7 +12474,7 @@ message Gbx_ModuleManifest_format {
 }
 
 message Gbx_ModuleManifest_version {
-  // Fixed semantic value: 1
+  optional sint64 value = 1;
 }
 
 message Gbx_ModuleManifest_header {
@@ -12418,6 +12501,65 @@ message Gbx_ModuleManifest_functionOrder {
   repeated Gbx_ModuleManifest_functionOrder_Item items = 1;
 }
 
+message Gbx_ModuleManifest_assetCatalogs_Item_assets_Item {
+  optional Gbx_Asset value = 1;
+}
+
+message Gbx_ModuleManifest_assetCatalogs_Item_assets {
+  repeated Gbx_ModuleManifest_assetCatalogs_Item_assets_Item items = 1;
+}
+
+message Gbx_ModuleManifest_assetCatalogs_Item_resources_Item {
+  optional Gbx_ResourceFact value = 1;
+}
+
+message Gbx_ModuleManifest_assetCatalogs_Item_resources {
+  repeated Gbx_ModuleManifest_assetCatalogs_Item_resources_Item items = 1;
+}
+
+message Gbx_ModuleManifest_assetCatalogs_Item {
+  optional Gbx_ModuleManifest_assetCatalogs_Item_assets assets = 1;
+  optional Gbx_ModuleManifest_assetCatalogs_Item_resources resources = 2;
+}
+
+message Gbx_ModuleManifest_assetCatalogs {
+  repeated Gbx_ModuleManifest_assetCatalogs_Item items = 1;
+}
+
+message Gbx_ModuleManifest_points_Item_at {
+  optional string value = 1;
+}
+
+message Gbx_ModuleManifest_points_Item_kind {
+  optional string value = 1;
+}
+
+message Gbx_ModuleManifest_points_Item {
+  optional Gbx_ModuleManifest_points_Item_at at = 1;
+  optional Gbx_ModuleManifest_points_Item_kind kind = 2;
+}
+
+message Gbx_ModuleManifest_points {
+  repeated Gbx_ModuleManifest_points_Item items = 1;
+}
+
+message Gbx_ModuleManifest_extrasCompatibility_Item_signature {
+  optional string value = 1;
+}
+
+message Gbx_ModuleManifest_extrasCompatibility_Item_catalog {
+  optional Gbx_ExtrasCatalog value = 1;
+}
+
+message Gbx_ModuleManifest_extrasCompatibility_Item {
+  optional Gbx_ModuleManifest_extrasCompatibility_Item_signature signature = 1;
+  optional Gbx_ModuleManifest_extrasCompatibility_Item_catalog catalog = 2;
+}
+
+message Gbx_ModuleManifest_extrasCompatibility {
+  repeated Gbx_ModuleManifest_extrasCompatibility_Item items = 1;
+}
+
 message Gbx_ModuleManifest {
   optional Gbx_ModuleManifest_format format = 1;
   optional Gbx_ModuleManifest_version version = 2;
@@ -12425,6 +12567,9 @@ message Gbx_ModuleManifest {
   optional Gbx_ModuleManifest_release release = 4;
   optional Gbx_ModuleManifest_modules modules = 5;
   optional Gbx_ModuleManifest_functionOrder functionOrder = 6;
+  optional Gbx_ModuleManifest_assetCatalogs assetCatalogs = 7;
+  optional Gbx_ModuleManifest_points points = 8;
+  optional Gbx_ModuleManifest_extrasCompatibility extrasCompatibility = 9;
 }
 
 message Gbx_ProgramModuleBinding_manifestSha256 {
@@ -12748,6 +12893,8 @@ message Gbx_InterfaceTextCatalog {
 message WireEnvelope {
   optional uint32 wire_version = 1;
   oneof body {
+    Gbx_Asset body_Asset = 123;
+    Gbx_Function body_Function = 124;
     Gbx_PresentationAssetCatalog body_PresentationAssetCatalog = 122;
     Gbx_DialoguePresentation body_DialoguePresentation = 121;
     Gbx_Program body_Program = 10;

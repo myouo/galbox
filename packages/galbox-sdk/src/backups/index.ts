@@ -1,3 +1,5 @@
+import {isModuleProgram} from '../program-tools/module-program.js';
+import type {ModuleProgram} from '../program-tools/module-program.js';
 import {extrasProgress} from '../protocol/extras.js';
 import {flowProgress} from '../protocol/flow.js';
 import {validateVoiceRecipe} from '../core/audio.js';
@@ -37,12 +39,13 @@ function preserveClosure(before:PortableBackup,after:PortableBackup):void {
   ensure((before.histories??[]).length===(after.histories??[]).length&&(before.histories??[]).every(h=>(after.histories??[]).some(k=>k.profileId===h.profileId&&h.record.entries.length===k.record.entries.length&&h.record.entries.every(e=>k.record.entries.some(f=>e.id===f.id&&(e.snapshot===null)===(f.snapshot===null))))),'CONTENT_MIGRATION_CLOSURE','Preserve all journal identities/checkpoint presence and profile relationships');
   ensure(before.slots.length===after.slots.length&&before.slots.every(s=>after.slots.some(t=>t.slot===s.slot&&t.revision===s.revision&&t.metadata.profileId===s.metadata.profileId&&(t.previous===null)===(s.previous===null)&&t.previousMetadata?.profileId===s.previousMetadata?.profileId)),'CONTENT_MIGRATION_CLOSURE','Preserve every slot, previous revision and profile relationship');
 }
-function validateCandidates(backup:PortableBackup,program:Program,operations:OperationRegistry):void {
+function validateCandidates(backup:PortableBackup,program:Program,operations:OperationRegistry,source?:ModuleProgram):void {
   for(const row of backup.profiles){flowProgress(program,row.profile);extrasProgress(program,row.profile);}
-  for(const h of backup.histories??[])for(const entry of h.record.entries){ensure(!entry.snapshot?.replayScene,'BACKUP_REPLAY_ONLY','Gallery snapshots are temporary');ensure(entry.release===program.release,'BACKUP_RELEASE_UNAVAILABLE','Historical source release is unavailable');if(entry.snapshot)entry.snapshot=validateRestore(program,entry.snapshot,operations);if(entry.text.voice)validateVoiceRecipe(program,entry.text.voice);}
+  for(const h of backup.histories??[])for(const entry of h.record.entries){ensure(!entry.snapshot?.replayScene,'BACKUP_REPLAY_ONLY','Gallery snapshots are temporary');ensure(entry.release===program.release,'BACKUP_RELEASE_UNAVAILABLE','Historical source release is unavailable');if(entry.snapshot)entry.snapshot=validateRestore(source??program,entry.snapshot,operations);if(entry.text.voice)validateVoiceRecipe(program,entry.text.voice);}
   for(const slot of backup.slots){
     for(const cut of [{snapshot:slot.snapshot,metadata:slot.metadata},...(slot.previous&&slot.previousMetadata?[{snapshot:slot.previous,metadata:slot.previousMetadata}]:[])]){
-      ensure(!cut.snapshot.replayScene,'BACKUP_REPLAY_ONLY','Gallery snapshots are temporary');const snapshot=validateRestore(program,cut.snapshot,operations),profile=backup.profiles.find(p=>p.id===cut.metadata.profileId)?.profile;ensure(profile,'BACKUP_PROFILE_MISSING',cut.metadata.profileId);
+      ensure(!cut.snapshot.replayScene,'BACKUP_REPLAY_ONLY','Gallery snapshots are temporary');const snapshot=validateRestore(source??program,cut.snapshot,operations),profile=backup.profiles.find(p=>p.id===cut.metadata.profileId)?.profile;ensure(profile,'BACKUP_PROFILE_MISSING',cut.metadata.profileId);
+      ensure(!source||!cut.metadata.recipe&&!cut.metadata.onLoad,'MODULE_UNSUPPORTED','Module restore hooks require an explicit migration');
       // Keep a before-recipe baseline; these isolated previews never persist hook effects.
       if(cut.metadata.recipe)prepareRestoreRecipe(program,profile,snapshot,cut.metadata.recipe,{operations});
       if(cut.metadata.onLoad)prepareRestoreRecipe(program,profile,snapshot,cut.metadata.onLoad,{operations});
@@ -51,20 +54,20 @@ function validateCandidates(backup:PortableBackup,program:Program,operations:Ope
   }
 }
 export function prepareBackupRestore(input:unknown,options:BackupRestoreOptions):PreparedBackupRestore {
-  const operations=options.operations??emptyOperations,program=linkProgram(options.program,operations).copy(),namespace=storageNamespace(program.gameId,options.series);let backup=backupClosure(input);
+  const operations=options.operations??emptyOperations,source=isModuleProgram(options.program)?options.program:undefined,program=source?source.program(source.loaded()):linkProgram(options.program,operations).copy(),namespace=storageNamespace(program.gameId,options.series);let backup=backupClosure(input);
   ensure(storageNamespace(backup.gameId,backup.series)===namespace,'BACKUP_NAMESPACE','Backup belongs to another game or compatibility series');
   const sourceReleases=releases(backup);let migrationId:string|null=null;
   if(options.migration){const migration=migrations.get(options.migration);ensure(migration,'CONTENT_MIGRATION','Use defineContentMigration');ensure(storageNamespace(migration.gameId,migration.series)===namespace&&migration.toRelease===program.release&&canonical(migration.fromReleases)===canonical(sourceReleases),'CONTENT_MIGRATION_SOURCE','Migration does not match this complete release set');
     const before=backupClosure(backup);freeze(backup);let output:unknown;try{output=migration.migrate(backup);}catch(error){throw new GalboxError('CONTENT_MIGRATION_FAILED',`${migration.id}: ${String(error)}`);}backup=backupClosure(output);preserveClosure(before,backup);migrationId=migration.id;
   }
   ensure(releases(backup).every(r=>r===program.release),'BACKUP_RELEASE_UNAVAILABLE','An explicit complete migration or the matching old release is required; original data is preserved');
-  validateCandidates(backup,program,operations);backup=backupClosure(backup);
+  validateCandidates(backup,program,operations,source);backup=backupClosure(backup);
   const report={profiles:backup.profiles.length,slots:backup.slots.length,sourceReleases,targetRelease:program.release,migrationId};
-  const plan:PreparedBackupRestore=Object.freeze({[prepared]:true as const,report:()=>({...report,sourceReleases:[...report.sourceReleases]})});plans.set(plan,{backup,namespace,signature:canonical(program),operations});return plan;
+  const plan:PreparedBackupRestore=Object.freeze({[prepared]:true as const,report:()=>({...report,sourceReleases:[...report.sourceReleases]})});plans.set(plan,{backup,namespace,signature:source?.identity??canonical(program),operations});return plan;
 }
 export function materializeBackupRestore(plan:PreparedBackupRestore,options:BackupRestoreOptions):PortableBackup {
-  const stored=plans.get(plan);ensure(stored,'BACKUP_PLAN','Expected a prepared backup handle');const operations=options.operations??emptyOperations,program=linkProgram(options.program,operations).copy();
-  ensure(stored.namespace===storageNamespace(program.gameId,options.series)&&stored.signature===canonical(program)&&stored.operations===operations,'BACKUP_PLAN_STALE','Program, series or operation registry changed');return parsePortableBackup(stored.backup);
+  const stored=plans.get(plan);ensure(stored,'BACKUP_PLAN','Expected a prepared backup handle');const operations=options.operations??emptyOperations,source=isModuleProgram(options.program)?options.program:undefined,program=source?source.program(source.loaded()):linkProgram(options.program,operations).copy();
+  ensure(stored.namespace===storageNamespace(program.gameId,options.series)&&stored.signature===(source?.identity??canonical(program))&&stored.operations===operations,'BACKUP_PLAN_STALE','Program, series or operation registry changed');return parsePortableBackup(stored.backup);
 }
 
 export {defineSavedGameMigration} from './saved-game.js';

@@ -2299,9 +2299,9 @@
       "depends_on": [
         "W1-03B"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "partial",
       "outputs": [
         "advanced capability modular execution"
       ],
@@ -2317,7 +2317,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "在基础模块路径上补齐高级指令/元数据签名与恢复闭包，包括audio.sources的具名SE和源包络；单体路径已支持不代表模块路径支持。"
+      "next_action": "ADR0077 v2有界组合/分段资源目录、源音频声明、历史与活动任务恢复闭包、稳定鉴赏身份和显式旧档目标已实现，check/370单元通过。下一独立实包验证第一门至完整二门、图文旧档及回放；脚本UI/流程图/视频等超出当前v2支持集，仍明确拒绝，不标done。"
     },
     {
       "id": "I1-01",
