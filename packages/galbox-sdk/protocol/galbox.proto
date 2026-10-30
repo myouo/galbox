@@ -12520,6 +12520,10 @@ message Gbx_ModuleFunction_audioSources {
   repeated Gbx_ModuleFunction_audioSources_Item items = 1;
 }
 
+message Gbx_ModuleFunction_packedAddresses {
+  optional string value = 1;
+}
+
 message Gbx_ModuleFunction {
   optional Gbx_ModuleFunction_id id = 1;
   optional Gbx_ModuleFunction_layout layout = 2;
@@ -12530,6 +12534,7 @@ message Gbx_ModuleFunction {
   optional Gbx_ModuleFunction_addresses addresses = 7;
   optional Gbx_ModuleFunction_entryMarker entryMarker = 8;
   optional Gbx_ModuleFunction_audioSources audioSources = 9;
+  optional Gbx_ModuleFunction_packedAddresses packedAddresses = 10;
 }
 
 message Gbx_ModuleHeader_version {

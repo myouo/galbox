@@ -13474,6 +13474,12 @@ definitions:
           type: string
           pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
         x-proto-tag: 9
+      packedAddresses:
+        description: Ordered newline-delimited exact address list; addresses must contain only entry when present
+          (module v2).
+        type: string
+        pattern: ^[a-zA-Z0-9_.:@/\n-]{1,1289999}$
+        x-proto-tag: 10
     required:
       - id
       - layout
