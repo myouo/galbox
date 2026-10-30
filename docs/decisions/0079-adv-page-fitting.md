@@ -3,7 +3,9 @@
 The default DOM renderer must not scroll an ADV dialogue window. Keep the
 authored font size whenever the complete page fits. On overflow, reduce a shared
 typographic factor with a bounded twelve-step measurement search; preserve the
-relative sizes of ruby, speaker and authored rich spans. Wrap otherwise
+relative sizes of ruby, speaker and authored rich spans. Measure inline font
+boxes as well as scroll extents, reserving missing leading above the first line;
+layout offsets keep this independent of stage camera transforms. Wrap otherwise
 unbreakable text. Reset fitting for each page, theme, display preference, font
 load and mount size. Reveal ticks reuse the fit, including unrevealed text, so
 typing does not repeatedly shrink or scroll the page.
