@@ -3,7 +3,7 @@ import type {Program,Snapshot,TextLayoutState,TextState,DeepReadonly} from './in
 import {isTextComplete} from './text.js';
 import {templateSignature} from './expressions.js';
 export function validateTextLayout(program:Program):void {
- const layout=program.textLayout;if(!layout)return;ensure(program.capabilities.includes('text.windows'),'TEXT_LAYOUT_CAPABILITY','Declare text.windows');
+ const layout=program.textLayout;if(!layout)return;ensure(!layout.windows.some(w=>w.opacityObject)||program.capabilities.includes('text.stage-opacity'),'TEXT_OPACITY_CAPABILITY','Declare text.stage-opacity');ensure(program.capabilities.includes('text.windows'),'TEXT_LAYOUT_CAPABILITY','Declare text.windows');
  ensure(new Set(layout.themes.map(t=>t.id)).size===layout.themes.length&&new Set(layout.windows.map(w=>w.id)).size===layout.windows.length,'TEXT_LAYOUT_DUPLICATE','Duplicate window/theme');
  const initial=layout.windows.find(w=>w.id===layout.initialWindow);ensure(initial?.visible,'TEXT_LAYOUT_INITIAL','Initial window must exist and be visible');
  for(const theme of layout.themes)if(theme.font.kind==='asset'){const asset=theme.font.asset;ensure(program.assets.some(a=>a.id===asset&&a.kind==='font'),'TEXT_FONT','Theme needs a registered font asset');}
@@ -14,7 +14,7 @@ export function textLayoutSignature(p:DeepReadonly<Program>):string {ensure(p.te
 export function initialTextLayout(p:Program):TextLayoutState|undefined {const l=p.textLayout;if(!l)return;const [first,...rest]=l.windows.map(w=>({id:w.id,theme:w.theme,visible:w.visible,entries:[]}));ensure(first,'TEXT_LAYOUT','No windows');return {version:1,signature:textLayoutSignature(p),active:l.initialWindow,windows:[first,...rest]};}
 export function activeTextWindow(s:Snapshot){const state=s.textLayout;ensure(state,'TEXT_LAYOUT','No text window state');const w=state.windows.find(w=>w.id===state.active);ensure(w,'TEXT_WINDOW',state.active);return w;}
 export function prepareWindowText(p:Program,s:Snapshot,text:TextState,at:string):void {
- if(!p.textLayout)return;const state=activeTextWindow(s),definition=p.textLayout.windows.find(w=>w.id===state.id);ensure(definition&&state.visible,'TEXT_WINDOW_HIDDEN','A prompt needs a visible active window');ensure(definition.mode==='adv'||state.entries.length<definition.maxEntries,'TEXT_WINDOW_FULL','Clear the NVL window before adding more entries');text.window={id:state.id,at};
+ if(!p.textLayout)return;const state=activeTextWindow(s),definition=p.textLayout.windows.find(w=>w.id===state.id);ensure(!definition?.opacityObject||s.stage.some(o=>o.id===definition.opacityObject&&!o.parent),'TEXT_OPACITY_OBJECT','Window needs its declared root opacity object');ensure(definition&&state.visible,'TEXT_WINDOW_HIDDEN','A prompt needs a visible active window');ensure(definition.mode==='adv'||state.entries.length<definition.maxEntries,'TEXT_WINDOW_FULL','Clear the NVL window before adding more entries');text.window={id:state.id,at};
 }
 export function commitWindowText(p:Program,s:Snapshot):void {if(!s.textLayout||!s.text)return;const w=activeTextWindow(s),definition=p.textLayout?.windows.find(d=>d.id===w.id);ensure(definition,'TEXT_WINDOW',w.id);if(definition.mode==='adv')w.entries=[];}
 export function confirmWindowText(s:Snapshot):void {if(!s.textLayout||!s.text)return;const w=activeTextWindow(s);w.entries.push(parseTextState(s.text));}
@@ -31,7 +31,7 @@ export function validateWindowState(p:Program,s:Snapshot):void {
   if(source.op==='text.template')ensure(!text.rich&&text.template?.at===source.at&&text.template.signature===templateSignature(source.speaker,source.content),'RESTORE_TEXT_WINDOW','Template source changed');
   if(source.op==='text.rich')ensure(text.rich?.at===source.at,'RESTORE_TEXT_WINDOW','Rich origin missing');
  }
- for(const w of state.windows){const definition=layout.windows.find(d=>d.id===w.id);ensure(definition&&layout.themes.some(t=>t.id===w.theme)&&w.entries.length<=definition.maxEntries,'RESTORE_TEXT_WINDOW','Unknown window/theme or capacity exceeded');
+ for(const w of state.windows){const definition=layout.windows.find(d=>d.id===w.id);if(definition?.opacityObject&&(w.entries.length||s.text?.window?.id===w.id))ensure(s.stage.some(o=>o.id===definition.opacityObject&&!o.parent),'RESTORE_TEXT_OPACITY','Opacity driver missing or parented');ensure(definition&&layout.themes.some(t=>t.id===w.theme)&&w.entries.length<=definition.maxEntries,'RESTORE_TEXT_WINDOW','Unknown window/theme or capacity exceeded');
   for(const entry of w.entries){ensure(entry.window?.id===w.id&&isTextComplete(entry)&&!entryPrompts.has(entry.prompt)&&s.history.some(t=>t.prompt===entry.prompt&&canonicalWireJSON(t)===canonicalWireJSON(entry)),'RESTORE_TEXT_ENTRIES','Invalid/unconfirmed/duplicate window entry');entryPrompts.add(entry.prompt);}
  }
  if(s.wait?.kind==='text'){const w=state.windows.find(w=>w.id===state.active);ensure(w?.visible&&s.text?.window?.id===w.id&&s.text.window.at===s.wait.at&&!entryPrompts.has(s.text.prompt),'RESTORE_TEXT_WINDOW','Current prompt belongs to the visible active window');}

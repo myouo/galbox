@@ -7323,6 +7323,10 @@ message Gbx_TextWindow_maxEntries {
   optional sint64 value = 1;
 }
 
+message Gbx_TextWindow_opacityObject {
+  optional string value = 1;
+}
+
 message Gbx_TextWindow {
   optional Gbx_TextWindow_id id = 1;
   optional Gbx_TextWindow_mode mode = 2;
@@ -7331,6 +7335,7 @@ message Gbx_TextWindow {
   optional Gbx_TextWindow_z z = 5;
   optional Gbx_TextWindow_visible visible = 6;
   optional Gbx_TextWindow_maxEntries maxEntries = 7;
+  optional Gbx_TextWindow_opacityObject opacityObject = 8;
 }
 
 message Gbx_TextLayout_version {

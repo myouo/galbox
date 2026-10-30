@@ -355,7 +355,7 @@ export class Core {
         ensure(!this.s.tasks.some(t=>taskObject(t)===i.object.id&&t.status==='running'),'STAGE_BUSY',i.object.id);
         const owned=parseInstruction(i);ensure(owned.op==='stage.put','STAGE_OBJECT','Object copy failed');const stage=[...this.s.stage.filter(o=>o.id!==i.object.id),owned.object];validateStageGraph(stage);validateComposition({...this.s,stage});this.s.stage=stage;syncMotion(this.s);break;
       }
-      case 'stage.remove':removeStageObject(this.s,i.id);break;
+      case 'stage.remove':ensure(!this.program.textLayout?.windows.some(w=>w.opacityObject===i.id&&(this.s.text?.window?.id===w.id||this.s.textLayout?.windows.find(v=>v.id===w.id)?.entries.length)),'TEXT_OPACITY_OBJECT','Cannot remove active text opacity driver');removeStageObject(this.s,i.id);break;
       case 'stage.animate': {
         const target=this.s.stage.find(o=>o.id===i.id);ensure(target,'STAGE_OBJECT',i.id);
         const locks=new Set(['x','y','alpha'].map(k=>`object:${i.id}:pose:${k}`)),previous=this.s.tasks.filter(t=>t.status==='running'&&taskLocks(t).some(k=>locks.has(k)));
