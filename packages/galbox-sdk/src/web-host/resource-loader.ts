@@ -1,6 +1,6 @@
 import {Texture} from 'pixi.js';
 import {ensure,GalboxError,parseResolvedStreamIdentity,canonicalWireJSON} from '../protocol/index.js';
-import type {Asset,Program,ResourceFact,ResourceBudget,IntegrityEvidence,StreamingOptions} from '../protocol/index.js';
+import type {Asset,Program,PresentationAssetCatalog,ResourceFact,ResourceBudget,IntegrityEvidence,StreamingOptions} from '../protocol/index.js';
 import {inspectResource,resourceUsage,canonicalReleaseJSON} from '../release/index.js';
 import {audioPlayback} from '../release/audio.js';
 import {verifiedBytes} from './assets.js';
@@ -13,8 +13,8 @@ import type {PreparedStream} from './streams.js';
 export interface LoadedResource {fact:ResourceFact;cost:number;integrity:IntegrityEvidence;image?:HTMLImageElement;texture?:Texture;buffer?:AudioBuffer;media?:PreparedMedia;stream?:PreparedStream;font?:FontFace;fontCSS?:string;dispose():void;}
 export class ResourceLoader {
  private readonly known=new Map<string,ResourceFact>();private readonly assets:Map<string,Asset>;private readonly facts:Map<string,ResourceFact>;private catalogHash:Promise<string>|undefined;
- constructor(private readonly program:Program,private readonly provider:AssetProvider,private readonly context:AudioContext,private readonly limits:ResourceBudget,expected:readonly ResourceFact[]|undefined,private readonly streaming:StreamingOptions|null,private readonly fontPrefix:string,resourceScope?:'resident'){this.assets=new Map(program.assets.map(a=>[a.id,a]));this.facts=new Map(expected?.map(f=>[f.id,f]));if(expected)for(const batch of resourceScope==='resident'?expected.map(f=>[f]):[expected])resourceUsage(batch,limits,context.sampleRate);}
- knownFacts():ResourceFact[]{return this.program.assets.flatMap(a=>{const f=this.known.get(a.id);return f?[f]:[];});}
+ constructor(private readonly program:Program,private readonly provider:AssetProvider,private readonly context:AudioContext,private readonly limits:ResourceBudget,expected:readonly ResourceFact[]|undefined,private readonly streaming:StreamingOptions|null,private readonly fontPrefix:string,resourceScope?:'resident',catalog?:PresentationAssetCatalog){this.assets=new Map([...program.assets,...catalog?.assets??[]].map(a=>[a.id,a]));this.facts=new Map([...expected??[],...catalog?.resources??[]].map(f=>[f.id,f]));for(const fact of catalog?.resources??[])resourceUsage([fact],limits,context.sampleRate);if(expected)for(const batch of resourceScope==='resident'?expected.map(f=>[f]):[expected])resourceUsage(batch,limits,context.sampleRate);}
+ knownFacts():ResourceFact[]{return [...this.assets.values()].flatMap(a=>{const f=this.known.get(a.id);return f?[f]:[];});}
  expectedFact(id:string):ResourceFact|undefined{return this.facts.get(id)??this.known.get(id);}
  async load(id:string,signal:AbortSignal,reserve:(n:number)=>void):Promise<LoadedResource> {
   const asset=this.assets.get(id);ensure(asset,'LOADING_ASSET',id);ensure(!signal.aborted,'ASSET_CANCELLED',id);let texture:Texture|undefined,image:HTMLImageElement|undefined,buffer:AudioBuffer|undefined,media:PreparedMedia|undefined,stream:PreparedStream|undefined,font:FontFace|undefined,fontCSS:string|undefined;let disposed=false,committedFact:ResourceFact|undefined;

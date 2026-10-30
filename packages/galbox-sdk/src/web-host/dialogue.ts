@@ -1,9 +1,9 @@
 import {ensure,parseDialoguePresentation} from '../protocol/index.js';
-import type {DialoguePresentation,Program,Snapshot,DeepReadonly} from '../protocol/index.js';
-export function dialoguePresentation(input:unknown,program:Program):DialoguePresentation {
+import type {DialoguePresentation,PresentationAssetCatalog,Program,Snapshot,DeepReadonly} from '../protocol/index.js';
+export function dialoguePresentation(input:unknown,program:Program,catalog?:PresentationAssetCatalog):DialoguePresentation {
  const value=parseDialoguePresentation(input??{objects:[],images:[]});
  ensure(new Set(value.images.map(v=>v.source)).size===value.images.length,'DIALOGUE_IMAGE_DUPLICATE','Each source image has one alternative');
- for(const pair of value.images)for(const id of [pair.source,pair.hidden])ensure(program.assets.some(a=>a.id===id&&a.kind==='image'),'DIALOGUE_IMAGE_KIND','Dialogue alternatives must be declared images');
+ for(const pair of value.images){ensure(program.assets.some(a=>a.id===pair.source&&a.kind==='image'),'DIALOGUE_IMAGE_KIND','Dialogue sources must be Program images');ensure([...program.assets,...catalog?.assets??[]].some(a=>a.id===pair.hidden&&a.kind==='image'),'DIALOGUE_IMAGE_KIND','Dialogue alternatives must be declared images');}
  return value;
 }
 export function assertDialogueCut(snapshot:DeepReadonly<Snapshot>):void {

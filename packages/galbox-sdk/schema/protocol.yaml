@@ -2,6 +2,30 @@ $id: https://galbox.local/protocol-v1
 $schema: http://json-schema.org/draft-07/schema#
 title: Wire
 definitions:
+  PresentationAssetCatalog:
+    type: object
+    properties:
+      version:
+        type: integer
+        const: 1
+        x-proto-tag: 1
+      assets:
+        type: array
+        maxItems: 128
+        items:
+          $ref: "#/definitions/Asset"
+        x-proto-tag: 2
+      resources:
+        type: array
+        maxItems: 128
+        items:
+          $ref: "#/definitions/ResourceFact"
+        x-proto-tag: 3
+    required:
+      - version
+      - assets
+      - resources
+    additionalProperties: false
   DialoguePresentation:
     type: object
     properties:
@@ -13729,3 +13753,4 @@ x-proto-envelope:
   LocaleCatalog: 119
   InterfaceTextCatalog: 120
   DialoguePresentation: 121
+  PresentationAssetCatalog: 122

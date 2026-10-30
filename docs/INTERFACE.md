@@ -34,3 +34,8 @@ PlayerView.presentation为私有化后冻结的只读配置，systemScreen是Pla
 默认界面皮肤独立于作者声明的正文窗口/TextTheme和脚本控件样式；不会把旧存档中的逻辑UI颜色偷偷改写为当前系统皮肤。工具栏/标题资源、系统页面由同一配置控制；要替换更复杂外观，可消费公开Player和系统面板。配置标签覆盖导航/标题入口与工具栏，系统面板说明和错误信息当前为中文；其它本地化可替换公开组件。当前不含任意菜单脚本、标题影片/音乐策略、任意HTML布局或可视化皮肤编辑器。
 
 原创 `/?demo=interface` 与 `&skin=paper` 只变配置，复用同一剧情、资源目录、鉴赏、流程图和表单；可加`&renderer=canvas`。触控模拟覆盖窄/矮视口、滚动、拖动取消和键盘焦点，不替代移动真机/Firefox/Safari认证。综合规模、性能归因与真实两作仍见G7/N/F/M6。
+
+
+ADR0071/0072：已读速度与行内确认由 text.readIntervalMs（-1继承）、skipInlineConfirmations、readSkipInlineConfirmations 指定；richText.confirm({skippable:false})保持强制确认。普通跳确认开关也作用于已读段，页末仍需输入。偏好持久化，不回写旧档；HistoryText（react公开出口）静态展示字号/斜体/颜色/Ruby，支持历史指定调色板与respectRevealed。
+
+隐藏正文时，dialoguePresentation 的 source 是 Program 图片；hidden 可从可选独立 PresentationAssetCatalog 引用。通过 protocol.parsePresentationAssetCatalog 构造version:1、assets与resources，分别传给 createPlayer({presentationAssets,...}) 和 createHttpProvider(program, base, {presentationAssets})。图片目录最多128项、不允许覆盖Program ID，实际摘要/尺寸/资源预算和取消由同一Host校验；不进入release/profile/stream catalog，不改变既有剧情存档身份。隐藏时首次step只恢复正文，保存仍捕获权威舞台；临时变体释放租约后按同一闲时策略回收，eager仍保留其全部剧情资源。

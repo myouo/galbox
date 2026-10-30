@@ -2,6 +2,32 @@
 syntax = "proto2";
 package galbox.wire.v1;
 
+message Gbx_PresentationAssetCatalog_version {
+  // Fixed semantic value: 1
+}
+
+message Gbx_PresentationAssetCatalog_assets_Item {
+  optional Gbx_Asset value = 1;
+}
+
+message Gbx_PresentationAssetCatalog_assets {
+  repeated Gbx_PresentationAssetCatalog_assets_Item items = 1;
+}
+
+message Gbx_PresentationAssetCatalog_resources_Item {
+  optional Gbx_ResourceFact value = 1;
+}
+
+message Gbx_PresentationAssetCatalog_resources {
+  repeated Gbx_PresentationAssetCatalog_resources_Item items = 1;
+}
+
+message Gbx_PresentationAssetCatalog {
+  optional Gbx_PresentationAssetCatalog_version version = 1;
+  optional Gbx_PresentationAssetCatalog_assets assets = 2;
+  optional Gbx_PresentationAssetCatalog_resources resources = 3;
+}
+
 message Gbx_DialoguePresentation_objects_Item {
   optional string value = 1;
 }
@@ -12689,6 +12715,7 @@ message Gbx_InterfaceTextCatalog {
 message WireEnvelope {
   optional uint32 wire_version = 1;
   oneof body {
+    Gbx_PresentationAssetCatalog body_PresentationAssetCatalog = 122;
     Gbx_DialoguePresentation body_DialoguePresentation = 121;
     Gbx_Program body_Program = 10;
     Gbx_Snapshot body_Snapshot = 11;
