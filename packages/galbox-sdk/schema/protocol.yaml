@@ -3233,6 +3233,86 @@ definitions:
           - gain
         additionalProperties: false
         x-proto-tag: 76
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.sequence
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          targets:
+            type: array
+            minItems: 1
+            maxItems: 64
+            uniqueItems: true
+            items:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          asset:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 5
+          frames:
+            type: array
+            minItems: 1
+            maxItems: 128
+            items:
+              $ref: "#/definitions/SequenceFrame"
+            x-proto-tag: 6
+          delayMs:
+            type: integer
+            minimum: 0
+            maximum: 3600000
+            x-proto-tag: 7
+          loop:
+            type: boolean
+            x-proto-tag: 8
+          policy:
+            type: string
+            enum:
+              - replace
+              - reject
+            x-proto-tag: 9
+        required:
+          - op
+          - at
+          - task
+          - targets
+          - asset
+          - frames
+          - delayMs
+          - loop
+          - policy
+        additionalProperties: false
+        x-proto-tag: 77
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.sequence.stop
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          task:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+        required:
+          - op
+          - at
+          - task
+        additionalProperties: false
+        x-proto-tag: 78
   Function:
     type: object
     properties:
@@ -3607,6 +3687,7 @@ definitions:
           - video
           - motion
           - particles
+          - sequence
         x-proto-tag: 3
       elapsed:
         type: integer
@@ -3691,6 +3772,9 @@ definitions:
       particleTask:
         $ref: "#/definitions/ParticleTaskState"
         x-proto-tag: 24
+      sequenceTask:
+        $ref: "#/definitions/SequenceTaskState"
+        x-proto-tag: 25
     required:
       - id
       - status
@@ -13112,6 +13196,72 @@ definitions:
       - hasPrevious
       - metadata
     additionalProperties: false
+  SequenceFrame:
+    type: object
+    properties:
+      duration:
+        type: integer
+        minimum: 1
+        maximum: 3600000
+        x-proto-tag: 1
+      frame:
+        $ref: "#/definitions/ImageFrame"
+        x-proto-tag: 2
+      pose:
+        $ref: "#/definitions/StagePose"
+        x-proto-tag: 3
+    required:
+      - duration
+    additionalProperties: false
+  SequenceTaskState:
+    type: object
+    properties:
+      targets:
+        type: array
+        minItems: 1
+        maxItems: 64
+        uniqueItems: true
+        items:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 4
+      asset:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 5
+      frames:
+        type: array
+        minItems: 1
+        maxItems: 128
+        items:
+          $ref: "#/definitions/SequenceFrame"
+        x-proto-tag: 6
+      delayMs:
+        type: integer
+        minimum: 0
+        maximum: 3600000
+        x-proto-tag: 7
+      loop:
+        type: boolean
+        x-proto-tag: 8
+      signature:
+        type: string
+        pattern: ^[^\x00]{1,65536}$
+        x-proto-tag: 1
+      startedAt:
+        type: integer
+        minimum: 0
+        maximum: 9007199254740991
+        x-proto-tag: 2
+    required:
+      - signature
+      - startedAt
+      - targets
+      - asset
+      - frames
+      - delayMs
+      - loop
+    additionalProperties: false
   ModuleFunction:
     type: object
     properties:
@@ -13981,3 +14131,5 @@ x-proto-envelope:
   Asset: 123
   Function: 124
   RulePresentation: 125
+  SequenceFrame: 126
+  SequenceTaskState: 127

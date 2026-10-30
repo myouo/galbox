@@ -3292,6 +3292,43 @@
       "evidence": [],
       "blocker": null,
       "next_action": "先定义显式旧manifest来源/快照映射与有界recipe依赖，复用正式prepare/activation CAS；再扩展SaveBridge与历史回溯闭包，验证取消、dirty更新、全调用ABI迁移和跨发行版失败。当前相关路径继续明确拒绝，不猜旧来源。"
+    },
+    {
+      "id": "G3-08",
+      "milestone": "G3",
+      "title": "有界图集帧与姿态序列",
+      "depends_on": [
+        "G3-01",
+        "W1-03B2"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "stage.sequence / stage.sequence.stop public factories and bounded wire state",
+        "active-time frame/pose schedule with explicit asset and targets",
+        "monolithic and v2 modular restore closure"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "variable duration, initial delay, loop and finite join",
+        "explicit ownership replacement and malformed source/clock rejection",
+        "front/back copy, image replacement and cold module restore",
+        "Canvas/WebGL real atlas pixels and illustrated save",
+        "check, unit suite and independent packed consumer"
+      ],
+      "evidence": [
+        "docs/evidence/g3-08/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Finish actual tarball independent consumer and third-door source acceptance; native random/pixel fidelity is a separate claim."
     }
   ]
 }

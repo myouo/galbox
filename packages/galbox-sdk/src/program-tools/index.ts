@@ -56,3 +56,5 @@ export {stageParticles,stopStageParticles} from './particles.js';
 export type {ParticleConfigInput,ParticleStyleInput} from './particles.js';
 
 export {rulePresentation,dialoguePresentation} from './dialogue.js';
+
+export {stageSequence,stopStageSequence} from './stage.js';

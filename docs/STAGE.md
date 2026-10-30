@@ -40,3 +40,7 @@ Snapshot.scene保存相机/舞台滤镜/遮罩，object保存变换/裁切/图�
 原创《灯塔来信·光影回信》在http://127.0.0.1:4173/?demo=stage ，输入fixtures/stage-novel/build.ts。运行时把distance从140改成9999，已启动相对移动仍到410；真实保存/刷新/两路线和WebGL像素验证使用同一生产路径。它不代表真实两作兼容。
 
 H2-01设备兼容扩展见 GRAPHICS.md：Canvas复用上述逻辑状态与基础场景图，既有blur/brightness/grayscale与隔离crossfade按ADR0022的Canvas离屏栈与预算实现；模糊有光学近似容差，不能扩大成任意shader/全平台逐像素保证。
+
+## Bounded frame/pose sequences (ADR0081)
+
+`stageSequence` declares 1–128 duration-bearing frames, 1–64 explicit stage targets, a required image identity, optional initial delay and finite/loop policy. Core projects the current frame/pose on its active clock, including page copies; targets showing another asset are left alone. The schedule does not restart when restored. `stopStageSequence` and target removal cancel it. Pose/frame ownership conflicts require explicit replacement. Finite sequences can be joined; sequence waits are not implicitly skippable. Source signature, clock and projected state are validated on restore, including v2 code modules. Object/task/texture/resident limits remain unchanged. Converter-prepared random or sampled schedules need their own fidelity report.

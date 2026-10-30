@@ -1,3 +1,4 @@
+import {isSequenceInstruction,executeSequence,syncSequences,validateSequences} from '../protocol/sequence.js';
 import {validateComposition} from '../protocol/composition.js';
 import {isParticleInstruction,validateParticles,ownsParticle} from '../protocol/particles.js';
 import {executeParticles,tickParticles,checkParticleTick} from './particles.js';
@@ -53,7 +54,7 @@ function values(slots: readonly {id:string;initial:Value}[]): Record<string,Valu
 function length(text:string):number { return Array.from(text).length; }
 export class Core {
   private readonly program:Program;
-  private readonly moduleSource:ModuleProgram|null;private usedModules:string[]=[];private neededFunction:string|null=null;
+  private readonly moduleSource:ModuleProgram|null;private sequenceEnabled=false;private usedModules:string[]=[];private neededFunction:string|null=null;
   get requiredFunction():string|null {return this.neededFunction;}
   private attachModule(id:string):void {if(this.usedModules.includes(id))return;ensure(this.moduleSource,'MODULE_SOURCE',id);const p=this.moduleSource.program([...this.usedModules,id]);this.program.functions=p.functions;this.usedModules=this.moduleSource.closure([...this.usedModules,id]);this.indexFunctions();this.s.programModules=parseProgramModuleBinding({manifestSha256:this.moduleSource.identity,modules:[...this.usedModules]});this.viewCache=null;}
   private indexFunctions():void {for(const definition of this.program.functions){if(this.functions.has(definition.id))continue;const code=new Map(definition.code.map(i=>[i.at,i])),next=new Map<string,string>();for(let i=0;i<definition.code.length-1;i++){const a=definition.code[i],b=definition.code[i+1];if(a&&b)next.set(a.at,b.at);}this.functions.set(definition.id,{definition,code,next});}}
@@ -77,7 +78,7 @@ export class Core {
   private reducing=false;
   constructor(input:unknown, profile:unknown=emptyProfile(), snapshot?:unknown, private readonly mode:'restore'|'initial'|'candidate'='restore',private readonly operations:OperationRegistry=emptyOperations, rngSeed?:number,entryNode?:string,entryScene?:string) {
     ensure(mode==='restore'||mode==='initial'||mode==='candidate','ACTIVATION_MODE','Unknown activation mode');
-    this.moduleSource=isModuleProgram(input)?input:null;const moduleNode=entryNode===undefined?undefined:this.moduleSource?.describe().header.flowchart?.nodes.find(n=>n.id===entryNode)?.entry;this.usedModules=this.moduleSource?(snapshot===undefined?this.moduleSource.closure([this.moduleSource.entryModule,...(moduleNode?[this.moduleSource.moduleForFunction(moduleNode)]:[]),...(entryScene?[this.moduleSource.moduleForFunction(this.moduleSource.describe().header.extras?.entries.filter(e=>e.kind==='scene').find(e=>e.id===entryScene)?.entry??'')]:[])]):this.moduleSource.binding(snapshot)):[];this.program=this.moduleSource?this.moduleSource.program(this.usedModules,operations):linkProgram(input,operations).copy();this.indexFunctions(); this.profile=parseProfile(profile);this.extrasIdentity=extrasSignature(this.program);extrasProgress(this.program,this.profile,this.extrasIdentity);flowProgress(this.program,this.profile);ensure(entryNode===undefined||entryScene===undefined,'EXTRAS_ENTRY_CONFLICT','Choose one declared root');ensure(snapshot===undefined||(entryNode===undefined&&entryScene===undefined),'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
+    this.moduleSource=isModuleProgram(input)?input:null;const moduleNode=entryNode===undefined?undefined:this.moduleSource?.describe().header.flowchart?.nodes.find(n=>n.id===entryNode)?.entry;this.usedModules=this.moduleSource?(snapshot===undefined?this.moduleSource.closure([this.moduleSource.entryModule,...(moduleNode?[this.moduleSource.moduleForFunction(moduleNode)]:[]),...(entryScene?[this.moduleSource.moduleForFunction(this.moduleSource.describe().header.extras?.entries.filter(e=>e.kind==='scene').find(e=>e.id===entryScene)?.entry??'')]:[])]):this.moduleSource.binding(snapshot)):[];this.program=this.moduleSource?this.moduleSource.program(this.usedModules,operations):linkProgram(input,operations).copy();this.sequenceEnabled=this.program.capabilities.includes('stage.sequence');this.indexFunctions(); this.profile=parseProfile(profile);this.extrasIdentity=extrasSignature(this.program);extrasProgress(this.program,this.profile,this.extrasIdentity);flowProgress(this.program,this.profile);ensure(entryNode===undefined||entryScene===undefined,'EXTRAS_ENTRY_CONFLICT','Choose one declared root');ensure(snapshot===undefined||(entryNode===undefined&&entryScene===undefined),'FLOW_ENTRY_SNAPSHOT','Declared entry starts a fresh run');
     if(snapshot!==undefined) {ensure(rngSeed===undefined,'RESTORE_RNG_SEED','A restored run must use its saved RNG state');this.s=validateSnapshot(this.moduleSource??this.program,snapshot,operations,mode==='initial'); this.s.profileBasis=this.profile.revision; this.resumeEffects(mode==='candidate'?'restore':mode);if(mode==='candidate')this.effects=[]; }
     else {
       const entry=this.fn(entryScene!==undefined?sceneRoot(this.program,this.profile,entryScene):entryNode===undefined?this.program.entry:flowEntry(this.program,this.profile,entryNode)),rng=initialRng(this.program.rng,rngSeed);
@@ -206,7 +207,7 @@ export class Core {
         if(t.kind==='stage')applyStageTask(this.s,t);
         if(t.elapsed===t.duration)t.status='completed';
       }
-      tickParticles(this.s,event.ms);tickMotion(this.s,event.ms);if(event.text!==false)this.finishAutomaticText();
+      tickParticles(this.s,event.ms);tickMotion(this.s,event.ms);if(this.sequenceEnabled)syncSequences(this.s);if(event.text!==false)this.finishAutomaticText();
     } else if(event.type==='task') {
       if(videoReport(this.s,event.task,event.attempt,event.result)||mediaReport(this.s,event.task,event.attempt,event.result)){this.resolveWait();return;}
       const t=this.s.tasks.find(t=>t.id===event.task);if(!t||t.kind!=='audio'||t.attempt!==event.attempt||t.status!=='running')return;
@@ -237,7 +238,7 @@ export class Core {
     ensure(Number.isInteger(budget)&&budget>0,'BUDGET','Positive integer required');
     if(this.revoked)return 'stable';
     for(let j=0;j<budget&&this.s.status==='running';j++) {
-      const op=this.op();if(op.op==='control.call'&&!this.functions.has(op.function)){ensure(this.moduleSource,'FUNCTION',op.function);const id=this.moduleSource.moduleForFunction(op.function);if(!this.moduleSource.has(id)){this.neededFunction=op.function;return 'yield';}this.attachModule(id);}this.neededFunction=null;try {this.execute(op);}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';if(op.op!=='extension.invoke')this.s.status='failed';throw e;}
+      const op=this.op();if(op.op==='control.call'&&!this.functions.has(op.function)){ensure(this.moduleSource,'FUNCTION',op.function);const id=this.moduleSource.moduleForFunction(op.function);if(!this.moduleSource.has(id)){this.neededFunction=op.function;return 'yield';}this.attachModule(id);}this.neededFunction=null;try {this.execute(op);if(this.sequenceEnabled&&op.op.startsWith('stage.'))syncSequences(this.s);}catch(e){this.error=e instanceof GalboxError?e.code:'CORE_ERROR';if(op.op!=='extension.invoke')this.s.status='failed';throw e;}
     }
     return this.s.status==='running'?'yield':'stable';
   }
@@ -296,6 +297,7 @@ export class Core {
     }catch(error){this.s=before.s;this.profile=before.profile;this.changes=before.changes;this.effects=before.effects;this.progressSeq=before.seq;this.error=error instanceof GalboxError?error.code:'OPERATION_FAILURE';throw error;}
   }
   private execute(i:Instruction):void {
+    if(isSequenceInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','Sequences require a declared source');executeSequence(this.program,this.s,i);this.top().pc=this.next();return;}
     if(isUIInstruction(i)){ensure(!this.recovering,'RECIPE_OPCODE','UI input cannot be guessed');if(!executeUI(this.program,this.s,i,e=>this.expression(e)))this.top().pc=this.next();return;}
     if(i.op==='interaction.prompt'){ensure(!this.recovering,'RECIPE_OPCODE','Interaction cannot be guessed');const w=prepareInteraction(i,this.s.counter+1,e=>this.expression(e));this.s.counter=w.prompt;this.s.wait=w;this.s.status='waiting';return;}
     if(i.op==='video.play'){ensure(!this.recovering,'RECIPE_OPCODE','Video cannot be guessed');this.effects.push(startVideo(this.program,this.s,i));return;}
@@ -432,7 +434,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
-  validateStageSnapshot(p,s);validateMotion(p,s);validateParticles(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
+  validateSequences(p,s);validateStageSnapshot(p,s);validateMotion(p,s);validateParticles(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);

@@ -3002,6 +3002,80 @@ message Gbx_Instruction_Case76 {
   optional Gbx_Instruction_Case76_inactive inactive = 5;
 }
 
+message Gbx_Instruction_Case77_op {
+  // Fixed semantic value: "stage.sequence"
+}
+
+message Gbx_Instruction_Case77_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case77_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case77_targets_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case77_targets {
+  repeated Gbx_Instruction_Case77_targets_Item items = 1;
+}
+
+message Gbx_Instruction_Case77_asset {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case77_frames_Item {
+  optional Gbx_SequenceFrame value = 1;
+}
+
+message Gbx_Instruction_Case77_frames {
+  repeated Gbx_Instruction_Case77_frames_Item items = 1;
+}
+
+message Gbx_Instruction_Case77_delayMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case77_loop {
+  optional bool value = 1;
+}
+
+message Gbx_Instruction_Case77_policy {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case77 {
+  optional Gbx_Instruction_Case77_op op = 1;
+  optional Gbx_Instruction_Case77_at at = 2;
+  optional Gbx_Instruction_Case77_task task = 3;
+  optional Gbx_Instruction_Case77_targets targets = 4;
+  optional Gbx_Instruction_Case77_asset asset = 5;
+  optional Gbx_Instruction_Case77_frames frames = 6;
+  optional Gbx_Instruction_Case77_delayMs delayMs = 7;
+  optional Gbx_Instruction_Case77_loop loop = 8;
+  optional Gbx_Instruction_Case77_policy policy = 9;
+}
+
+message Gbx_Instruction_Case78_op {
+  // Fixed semantic value: "stage.sequence.stop"
+}
+
+message Gbx_Instruction_Case78_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case78_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case78 {
+  optional Gbx_Instruction_Case78_op op = 1;
+  optional Gbx_Instruction_Case78_at at = 2;
+  optional Gbx_Instruction_Case78_task task = 3;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -3080,6 +3154,8 @@ message Gbx_Instruction {
     Gbx_Instruction_Case74 v74 = 74;
     Gbx_Instruction_Case75 v75 = 75;
     Gbx_Instruction_Case76 v76 = 76;
+    Gbx_Instruction_Case77 v77 = 77;
+    Gbx_Instruction_Case78 v78 = 78;
   }
 }
 
@@ -3553,6 +3629,10 @@ message Gbx_Task_particleTask {
   optional Gbx_ParticleTaskState value = 1;
 }
 
+message Gbx_Task_sequenceTask {
+  optional Gbx_SequenceTaskState value = 1;
+}
+
 message Gbx_Task {
   optional Gbx_Task_id id = 1;
   optional Gbx_Task_status status = 2;
@@ -3578,6 +3658,7 @@ message Gbx_Task {
   optional Gbx_Task_sourceFade sourceFade = 22;
   optional Gbx_Task_motionTask motionTask = 23;
   optional Gbx_Task_particleTask particleTask = 24;
+  optional Gbx_Task_sequenceTask sequenceTask = 25;
 }
 
 message Gbx_TaskGroup_id {
@@ -12189,6 +12270,70 @@ message Gbx_StoredSlotSummary {
   optional Gbx_StoredSlotSummary_metadata metadata = 4;
 }
 
+message Gbx_SequenceFrame_duration {
+  optional sint64 value = 1;
+}
+
+message Gbx_SequenceFrame_frame {
+  optional Gbx_ImageFrame value = 1;
+}
+
+message Gbx_SequenceFrame_pose {
+  optional Gbx_StagePose value = 1;
+}
+
+message Gbx_SequenceFrame {
+  optional Gbx_SequenceFrame_duration duration = 1;
+  optional Gbx_SequenceFrame_frame frame = 2;
+  optional Gbx_SequenceFrame_pose pose = 3;
+}
+
+message Gbx_SequenceTaskState_targets_Item {
+  optional string value = 1;
+}
+
+message Gbx_SequenceTaskState_targets {
+  repeated Gbx_SequenceTaskState_targets_Item items = 1;
+}
+
+message Gbx_SequenceTaskState_asset {
+  optional string value = 1;
+}
+
+message Gbx_SequenceTaskState_frames_Item {
+  optional Gbx_SequenceFrame value = 1;
+}
+
+message Gbx_SequenceTaskState_frames {
+  repeated Gbx_SequenceTaskState_frames_Item items = 1;
+}
+
+message Gbx_SequenceTaskState_delayMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_SequenceTaskState_loop {
+  optional bool value = 1;
+}
+
+message Gbx_SequenceTaskState_signature {
+  optional string value = 1;
+}
+
+message Gbx_SequenceTaskState_startedAt {
+  optional sint64 value = 1;
+}
+
+message Gbx_SequenceTaskState {
+  optional Gbx_SequenceTaskState_targets targets = 4;
+  optional Gbx_SequenceTaskState_asset asset = 5;
+  optional Gbx_SequenceTaskState_frames frames = 6;
+  optional Gbx_SequenceTaskState_delayMs delayMs = 7;
+  optional Gbx_SequenceTaskState_loop loop = 8;
+  optional Gbx_SequenceTaskState_signature signature = 1;
+  optional Gbx_SequenceTaskState_startedAt startedAt = 2;
+}
+
 message Gbx_ModuleFunction_id {
   optional string value = 1;
 }
@@ -12924,6 +13069,8 @@ message Gbx_InterfaceTextCatalog {
 message WireEnvelope {
   optional uint32 wire_version = 1;
   oneof body {
+    Gbx_SequenceFrame body_SequenceFrame = 126;
+    Gbx_SequenceTaskState body_SequenceTaskState = 127;
     Gbx_RulePresentation body_RulePresentation = 125;
     Gbx_Asset body_Asset = 123;
     Gbx_Function body_Function = 124;
