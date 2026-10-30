@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03B2",
+  "current_task": "G2-06",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-30",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3219,6 +3219,41 @@
       ],
       "blocker": null,
       "next_action": "有限回收已验；OS/GPU回收时机与真机/长期认证仍独立。继续G1-05及F-01F的源语义/模块组合，不破坏当前状态闭包来降低数字。"
+    },
+    {
+      "id": "G2-06",
+      "milestone": "G2",
+      "title": "ADV整页适配与禁止正文滚动",
+      "depends_on": [
+        "G2-02",
+        "G2-03"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "partial",
+      "outputs": [
+        "bounded complete-page typographic fitting in the default DOM renderer",
+        "stable partial-reveal layout and resize/restore",
+        "real consumer long-page regression"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "no ADV scrollbar or clipped current page",
+        "short-page authored-size reset",
+        "partial reveal, preference, resize and illustrated restore",
+        "explicit NVL scrolling retained"
+      ],
+      "evidence": [
+        "docs/decisions/0079-adv-page-fitting.md"
+      ],
+      "blocker": null,
+      "next_action": "默认ADV整页测量/有界缩排已实现；验证CJK/Latin/ruby/长词、偏好、逐字显现/刷新图文与显式NVL行为，再重新打包供独立实例消费，验真实正文。"
     }
   ]
 }
