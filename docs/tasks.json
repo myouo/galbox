@@ -3121,7 +3121,7 @@
       ],
       "status": "in_progress",
       "implementation": "in_progress",
-      "verification": "pending",
+      "verification": "partial",
       "outputs": [
         "eight-locale complete door2",
         "source interludes and persistent unlock",
@@ -3141,10 +3141,11 @@
       ],
       "evidence": [
         "docs/evidence/h3-04/REPORT.md",
-        "docs/evidence/g1-05/REPORT.md"
+        "docs/evidence/g1-05/REPORT.md",
+        "docs/evidence/f-01f/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "八语前置间章和完整第二门IR已保留，有限sf.fataend条件输出标准SDK分支，32个新档/通关态与预算1/100一致；动作仍为标记，未成第二门可玩程序。下一接memory1章尾选择支线、noise/heartbeat/eyecatch与角色/音频闭包，再落实W1-03B2高级模块组合，不抬预算。"
+      "next_action": "八语真实Program已接第一门→79–80段间章→351–355段二门前三节，八语Core/文本/页确认/切点及中英4浏览器通过；127/128函数（日/韩128），隔离开发入口，不改正式旧档。下一W1-03B2高级模块闭包及二门剩余演出/角色、memory1分支，保留原预算；glyph/历史注记/首行定位/脚本输入限制仍待补。"
     },
     {
       "id": "W1-06",
