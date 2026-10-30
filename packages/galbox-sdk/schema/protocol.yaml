@@ -3320,6 +3320,30 @@ definitions:
           - task
         additionalProperties: false
         x-proto-tag: 78
+      - type: object
+        properties:
+          op:
+            type: string
+            const: text.window.geometry
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          window:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          rect:
+            $ref: "#/definitions/TextRect"
+            x-proto-tag: 4
+        required:
+          - op
+          - at
+          - window
+          - rect
+        additionalProperties: false
+        x-proto-tag: 79
   Function:
     type: object
     properties:
@@ -8199,6 +8223,35 @@ definitions:
       - padding
       - align
     additionalProperties: false
+  TextRect:
+    type: object
+    properties:
+      x:
+        type: number
+        minimum: 0
+        maximum: 1280
+        x-proto-tag: 1
+      y:
+        type: number
+        minimum: 0
+        maximum: 720
+        x-proto-tag: 2
+      width:
+        type: number
+        minimum: 1
+        maximum: 1280
+        x-proto-tag: 3
+      height:
+        type: number
+        minimum: 1
+        maximum: 720
+        x-proto-tag: 4
+    required:
+      - x
+      - y
+      - width
+      - height
+    additionalProperties: false
   TextWindow:
     type: object
     properties:
@@ -8217,34 +8270,7 @@ definitions:
         pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
         x-proto-tag: 3
       rect:
-        type: object
-        properties:
-          x:
-            type: number
-            minimum: 0
-            maximum: 1280
-            x-proto-tag: 1
-          y:
-            type: number
-            minimum: 0
-            maximum: 720
-            x-proto-tag: 2
-          width:
-            type: number
-            minimum: 1
-            maximum: 1280
-            x-proto-tag: 3
-          height:
-            type: number
-            minimum: 1
-            maximum: 720
-            x-proto-tag: 4
-        required:
-          - x
-          - y
-          - width
-          - height
-        additionalProperties: false
+        $ref: "#/definitions/TextRect"
         x-proto-tag: 4
       z:
         type: integer
@@ -8348,6 +8374,13 @@ definitions:
                 $ref: "#/definitions/TextState"
               maxItems: 32
               x-proto-tag: 4
+            rect:
+              $ref: "#/definitions/TextRect"
+              x-proto-tag: 5
+            geometryAt:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 6
           required:
             - id
             - theme
@@ -14213,3 +14246,4 @@ x-proto-envelope:
   SequenceFrame: 126
   SequenceTaskState: 127
   SequencePose: 128
+  TextRect: 129

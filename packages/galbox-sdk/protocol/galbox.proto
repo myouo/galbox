@@ -3076,6 +3076,29 @@ message Gbx_Instruction_Case78 {
   optional Gbx_Instruction_Case78_task task = 3;
 }
 
+message Gbx_Instruction_Case79_op {
+  // Fixed semantic value: "text.window.geometry"
+}
+
+message Gbx_Instruction_Case79_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case79_window {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case79_rect {
+  optional Gbx_TextRect value = 1;
+}
+
+message Gbx_Instruction_Case79 {
+  optional Gbx_Instruction_Case79_op op = 1;
+  optional Gbx_Instruction_Case79_at at = 2;
+  optional Gbx_Instruction_Case79_window window = 3;
+  optional Gbx_Instruction_Case79_rect rect = 4;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -3156,6 +3179,7 @@ message Gbx_Instruction {
     Gbx_Instruction_Case76 v76 = 76;
     Gbx_Instruction_Case77 v77 = 77;
     Gbx_Instruction_Case78 v78 = 78;
+    Gbx_Instruction_Case79 v79 = 79;
   }
 }
 
@@ -7406,6 +7430,29 @@ message Gbx_TextTheme {
   optional Gbx_TextTheme_align align = 13;
 }
 
+message Gbx_TextRect_x {
+  optional double value = 1;
+}
+
+message Gbx_TextRect_y {
+  optional double value = 1;
+}
+
+message Gbx_TextRect_width {
+  optional double value = 1;
+}
+
+message Gbx_TextRect_height {
+  optional double value = 1;
+}
+
+message Gbx_TextRect {
+  optional Gbx_TextRect_x x = 1;
+  optional Gbx_TextRect_y y = 2;
+  optional Gbx_TextRect_width width = 3;
+  optional Gbx_TextRect_height height = 4;
+}
+
 message Gbx_TextWindow_id {
   optional string value = 1;
 }
@@ -7418,27 +7465,8 @@ message Gbx_TextWindow_theme {
   optional string value = 1;
 }
 
-message Gbx_TextWindow_rect_x {
-  optional double value = 1;
-}
-
-message Gbx_TextWindow_rect_y {
-  optional double value = 1;
-}
-
-message Gbx_TextWindow_rect_width {
-  optional double value = 1;
-}
-
-message Gbx_TextWindow_rect_height {
-  optional double value = 1;
-}
-
 message Gbx_TextWindow_rect {
-  optional Gbx_TextWindow_rect_x x = 1;
-  optional Gbx_TextWindow_rect_y y = 2;
-  optional Gbx_TextWindow_rect_width width = 3;
-  optional Gbx_TextWindow_rect_height height = 4;
+  optional Gbx_TextRect value = 1;
 }
 
 message Gbx_TextWindow_z {
@@ -7541,11 +7569,21 @@ message Gbx_TextLayoutState_windows_Item_entries {
   repeated Gbx_TextLayoutState_windows_Item_entries_Item items = 1;
 }
 
+message Gbx_TextLayoutState_windows_Item_rect {
+  optional Gbx_TextRect value = 1;
+}
+
+message Gbx_TextLayoutState_windows_Item_geometryAt {
+  optional string value = 1;
+}
+
 message Gbx_TextLayoutState_windows_Item {
   optional Gbx_TextLayoutState_windows_Item_id id = 1;
   optional Gbx_TextLayoutState_windows_Item_theme theme = 2;
   optional Gbx_TextLayoutState_windows_Item_visible visible = 3;
   optional Gbx_TextLayoutState_windows_Item_entries entries = 4;
+  optional Gbx_TextLayoutState_windows_Item_rect rect = 5;
+  optional Gbx_TextLayoutState_windows_Item_geometryAt geometryAt = 6;
 }
 
 message Gbx_TextLayoutState_windows {

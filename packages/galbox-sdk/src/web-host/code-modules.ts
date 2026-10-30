@@ -18,3 +18,6 @@ export class WebCodeModules {
  async ensure(ids:readonly string[],signal:AbortSignal):Promise<void> {const request=this.prepare(ids,signal);try{await request.ready;}finally{request.cancel();}}
  dispose():void {this.lifetime.abort();}
 }
+
+/** Candidate-only preparation, using the same verified leases as ordinary calls. */
+export async function prepareModuleProgram(source:ModuleProgram,provider:CodeModuleProvider,ids:readonly string[],cancellation:import('../runtime/stream-ports.js').Cancellation):Promise<void>{const controller=new AbortController(),release=cancellation.onCancel(()=>controller.abort()),loader=new WebCodeModules(source,provider);try{if(cancellation.cancelled)controller.abort();await loader.ensure(ids,controller.signal);ensure(!controller.signal.aborted,'MODULE_CANCELLED','Preparation cancelled');}finally{release();loader.dispose();}}

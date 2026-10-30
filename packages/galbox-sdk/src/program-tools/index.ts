@@ -13,7 +13,7 @@ export {expr,expressionWire,expressionOperand,assignExpression,branchExpression,
 export type {TypedExpression} from './expressions.js';
 export {richText,richPage} from './text.js';
 
-export {textTheme,textWindow,textLayout,textFont} from './layout.js';
+export {textTheme,textWindow,textLayout,textFont,textWindowGeometry} from './layout.js';
 
 export {stageImage,stageTween,stageFilter,stageCamera,stageFade,stageTransition,stageRuleTransition,stageShake,stageStyle,stageAsset,stageMix,stageMotion,stageClone,stopStageMotion} from './stage.js';
 export type {StageNumber,StagePoseInput,StageFilterInput,StageCameraInput,StageStyleInput,StageTiming,StageMixOptions} from './stage.js';

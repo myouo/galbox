@@ -349,6 +349,7 @@ export class Core {
       case 'rng.seed': ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');this.s.rng={algorithm:'lcg32@1',state:i.seed,draws:0};break;
       case 'state.collect':this.collectState(i.retainTasks,i.historyLimit);break;
       case 'text.clear':if(this.s.textLayout)clearTextWindow(this.s,this.s.textLayout.active);else this.s.text=null;break;
+      case 'text.window.geometry': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.rect={...i.rect};w.geometryAt=i.at;break;}
       case 'text.window.select': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w&&this.s.textLayout,'TEXT_WINDOW',i.window);this.s.textLayout.active=w.id;w.visible=true;break;}
       case 'text.window.clear':clearTextWindow(this.s,i.window);break;
       case 'text.window.visible': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.visible=i.visible;break;}

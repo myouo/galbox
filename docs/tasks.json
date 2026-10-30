@@ -3267,9 +3267,9 @@
         "M5-01",
         "G4-02"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "not_run",
+      "status": "in_progress",
+      "implementation": "partial",
+      "verification": "in_progress",
       "outputs": [
         "explicit cross-manifest module migration and source binding",
         "recipe and SaveBridge dependency preparation",
@@ -3291,7 +3291,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "先定义显式旧manifest来源/快照映射与有界recipe依赖，复用正式prepare/activation CAS；再扩展SaveBridge与历史回溯闭包，验证取消、dirty更新、全调用ABI迁移和跨发行版失败。当前相关路径继续明确拒绝，不猜旧来源。"
+      "next_action": "先验收B3A显式旧模块来源/双闭包迁移与生产activation CAS；模块recipe/SaveBridge/历史回溯仍分后续子项，当前不扩大支持承诺。"
     },
     {
       "id": "G3-08",
@@ -3437,6 +3437,72 @@
       ],
       "blocker": null,
       "next_action": "397单元/16相关双后端/严格隔离实包与第三门64MiB连续交接通过；逐帧准备和有界预取不扩大预算。继续W1-03B3。"
+    },
+    {
+      "id": "W1-03B3A",
+      "milestone": "W1",
+      "title": "显式跨manifest Web存档迁移",
+      "depends_on": [
+        "W1-03B2"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "verified original module binding and code closure",
+        "mapped target preparation and activation CAS",
+        "preserved source slots/current durable progress"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C06",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "source/target code failure and ignored cancellation reject before takeover",
+        "complete source validation and mapped target binding",
+        "real IndexedDB and isolated packed consumer"
+      ],
+      "evidence": [
+        "docs/decisions/0084-explicit-module-save-migration.md"
+      ],
+      "blocker": null,
+      "next_action": "验证独立实例旧1/2门切点续到正式三门；recipe/SaveBridge/历史回溯不列入本子项。"
+    },
+    {
+      "id": "G2-07",
+      "milestone": "G2",
+      "title": "可恢复的源窗口几何变更",
+      "depends_on": [
+        "G2-06"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "text.window.geometry factory and bounded wire state",
+        "last-writer source closure and renderer fitting"
+      ],
+      "contracts": [
+        "C01",
+        "C04",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "tampered source/rect and bounds rejection",
+        "cold module source survives returned function",
+        "Canvas/WebGL actual DOM and illustrated capture",
+        "independent game letter/old-save validation"
+      ],
+      "evidence": [
+        "docs/decisions/0085-authored-text-window-geometry.md"
+      ],
+      "blocker": null,
+      "next_action": "将信件区域接入三门正式主线并核对旧段落布局。"
     }
   ]
 }
