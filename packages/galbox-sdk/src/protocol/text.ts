@@ -4,6 +4,12 @@ import type {TextState,TextRun,TextStyle,Instruction,DeepReadonly,RichTextState,
 export const textSegmentation='uax29-17.0.0@1';
 type Text=DeepReadonly<TextState>;
 type RichInstruction=Extract<Instruction,{op:'text.rich'}>;
+/** Resolve one bounded source page. The Program itself remains compact. */
+export function resolveRichSource(program:Pick<DeepReadonly<Program>,'textStyles'>,source:DeepReadonly<RichInstruction>):DeepReadonly<RichInstruction> {
+ if(!source.runs.some(r=>(r.kind==='text'||r.kind==='ruby')&&r.styleId!==undefined))return source;
+ const runs=source.runs.map(run=>{if((run.kind!=='text'&&run.kind!=='ruby')||run.styleId===undefined)return run;ensure(run.style===undefined,'TEXT_STYLE_MIXED','Use either an inline style or a style ID');const style=program.textStyles?.find(s=>s.id===run.styleId)?.style;ensure(style,'TEXT_STYLE_UNKNOWN',run.styleId);const {styleId,...rest}=run;return {...rest,style};});
+ const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return {...source,runs:[first,...rest]};
+}
 export type TextToken={kind:'unit';text:string;run:number;style:DeepReadonly<TextStyle>}|{kind:'pause';duration:number}|{kind:'pause.units';units:number}|{kind:'speed';intervalMs:number;user?:boolean}|{kind:'confirm';skippable:boolean};
 export interface TextPlan {content:string;tokens:TextToken[];units:number;}
 function unicode(text:string):void {ensure(!/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(text),'TEXT_UNICODE','Unpaired UTF-16 surrogate');}
@@ -50,11 +56,11 @@ export function isTextComplete(text:Text):boolean {
 export function revealRichText(text:TextState,plan:TextPlan,skipConfirmations=false):void {const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');if(rich.waitingForClick){const token=plan.tokens[rich.cursor];if(!skipConfirmations||token?.kind!=='confirm'||!token.skippable)return;delete rich.waitingForClick;}let start=0;for(let i=0;i<rich.cursor;i++)if(plan.tokens[i]?.kind==='confirm')start=i+1;let end=rich.cursor;while(end<plan.tokens.length){const token=plan.tokens[end];if(token?.kind==='confirm'&&(!skipConfirmations||!token.skippable))break;end++;}const before=plan.tokens.slice(0,start).filter(t=>t.kind==='unit').length,count=plan.tokens.slice(start,end).filter(t=>t.kind==='unit').length;text.revealed=before+count;rich.cursor=end;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;rich.remainderMs=0;rich.revealedAt=Array.from({length:before+count},()=>null);if(plan.tokens[end]?.kind==='confirm')rich.waitingForClick=true;}
 export function confirmRichText(text:TextState,plan:TextPlan,skipConfirmations=false):void {const rich=text.rich;ensure(rich?.waitingForClick&&plan.tokens[rich.cursor]?.kind==='confirm','TEXT_CONFIRM','No inline confirmation');delete rich.waitingForClick;rich.cursor++;rich.remainderMs=0;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;tickRichText(text,0,plan,skipConfirmations);}
 export function richContinuationSources(p:DeepReadonly<Program>,source:DeepReadonly<RichInstruction>):DeepReadonly<RichInstruction>[] {
- if(!source.appendFrom)return [];const result:DeepReadonly<RichInstruction>[]=[],all=p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich');let current=source;const seen=new Set([source.at]);
+ if(!source.appendFrom)return [];const result:DeepReadonly<RichInstruction>[]=[],all=p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich').map(i=>resolveRichSource(p,i));let current=resolveRichSource(p,source);const seen=new Set([source.at]);
  while(current.appendFrom){const candidates=all.filter(i=>i.at===current.appendFrom&&i.textId===source.textId&&i.revision===source.revision),previous=candidates[0];ensure(candidates.length===1&&previous?.completion==='continue'&&!seen.has(previous.at)&&previous.runs.length<=current.runs.length&&canonicalWireJSON(previous.runs)===canonicalWireJSON(current.runs.slice(0,previous.runs.length)),'TEXT_APPEND_SOURCE','Continuation needs a declared complete prefix');seen.add(previous.at);result.push(previous);current=previous;}
  return result;
 }
-export function validateRichText(text:TextState,source:RichInstruction,prefixes:readonly DeepReadonly<RichInstruction>[]=[]):void {
+export function validateRichText(text:TextState,source:DeepReadonly<RichInstruction>,prefixes:readonly DeepReadonly<RichInstruction>[]=[]):void {
  const rich=text.rich;ensure(rich&&!text.template&&rich.at===source.at&&rich.signature===richTextSignature(source),'RESTORE_RICH_SOURCE','Rich origin missing or changed; explicit migration required');
  const plan=compileRichText(rich.runs);ensure(text.textId===source.textId&&text.revision===source.revision&&text.content===plan.content&&rich.runs.length===source.runs.length,'RESTORE_RICH_TEXT','Rich content/identity mismatch');unicode(text.speaker);
  if(source.speaker.op==='literal')ensure(text.speaker===source.speaker.value,'RESTORE_RICH_TEXT','Literal speaker changed');

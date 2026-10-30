@@ -3364,6 +3364,25 @@ definitions:
           type: string
           pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
         x-proto-tag: 21
+      textStyles:
+        type: array
+        minItems: 1
+        maxItems: 128
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 1
+            style:
+              $ref: "#/definitions/TextStyle"
+              x-proto-tag: 2
+          required:
+            - id
+            - style
+          additionalProperties: false
+        x-proto-tag: 22
     required:
       - version
       - gameId
@@ -7633,6 +7652,10 @@ definitions:
           style:
             $ref: "#/definitions/TextStyle"
             x-proto-tag: 3
+          styleId:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
         required:
           - kind
           - content
@@ -7653,6 +7676,10 @@ definitions:
           style:
             $ref: "#/definitions/TextStyle"
             x-proto-tag: 4
+          styleId:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 5
         required:
           - kind
           - content

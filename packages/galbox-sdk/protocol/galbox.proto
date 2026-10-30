@@ -3228,6 +3228,23 @@ message Gbx_Program_bgmBuffers {
   repeated Gbx_Program_bgmBuffers_Item items = 1;
 }
 
+message Gbx_Program_textStyles_Item_id {
+  optional string value = 1;
+}
+
+message Gbx_Program_textStyles_Item_style {
+  optional Gbx_TextStyle value = 1;
+}
+
+message Gbx_Program_textStyles_Item {
+  optional Gbx_Program_textStyles_Item_id id = 1;
+  optional Gbx_Program_textStyles_Item_style style = 2;
+}
+
+message Gbx_Program_textStyles {
+  repeated Gbx_Program_textStyles_Item items = 1;
+}
+
 message Gbx_Program {
   optional Gbx_Program_version version = 1;
   optional Gbx_Program_gameId gameId = 2;
@@ -3250,6 +3267,7 @@ message Gbx_Program {
   optional Gbx_Program_textCatalogBinding textCatalogBinding = 19;
   optional Gbx_Program_sfxBuffers sfxBuffers = 20;
   optional Gbx_Program_bgmBuffers bgmBuffers = 21;
+  optional Gbx_Program_textStyles textStyles = 22;
 }
 
 message Gbx_Profile_revision {
@@ -6859,10 +6877,15 @@ message Gbx_RichTextSourceRun_Case1_style {
   optional Gbx_TextStyle value = 1;
 }
 
+message Gbx_RichTextSourceRun_Case1_styleId {
+  optional string value = 1;
+}
+
 message Gbx_RichTextSourceRun_Case1 {
   optional Gbx_RichTextSourceRun_Case1_kind kind = 1;
   optional Gbx_RichTextSourceRun_Case1_content content = 2;
   optional Gbx_RichTextSourceRun_Case1_style style = 3;
+  optional Gbx_RichTextSourceRun_Case1_styleId styleId = 4;
 }
 
 message Gbx_RichTextSourceRun_Case2_kind {
@@ -6881,11 +6904,16 @@ message Gbx_RichTextSourceRun_Case2_style {
   optional Gbx_TextStyle value = 1;
 }
 
+message Gbx_RichTextSourceRun_Case2_styleId {
+  optional string value = 1;
+}
+
 message Gbx_RichTextSourceRun_Case2 {
   optional Gbx_RichTextSourceRun_Case2_kind kind = 1;
   optional Gbx_RichTextSourceRun_Case2_content content = 2;
   optional Gbx_RichTextSourceRun_Case2_reading reading = 3;
   optional Gbx_RichTextSourceRun_Case2_style style = 4;
+  optional Gbx_RichTextSourceRun_Case2_styleId styleId = 5;
 }
 
 message Gbx_RichTextSourceRun_Case3_kind {
