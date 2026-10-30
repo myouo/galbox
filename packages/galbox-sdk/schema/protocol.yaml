@@ -2,6 +2,31 @@ $id: https://galbox.local/protocol-v1
 $schema: http://json-schema.org/draft-07/schema#
 title: Wire
 definitions:
+  RulePresentation:
+    type: object
+    properties:
+      images:
+        type: array
+        maxItems: 128
+        items:
+          type: object
+          properties:
+            source:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 1
+            mask:
+              type: string
+              pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+              x-proto-tag: 2
+          required:
+            - source
+            - mask
+          additionalProperties: false
+        x-proto-tag: 1
+    required:
+      - images
+    additionalProperties: false
   PresentationAssetCatalog:
     type: object
     properties:
@@ -13949,3 +13974,4 @@ x-proto-envelope:
   PresentationAssetCatalog: 122
   Asset: 123
   Function: 124
+  RulePresentation: 125

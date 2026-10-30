@@ -55,4 +55,4 @@ export {splitProgramText,bindProgramText,localeCatalog,resolveLocale,interfaceTe
 export {stageParticles,stopStageParticles} from './particles.js';
 export type {ParticleConfigInput,ParticleStyleInput} from './particles.js';
 
-export {dialoguePresentation} from './dialogue.js';
+export {rulePresentation,dialoguePresentation} from './dialogue.js';
