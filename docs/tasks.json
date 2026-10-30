@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G2-06",
+  "current_task": "W1-03B2",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-30",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3228,9 +3228,9 @@
         "G2-02",
         "G2-03"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "partial",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "bounded complete-page typographic fitting in the default DOM renderer",
         "stable partial-reveal layout and resize/restore",
@@ -3250,10 +3250,11 @@
         "explicit NVL scrolling retained"
       ],
       "evidence": [
-        "docs/decisions/0079-adv-page-fitting.md"
+        "docs/decisions/0079-adv-page-fitting.md",
+        "docs/evidence/g2-06/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "默认ADV整页测量/有界缩排已实现；验证CJK/Latin/ruby/长词、偏好、逐字显现/刷新图文与显式NVL行为，再重新打包供独立实例消费，验真实正文。"
+      "next_action": "ADV完整页适配已验收：13相关浏览器/371单元/顺序check、独立实际tarball、八语50638页字形与可读性、实际中文偏好/滚轮/图文刷新及网络回归通过。只有38页缩排，最小0.80542，剧情与存档身份不变。继续W1-03B2剩余通用高级模块；原生禁则/逐像素/极小矩形可读性另验。"
     }
   ]
 }
