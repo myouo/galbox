@@ -41,7 +41,21 @@ flowchart LR
 
 release.origin为modules：已获取的模块按独立摘要验证；尚未全部下载时不宣称重新计算了完整Program摘要。最后一个模块安装时再核对完整重组Program与生产者摘要。模块代码protobuf与SDK自身JS包是两个层次，后者仍主要由Vite打包。
 
-当前支持基础ADV/control/choice、i32/bool/string、基础stage/audio.wav/tasks/profile和静态presentation。高级媒体/富文/窗口/剧本UI/流程图/鉴赏/扩展/RNG、模块recipe/SaveBridge/备份恢复和历史回溯暂明确unsupported，B2继续补齐。默认模块历史回溯关闭；普通保存/读取、历史文本和备份导出保留。单体Program原功能继续可用。
+v1保持基础ADV/control/choice、i32/bool/string、基础stage/audio.wav/tasks/profile与静态presentation。v2通过`ProgramBuilder.parts()`与`compileProgramModuleParts`分别验证有界头/代码/资源目录，支持现有富文/窗口、二维演出、源音频/流、鉴赏，以及ADR0080的UI、流程图、计时交互、WebM、RNG和已登记operations。没有提高单个输入、模块、快照或驻留预算。
+
+```ts
+const built = await compileProgramModuleParts({
+  parts: builder.parts(), series: '1', resources, operations,
+});
+const source = createModuleProgram(manifest, {operations});
+// createModulePlayer同样传入operations；未使用扩展时均可省略。
+```
+
+注册表由宿主的真实工厂建立并冻结，manifest只承诺Schema/实现/迁移身份，不传输可执行扩展。缺失或不匹配的注册表在创建/链接/恢复前拒绝。单体与v2使用同一扩展reducer、等待/尝试身份、视频和计时恢复机制。
+
+UI/流程图运行签名绑定完整不可变manifest，加载下一模块不会改变已有签名。活动UI额外保留创建它的`ui.show`来源，允许该函数先返回；快照也保留任务、正文、窗口、扩展调用等来源闭包。流程图声明的根函数须以对应marker开头，Player在验证当前持久profile gate后加载该根，再创建候选。取消/故障不得接管原会话，加载旧档不回退持久访问/解锁。
+
+模块recipe/SaveBridge/跨manifest迁移与历史回溯仍明确拒绝，另列后续任务；不猜旧清单、不伪造函数体、不把单体迁移接口当模块已支持。备份同manifest可异步预备其完整源码闭包后恢复。
 
 资源仍独立使用eager/demand/balanced/chapter策略；代码当前仅实际调用触发，无自动代码预取。模块内所有函数一并下载，单个大函数内部的未选分支也在同一函数体里，作者分组决定粒度。已使用代码暂不淘汰，原输入/内存上限保持，不能据此声称任意规模大作完成。
 

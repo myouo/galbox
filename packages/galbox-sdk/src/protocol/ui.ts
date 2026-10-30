@@ -1,3 +1,4 @@
+import {moduleContext} from './module-context.js';
 import {ensure,parseProgram,parseUIScreen,parseUIControl,parseUIState,parseUIWait,parseUIEvent,canonicalWireJSON} from './index.js';
 import type {Program,Snapshot,Instruction,UIControl,UIState,UIWait,UIEvent,Value,Expression,Slot,DeepReadonly} from './index.js';
 import {wireDigest} from './digest.js';
@@ -5,7 +6,7 @@ import {validateExpressionTree} from './expressions.js';
 export type UIInstruction=Extract<Instruction,{op:`ui.${string}`}>;
 export function isUIInstruction(i:Instruction):i is UIInstruction{return i.op.startsWith('ui.');}
 export function uiExpressions(i:UIInstruction):Expression[]{return 'value'in i?[i.value]:[];}
-export function uiSignature(p:DeepReadonly<Program>):string|null {if(!p.ui)return null;const ids=new Set(p.ui.screens.flatMap(s=>s.controls.flatMap(c=>c.kind==='image'?[c.asset]:[])));return wireDigest({catalog:p.ui,assets:p.assets.filter(a=>ids.has(a.id)),instructions:p.functions.map(f=>({id:f.id,code:f.code.filter(i=>i.op.startsWith('ui.'))}))});}
+export function uiSignature(p:DeepReadonly<Program>):string|null {if(!p.ui)return null;const context=moduleContext(p);if(context)return wireDigest({version:2,catalog:p.ui,module:context.identity});const ids=new Set(p.ui.screens.flatMap(s=>s.controls.flatMap(c=>c.kind==='image'?[c.asset]:[])));return wireDigest({catalog:p.ui,assets:p.assets.filter(a=>ids.has(a.id)),instructions:p.functions.map(f=>({id:f.id,code:f.code.filter(i=>i.op.startsWith('ui.'))}))});}
 export function uiFingerprint(input:unknown):string|null{return uiSignature(parseProgram(input));}
 function unique(ids:readonly string[]):void {ensure(new Set(ids).size===ids.length,'UI_DUPLICATE','Duplicate UI identity');}
 export function validateControl(c:DeepReadonly<UIControl>):void {

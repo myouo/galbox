@@ -18,9 +18,9 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03B2",
+  "current_task": "W1-03B3",
   "engine_status": "web_delivery_scaling",
-  "last_updated": "2026-10-30",
+  "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -2136,7 +2136,8 @@
         "W1-03A",
         "W1-03B",
         "W1-03C",
-        "W1-03B2"
+        "W1-03B2",
+        "W1-03B3"
       ],
       "status": "in_progress",
       "implementation": "in_progress",
@@ -2159,7 +2160,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "A和基础B已验收；B2补齐高级能力模块，C继续热记录粒度/留存/容量。父任务保持进行中。"
+      "next_action": "A、基础B及B2高级执行有限集已验收；继续B3跨清单迁移/桥接/回溯与C热记录粒度/留存/容量。父任务保持in_progress，不提高既定预算替代完成。"
     },
     {
       "id": "W1-04",
@@ -2299,9 +2300,9 @@
       "depends_on": [
         "W1-03B"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "partial",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "advanced capability modular execution"
       ],
@@ -2317,11 +2318,12 @@
       ],
       "evidence": [
         "docs/decisions/0077-advanced-module-composition.md",
-        "docs/decisions/0078-rule-presentation.md",
-        "docs/evidence/f-01f/REPORT.md"
+        "docs/decisions/0080-interactive-module-closure.md",
+        "docs/evidence/f-01f/REPORT.md",
+        "docs/evidence/w1-03b2/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "ADR0077/0078有限v2组合/分段资源、富文/窗口/舞台/源音频/鉴赏与完整恢复闭包已消费真实tarball，check/371单元、6模块及2规则浏览器、八语正式两门/旧档/回放/实际R2通过。下一为脚本UI/流程图/视频/扩展operations建立有限协议和失败反例，再逐项实施模块执行/恢复闭包；当前明确拒绝，跨v2发行版仍要求显式迁移，保持in_progress。"
+      "next_action": "当前v2高级执行集已闭合：富文/舞台/音源/鉴赏及UI/流程图/RNG/计时/WebM/注册operations；377单元、29相关浏览器、真实tarball独立消费和235项分片发现通过。跨manifest迁移、recipe/SaveBridge/历史回溯转W1-03B3，代码驱逐/持久缓存/容量另验；不声称W1父任务或整作认证完成。"
     },
     {
       "id": "I1-01",
@@ -3255,6 +3257,41 @@
       ],
       "blocker": null,
       "next_action": "ADV完整页适配已验收：13相关浏览器/371单元/顺序check、独立实际tarball、八语50638页字形与可读性、实际中文偏好/滚轮/图文刷新及网络回归通过。只有38页缩排，最小0.80542，剧情与存档身份不变。继续W1-03B2剩余通用高级模块；原生禁则/逐像素/极小矩形可读性另验。"
+    },
+    {
+      "id": "W1-03B3",
+      "milestone": "W1",
+      "title": "模块跨版本迁移、恢复配方与SaveBridge/历史回溯",
+      "depends_on": [
+        "W1-03B2",
+        "M5-01",
+        "G4-02"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "not_run",
+      "outputs": [
+        "explicit cross-manifest module migration and source binding",
+        "recipe and SaveBridge dependency preparation",
+        "module rollback and durable history source closure"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C11"
+      ],
+      "acceptance": [
+        "complete old-source and candidate closure",
+        "migration/recipe failure preserves live head and source slots",
+        "durable progress never overwritten by old module snapshots",
+        "actual IndexedDB and independent packed consumer"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "先定义显式旧manifest来源/快照映射与有界recipe依赖，复用正式prepare/activation CAS；再扩展SaveBridge与历史回溯闭包，验证取消、dirty更新、全调用ABI迁移和跨发行版失败。当前相关路径继续明确拒绝，不猜旧来源。"
     }
   ]
 }

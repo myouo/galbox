@@ -13299,6 +13299,12 @@ definitions:
             - style
           additionalProperties: false
         x-proto-tag: 18
+      ui:
+        $ref: "#/definitions/UICatalog"
+        x-proto-tag: 19
+      flowchart:
+        $ref: "#/definitions/Flowchart"
+        x-proto-tag: 20
     required:
       - version
       - gameId

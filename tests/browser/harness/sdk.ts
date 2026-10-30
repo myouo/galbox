@@ -24,3 +24,5 @@ export {BrowserScheduler} from '../../../packages/galbox-sdk/src/web-host/schedu
 export {loadingFixture} from "./loading-fixture.js";
 
 export * from 'galbox-sdk/wire';
+
+export {interactiveRegistry} from '../../fixtures/game-data/interactive-modules/source.js';

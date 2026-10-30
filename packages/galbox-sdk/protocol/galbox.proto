@@ -12375,6 +12375,14 @@ message Gbx_ModuleHeader_textStyles {
   repeated Gbx_ModuleHeader_textStyles_Item items = 1;
 }
 
+message Gbx_ModuleHeader_ui {
+  optional Gbx_UICatalog value = 1;
+}
+
+message Gbx_ModuleHeader_flowchart {
+  optional Gbx_Flowchart value = 1;
+}
+
 message Gbx_ModuleHeader {
   optional Gbx_ModuleHeader_version version = 1;
   optional Gbx_ModuleHeader_gameId gameId = 2;
@@ -12394,6 +12402,8 @@ message Gbx_ModuleHeader {
   optional Gbx_ModuleHeader_sfxBuffers sfxBuffers = 16;
   optional Gbx_ModuleHeader_bgmBuffers bgmBuffers = 17;
   optional Gbx_ModuleHeader_textStyles textStyles = 18;
+  optional Gbx_ModuleHeader_ui ui = 19;
+  optional Gbx_ModuleHeader_flowchart flowchart = 20;
 }
 
 message Gbx_ModulePartition_Item_id {
