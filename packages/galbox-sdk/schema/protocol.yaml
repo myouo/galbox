@@ -7582,7 +7582,7 @@ definitions:
         x-proto-tag: 4
       scale:
         type: number
-        minimum: 0.75
+        minimum: 0.5
         maximum: 1.5
         x-proto-tag: 5
       effect:
