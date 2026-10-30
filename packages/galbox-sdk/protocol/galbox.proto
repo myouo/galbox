@@ -7465,8 +7465,27 @@ message Gbx_TextWindow_theme {
   optional string value = 1;
 }
 
+message Gbx_TextWindow_rect_x {
+  optional double value = 1;
+}
+
+message Gbx_TextWindow_rect_y {
+  optional double value = 1;
+}
+
+message Gbx_TextWindow_rect_width {
+  optional double value = 1;
+}
+
+message Gbx_TextWindow_rect_height {
+  optional double value = 1;
+}
+
 message Gbx_TextWindow_rect {
-  optional Gbx_TextRect value = 1;
+  optional Gbx_TextWindow_rect_x x = 1;
+  optional Gbx_TextWindow_rect_y y = 2;
+  optional Gbx_TextWindow_rect_width width = 3;
+  optional Gbx_TextWindow_rect_height height = 4;
 }
 
 message Gbx_TextWindow_z {
