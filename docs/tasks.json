@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G1-05",
+  "current_task": "F-01F",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-30",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3085,9 +3085,9 @@
         "G1-04",
         "G2-02"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
       "outputs": [
         "owned view-only message visibility",
         "explicit menu audio policy",
@@ -3106,10 +3106,10 @@
         "capture and restore remain authoritative"
       ],
       "evidence": [
-        "docs/evidence/h3-04/REPORT.md"
+        "docs/evidence/g1-05/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "已消费逐次滚轮/触控板偏好、历史到底返回与150ms保护、存读档循环翻页及顶层右键取消；继续原config已读字速/nonstop、历史富样式/姓名、无框图片变体和阅读右键隐藏，不标整体完成。"
+      "next_action": "有限源设置/取消/隐藏已完成；read速度与确认偏好、独立显示目录、富历史/姓名、首次恢复不推进及回放隔离通过。原生字体/逐像素/原档/真机长期另验；继续F-01F。"
     },
     {
       "id": "F-01F",
@@ -3140,10 +3140,11 @@
         "original config and secondary input"
       ],
       "evidence": [
-        "docs/evidence/h3-04/REPORT.md"
+        "docs/evidence/h3-04/REPORT.md",
+        "docs/evidence/g1-05/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "八语前置间章79–80段/第二门含尾间章3672–3682段IR及全部源控制/跳转已验证，未编译Program。下一实现有限条件/选择、noise/heartbeat/eyecatch等源宏与W1-03B2组合，量真实闭包，不普遍抬预算。"
+      "next_action": "八语前置间章和完整第二门IR已保留，有限sf.fataend条件输出标准SDK分支，32个新档/通关态与预算1/100一致；动作仍为标记，未成第二门可玩程序。下一接memory1章尾选择支线、noise/heartbeat/eyecatch与角色/音频闭包，再落实W1-03B2高级模块组合，不抬预算。"
     },
     {
       "id": "W1-06",
