@@ -33,7 +33,8 @@ class DomTextRenderer implements TextRenderer {
   if(root.clientWidth===0||root.clientHeight===0)return;
   // Offset boxes are layout coordinates, unaffected by the stage camera.
   // Some fonts extend above the first line box despite a matching scrollHeight.
-  const units=[...root.querySelectorAll<HTMLElement>('.galbox-text-unit,ruby,rt,.galbox-speaker,p>span')],top=Math.min(0,...units.filter(e=>e.offsetHeight>0).map(e=>e.offsetTop));
+  // Hanging wrap whitespace has no ink; keep its line layout without fitting its box.
+  const units=[...root.querySelectorAll<HTMLElement>('.galbox-text-unit,ruby,rt,.galbox-speaker,p>span')].filter(e=>!e.classList.contains('galbox-text-unit')||!!e.textContent?.trim()||!!e.style.textDecoration),top=Math.min(0,...units.filter(e=>e.offsetHeight>0).map(e=>e.offsetTop));
   if(top<0)root.style.setProperty('--galbox-fit-leading',`${1-top}px`);
   const fits=()=>root.scrollHeight<=root.clientHeight&&root.scrollWidth<=root.clientWidth&&units.every(e=>e.offsetHeight===0||e.offsetTop>=0&&e.offsetTop+e.offsetHeight<=root.clientHeight&&e.offsetLeft>=0&&e.offsetLeft+e.offsetWidth<=root.clientWidth);
   if(fits())return;
