@@ -70,7 +70,7 @@ export class Core {
   private consumed=new Set<string>();
   private textRemainder=0;
   private richPlan:TextPlan|null=null;
-  private textInterval=32;
+  private textInterval=32;private textPreferences:import('../protocol/index.js').TextPreferences={intervalMs:32};private currentTextInterval=32;private skipInlineConfirmations=false;
   private error:string|null=null;
   private revoked=false;
   private recovering=false;
@@ -85,8 +85,10 @@ export class Core {
     }
     if(this.moduleSource)this.s.programModules=parseProgramModuleBinding({manifestSha256:this.moduleSource.identity,modules:[...this.usedModules]});
     if(snapshot===undefined)this.checkExtras();
-    if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.richPlan=compileRichText(this.s.text.rich.runs);}
+    if(this.s.text?.rich){this.textInterval=this.s.text.rich.baseIntervalMs;this.textPreferences={intervalMs:this.textInterval};this.currentTextInterval=this.textInterval;this.richPlan=compileRichText(this.s.text.rich.runs);}
   }
+  private textPolicy(text:{textId:string;revision:string}):{interval:number;skip:boolean} {const read=this.profile.read.includes(readUnit(text)),p=this.textPreferences;return {interval:read&&(p.readIntervalMs??-1)>=0?p.readIntervalMs!:p.intervalMs,skip:p.skipInlineConfirmations===true||read&&p.readSkipInlineConfirmations===true};}
+  private selectTextPolicy(text:{textId:string;revision:string}):void {const policy=this.textPolicy(text);this.currentTextInterval=policy.interval;this.skipInlineConfirmations=policy.skip;}
   private textPlan():TextPlan {const rich=this.s.text?.rich;ensure(rich,'TEXT_STATE','No structured text');return this.richPlan??=compileRichText(rich.runs);}
   private finishText(record=true):void {
     ensure(this.s.text&&this.s.wait?.kind==='text','TEXT_STATE','No active text');
@@ -163,7 +165,7 @@ export class Core {
     if(event.type==='interaction.choose'||event.type==='interaction.point'){const input=parseInteractionEvent(event);if(input.type==='interaction.activate'||this.consumed.has(event.inputId))return;const branch=pickInteraction(this.s,input);if(branch){this.consumed.add(event.inputId);this.interactionBranch(branch);}return;}
     if(event.type==='video.skip'){const w=this.s.wait;if(w?.kind!=='video'||w.prompt!==event.prompt||this.consumed.has(event.inputId))return;const t=this.s.tasks.find(t=>t.id===w.task);if(!t?.videoTask?.skippable||!['running','blocked'].includes(t.status))return;this.consumed.add(event.inputId);t.status='cancelled';t.videoTask.phase='skipped';this.effects.push({type:'video-stop'});this.resolveWait();return;}
     if(event.type==='voice.replay'){if(this.consumed.has(event.inputId)||this.s.wait?.kind!=='text'||event.prompt!==this.s.wait.prompt||!this.s.text?.voice)return;this.consumed.add(event.inputId);this.effects.push(...replayVoice(this.program,this.s));return;}
-    if(event.type==='text.preferences'){const value=parseTextPreferences(event.value);this.textInterval=value.intervalMs;this.textRemainder=0;if(this.s.wait?.kind==='text'&&this.s.text?.rich){if(this.s.text.rich.baseIntervalMs!==value.intervalMs)this.s.text.rich.remainderMs=0;this.s.text.rich.baseIntervalMs=value.intervalMs;}return;}
+    if(event.type==='text.preferences'){const value=parseTextPreferences(event.value);this.textPreferences=value;this.textInterval=value.intervalMs;this.textRemainder=0;if(this.s.wait?.kind==='text'&&this.s.text){this.selectTextPolicy(this.s.text);if(this.s.text.rich){if(this.s.text.rich.baseIntervalMs!==this.currentTextInterval)this.s.text.rich.remainderMs=0;this.s.text.rich.baseIntervalMs=this.currentTextInterval;}}return;}
     if(event.type==='operation'){this.resumeOperation(parseOperationResume(event));return;}
     if(event.type==='reveal'||event.type==='advance'||event.type==='step'||event.type==='choose') {
       if(this.consumed.has(event.inputId)||!this.s.wait||!('prompt'in this.s.wait)||event.prompt!==this.s.wait.prompt)return;
@@ -172,7 +174,7 @@ export class Core {
         for(const t of tasks){if(!t||t.status==='completed')continue;t.elapsed=t.duration;if(t.kind==='stage')applyStageTask(candidate,t);else if(t.kind==='animation'){const object=candidate.stage.find(o=>o.id===t.target);ensure(object&&t.to,'WAIT_SKIP_TASK','Animation target absent');object.position={...t.to};}t.status='completed';}syncMotion(candidate);validateComposition(candidate);this.s=candidate;this.consumed.add(event.inputId);this.resolveWait();return;
       }
       if(this.s.wait.kind==='text'&&this.s.text&&event.type!=='choose'){
-        const confirming=isTextConfirming(this.s.text),revealing=(event.type==='reveal'||event.type==='step')&&!confirming&&!isTextComplete(this.s.text);
+        const confirming=isTextConfirming(this.s.text),token=this.s.text.rich?this.textPlan().tokens[this.s.text.rich.cursor]:undefined,canIgnore=confirming&&this.skipInlineConfirmations&&token?.kind==='confirm'&&token.skippable,revealing=(event.type==='reveal'||event.type==='step')&&(!confirming||canIgnore)&&!isTextComplete(this.s.text);
         if((confirming&&event.type!=='reveal')||(revealing&&this.s.text.rich&&this.textPlan().tokens.some(t=>t.kind==='confirm')))i32(this.s.counter+1);
       }
       this.consumed.add(event.inputId);
@@ -180,8 +182,8 @@ export class Core {
         if(this.s.wait.kind!=='choice')return;const choice=this.s.wait.options.find(o=>o.id===event.option);if(!choice)return;
         this.put(this.s.wait.dest,{kind:'string',value:choice.id});this.top().pc=choice.target;this.s.wait=null;this.s.status='running';
       } else if(this.s.wait.kind==='text'&&this.s.text) {
-        if(event.type!=='reveal'&&isTextConfirming(this.s.text)){confirmRichText(this.s.text,this.textPlan());this.renewTextPrompt();this.finishAutomaticText();return;}
-        if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich){const changed=!isTextComplete(this.s.text)&&!isTextConfirming(this.s.text),plan=this.textPlan();revealRichText(this.s.text,plan);if(changed&&plan.tokens.some(t=>t.kind==='confirm'))this.renewTextPrompt();}else this.s.text.revealed=length(this.s.text.content);this.finishAutomaticText();return;}
+        if(event.type!=='reveal'&&isTextConfirming(this.s.text)){confirmRichText(this.s.text,this.textPlan(),this.skipInlineConfirmations);this.renewTextPrompt();this.finishAutomaticText();return;}
+        if(event.type==='reveal'||(event.type==='step'&&!isTextComplete(this.s.text))){if(this.s.text.rich){const plan=this.textPlan(),token=plan.tokens[this.s.text.rich.cursor],changed=!isTextComplete(this.s.text)&&(!isTextConfirming(this.s.text)||this.skipInlineConfirmations&&token?.kind==='confirm'&&token.skippable);revealRichText(this.s.text,plan,this.skipInlineConfirmations);if(changed&&plan.tokens.some(t=>t.kind==='confirm'))this.renewTextPrompt();}else this.s.text.revealed=length(this.s.text.content);this.finishAutomaticText();return;}
         if(!isTextComplete(this.s.text))return;
         try{this.finishText();}catch(error){this.consumed.delete(event.inputId);throw error;}
       }
@@ -190,9 +192,9 @@ export class Core {
     if(event.type==='tick') {
       ensure(Number.isInteger(event.ms)&&event.ms>=0&&event.ms<=3600000,'TIME','Invalid active time delta');
       ensure(event.text===undefined||typeof event.text==='boolean','TIME','Invalid text tick policy');
-      if(event.text!==false&&this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich&&!isTextConfirming(this.s.text)){const candidate=parseTextState(this.s.text);tickRichText(candidate,event.ms,this.textPlan());if(isTextConfirming(candidate))i32(this.s.counter+1);}
+      if(event.text!==false&&this.s.counter===2147483647&&this.s.wait?.kind==='text'&&this.s.text?.rich){const candidate=parseTextState(this.s.text),wasWaiting=isTextConfirming(candidate),cursor=candidate.rich!.cursor;tickRichText(candidate,event.ms,this.textPlan(),this.skipInlineConfirmations);if(!wasWaiting&&isTextConfirming(candidate)||wasWaiting&&candidate.rich!.cursor!==cursor)i32(this.s.counter+1);}
       checkParticleTick(this.s,event.ms);this.s.logicalTime+=event.ms;
-      if(event.text!==false&&this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text);tickRichText(this.s.text,event.ms,this.textPlan());if(!wasWaiting&&isTextConfirming(this.s.text))this.renewTextPrompt();}else if(this.textInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.textInterval);this.textRemainder%=this.textInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
+      if(event.text!==false&&this.s.wait?.kind==='text'&&this.s.text){if(this.s.text.rich){const wasWaiting=isTextConfirming(this.s.text),cursor=this.s.text.rich.cursor;tickRichText(this.s.text,event.ms,this.textPlan(),this.skipInlineConfirmations);if(!wasWaiting&&isTextConfirming(this.s.text)||wasWaiting&&this.s.text.rich.cursor!==cursor)this.renewTextPrompt();}else if(this.currentTextInterval===0)this.s.text.revealed=length(this.s.text.content);else{this.textRemainder+=event.ms;const chars=Math.floor(this.textRemainder/this.currentTextInterval);this.textRemainder%=this.currentTextInterval;this.s.text.revealed=Math.min(length(this.s.text.content),this.s.text.revealed+chars);}}
       tickAudio(this.s,event.ms);for(const stopped of tickSourceFades(this.s,event.ms))this.effects.push({type:'audio-source-stop',task:stopped.id,attempt:stopped.attempt});settleSourceFades(this.s);updateDuck(this.s);const timeout=tickInteraction(this.s,event.ms);if(timeout)this.interactionBranch(timeout);
       for(const t of this.s.tasks)if(t.status==='running'&&(t.kind==='animation'||t.kind==='delay'||t.kind==='stage')) {
         t.elapsed=Math.min(t.duration,t.elapsed+event.ms);
@@ -326,8 +328,8 @@ export class Core {
       case 'extension.invoke':this.invokeOperation(i);return;
       case 'value.set':this.put(i.dest,this.get(i.value));break;
       case 'i32.add.checked': {const a=this.get(i.left),b=this.get(i.right);ensure(a.kind==='i32'&&b.kind==='i32','I32_OPERAND',i.at);this.put(i.dest,i32(a.value+b.value));break;}
-      case 'text.page': {const prompt=this.s.counter+1,text=parseTextState({textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.textInterval===0?length(i.content):0,prompt});prepareWindowText(this.program,this.s,text,i.at);this.richPlan=null;this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
-      case 'text.template': {this.richPlan=null;const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(content.value.length>0,'TEMPLATE_EMPTY','Text must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.textInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}});prepareWindowText(this.program,this.s,text,i.at);this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.page': {this.selectTextPolicy(i);const prompt=this.s.counter+1,text=parseTextState({textId:i.textId,revision:i.revision,speaker:i.speaker,content:i.content,revealed:this.currentTextInterval===0?length(i.content):0,prompt});prepareWindowText(this.program,this.s,text,i.at);this.richPlan=null;this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
+      case 'text.template': {this.selectTextPolicy(i);this.richPlan=null;const speaker=this.expression(i.speaker),content=this.expression(i.content);ensure(speaker.kind==='string'&&content.kind==='string','EXPRESSION_KIND','Template requires strings');ensure(content.value.length>0,'TEMPLATE_EMPTY','Text must not be empty');const signature=templateSignature(i.speaker,i.content),prompt=this.s.counter+1;i32(prompt);const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:content.value,revealed:this.currentTextInterval===0?length(content.value):0,prompt,template:{at:i.at,signature}});prepareWindowText(this.program,this.s,text,i.at);this.s.counter=prompt;this.textRemainder=0;bindVoice(this.s,text);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);wait({kind:'text',at:i.at,prompt});return;}
       case 'text.rich': {
         const speaker=this.expression(i.speaker);ensure(speaker.kind==='string','EXPRESSION_KIND','Speaker requires a string');
         const textValue=(expression:import('../protocol/index.js').StringExpression)=>{const value=this.expression(expression);ensure(value.kind==='string'&&value.value.length>0,'TEMPLATE_EMPTY','Rich content/reading must not be empty');return value.value;};
@@ -335,10 +337,10 @@ export class Core {
         if(i.appendFrom)ensure(prior?.rich?.at===i.appendFrom&&prior.textId===i.textId&&prior.revision===i.revision&&prior.speaker===speaker.value&&isTextComplete(prior)&&(!this.s.textLayout||prior.window?.id===this.s.textLayout.active&&this.program.textLayout?.windows.find(w=>w.id===prior.window?.id)?.mode==='adv'),'TEXT_APPEND_STATE','Continue only the complete matching ADV text');
         const prefixCount=prefix?.runs.length??0;
         const runs=[...(prior?.rich?.runs??[]),...i.runs.slice(prefixCount).map(run=>run.kind==='text'?{...run,content:textValue(run.content)}:run.kind==='ruby'?{...run,content:textValue(run.content),reading:textValue(run.reading)}:{...run})];
-        const plan=compileRichText(runs),signature=richTextSignature(i),prompt=this.s.counter+1;i32(prompt);
-        const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:i.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:this.textInterval,revealedAt:[]}});
+        this.selectTextPolicy(i);const plan=compileRichText(runs),signature=richTextSignature(i),prompt=this.s.counter+1;i32(prompt);
+        const text=parseTextState({textId:i.textId,revision:i.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:i.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:this.currentTextInterval,revealedAt:[]}});
         if(prior?.rich&&text.rich){text.revealed=prior.revealed;text.rich.cursor=compileRichText(prior.rich.runs).tokens.length;text.rich.elapsedMs=prior.rich.elapsedMs;text.rich.revealedAt=[...prior.rich.revealedAt];}
-        tickRichText(text,0,plan);validateRichText(text,i,prefixes);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;bindVoice(this.s,text);if(prior?.historyId)text.historyId=prior.historyId;else if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});this.finishAutomaticText();return;
+        tickRichText(text,0,plan,this.skipInlineConfirmations);validateRichText(text,i,prefixes);prepareWindowText(this.program,this.s,text,i.at);this.richPlan=plan;bindVoice(this.s,text);if(prior?.historyId)text.historyId=prior.historyId;else if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:i.at,prompt});this.finishAutomaticText();return;
       }
       case 'random.i32': {ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');const min=this.expression(i.min),max=this.expression(i.max);ensure(min.kind==='i32'&&max.kind==='i32','EXPRESSION_KIND','Random bounds require i32');const result=sampleI32(this.s.rng,min.value,max.value);this.put(i.dest,result.value);this.s.rng=result.rng;break;}
       case 'rng.seed': ensure(this.s.rng,'RNG_STATE_REQUIRED','No RNG state');this.s.rng={algorithm:'lcg32@1',state:i.seed,draws:0};break;

@@ -10,7 +10,7 @@ export const richText=Object.freeze({
  text:(content:Content,style?:TextStyle)=>run('text',{kind:'text',content:expression(content),...(style?{style}:{})}),
  ruby:(content:Content,reading:Content,style?:TextStyle)=>run('ruby',{kind:'ruby',content:expression(content),reading:expression(reading),...(style?{style}:{})}),
  br:()=>run('break',{kind:'break'}),
- confirm:()=>run('confirm',{kind:'confirm'}),
+ confirm:(options:{skippable?:boolean}={})=>run('confirm',{kind:'confirm',...options}),
  pause:(duration:number)=>run('pause',{kind:'pause',duration}),
  pauseUnits:(units:number)=>run('pause.units',{kind:'pause.units',units}),
  speed:(intervalMs:number)=>run('speed',{kind:'speed',intervalMs}),

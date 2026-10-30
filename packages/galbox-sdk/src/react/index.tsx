@@ -45,3 +45,4 @@ function StoryUI({player}:{player:Player}) {
     <details className="diagnostics"><summary>开发诊断 · {run?.frames.at(-1)?.pc??'ready'}</summary><pre data-testid="diagnostics">{JSON.stringify({release:view.release?{origin:view.release.origin,sha256:view.release.sha256}:null,resources:view.resources,preferences:view.preferences,playback:view.playback,profileId:view.profileId,lastImport:view.lastImport,video:view.video,epoch:view.epoch,lifecycle:view.lifecycle,globals:run?.globals,stage:run?.stage,scene:run?.scene,audioState:run?.audioState,textLayout:run?.textLayout,flow:run?.flow,ui:run?.ui,rng:run?.rng,wait:run?.wait,tasks:run?.tasks,canSave:view.core?.canSave,saveReason:view.core?.saveReason,dirty:view.core?.dirty,profile:view.core?.profile,media:view.media},null,2)}</pre></details>
   </div>;
 }
+export {HistoryText} from './history-text.js';

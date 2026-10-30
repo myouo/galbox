@@ -5079,8 +5079,23 @@ message Gbx_TextPreferences_intervalMs {
   optional sint64 value = 1;
 }
 
+message Gbx_TextPreferences_readIntervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_TextPreferences_skipInlineConfirmations {
+  optional bool value = 1;
+}
+
+message Gbx_TextPreferences_readSkipInlineConfirmations {
+  optional bool value = 1;
+}
+
 message Gbx_TextPreferences {
   optional Gbx_TextPreferences_intervalMs intervalMs = 1;
+  optional Gbx_TextPreferences_readIntervalMs readIntervalMs = 2;
+  optional Gbx_TextPreferences_skipInlineConfirmations skipInlineConfirmations = 3;
+  optional Gbx_TextPreferences_readSkipInlineConfirmations readSkipInlineConfirmations = 4;
 }
 
 message Gbx_PlayerPreferences_version {
@@ -5166,8 +5181,23 @@ message Gbx_PreferencesPatch_text_intervalMs {
   optional sint64 value = 1;
 }
 
+message Gbx_PreferencesPatch_text_readIntervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_PreferencesPatch_text_skipInlineConfirmations {
+  optional bool value = 1;
+}
+
+message Gbx_PreferencesPatch_text_readSkipInlineConfirmations {
+  optional bool value = 1;
+}
+
 message Gbx_PreferencesPatch_text {
   optional Gbx_PreferencesPatch_text_intervalMs intervalMs = 1;
+  optional Gbx_PreferencesPatch_text_readIntervalMs readIntervalMs = 2;
+  optional Gbx_PreferencesPatch_text_skipInlineConfirmations skipInlineConfirmations = 3;
+  optional Gbx_PreferencesPatch_text_readSkipInlineConfirmations readSkipInlineConfirmations = 4;
 }
 
 message Gbx_PreferencesPatch_playback_autoDelayMs {
@@ -6875,8 +6905,13 @@ message Gbx_RichTextSourceRun_Case6_kind {
   // Fixed semantic value: "confirm"
 }
 
+message Gbx_RichTextSourceRun_Case6_skippable {
+  optional bool value = 1;
+}
+
 message Gbx_RichTextSourceRun_Case6 {
   optional Gbx_RichTextSourceRun_Case6_kind kind = 1;
+  optional Gbx_RichTextSourceRun_Case6_skippable skippable = 2;
 }
 
 message Gbx_RichTextSourceRun_Case7_kind {
@@ -6988,8 +7023,13 @@ message Gbx_TextRun_Case6_kind {
   // Fixed semantic value: "confirm"
 }
 
+message Gbx_TextRun_Case6_skippable {
+  optional bool value = 1;
+}
+
 message Gbx_TextRun_Case6 {
   optional Gbx_TextRun_Case6_kind kind = 1;
+  optional Gbx_TextRun_Case6_skippable skippable = 2;
 }
 
 message Gbx_TextRun_Case7_kind {

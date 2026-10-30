@@ -1,0 +1,31 @@
+import {it,expect} from 'vitest';
+import {ProgramBuilder,instruction,richPage,richText as R} from 'galbox-sdk/port-kit';
+import {createCore} from 'galbox-sdk/core';
+import {emptyProfile,isTextConfirming,isTextComplete,parseSnapshot} from 'galbox-sdk/protocol';
+import {defaultPreferences,mergePreferences,normalizePreferences} from 'galbox-sdk/settings';
+import {encodeWire,decodeWire} from 'galbox-sdk/wire';
+function program(){return new ProgramBuilder({gameId:'read-text',release:'v1',entry:'main'}).function({id:'main',entry:'page',layout:1,params:[],locals:[],returns:'void',code:[richPage('page','unit','v1','',[R.userSpeed(),R.text('AB'),R.confirm(),R.text('CD'),R.confirm({skippable:false}),R.text('EF')]),instruction('text.page',{at:'next',textId:'next',revision:'v1',speaker:'',content:'Next'}),instruction('control.end',{at:'end'})]}).build();}
+function start(read=false,preferences={intervalMs:20,readIntervalMs:80,skipInlineConfirmations:false,readSkipInlineConfirmations:false}){const p=program(),profile=emptyProfile();if(read)profile.read.push('unit@v1');const core=createCore(p,profile);core.accept({type:'text.preferences',value:preferences});while(core.run(100)==='yield'){}return {core,p,profile};}
+function input(c:ReturnType<typeof createCore>,action:'reveal'|'advance'|'step'){const w=c.capture().wait;if(w?.kind!=='text')throw new Error('text');c.accept({type:action,prompt:w.prompt,inputId:crypto.randomUUID()});while(c.run(100)==='yield'){}return c.capture();}
+it('selects stable profile read speed, keeps unread speed independent and supports inheritance',()=>{
+ const unread=start().core,read=start(true).core;unread.accept({type:'tick',ms:20});read.accept({type:'tick',ms:20});expect(unread.capture().text?.revealed).toBe(1);expect(read.capture().text?.revealed).toBe(0);expect(read.capture().text?.rich?.baseIntervalMs).toBe(80);
+ read.accept({type:'text.preferences',value:{intervalMs:20,readIntervalMs:-1}});read.accept({type:'tick',ms:20});expect(read.capture().text?.revealed).toBe(1);expect(read.view().profile.read).toEqual(['unit@v1']);
+});
+it('nonstop preserves character speed, skips only eligible inline confirms and still requires page-end input',()=>{
+ const {core:c}=start(false,{intervalMs:20,readIntervalMs:80,skipInlineConfirmations:true,readSkipInlineConfirmations:false});c.accept({type:'tick',ms:20});expect(c.capture().text?.revealed).toBe(1);c.accept({type:'tick',ms:60});expect(c.capture().text?.revealed).toBe(4);expect(isTextConfirming(c.capture().text!)).toBe(true);expect(c.view().profile.read).toEqual([]);
+ input(c,'advance');c.accept({type:'tick',ms:40});expect(isTextComplete(c.capture().text!)).toBe(true);expect(c.capture().frames[0]?.pc).toBe('page');expect(c.view().profile.read).toEqual([]);input(c,'advance');expect(c.view().profile.read).toEqual(['unit@v1']);expect(c.capture().text?.textId).toBe('next');
+});
+it('read-only nonstop does not skip unread confirms and ordinary nonstop also applies to read text',()=>{
+ const preferences={intervalMs:20,readIntervalMs:20,skipInlineConfirmations:false,readSkipInlineConfirmations:true},u=start(false,preferences).core,r=start(true,preferences).core;u.accept({type:'tick',ms:40});r.accept({type:'tick',ms:40});expect(isTextConfirming(u.capture().text!)).toBe(true);expect(isTextConfirming(r.capture().text!)).toBe(false);r.accept({type:'tick',ms:40});expect(r.capture().text?.revealed).toBe(4);
+});
+it('restores old confirm cursors and renews their prompt only when the newly applied preference takes effect',()=>{
+ const {core:c,p,profile}=start();c.accept({type:'tick',ms:40});const saved=c.capture(),oldPrompt=saved.text!.prompt,r=createCore(p,profile,decodeWire('Snapshot',encodeWire('Snapshot',saved)));r.accept({type:'text.preferences',value:{intervalMs:20,skipInlineConfirmations:true}});expect(r.capture().text?.prompt).toBe(oldPrompt);expect(isTextConfirming(r.capture().text!)).toBe(true);r.accept({type:'tick',ms:20});expect(r.capture().text?.revealed).toBe(3);expect(r.capture().text?.prompt).toBeGreaterThan(oldPrompt);const after=r.capture();r.accept({type:'advance',prompt:oldPrompt,inputId:'stale'});expect(r.capture()).toEqual(after);
+ const again=createCore(p,profile,after);again.accept({type:'text.preferences',value:{intervalMs:20,skipInlineConfirmations:true}});again.accept({type:'tick',ms:20});expect(again.capture().text?.revealed).toBe(4);expect(isTextConfirming(again.capture().text!)).toBe(true);
+});
+it('instant reveal can cross eligible confirms but cannot cross the required one',()=>{const {core:c}=start();input(c,'reveal');c.accept({type:'text.preferences',value:{intervalMs:20,skipInlineConfirmations:true}});const s=input(c,'reveal');expect(s.text?.revealed).toBe(4);expect(isTextConfirming(s.text!)).toBe(true);expect(s.text?.rich?.revealedAt).toEqual([null,null,null,null]);createCore(program(),emptyProfile(),s);});
+it('counter exhaustion rejects auto-skipping a pending confirm before changing saved state or time',()=>{
+ const {core:c,p,profile}=start();c.accept({type:'tick',ms:40});const s=c.capture(),max=2147483647,w=s.wait;if(w?.kind!=='text'||!s.text)throw new Error('text');const cut=parseSnapshot({...s,counter:max,text:{...s.text,prompt:max},wait:{...w,prompt:max}}),r=createCore(p,profile,cut);r.accept({type:'text.preferences',value:{intervalMs:20,skipInlineConfirmations:true}});const before=r.capture();expect(()=>r.accept({type:'tick',ms:20})).toThrow();expect(r.capture()).toEqual(before);expect(()=>r.accept({type:'reveal',prompt:max,inputId:'overflow'})).toThrow();expect(r.capture()).toEqual(before);
+});
+it('normalizes old preference files, roundtrips new fields and rejects invalid values',()=>{
+ const old={...defaultPreferences(),text:{intervalMs:40}},p=normalizePreferences(old);expect(p.text).toEqual({intervalMs:40,readIntervalMs:-1,skipInlineConfirmations:false,readSkipInlineConfirmations:false});const value=mergePreferences(p,{text:{readIntervalMs:0,readSkipInlineConfirmations:true}});expect(decodeWire('PlayerPreferences',encodeWire('PlayerPreferences',value))).toEqual(value);for(const text of [{readIntervalMs:-2},{readIntervalMs:201},{readIntervalMs:true},{skipInlineConfirmations:1},{readSkipInlineConfirmations:null}])expect(()=>mergePreferences(p,{text})).toThrow();
+});

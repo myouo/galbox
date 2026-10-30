@@ -4,7 +4,7 @@ import type {TextState,TextRun,TextStyle,Instruction,DeepReadonly,RichTextState,
 export const textSegmentation='uax29-17.0.0@1';
 type Text=DeepReadonly<TextState>;
 type RichInstruction=Extract<Instruction,{op:'text.rich'}>;
-export type TextToken={kind:'unit';text:string;run:number;style:DeepReadonly<TextStyle>}|{kind:'pause';duration:number}|{kind:'pause.units';units:number}|{kind:'speed';intervalMs:number;user?:boolean}|{kind:'confirm'};
+export type TextToken={kind:'unit';text:string;run:number;style:DeepReadonly<TextStyle>}|{kind:'pause';duration:number}|{kind:'pause.units';units:number}|{kind:'speed';intervalMs:number;user?:boolean}|{kind:'confirm';skippable:boolean};
 export interface TextPlan {content:string;tokens:TextToken[];units:number;}
 function unicode(text:string):void {ensure(!/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(text),'TEXT_UNICODE','Unpaired UTF-16 surrogate');}
 export function compileRichText(runs:readonly DeepReadonly<TextRun>[]):TextPlan {
@@ -16,7 +16,7 @@ export function compileRichText(runs:readonly DeepReadonly<TextRun>[]):TextPlan 
   if(run.kind==='pause.units'){tokens.push({kind:'pause.units',units:run.units});return;}
   if(run.kind==='pause'){tokens.push({kind:'pause',duration:run.duration});return;}
   if(run.kind==='speed'){tokens.push({kind:'speed',intervalMs:run.intervalMs,...(run.user?{user:true}:{})});return;}
-  if(run.kind==='confirm'){tokens.push({kind:'confirm'});return;}
+  if(run.kind==='confirm'){tokens.push({kind:'confirm',skippable:run.skippable!==false});return;}
   if(run.kind==='ruby'){unicode(run.reading);ensure(run.reading.length<=256,'TEXT_RUBY_SIZE','Ruby reading is at most 256 UTF-16 units');}
   const value=run.kind==='break'?'\n':run.content;unicode(value);offset+=value.length;ensure(boundaries.has(offset),'TEXT_GRAPHEME_BOUNDARY','A run splits a grapheme');
   for(const part of collectGraphemes(value)){tokens.push({kind:'unit',text:part,run:index,style:run.kind==='break'?{}:run.style??{}});units++;}
@@ -24,12 +24,12 @@ export function compileRichText(runs:readonly DeepReadonly<TextRun>[]):TextPlan 
 }
 export function richTextSignature(source:DeepReadonly<RichInstruction>):string {const signature=canonicalWireJSON({segmentation:textSegmentation,speaker:source.speaker,runs:source.runs,...(source.completion&&source.completion!=='input'?{completion:source.completion}:{}),...(source.appendFrom?{appendFrom:source.appendFrom}:{})});ensure(signature.length<=65536,'TEXT_SOURCE_SIZE','Rich source signature exceeds 65536 characters');return signature;}
 function intervalAt(rich:DeepReadonly<RichTextState>,plan:TextPlan):number {let value=rich.baseIntervalMs;for(let j=0;j<rich.cursor;j++){const token=plan.tokens[j];if(token?.kind==='speed')value=token.user?rich.baseIntervalMs:token.intervalMs;}return rich.baseIntervalMs===0?0:value;}
-export function tickRichText(text:TextState,ms:number,plan:TextPlan):void {
+export function tickRichText(text:TextState,ms:number,plan:TextPlan,skipConfirmations=false):void {
  const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');let budget=ms,interval=intervalAt(rich,plan);
  while(rich.cursor<plan.tokens.length||rich.pauseRemainingMs>0){
   if(rich.pauseRemainingMs>0){const used=Math.min(budget,rich.pauseRemainingMs);rich.pauseRemainingMs-=used;rich.elapsedMs+=used;budget-=used;if(rich.pauseRemainingMs>0)break;delete rich.pauseIntervalMs;}
   const token=plan.tokens[rich.cursor];if(!token)break;
-  if(token.kind==='confirm'){rich.waitingForClick=true;rich.remainderMs=0;break;}
+  if(token.kind==='confirm'){if(skipConfirmations&&token.skippable){delete rich.waitingForClick;rich.cursor++;rich.remainderMs=0;continue;}rich.waitingForClick=true;rich.remainderMs=0;break;}
   if(token.kind==='pause.units'){rich.cursor++;rich.pauseRemainingMs=token.units*interval;rich.remainderMs=0;if(interval>0)rich.pauseIntervalMs=interval;else delete rich.pauseIntervalMs;continue;}
   if(token.kind==='pause'){delete rich.pauseIntervalMs;rich.cursor++;rich.pauseRemainingMs=token.duration;rich.remainderMs=0;continue;}
   if(token.kind==='speed'){rich.cursor++;interval=token.user?rich.baseIntervalMs:rich.baseIntervalMs===0?0:token.intervalMs;rich.remainderMs=0;continue;}
@@ -47,8 +47,8 @@ export function isTextComplete(text:Text):boolean {
  const controls=rich.runs.filter(r=>r.kind==='pause'||r.kind==='pause.units'||r.kind==='speed'||r.kind==='confirm').length;if(rich.cursor!==count+controls||rich.pauseRemainingMs>0||rich.waitingForClick)return false;
  return revealedEffectsComplete(text);
 }
-export function revealRichText(text:TextState,plan:TextPlan):void {const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');if(rich.waitingForClick)return;let start=0;for(let i=0;i<rich.cursor;i++)if(plan.tokens[i]?.kind==='confirm')start=i+1;let end=rich.cursor;while(end<plan.tokens.length&&plan.tokens[end]?.kind!=='confirm')end++;const before=plan.tokens.slice(0,start).filter(t=>t.kind==='unit').length,count=plan.tokens.slice(start,end).filter(t=>t.kind==='unit').length;text.revealed=before+count;rich.cursor=end;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;rich.remainderMs=0;rich.revealedAt=Array.from({length:before+count},()=>null);if(plan.tokens[end]?.kind==='confirm')rich.waitingForClick=true;}
-export function confirmRichText(text:TextState,plan:TextPlan):void {const rich=text.rich;ensure(rich?.waitingForClick&&plan.tokens[rich.cursor]?.kind==='confirm','TEXT_CONFIRM','No inline confirmation');delete rich.waitingForClick;rich.cursor++;rich.remainderMs=0;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;tickRichText(text,0,plan);}
+export function revealRichText(text:TextState,plan:TextPlan,skipConfirmations=false):void {const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');if(rich.waitingForClick){const token=plan.tokens[rich.cursor];if(!skipConfirmations||token?.kind!=='confirm'||!token.skippable)return;delete rich.waitingForClick;}let start=0;for(let i=0;i<rich.cursor;i++)if(plan.tokens[i]?.kind==='confirm')start=i+1;let end=rich.cursor;while(end<plan.tokens.length){const token=plan.tokens[end];if(token?.kind==='confirm'&&(!skipConfirmations||!token.skippable))break;end++;}const before=plan.tokens.slice(0,start).filter(t=>t.kind==='unit').length,count=plan.tokens.slice(start,end).filter(t=>t.kind==='unit').length;text.revealed=before+count;rich.cursor=end;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;rich.remainderMs=0;rich.revealedAt=Array.from({length:before+count},()=>null);if(plan.tokens[end]?.kind==='confirm')rich.waitingForClick=true;}
+export function confirmRichText(text:TextState,plan:TextPlan,skipConfirmations=false):void {const rich=text.rich;ensure(rich?.waitingForClick&&plan.tokens[rich.cursor]?.kind==='confirm','TEXT_CONFIRM','No inline confirmation');delete rich.waitingForClick;rich.cursor++;rich.remainderMs=0;rich.pauseRemainingMs=0;delete rich.pauseIntervalMs;tickRichText(text,0,plan,skipConfirmations);}
 export function richContinuationSources(p:DeepReadonly<Program>,source:DeepReadonly<RichInstruction>):DeepReadonly<RichInstruction>[] {
  if(!source.appendFrom)return [];const result:DeepReadonly<RichInstruction>[]=[],all=p.functions.flatMap(f=>f.code).filter(i=>i.op==='text.rich');let current=source;const seen=new Set([source.at]);
  while(current.appendFrom){const candidates=all.filter(i=>i.at===current.appendFrom&&i.textId===source.textId&&i.revision===source.revision),previous=candidates[0];ensure(candidates.length===1&&previous?.completion==='continue'&&!seen.has(previous.at)&&previous.runs.length<=current.runs.length&&canonicalWireJSON(previous.runs)===canonicalWireJSON(current.runs.slice(0,previous.runs.length)),'TEXT_APPEND_SOURCE','Continuation needs a declared complete prefix');seen.add(previous.at);result.push(previous);current=previous;}
