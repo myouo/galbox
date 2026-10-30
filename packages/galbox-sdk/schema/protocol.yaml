@@ -1736,6 +1736,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           id:
             type: string
@@ -1789,6 +1790,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           target:
             $ref: "#/definitions/StageTarget"
@@ -1837,6 +1839,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           to:
             $ref: "#/definitions/StageCameraExpressions"
@@ -1881,6 +1884,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           color:
             type: string
@@ -1930,6 +1934,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           id:
             type: string
@@ -1980,6 +1985,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           target:
             $ref: "#/definitions/StageTarget"
@@ -2175,6 +2181,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 7
           policy:
             type: string
@@ -2750,6 +2757,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 6
           id:
             type: string
@@ -2812,6 +2820,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 7
           policy:
             type: string
@@ -3127,6 +3136,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 10
           policy:
             type: string
@@ -9871,6 +9881,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           target:
             type: string
@@ -9930,6 +9941,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           target:
             $ref: "#/definitions/StageTarget"
@@ -9979,6 +9991,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           fields:
             type: array
@@ -10025,6 +10038,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           from:
             type: number
@@ -10066,6 +10080,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           target:
             type: string
@@ -10108,6 +10123,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           target:
             $ref: "#/definitions/StageTarget"
@@ -10161,6 +10177,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           target:
             type: string
@@ -10211,6 +10228,7 @@ definitions:
               - ease-in
               - ease-out
               - ease-in-out
+              - step-end
             x-proto-tag: 3
           sourceRoots:
             type: array
@@ -10412,6 +10430,7 @@ definitions:
           - ease-in
           - ease-out
           - ease-in-out
+          - step-end
         x-proto-tag: 5
     required:
       - signature
@@ -10452,6 +10471,7 @@ definitions:
           - ease-in
           - ease-out
           - ease-in-out
+          - step-end
         x-proto-tag: 6
       stop:
         type: boolean
