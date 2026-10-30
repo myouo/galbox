@@ -1,3 +1,4 @@
+import {sequenceAssetHints} from '../protocol/sequence.js';
 import {assertDialogueCut,dialogueAssets,projectDialogue} from './dialogue.js';
 import {audioSlot} from '../protocol/audio-sources.js';
 import {ResourceLoader} from './resource-loader.js';
@@ -67,8 +68,8 @@ export class WebHost implements HostPort {
   private resourceCost(id:string):number {const fact=this.loader?.expectedFact(id);if(!fact)return this.loaded.get(id)?.cost??Infinity;const stream=!!this.program?.assets.find(a=>a.id===id)?.transport,encoded=stream?0:fact.bytes;return fact.kind==='image'?fact.width*fact.height*8+encoded:fact.kind==='video'?fact.width*fact.height*8+encoded:fact.kind==='font'?fact.bytes*4:fact.playback==='element'?(stream?streamAudioWarmBytes(fact):encoded):Math.ceil(fact.frames*(this.context?.sampleRate??fact.sampleRate)/fact.sampleRate)*fact.channels*4+encoded;}
   private prefetch(snapshot:DeepReadonly<Snapshot>):void {
     if(!this.program||!this.cache||this.policy.mode!=='balanced')return;
-    const frame=snapshot.frames.at(-1),location=JSON.stringify([frame?.functionId,frame?.pc,snapshot.wait?.kind]);if(location===this.prefetchLocation)return;this.prefetchLocation=location;
-    const hints=(this.lookahead?.(snapshot,this.policy)??[]);this.prefetchKeep=new Set(hints);const maximum=this.policy.maxResidentBytes??268435456,required=new Set([...this.required(snapshot,[]),...this.displayKey.split('|').filter(Boolean)]),pinned=[...required].reduce((n,id)=>n+this.resourceCost(id),0);let remaining=Math.max(0,Math.min(maximum/2,maximum-pinned));const ids:string[]=[];
+    const sequenceHints=this.program.capabilities.includes('stage.sequence.assets')?sequenceAssetHints(snapshot,Math.min(16,(this.policy.lookahead??2)*2)):[],frame=snapshot.frames.at(-1),location=JSON.stringify([frame?.functionId,frame?.pc,snapshot.wait?.kind,sequenceHints]);if(location===this.prefetchLocation)return;this.prefetchLocation=location;
+    const hints=[...sequenceHints,...(this.lookahead?.(snapshot,this.policy)??[])];this.prefetchKeep=new Set(hints);const maximum=this.policy.maxResidentBytes??268435456,required=new Set([...this.required(snapshot,[]),...this.displayKey.split('|').filter(Boolean)]),pinned=[...required].reduce((n,id)=>n+this.resourceCost(id),0);let remaining=Math.max(0,Math.min(maximum/2,maximum-pinned));const ids:string[]=[];
     for(const id of hints){if(required.has(id))continue;const cost=this.resourceCost(id);if(!Number.isFinite(cost)||cost>remaining)break;remaining-=cost;ids.push(id);}
     const key=ids.join('|');if(key===this.prefetched)return;
     const previous=this.prefetchAbort,controller=new AbortController();this.prefetched=key;this.prefetchAbort=controller;

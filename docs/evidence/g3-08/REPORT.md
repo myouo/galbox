@@ -37,3 +37,13 @@ premature forged sequence completion. Final `pnpm build:harness` and
 passed all 14 real pixel/save/restore cases across both backends. Earlier mask
 attempts failed and were repaired before this successful run. Final package and
 source acceptance below supersede the preliminary package figures above.
+
+ADR0083/G3-10 resource frames address real atlas handoff pressure without raising
+loading limits. Each step may name a typed image; Core and cold module restore
+bind its exact phase. Only the projected image is required, with optional future
+hints using existing cache budget/retry/leases. `pnpm exec vitest run` passed 396
+units. `pnpm build:harness` plus the asset-sequence/composition/sequence browser
+subset passed all 16 Canvas/WebGL cases, including six image phases within a
+16MiB two-image working set, failed-frame preservation of the live head, retry,
+eviction and illustrated pixels. This supersedes using large resident atlases
+for the independent instance's long trails; final source/64MiB evidence follows.

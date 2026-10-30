@@ -12341,6 +12341,10 @@ message Gbx_SequenceFrame_frame {
   optional Gbx_ImageFrame value = 1;
 }
 
+message Gbx_SequenceFrame_asset {
+  optional string value = 1;
+}
+
 message Gbx_SequenceFrame_pose {
   optional Gbx_SequencePose value = 1;
 }
@@ -12348,6 +12352,7 @@ message Gbx_SequenceFrame_pose {
 message Gbx_SequenceFrame {
   optional Gbx_SequenceFrame_duration duration = 1;
   optional Gbx_SequenceFrame_frame frame = 2;
+  optional Gbx_SequenceFrame_asset asset = 4;
   optional Gbx_SequenceFrame_pose pose = 3;
 }
 

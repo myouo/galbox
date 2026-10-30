@@ -13282,6 +13282,10 @@ definitions:
       frame:
         $ref: "#/definitions/ImageFrame"
         x-proto-tag: 2
+      asset:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 4
       pose:
         $ref: "#/definitions/SequencePose"
         x-proto-tag: 3

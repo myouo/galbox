@@ -20,7 +20,7 @@ export function blendedLayers(from:readonly DeepReadonly<StageLayer>[],to:string
 export function currentLayers(o:DeepReadonly<StageObject>):[StageLayer,...StageLayer[]] {ensure(!o.ruleTransition,'STAGE_RULE_BASE','Finish or replace a frozen rule image before starting another transition');const [first,...rest]=(o.layers??[{asset:o.asset,weight:1}]).map(l=>({...l}));ensure(first,'STAGE_LAYERS','No visible image layer');return [first,...rest];}
 function targetKey(target:DeepReadonly<StageTarget>):string {return target.kind==='camera'?'camera':`object:${target.id}`;}
 export function taskLocks(t:DeepReadonly<Task>):string[] {
- if(t.kind==='sequence'&&t.sequenceTask){const fields=new Set(t.sequenceTask.frames.flatMap(f=>f.pose?Object.keys(f.pose):[]));return t.sequenceTask.targets.flatMap(id=>['object:'+id+':frame',...[...fields].map(k=>'object:'+id+':pose:'+k)]); }
+ if(t.kind==='sequence'&&t.sequenceTask){const fields=new Set(t.sequenceTask.frames.flatMap(f=>f.pose?Object.keys(f.pose):[]));return t.sequenceTask.targets.flatMap(id=>['object:'+id+':frame',...(t.sequenceTask?.frames.some(f=>f.asset)?['object:'+id+':asset']:[]),...[...fields].map(k=>'object:'+id+':pose:'+k)]); }
  if(t.kind==='animation')return ['x','y','alpha'].map(k=>`object:${t.target}:pose:${k}`);const v=t.stageTask;if(t.kind!=='stage'||!v)return [];
  switch(v.type){case 'mix':return ['scene:mix'];case 'pose':return v.fields.map(k=>`object:${v.target}:pose:${k}`);case 'filter':return v.fields.map(k=>`${targetKey(v.target)}:filter:${k}`);case 'camera':return v.fields.map(k=>`camera:pose:${k}`);case 'fade':return ['scene:overlay'];case 'rule':case 'transition':return [`object:${v.target}:asset`];case 'shake':return [`${targetKey(v.target)}:shake`];}
 }

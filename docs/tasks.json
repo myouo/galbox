@@ -3301,9 +3301,9 @@
         "G3-01",
         "W1-03B2"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "implemented",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "stage.sequence / stage.sequence.stop public factories and bounded wire state",
         "active-time frame/pose schedule with explicit asset and targets",
@@ -3328,7 +3328,7 @@
         "docs/evidence/g3-08/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Finish actual tarball independent consumer and third-door source acceptance; native random/pixel fidelity is a separate claim."
+      "next_action": "有限序列/四向卷动已通过公开工厂、模块冷恢复、实际Canvas/WebGL像素和独立tarball消费；资源预算未扩大。实例长残像采样与原生像素认证分开，继续W1-03B3。"
     },
     {
       "id": "G3-09",
@@ -3337,9 +3337,9 @@
       "depends_on": [
         "G3-08"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "implemented",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "scroll-top/right/bottom/left public stage.mix methods",
         "existing composition and source/phase restore contract"
@@ -3360,7 +3360,83 @@
         "docs/evidence/g3-08/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Finish directional browser pixels and the third-door independent consumer."
+      "next_action": "有限序列/四向卷动已通过公开工厂、模块冷恢复、实际Canvas/WebGL像素和独立tarball消费；资源预算未扩大。实例长残像采样与原生像素认证分开，继续W1-03B3。"
+    },
+    {
+      "id": "F-01G",
+      "milestone": "F",
+      "title": "独立第三门新周目完整路线",
+      "depends_on": [
+        "F-01F",
+        "G3-08",
+        "G3-09"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "scenario3 21-scene source lowering through search.ks entry",
+        "eight locale PO and standard SDK module releases",
+        "finite source plugins and bounded atlas conversion"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C12"
+      ],
+      "acceptance": [
+        "eight production Core routes with exact source text/control coverage",
+        "cold protobuf/module cuts for movie, atlas, trail, letter and scroll",
+        "real illustrated IndexedDB save/reload and wheel/no-scroll",
+        "64MiB actual loading budget without widening existing limits",
+        "first-door function identities and frozen doors12 saves preserved"
+      ],
+      "evidence": [
+        "docs/evidence/g3-08/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "八语首轮全程与中英效果恢复已验；缩减残像图集后重验实际64MiB驻留、最终八语与全文排版。正式1→2→3及旧模块档衔接仍需W1-03B3。"
+    },
+    {
+      "id": "G3-10",
+      "milestone": "G3",
+      "title": "按资源换帧的有界表现序列",
+      "depends_on": [
+        "G3-08",
+        "W1-02"
+      ],
+      "status": "in_progress",
+      "implementation": "implemented",
+      "verification": "in_progress",
+      "outputs": [
+        "typed stageAssetSequence and stage.sequence.assets capability",
+        "current-frame resource preparation and bounded future hints",
+        "exact source/phase restore without monolithic atlas residency"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "typed per-step image refs and kind/source/phase negatives",
+        "v2 cold source closure and page copy",
+        "Canvas/WebGL phase pixels, failed frame preserves live head, bounded two-image working set",
+        "independent packed third-door effect handoffs under 64MiB"
+      ],
+      "evidence": [
+        "docs/decisions/0083-resource-backed-stage-sequences.md",
+        "docs/evidence/g3-08/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "396单元已过，完成双后端预算/失败帧回归与独立实例64MiB交接。"
     }
   ]
 }
