@@ -3289,9 +3289,13 @@
         "durable progress never overwritten by old module snapshots",
         "actual IndexedDB and independent packed consumer"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/decisions/0084-explicit-module-save-migration.md",
+        "docs/decisions/0086-exact-packed-module-addresses.md",
+        "docs/evidence/w1-03b3/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "先验收B3A显式旧模块来源/双闭包迁移与生产activation CAS；模块recipe/SaveBridge/历史回溯仍分后续子项，当前不扩大支持承诺。"
+      "next_action": "B3A显式跨manifest Web槽迁移已完成；继续模块recipe/SaveBridge候选准备与模块历史回溯，保持显式unsupported直到对应实现和验收。代码驱逐/持久缓存与容量另列W1-03C/W1-04。"
     },
     {
       "id": "G3-08",
@@ -3398,7 +3402,7 @@
         "docs/evidence/g3-08/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "第三门独立八语21场景→search入口已验收：23066文本片段/80冷切点、13浏览器场景/输入检查及22985页八语无滚动；长残像等有限表现差异显式记录。正式1→2→3/回放须先W1-03B3，不覆盖旧清单；后续search/原生tft/逐像素另验。"
+      "next_action": "独立第三门范围保持既定21场景至search入口；正式1→2→3和旧模块升级转已验收F-01H。下一为search调查章节，原生tft/通关变体/逐像素仍未认证。"
     },
     {
       "id": "G3-10",
@@ -3445,13 +3449,14 @@
       "depends_on": [
         "W1-03B2"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "implemented",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "verified original module binding and code closure",
         "mapped target preparation and activation CAS",
-        "preserved source slots/current durable progress"
+        "preserved source slots/current durable progress",
+        "exact packed v2 address declarations under unchanged input limits"
       ],
       "contracts": [
         "C01",
@@ -3466,10 +3471,12 @@
         "real IndexedDB and isolated packed consumer"
       ],
       "evidence": [
-        "docs/decisions/0084-explicit-module-save-migration.md"
+        "docs/decisions/0084-explicit-module-save-migration.md",
+        "docs/evidence/w1-03b3/REPORT.md",
+        "docs/decisions/0086-exact-packed-module-addresses.md"
       ],
       "blocker": null,
-      "next_action": "验证独立实例旧1/2门切点续到正式三门；recipe/SaveBridge/历史回溯不列入本子项。"
+      "next_action": "显式Web槽迁移已验收：407单元、10相关浏览器、隔离实包，独立八语64旧切点与中英完整三门双路线通过；模块recipe/SaveBridge/历史回溯仍属父项剩余工作。"
     },
     {
       "id": "G2-07",
@@ -3478,9 +3485,9 @@
       "depends_on": [
         "G2-06"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "implemented",
-      "verification": "in_progress",
+      "verification": "passed",
       "outputs": [
         "text.window.geometry factory and bounded wire state",
         "last-writer source closure and renderer fitting"
@@ -3499,10 +3506,50 @@
         "independent game letter/old-save validation"
       ],
       "evidence": [
-        "docs/decisions/0085-authored-text-window-geometry.md"
+        "docs/decisions/0085-authored-text-window-geometry.md",
+        "docs/evidence/w1-03b3/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "将信件区域接入三门正式主线并核对旧段落布局。"
+      "next_action": "源窗口矩形/末写者闭包与原TextWindow wire兼容已验收；实例三门信件、旧段落、图文刷新及18407页无滚动通过。动态表达式与原生禁则/像素认证另验。"
+    },
+    {
+      "id": "F-01H",
+      "milestone": "F",
+      "title": "正式三门接续、旧模块档升级与章节回放",
+      "depends_on": [
+        "F-01G",
+        "W1-03B3A",
+        "G2-07"
+      ],
+      "status": "done",
+      "implementation": "implemented",
+      "verification": "passed",
+      "outputs": [
+        "eight source-led doors123 publications outside SDK",
+        "explicit original doors12 sources and 64 preserved save cuts",
+        "native third chapter replay and authored letter geometry"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "en/zh production Core both complete connected branches and existing first-door upgrades",
+        "eight-locale exact prior functions and original manifest/code retention",
+        "real old-slot IndexedDB migration/retry/illustrated reload and isolated third replay",
+        "18407 en/zh literal pages without scrolling or glyph overflow"
+      ],
+      "evidence": [
+        "docs/evidence/w1-03b3/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "继续search.ks调查章节与后续门；整作、通关变体、原生tft及原作/移动真机完整矩阵未认证。"
     }
   ]
 }

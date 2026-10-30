@@ -55,7 +55,9 @@ const source = createModuleProgram(manifest, {operations});
 
 UI/流程图运行签名绑定完整不可变manifest，加载下一模块不会改变已有签名。活动UI额外保留创建它的`ui.show`来源，允许该函数先返回；快照也保留任务、正文、窗口、扩展调用等来源闭包。流程图声明的根函数须以对应marker开头，Player在验证当前持久profile gate后加载该根，再创建候选。取消/故障不得接管原会话，加载旧档不回退持久访问/解锁。
 
-模块recipe/SaveBridge/跨manifest迁移与历史回溯仍明确拒绝，另列后续任务；不猜旧清单、不伪造函数体、不把单体迁移接口当模块已支持。备份同manifest可异步预备其完整源码闭包后恢复。
+显式跨 manifest Web 槽迁移使用 `defineSavedGameMigration`：`sourceProgram` 返回原始 `ModuleProgram`，`prepareSourceModules` 通过公开 `prepareModuleProgram` 获取原绑定闭包。完整旧档先验证，mapper 再返回完整目标快照与目标绑定，Player 准备目标闭包后验证并按原 activation CAS 接管。旧槽和当前持久进度保留；错误代码、取消和迟到结果失败。模块 recipe/SaveBridge/历史回溯仍明确拒绝。同 manifest 备份可异步预备完整代码闭包后恢复。
+
+大清单可在 `compileProgramModuleParts` 指定 `packedDeclarations: true`，用换行串精确声明每条地址；外部 manifest 保留压缩表示，`declarations()` 返回完整已校验声明。代码字节、ABI、快照绑定和原输入上限不变，版本 1 不接受该字段。具体边界见 ADR0084–0086。
 
 资源仍独立使用eager/demand/balanced/chapter策略；代码当前仅实际调用触发，无自动代码预取。模块内所有函数一并下载，单个大函数内部的未选分支也在同一函数体里，作者分组决定粒度。已使用代码暂不淘汰，原输入/内存上限保持，不能据此声称任意规模大作完成。
 
