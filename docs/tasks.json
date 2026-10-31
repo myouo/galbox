@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G5-03",
+  "current_task": "W1-03B3",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3731,9 +3731,9 @@
       "depends_on": [
         "G5-02"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "done",
+      "verification": "done",
       "outputs": [
         "typed overlay screens and image buttons",
         "prepared artwork/cues and restorable UI",
@@ -3751,10 +3751,11 @@
         "independent tarball consumption"
       ],
       "evidence": [
-        "docs/decisions/0092-authored-ui-artwork.md"
+        "docs/decisions/0092-authored-ui-artwork.md",
+        "docs/evidence/g5-03/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "接调查条件菜单，不生成状态组合帧。"
+      "next_action": "真实作品的调查循环与旧来源升级在独立实例继续验证；不引入作品脚本或素材。"
     },
     {
       "id": "W1-07",
@@ -3763,9 +3764,9 @@
       "depends_on": [
         "W1-03B3A"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "done",
+      "verification": "done",
       "outputs": [
         "opt-in public leaf expansion",
         "typed explicit source aliases",
@@ -3784,10 +3785,11 @@
         "strict tarball producer consumption"
       ],
       "evidence": [
-        "docs/decisions/0093-bounded-producer-leaf-expansion.md"
+        "docs/decisions/0093-bounded-producer-leaf-expansion.md",
+        "docs/evidence/w1-07/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "缩减原作大量无等待辅助函数以接全流程，保留旧来源验收。"
+      "next_action": "真实作品的调查循环与旧来源升级在独立实例继续验证；不引入作品脚本或素材。"
     }
   ]
 }
