@@ -37,7 +37,7 @@ export {cgExtra,musicExtra,sceneExtra,achievement,extrasCatalog,unlockExtra,scen
 export type {ExtraRef,ExtraOptions} from './extras.js';
 export {extrasFingerprint} from '../protocol/extras.js';
 
-export {uiLabel,uiImage,uiButton,uiToggle,uiRange,uiInput,uiScreen,uiCatalog,uiField,showUI,hideUI,setUIText,setUIVisible,setUIEnabled,setUIToggle,setUIRange,setUIInput,waitUI} from './ui.js';
+export {uiLabel,uiImage,uiButton,uiImageButton,uiToggle,uiRange,uiInput,uiScreen,uiCatalog,uiField,showUI,hideUI,setUIText,setUIVisible,setUIEnabled,setUIToggle,setUIRange,setUIInput,waitUI} from './ui.js';
 export type {UIControlRef,UIScreenRef,UIFieldRef,UIControlOptions} from './ui.js';
 export {uiFingerprint} from '../protocol/ui.js';
 
@@ -63,3 +63,5 @@ export {stageSequence,stageAssetSequence,stopStageSequence} from './stage.js';
 export {stageRaster,stopStageRaster} from './raster.js';
 
 export {stageFilteredImage} from './stage.js';
+
+export {expandModuleLeaves,rebaseLeafOrigins} from './leaf-expansion.js';export type {ExpandedLeaves,LeafOriginAlias} from './leaf-expansion.js';

@@ -1,3 +1,4 @@
+import {verifyArtwork} from './artwork.js';
 import {verifyLoopRegion} from './loop-region.js';
 import {verifyAuthoredHistory} from './authored-history.js';
 import {verifyImageFilter} from './image-filter.js';
@@ -85,6 +86,6 @@ button?.addEventListener('click',()=>{void(async()=>{
  await verifyInteractiveModulePlayer(mount);
  await verifyModuleUpgrade(mount);
  await verifyRasters(mount);
- await verifyLoopRegion(mount);await verifyAuthoredHistory(mount);await verifyImageFilter(mount);
+ await verifyArtwork(mount);await verifyLoopRegion(mount);await verifyAuthoredHistory(mount);await verifyImageFilter(mount);
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore / portable backup passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});

@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03B3",
+  "current_task": "G5-03",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3723,6 +3723,71 @@
       ],
       "blocker": null,
       "next_action": "独立实例实包接四门M-4条件循环，并同步八语后段与结局；原生Smooth/精确seek不借此认证。"
+    },
+    {
+      "id": "G5-03",
+      "milestone": "G5",
+      "title": "Authored overlay UI and image button sheets",
+      "depends_on": [
+        "G5-02"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "in_progress",
+      "outputs": [
+        "typed overlay screens and image buttons",
+        "prepared artwork/cues and restorable UI",
+        "axis-correct logical layout"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10"
+      ],
+      "acceptance": [
+        "public factories and malformed/missing capability rejection",
+        "real sprite input/capture/restore and failed candidate preservation",
+        "independent tarball consumption"
+      ],
+      "evidence": [
+        "docs/decisions/0092-authored-ui-artwork.md"
+      ],
+      "blocker": null,
+      "next_action": "接调查条件菜单，不生成状态组合帧。"
+    },
+    {
+      "id": "W1-07",
+      "milestone": "W1",
+      "title": "Bounded producer leaf expansion and exact saved origin mappings",
+      "depends_on": [
+        "W1-03B3A"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "in_progress",
+      "outputs": [
+        "opt-in public leaf expansion",
+        "typed explicit source aliases",
+        "unchanged raw function/capability bounds"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C12"
+      ],
+      "acceptance": [
+        "equivalent literal parameter execution and old mid-mix cold restore",
+        "reject removed live frames and altered signatures/durations",
+        "no arbitrary control/media inlining or input budget expansion",
+        "strict tarball producer consumption"
+      ],
+      "evidence": [
+        "docs/decisions/0093-bounded-producer-leaf-expansion.md"
+      ],
+      "blocker": null,
+      "next_action": "缩减原作大量无等待辅助函数以接全流程，保留旧来源验收。"
     }
   ]
 }

@@ -1,5 +1,5 @@
 import {ensure,parseUIControl,parseUIScreen,parseUICatalog} from '../protocol/index.js';
-import type {UIControl,UIStyle,InteractionRect,DeepReadonly,UICatalog} from '../protocol/index.js';
+import type {UISoundRequest,UIControl,UIStyle,InteractionRect,DeepReadonly,UICatalog} from '../protocol/index.js';
 import type {AssetRef,Variable} from './linker.js';
 import {instruction} from './linker.js';
 import {expressionWire} from './expressions.js';
@@ -14,11 +14,12 @@ function create<K extends UIControl['kind']>(id:string,kind:K,options:UIControlO
 export function uiLabel(id:string,options:UIControlOptions):UIControlRef<'label'>{return create(id,'label',options);}
 export function uiImage(id:string,asset:AssetRef<'image'>,options:UIControlOptions):UIControlRef<'image'>{ensure(asset.kind==='image','UI_ASSET_KIND','UI image needs image');return create(id,'image',options,{asset:asset.id});}
 export function uiButton(id:string,options:UIControlOptions):UIControlRef<'button'>{return create(id,'button',options);}
+export function uiImageButton(id:string,asset:AssetRef<'image'>,options:UIControlOptions&{frameWidth:number;frameHeight:number;enterSound?:UISoundRequest;clickSound?:UISoundRequest}):UIControlRef<'button'>{const {frameWidth,frameHeight,enterSound,clickSound,...base}=options;ensure(asset.kind==='image','UI_ASSET_KIND','Sprite button needs an image');return create(id,'button',base,{graphic:{asset:asset.id,frameWidth,frameHeight,...(enterSound?{enterSound}:{}),...(clickSound?{clickSound}:{})}});}
 export function uiToggle(id:string,value:boolean,options:UIControlOptions):UIControlRef<'toggle'>{return create(id,'toggle',options,{value});}
 export function uiRange(id:string,value:number,options:UIControlOptions&{min:number;max:number;step:number}):UIControlRef<'range'>{return create(id,'range',options,{value,min:options.min,max:options.max,step:options.step});}
 export function uiInput(id:string,value:string,options:UIControlOptions&{maxLength:number}):UIControlRef<'input'>{return create(id,'input',options,{value,maxLength:options.maxLength});}
 function wire(ref:UIControlRef<UIControl['kind']>):UIControl {const c=controls.get(ref);ensure(c,'UI_FACTORY','Use real control factories');return parseUIControl(c);}
-export function uiScreen(id:string,title:string,refs:readonly UIControlRef<UIControl['kind']>[],background='#102938'):UIScreenRef {const value=parseUIScreen({id,title,background,controls:refs.map(wire)}),ref=Object.freeze({[screenBrand]:true as const,id:value.id});screens.set(ref,{wire:value,refs:[...refs]});return ref;}
+export function uiScreen(id:string,title:string,refs:readonly UIControlRef<UIControl['kind']>[],background='#102938',options:{overlay?:boolean}={}):UIScreenRef {const value=parseUIScreen({id,title,background,controls:refs.map(wire),...options}),ref=Object.freeze({[screenBrand]:true as const,id:value.id});screens.set(ref,{wire:value,refs:[...refs]});return ref;}
 function screen(ref:UIScreenRef){const s=screens.get(ref);ensure(s,'UI_FACTORY','Use real screen factory');return s;}
 function member(s:UIScreenRef,c:UIControlRef<UIControl['kind']>):string {ensure(screen(s).refs.includes(c),'UI_MEMBERSHIP','Control belongs to a different screen');return wire(c).id;}
 export function uiCatalog(id:string,revision:string,refs:readonly UIScreenRef[]):UICatalog {return parseUICatalog({id,revision,screens:refs.map(r=>screen(r).wire)});}

@@ -11544,6 +11544,34 @@ message Gbx_UIControl_Case3_kind {
   // Fixed semantic value: "button"
 }
 
+message Gbx_UIControl_Case3_graphic_asset {
+  optional string value = 1;
+}
+
+message Gbx_UIControl_Case3_graphic_frameWidth {
+  optional sint64 value = 1;
+}
+
+message Gbx_UIControl_Case3_graphic_frameHeight {
+  optional sint64 value = 1;
+}
+
+message Gbx_UIControl_Case3_graphic_enterSound {
+  optional Gbx_UISoundRequest value = 1;
+}
+
+message Gbx_UIControl_Case3_graphic_clickSound {
+  optional Gbx_UISoundRequest value = 1;
+}
+
+message Gbx_UIControl_Case3_graphic {
+  optional Gbx_UIControl_Case3_graphic_asset asset = 1;
+  optional Gbx_UIControl_Case3_graphic_frameWidth frameWidth = 2;
+  optional Gbx_UIControl_Case3_graphic_frameHeight frameHeight = 3;
+  optional Gbx_UIControl_Case3_graphic_enterSound enterSound = 4;
+  optional Gbx_UIControl_Case3_graphic_clickSound clickSound = 5;
+}
+
 message Gbx_UIControl_Case3 {
   optional Gbx_UIControl_Case3_id id = 1;
   optional Gbx_UIControl_Case3_rect rect = 2;
@@ -11552,6 +11580,7 @@ message Gbx_UIControl_Case3 {
   optional Gbx_UIControl_Case3_enabled enabled = 5;
   optional Gbx_UIControl_Case3_style style = 6;
   optional Gbx_UIControl_Case3_kind kind = 7;
+  optional Gbx_UIControl_Case3_graphic graphic = 8;
 }
 
 message Gbx_UIControl_Case4_id {
@@ -11734,11 +11763,16 @@ message Gbx_UIScreen_controls {
   repeated Gbx_UIScreen_controls_Item items = 1;
 }
 
+message Gbx_UIScreen_overlay {
+  optional bool value = 1;
+}
+
 message Gbx_UIScreen {
   optional Gbx_UIScreen_id id = 1;
   optional Gbx_UIScreen_title title = 2;
   optional Gbx_UIScreen_background background = 3;
   optional Gbx_UIScreen_controls controls = 4;
+  optional Gbx_UIScreen_overlay overlay = 5;
 }
 
 message Gbx_UICatalog_id {

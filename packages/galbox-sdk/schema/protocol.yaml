@@ -12440,6 +12440,35 @@ definitions:
             type: string
             const: button
             x-proto-tag: 7
+          graphic:
+            type: object
+            properties:
+              asset:
+                type: string
+                pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+                x-proto-tag: 1
+              frameWidth:
+                type: integer
+                minimum: 1
+                maximum: 426
+                x-proto-tag: 2
+              frameHeight:
+                type: integer
+                minimum: 1
+                maximum: 720
+                x-proto-tag: 3
+              enterSound:
+                $ref: "#/definitions/UISoundRequest"
+                x-proto-tag: 4
+              clickSound:
+                $ref: "#/definitions/UISoundRequest"
+                x-proto-tag: 5
+            required:
+              - asset
+              - frameWidth
+              - frameHeight
+            additionalProperties: false
+            x-proto-tag: 8
         required:
           - id
           - rect
@@ -12619,6 +12648,9 @@ definitions:
         minItems: 1
         maxItems: 64
         x-proto-tag: 4
+      overlay:
+        type: boolean
+        x-proto-tag: 5
     required:
       - id
       - title
@@ -14322,6 +14354,7 @@ definitions:
               enum:
                 - text
                 - choice
+                - ui
               x-proto-tag: 2
           required:
             - at
