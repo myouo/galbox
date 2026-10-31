@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G3-12",
+  "current_task": "W1-03B3",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3598,7 +3598,7 @@
         "G3-11"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "typed filtered image instruction and exact finite alpha8 kernel",
@@ -3635,7 +3635,7 @@
         "G2-07"
       ],
       "status": "done",
-      "implementation": "done",
+      "implementation": "complete",
       "verification": "passed",
       "outputs": [
         "per-instruction typed history recording",
@@ -3657,6 +3657,37 @@
       ],
       "blocker": null,
       "next_action": "第四门实例重新打包消费；历史-only注记和后段选择链继续由实例按源确认。"
+    },
+    {
+      "id": "G3-13",
+      "milestone": "G3",
+      "title": "Static per-channel image ceilings",
+      "depends_on": [
+        "G3-12"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "bounded RGB endpoint correction without derived images"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10"
+      ],
+      "acceptance": [
+        "published-reference numerical endpoints and alpha preservation",
+        "restorable shared surface in both backends",
+        "independent tarball consumption"
+      ],
+      "evidence": [
+        "docs/decisions/0090-static-per-channel-image-ceilings.md",
+        "docs/evidence/g3-13/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "实例新实包接入第四门九处通道上限，验收主体至select_maid；后段选择链和search入口继续。"
     }
   ]
 }

@@ -13807,6 +13807,30 @@ definitions:
         minimum: 0
         maximum: 255
         x-proto-tag: 6
+      channelCeil:
+        type: object
+        properties:
+          red:
+            type: integer
+            minimum: 0
+            maximum: 255
+            x-proto-tag: 1
+          green:
+            type: integer
+            minimum: 0
+            maximum: 255
+            x-proto-tag: 2
+          blue:
+            type: integer
+            minimum: 0
+            maximum: 255
+            x-proto-tag: 3
+        required:
+          - red
+          - green
+          - blue
+        additionalProperties: false
+        x-proto-tag: 8
     required:
       - width
       - height

@@ -12835,6 +12835,24 @@ message Gbx_ImageFilter_opacity {
   optional sint64 value = 1;
 }
 
+message Gbx_ImageFilter_channelCeil_red {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_channelCeil_green {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_channelCeil_blue {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_channelCeil {
+  optional Gbx_ImageFilter_channelCeil_red red = 1;
+  optional Gbx_ImageFilter_channelCeil_green green = 2;
+  optional Gbx_ImageFilter_channelCeil_blue blue = 3;
+}
+
 message Gbx_ImageFilter {
   optional Gbx_ImageFilter_width width = 1;
   optional Gbx_ImageFilter_height height = 2;
@@ -12842,6 +12860,7 @@ message Gbx_ImageFilter {
   optional Gbx_ImageFilter_radiusY radiusY = 4;
   optional Gbx_ImageFilter_color color = 5;
   optional Gbx_ImageFilter_opacity opacity = 6;
+  optional Gbx_ImageFilter_channelCeil channelCeil = 8;
 }
 
 message Gbx_ImageFilterState_at {
