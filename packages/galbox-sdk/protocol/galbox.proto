@@ -3222,6 +3222,44 @@ message Gbx_Instruction_Case82 {
   optional Gbx_Instruction_Case82_effect effect = 7;
 }
 
+message Gbx_Instruction_Case83_op {
+  // Fixed semantic value: "audio.source.loop-region"
+}
+
+message Gbx_Instruction_Case83_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case83_source {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case83_fromFrame {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case83_toFrame {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case83_sampleRate {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case83_enabled {
+  optional bool value = 1;
+}
+
+message Gbx_Instruction_Case83 {
+  optional Gbx_Instruction_Case83_op op = 1;
+  optional Gbx_Instruction_Case83_at at = 2;
+  optional Gbx_Instruction_Case83_source source = 3;
+  optional Gbx_Instruction_Case83_fromFrame fromFrame = 4;
+  optional Gbx_Instruction_Case83_toFrame toFrame = 5;
+  optional Gbx_Instruction_Case83_sampleRate sampleRate = 6;
+  optional Gbx_Instruction_Case83_enabled enabled = 7;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -3306,6 +3344,7 @@ message Gbx_Instruction {
     Gbx_Instruction_Case80 v80 = 80;
     Gbx_Instruction_Case81 v81 = 81;
     Gbx_Instruction_Case82 v82 = 82;
+    Gbx_Instruction_Case83 v83 = 83;
   }
 }
 
@@ -9867,6 +9906,39 @@ message Gbx_MediaTaskState_replay {
   optional bool value = 1;
 }
 
+message Gbx_MediaTaskState_loopRegion_at {
+  optional string value = 1;
+}
+
+message Gbx_MediaTaskState_loopRegion_signature {
+  optional string value = 1;
+}
+
+message Gbx_MediaTaskState_loopRegion_fromFrame {
+  optional sint64 value = 1;
+}
+
+message Gbx_MediaTaskState_loopRegion_toFrame {
+  optional sint64 value = 1;
+}
+
+message Gbx_MediaTaskState_loopRegion_sampleRate {
+  optional sint64 value = 1;
+}
+
+message Gbx_MediaTaskState_loopRegion_enabled {
+  optional bool value = 1;
+}
+
+message Gbx_MediaTaskState_loopRegion {
+  optional Gbx_MediaTaskState_loopRegion_at at = 1;
+  optional Gbx_MediaTaskState_loopRegion_signature signature = 2;
+  optional Gbx_MediaTaskState_loopRegion_fromFrame fromFrame = 3;
+  optional Gbx_MediaTaskState_loopRegion_toFrame toFrame = 4;
+  optional Gbx_MediaTaskState_loopRegion_sampleRate sampleRate = 5;
+  optional Gbx_MediaTaskState_loopRegion_enabled enabled = 6;
+}
+
 message Gbx_MediaTaskState {
   optional Gbx_MediaTaskState_version version = 1;
   optional Gbx_MediaTaskState_signature signature = 2;
@@ -9874,6 +9946,7 @@ message Gbx_MediaTaskState {
   optional Gbx_MediaTaskState_loopStartMs loopStartMs = 4;
   optional Gbx_MediaTaskState_loopEndMs loopEndMs = 5;
   optional Gbx_MediaTaskState_replay replay = 6;
+  optional Gbx_MediaTaskState_loopRegion loopRegion = 7;
 }
 
 message Gbx_AudioFadeState_signature {

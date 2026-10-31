@@ -2,8 +2,8 @@ import {settleSourceFades} from './audio-sources.js';
 import {canonicalWireJSON,ensure,parseVoiceRecipe} from './index.js';
 import type {AudioState,Instruction,Expression,Snapshot,Task,TextState,VoiceRecipe} from './index.js';
 import {ease} from './stage.js';
-export type AudioInstruction=Extract<Instruction,{op:'audio.track'|'audio.fade'|'audio.duck'|'audio.policy'|'audio.wait'|'audio.source.fade'|'audio.source.stop'|'audio.source.gain'}>;
-export function isAudioInstruction(i:Instruction):i is AudioInstruction{return ['audio.track','audio.fade','audio.duck','audio.policy','audio.wait','audio.source.fade','audio.source.stop','audio.source.gain'].includes(i.op);}
+export type AudioInstruction=Extract<Instruction,{op:'audio.track'|'audio.fade'|'audio.duck'|'audio.policy'|'audio.wait'|'audio.source.fade'|'audio.source.stop'|'audio.source.gain'|'audio.source.loop-region'}>;
+export function isAudioInstruction(i:Instruction):i is AudioInstruction{return ['audio.track','audio.fade','audio.duck','audio.policy','audio.wait','audio.source.fade','audio.source.stop','audio.source.gain','audio.source.loop-region'].includes(i.op);}
 export function audioExpressions(i:AudioInstruction):Expression[] {if(i.op==='audio.track')return [i.gain,i.loopStartMs,...(i.loopEndMs?[i.loopEndMs]:[])];if(i.op==='audio.fade')return [i.to,i.duration];if(i.op==='audio.source.fade')return [i.to,i.duration,...(i.delayMs?[i.delayMs]:[])];if(i.op==='audio.source.gain')return [i.gain];if(i.op==='audio.duck')return [i.level,i.attackMs,i.releaseMs];return [];}
 export function initialAudioState():AudioState {return {version:1,gains:{bgm:1,voice:1,sfx:1},duck:{enabled:false,level:.35,attackMs:120,releaseMs:240,value:1,from:1,to:1,elapsed:0,duration:0},stopVoiceOnAdvance:true};}
 export function audioSignature(i:Instruction):string {const signature=canonicalWireJSON(i);ensure(signature.length<=65536,'AUDIO_SOURCE_SIZE','Audio signature exceeds supported bound');return signature;}

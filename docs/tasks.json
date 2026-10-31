@@ -3688,6 +3688,41 @@
       ],
       "blocker": null,
       "next_action": "实例新实包接入第四门九处通道上限，验收主体至select_maid；后段选择链和search入口继续。"
+    },
+    {
+      "id": "G3-14",
+      "milestone": "G3",
+      "title": "Restorable live conditional audio loop links",
+      "depends_on": [
+        "G3-02"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "bounded source loop link mutation",
+        "returned writer/module/save closure",
+        "no-restart live element update"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "numeric bounds and source tampering refused",
+        "save/cold restore retains link and source lifecycle",
+        "real media crosses conditional point without restarting or premature rewind",
+        "strict independent tarball consumption"
+      ],
+      "evidence": [
+        "docs/decisions/0091-live-conditional-audio-loop-links.md",
+        "docs/evidence/g3-14/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "独立实例实包接四门M-4条件循环，并同步八语后段与结局；原生Smooth/精确seek不借此认证。"
     }
   ]
 }

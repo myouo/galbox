@@ -1,5 +1,11 @@
 # galbox-sdk 当前接续
 
+2026-10-31：G3-14条件后向音频链接完成，公开工厂/保存来源/返回写入函数模块
+闭包/实时element更新接通。check、424单元、7相关设备、另1实际IndexedDB
+专项及严格独立实包通过。不重启音源，启用已过点不倒跳；坏候选保留head。
+恢复仍遵循replay从0；buffer/Smooth跨淡化/精确seek未认证。实例八语四门后段
+继续，资源上传仍停止。见ADR0091、evidence/g3-14/REPORT.md。
+
 2026-10-31：G3-13/G3-12/G2-08 完成。源绑定 tint/box blur 不制造新任务，真实心跳
 137ms 旧档 Canvas/WebGL 迁移、冷刷新与零派生图片请求通过。新增 richPage
 recordHistory=false，保持正文推进/已读/窗口确认，仅抑制 backlog；公开实包

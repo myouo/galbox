@@ -3466,6 +3466,48 @@ definitions:
           - effect
         additionalProperties: false
         x-proto-tag: 82
+      - type: object
+        properties:
+          op:
+            type: string
+            const: audio.source.loop-region
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          source:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          fromFrame:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            x-proto-tag: 4
+          toFrame:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+            x-proto-tag: 5
+          sampleRate:
+            type: integer
+            minimum: 8000
+            maximum: 192000
+            x-proto-tag: 6
+          enabled:
+            type: boolean
+            x-proto-tag: 7
+        required:
+          - op
+          - at
+          - source
+          - fromFrame
+          - toFrame
+          - sampleRate
+          - enabled
+        additionalProperties: false
+        x-proto-tag: 83
   Function:
     type: object
     properties:
@@ -10727,6 +10769,44 @@ definitions:
       replay:
         type: boolean
         x-proto-tag: 6
+      loopRegion:
+        type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          signature:
+            type: string
+            pattern: ^[^\x00]{1,65536}$
+            x-proto-tag: 2
+          fromFrame:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            x-proto-tag: 3
+          toFrame:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+            x-proto-tag: 4
+          sampleRate:
+            type: integer
+            minimum: 8000
+            maximum: 192000
+            x-proto-tag: 5
+          enabled:
+            type: boolean
+            x-proto-tag: 6
+        required:
+          - at
+          - signature
+          - fromFrame
+          - toFrame
+          - sampleRate
+          - enabled
+        additionalProperties: false
+        x-proto-tag: 7
     required:
       - version
       - signature

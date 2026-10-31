@@ -22,3 +22,5 @@ export function audioSourceStop(at:string,source:string,options:{inactive?:'erro
 
 export function bgmTrack(at:string,task:string,asset:AssetRef<'audio'>,buffer:BgmBufferRef,options:Omit<AudioTrackOptions,'channel'>){ensure(buffer.kind==='bgm-buffer','AUDIO_BUFFER','Expected a BGM buffer');return make('audio.track',{...audioTrack(at,task,asset,{...options,channel:'bgm'}),buffer:buffer.id});}
 export function audioSourceGain(at:string,source:string,gain:StageNumber,options:{inactive?:'error'|'ignore'}={}){return make('audio.source.gain',{at,source,gain:numeric(gain),...options});}
+
+export function audioSourceLoopRegion(at:string,source:string,options:{fromFrame:number;toFrame:number;sampleRate:number;enabled:boolean}){return make('audio.source.loop-region',{at,source,...options});}

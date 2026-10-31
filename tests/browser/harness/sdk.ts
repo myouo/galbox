@@ -28,3 +28,5 @@ export * from 'galbox-sdk/wire';
 export {interactiveRegistry} from '../../fixtures/game-data/interactive-modules/source.js';
 
 export {RasterImages} from '../../../packages/galbox-sdk/src/web-host/raster-images.js';
+
+export {verifyLoopRegion} from '../../consumer/loop-region.js';

@@ -18,7 +18,7 @@ export {textTheme,textWindow,textLayout,textFont,textWindowGeometry} from './lay
 export {stageImage,stageTween,stageFilter,stageCamera,stageFade,stageTransition,stageRuleTransition,stageShake,stageStyle,stageAsset,stageMix,stageMotion,stageClone,stopStageMotion} from './stage.js';
 export type {StageNumber,StagePoseInput,StageFilterInput,StageCameraInput,StageStyleInput,StageTiming,StageMixOptions} from './stage.js';
 
-export {audioTrack,audioFade,audioDuck,uiSound,sfxTrack,audioSourceFade,audioFadeOutAndStop,audioSourceStop,audioSourceGain,bgmTrack} from './audio.js';
+export {audioTrack,audioFade,audioDuck,uiSound,sfxTrack,audioSourceFade,audioFadeOutAndStop,audioSourceStop,audioSourceGain,audioSourceLoopRegion,bgmTrack} from './audio.js';
 export type {AudioTrackOptions} from './audio.js';
 
 export {interactionPrompt,videoPlay} from './interaction.js';
