@@ -28,3 +28,9 @@ cannot publish bodies. No digest/link check is removed from installation.
 again. Mutation of a returned function/asset and subsequent reinstallation are
 covered. The independent game found repeated full projection during cold-cut
 validation; this change avoids relinking unchanged closure declarations.
+
+2026-10-31 follow-up / ADR0094: explicit inheritExtrasCompatibility retains the
+checked predecessor's own and inherited catalog aliases. Default output remains
+direct-only. The real three-generation public producer test and strict consumer
+option compilation pass; pnpm check, 82 files / 430 units and pnpm test:consumer
+pass again. No source-release or snapshot validation is bypassed.

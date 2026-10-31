@@ -3786,7 +3786,8 @@
       ],
       "evidence": [
         "docs/decisions/0093-bounded-producer-leaf-expansion.md",
-        "docs/evidence/w1-07/REPORT.md"
+        "docs/evidence/w1-07/REPORT.md",
+        "docs/decisions/0094-transitive-extras-catalog-aliases.md"
       ],
       "blocker": null,
       "next_action": "真实作品的调查循环与旧来源升级在独立实例继续验证；不引入作品脚本或素材。"
