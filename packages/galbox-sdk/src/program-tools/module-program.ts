@@ -1,7 +1,7 @@
 import {emptyOperations} from '../core/operations.js';
 import type {OperationRegistry} from '../core/operations.js';
 import {normalizeProgram} from '../protocol/normalize.js';
-import {ensure,parseModuleManifest,parseProgramModule,parseProgram,parseSnapshot,parseModuleHeader,parseModuleFunction,parseProgramModuleBinding,parseAsset,parseResourceFact,canonicalWireJSON} from '../protocol/index.js';
+import {ensure,parseCodeModuleDescriptor,parseModuleManifest,parseProgramModule,parseProgram,parseSnapshot,parseModuleHeader,parseModuleFunction,parseProgramModuleBinding,parseAsset,parseResourceFact,canonicalWireJSON} from '../protocol/index.js';
 import type {ModuleManifest,ProgramModule,Program,Snapshot,ModuleFunction,Function as ProgramFunction} from '../protocol/index.js';
 import {wireDigest,byteDigest} from '../protocol/digest.js';
 import {registerModuleProjection} from '../protocol/module-context.js';
@@ -42,7 +42,7 @@ export class ModuleProgram {
  catalog(){return [...this.manifest.header.assets,...this.manifest.assetCatalogs?.flatMap(c=>c.assets)??[]].map(parseAsset);}
  resources(){return [...this.manifest.release.resources,...this.manifest.assetCatalogs?.flatMap(c=>c.resources)??[]].map(parseResourceFact);}
  point(at:string,kind?:'text'|'choice'):boolean{return !!this.manifest.points?.some(p=>p.at===at&&(!kind||p.kind===kind));}
- descriptor(id:string){const d=this.describe().modules.find(d=>d.id===id);ensure(d,'MODULE_UNKNOWN',id);return d;}
+ descriptor(id:string){const d=this.manifest.modules.find(d=>d.id===id);ensure(d,'MODULE_UNKNOWN',id);return parseCodeModuleDescriptor(d);}
  declarations(){return this.manifest.functionOrder.map(id=>parseModuleFunction(this.functions.get(id)!.definition));}
  moduleForFunction(id:string):string {const f=this.functions.get(id);ensure(f,'FUNCTION',id);return f.module;}
  closure(ids:readonly string[]):string[]{const set=new Set<string>(),visit=(id:string)=>{if(set.has(id))return;ensure(this.manifest.modules.some(m=>m.id===id),'MODULE_UNKNOWN',id);set.add(id);for(const dep of this.manifest.modules.find(m=>m.id===id)!.dependencies??[])visit(dep);};for(const id of ids)visit(id);return [...set];}

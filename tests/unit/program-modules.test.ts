@@ -21,3 +21,5 @@ it('typed wire factories reject opcode/value mismatches; dynamic ID relationship
 });
 
 it('locale preferences accept validated language tags and reject malformed external input',async()=>{const {defaultPreferences,mergePreferences}=await import('galbox-sdk/settings');expect(mergePreferences(defaultPreferences(),{locale:'en-US'}).locale).toBe('en-US');expect(()=>mergePreferences(defaultPreferences(),{locale:'../en'})).toThrow('SCHEMA');});
+
+it('module descriptor queries detach only their own ABI and never expose mutable manifest state',async()=>{const built=await fixture(),source=createModuleProgram(built.manifest),id=source.entryModule,a=source.descriptor(id);a.uri='altered.pb';a.functions[0]!.addresses[0]='altered';const b=source.descriptor(id);expect(b.uri).toBe(built.manifest.modules.find(d=>d.id===id)!.uri);expect(b.functions[0]!.addresses).toEqual(built.manifest.modules.find(d=>d.id===id)!.functions[0]!.addresses);source.install(built.files.find(f=>f.body.id===id)!.body);expect(source.has(id)).toBe(true);});

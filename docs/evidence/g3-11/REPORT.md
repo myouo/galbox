@@ -59,3 +59,8 @@ remain detached/schema-checked, manifest commitments are independently validated
 and static prefix dependencies are topologically checked. Runtime per-body
 digest/length/ABI/link validation is unchanged. Sequential check, all 413 units
 and isolated tarball consumer passed again after this producer-only change.
+
+Module descriptor lookup now detaches only the requested descriptor, rather than
+cloning the entire multi-megabyte catalog on every code request. The explicit
+ownership regression, all 414 units, sequential check and isolated packed
+consumer passed; external descriptor edits cannot change the private manifest.
