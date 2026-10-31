@@ -59,3 +59,5 @@ export {rulePresentation,dialoguePresentation} from './dialogue.js';
 
 export type {AssetSequenceFrame} from './stage.js';
 export {stageSequence,stageAssetSequence,stopStageSequence} from './stage.js';
+
+export {stageRaster,stopStageRaster} from './raster.js';

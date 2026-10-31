@@ -1,3 +1,4 @@
+import {verifyRasters} from './raster.js';
 import {verifyModuleUpgrade} from './module-upgrade.js';
 import {verifySourcePlayer} from './audio-sources.js';
 import {verifyInteractiveModulePlayer} from './interactive-modules.js';
@@ -80,5 +81,6 @@ button?.addEventListener('click',()=>{void(async()=>{
  await verifySourcePlayer(mount,program);
  await verifyInteractiveModulePlayer(mount);
  await verifyModuleUpgrade(mount);
+ await verifyRasters(mount);
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore / portable backup passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});

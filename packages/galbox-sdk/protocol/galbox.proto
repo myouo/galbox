@@ -334,6 +334,10 @@ message Gbx_StageObject_frame {
   optional Gbx_ImageFrame value = 1;
 }
 
+message Gbx_StageObject_rasterRef {
+  optional string value = 1;
+}
+
 message Gbx_StageObject {
   optional Gbx_StageObject_id id = 1;
   optional Gbx_StageObject_asset asset = 2;
@@ -350,6 +354,7 @@ message Gbx_StageObject {
   optional Gbx_StageObject_ruleTransition ruleTransition = 13;
   optional Gbx_StageObject_motion motion = 14;
   optional Gbx_StageObject_frame frame = 15;
+  optional Gbx_StageObject_rasterRef rasterRef = 16;
 }
 
 message Gbx_MotionOffset_x {
@@ -3099,6 +3104,76 @@ message Gbx_Instruction_Case79 {
   optional Gbx_Instruction_Case79_rect rect = 4;
 }
 
+message Gbx_Instruction_Case80_op {
+  // Fixed semantic value: "stage.raster"
+}
+
+message Gbx_Instruction_Case80_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case80_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case80_asset {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case80_effect {
+  optional Gbx_RasterEffect value = 1;
+}
+
+message Gbx_Instruction_Case80_delayMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_Instruction_Case80_loop {
+  optional bool value = 1;
+}
+
+message Gbx_Instruction_Case80_policy {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case80_targets_Item {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case80_targets {
+  repeated Gbx_Instruction_Case80_targets_Item items = 1;
+}
+
+message Gbx_Instruction_Case80 {
+  optional Gbx_Instruction_Case80_op op = 1;
+  optional Gbx_Instruction_Case80_at at = 2;
+  optional Gbx_Instruction_Case80_task task = 3;
+  optional Gbx_Instruction_Case80_asset asset = 4;
+  optional Gbx_Instruction_Case80_effect effect = 5;
+  optional Gbx_Instruction_Case80_delayMs delayMs = 6;
+  optional Gbx_Instruction_Case80_loop loop = 7;
+  optional Gbx_Instruction_Case80_policy policy = 8;
+  optional Gbx_Instruction_Case80_targets targets = 9;
+}
+
+message Gbx_Instruction_Case81_op {
+  // Fixed semantic value: "stage.raster.stop"
+}
+
+message Gbx_Instruction_Case81_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case81_task {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case81 {
+  optional Gbx_Instruction_Case81_op op = 1;
+  optional Gbx_Instruction_Case81_at at = 2;
+  optional Gbx_Instruction_Case81_task task = 3;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -3180,6 +3255,8 @@ message Gbx_Instruction {
     Gbx_Instruction_Case77 v77 = 77;
     Gbx_Instruction_Case78 v78 = 78;
     Gbx_Instruction_Case79 v79 = 79;
+    Gbx_Instruction_Case80 v80 = 80;
+    Gbx_Instruction_Case81 v81 = 81;
   }
 }
 
@@ -3657,6 +3734,10 @@ message Gbx_Task_sequenceTask {
   optional Gbx_SequenceTaskState value = 1;
 }
 
+message Gbx_Task_rasterTask {
+  optional Gbx_RasterTaskState value = 1;
+}
+
 message Gbx_Task {
   optional Gbx_Task_id id = 1;
   optional Gbx_Task_status status = 2;
@@ -3683,6 +3764,7 @@ message Gbx_Task {
   optional Gbx_Task_motionTask motionTask = 23;
   optional Gbx_Task_particleTask particleTask = 24;
   optional Gbx_Task_sequenceTask sequenceTask = 25;
+  optional Gbx_Task_rasterTask rasterTask = 26;
 }
 
 message Gbx_TaskGroup_id {
@@ -12459,6 +12541,227 @@ message Gbx_SequenceTaskState {
   optional Gbx_SequenceTaskState_startedAt startedAt = 2;
 }
 
+message Gbx_RasterEffect_Case1_kind {
+  // Fixed semantic value: "film"
+}
+
+message Gbx_RasterEffect_Case1_width {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_height {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_intervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_periodSteps {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_seed {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_flicker {
+  optional bool value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lineCount {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lineColor {
+  optional string value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lineAlpha {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lineSpeed {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lineChance {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case1_linePersistence {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case1_noiseCount {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case1_swayChance {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lightColor {
+  optional string value = 1;
+}
+
+message Gbx_RasterEffect_Case1_darkColor {
+  optional string value = 1;
+}
+
+message Gbx_RasterEffect_Case1_lightAlpha {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case1_darkAlpha {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case1 {
+  optional Gbx_RasterEffect_Case1_kind kind = 1;
+  optional Gbx_RasterEffect_Case1_width width = 2;
+  optional Gbx_RasterEffect_Case1_height height = 3;
+  optional Gbx_RasterEffect_Case1_intervalMs intervalMs = 4;
+  optional Gbx_RasterEffect_Case1_periodSteps periodSteps = 5;
+  optional Gbx_RasterEffect_Case1_seed seed = 6;
+  optional Gbx_RasterEffect_Case1_flicker flicker = 7;
+  optional Gbx_RasterEffect_Case1_lineCount lineCount = 8;
+  optional Gbx_RasterEffect_Case1_lineColor lineColor = 9;
+  optional Gbx_RasterEffect_Case1_lineAlpha lineAlpha = 10;
+  optional Gbx_RasterEffect_Case1_lineSpeed lineSpeed = 11;
+  optional Gbx_RasterEffect_Case1_lineChance lineChance = 12;
+  optional Gbx_RasterEffect_Case1_linePersistence linePersistence = 13;
+  optional Gbx_RasterEffect_Case1_noiseCount noiseCount = 14;
+  optional Gbx_RasterEffect_Case1_swayChance swayChance = 15;
+  optional Gbx_RasterEffect_Case1_lightColor lightColor = 16;
+  optional Gbx_RasterEffect_Case1_darkColor darkColor = 17;
+  optional Gbx_RasterEffect_Case1_lightAlpha lightAlpha = 18;
+  optional Gbx_RasterEffect_Case1_darkAlpha darkAlpha = 19;
+}
+
+message Gbx_RasterEffect_Case2_kind {
+  // Fixed semantic value: "accumulate"
+}
+
+message Gbx_RasterEffect_Case2_width {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case2_height {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case2_intervalMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case2_durationMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterEffect_Case2_fromScale {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_toScale {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_fromOpacity {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_toOpacity {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_fromRotation {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_toRotation {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_moveX {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_moveY {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_square {
+  optional bool value = 1;
+}
+
+message Gbx_RasterEffect_Case2_brightness {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2_grayscale {
+  optional double value = 1;
+}
+
+message Gbx_RasterEffect_Case2 {
+  optional Gbx_RasterEffect_Case2_kind kind = 1;
+  optional Gbx_RasterEffect_Case2_width width = 2;
+  optional Gbx_RasterEffect_Case2_height height = 3;
+  optional Gbx_RasterEffect_Case2_intervalMs intervalMs = 4;
+  optional Gbx_RasterEffect_Case2_durationMs durationMs = 5;
+  optional Gbx_RasterEffect_Case2_fromScale fromScale = 6;
+  optional Gbx_RasterEffect_Case2_toScale toScale = 7;
+  optional Gbx_RasterEffect_Case2_fromOpacity fromOpacity = 8;
+  optional Gbx_RasterEffect_Case2_toOpacity toOpacity = 9;
+  optional Gbx_RasterEffect_Case2_fromRotation fromRotation = 10;
+  optional Gbx_RasterEffect_Case2_toRotation toRotation = 11;
+  optional Gbx_RasterEffect_Case2_moveX moveX = 12;
+  optional Gbx_RasterEffect_Case2_moveY moveY = 13;
+  optional Gbx_RasterEffect_Case2_square square = 14;
+  optional Gbx_RasterEffect_Case2_brightness brightness = 15;
+  optional Gbx_RasterEffect_Case2_grayscale grayscale = 16;
+}
+
+message Gbx_RasterEffect {
+  oneof value {
+    Gbx_RasterEffect_Case1 v1 = 1;
+    Gbx_RasterEffect_Case2 v2 = 2;
+  }
+}
+
+message Gbx_RasterTaskState_signature {
+  optional string value = 1;
+}
+
+message Gbx_RasterTaskState_startedAt {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterTaskState_asset {
+  optional string value = 1;
+}
+
+message Gbx_RasterTaskState_effect {
+  optional Gbx_RasterEffect value = 1;
+}
+
+message Gbx_RasterTaskState_delayMs {
+  optional sint64 value = 1;
+}
+
+message Gbx_RasterTaskState_loop {
+  optional bool value = 1;
+}
+
+message Gbx_RasterTaskState {
+  optional Gbx_RasterTaskState_signature signature = 1;
+  optional Gbx_RasterTaskState_startedAt startedAt = 2;
+  optional Gbx_RasterTaskState_asset asset = 3;
+  optional Gbx_RasterTaskState_effect effect = 4;
+  optional Gbx_RasterTaskState_delayMs delayMs = 5;
+  optional Gbx_RasterTaskState_loop loop = 6;
+}
+
 message Gbx_ModuleFunction_id {
   optional string value = 1;
 }
@@ -13201,6 +13504,8 @@ message WireEnvelope {
   oneof body {
     Gbx_SequenceFrame body_SequenceFrame = 126;
     Gbx_SequenceTaskState body_SequenceTaskState = 127;
+    Gbx_RasterEffect body_RasterEffect = 130;
+    Gbx_RasterTaskState body_RasterTaskState = 131;
     Gbx_RulePresentation body_RulePresentation = 125;
     Gbx_Asset body_Asset = 123;
     Gbx_Function body_Function = 124;

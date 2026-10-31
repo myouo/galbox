@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03B3",
+  "current_task": "G3-11",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3550,6 +3550,44 @@
       ],
       "blocker": null,
       "next_action": "继续search.ks调查章节与后续门；整作、通关变体、原生tft及原作/移动真机完整矩阵未认证。"
+    },
+    {
+      "id": "G3-11",
+      "milestone": "G3",
+      "title": "可恢复的实时参数化旧电影与图像累积",
+      "depends_on": [
+        "G3-10",
+        "G2-07"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "in_progress",
+      "outputs": [
+        "typed procedural raster instructions and source-bound snapshot state",
+        "shared bounded real-time raster surfaces in Canvas/WebGL",
+        "cancel-safe candidate replay and physical surface release",
+        "independent game consumes parameters/source images without generated frame payloads"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "source/clock/asset/reference tampering rejected and collection/clone/stop semantics",
+        "real mid-effect cold image/save restore across both graphics backends",
+        "bounded replay yields/cancels and failed preparation preserves current image/head",
+        "strict independent tarball consumer and asset-byte reduction measurement"
+      ],
+      "evidence": [
+        "docs/decisions/0087-restorable-procedural-raster-effects.md"
+      ],
+      "blocker": null,
+      "next_action": "上传按用户要求停止；实现实时绘制后先本地验证，不恢复预生成帧上传。"
     }
   ]
 }
