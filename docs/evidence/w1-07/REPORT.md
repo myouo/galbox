@@ -19,3 +19,12 @@ plus atomic rejection of a damaged batch. `pnpm test:consumer` passes independen
 strict tarball compilation and headless public expansion/installAll/origin binding,
 then browser consumer checks. Logs remain ignored artifacts. This is not arbitrary
 inlining, invocation migration, a legacy VM or a native save codec.
+
+Follow-up: immutable ownership of checked module closures is retained privately in
+a four-entry projection cache. Each caller gets a detached DTO and the required
+module context; successful installation invalidates the cache, failed candidates
+cannot publish bodies. No digest/link check is removed from installation.
+`pnpm check`, 81 files / 429 units and the strict isolated tarball consumer pass
+again. Mutation of a returned function/asset and subsequent reinstallation are
+covered. The independent game found repeated full projection during cold-cut
+validation; this change avoids relinking unchanged closure declarations.
