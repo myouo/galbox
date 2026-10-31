@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "G3-11",
+  "current_task": "W1-03B3",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3559,9 +3559,9 @@
         "G3-10",
         "G2-07"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "implemented",
+      "verification": "passed",
       "outputs": [
         "typed procedural raster instructions and source-bound snapshot state",
         "shared bounded real-time raster surfaces in Canvas/WebGL",
@@ -3584,10 +3584,11 @@
         "strict independent tarball consumer and asset-byte reduction measurement"
       ],
       "evidence": [
-        "docs/decisions/0087-restorable-procedural-raster-effects.md"
+        "docs/decisions/0087-restorable-procedural-raster-effects.md",
+        "docs/evidence/g3-11/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "上传按用户要求停止；实现实时绘制后先本地验证，不恢复预生成帧上传。"
+      "next_action": "实时参数绘制/冷恢复/取消/释放与独立实包、真实电影和残像旧档双后端已验收；跨语言存储共享归实例。上传按用户要求保持停止；原作像素/原RNG与移动真机另验。"
     }
   ]
 }
