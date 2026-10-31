@@ -64,3 +64,14 @@ Module descriptor lookup now detaches only the requested descriptor, rather than
 cloning the entire multi-megabyte catalog on every code request. The explicit
 ownership regression, all 414 units, sequential check and isolated packed
 consumer passed; external descriptor edits cannot change the private manifest.
+
+Latest user scope is specifically effects that were expanded into repeated image
+frames because the SDK lacked real-time semantics, not general image/audio
+compression. Current eight-locale programs contain 48 film and 96 accumulation
+sites, zero per-asset image sequences and zero referenced old generated effect
+frames. Heartbeat still preprocesses one tint/box-blur image per source/color
+(38 unique derived images, 8651258 bytes); exact per-image colorRect/box kernels
+are a smaller remaining gap. Existing particle/motion/composition tasks and original
+ASD atlases are not frame-expansion gaps. Instance portrait composites use already
+available SDK hierarchy/alpha composition and must not be mislabeled missing
+engine capabilities. Later scenario occurrence inventory is not full acceptance.
