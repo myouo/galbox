@@ -1,8 +1,8 @@
 import {mixState} from './composition.js';
 import {ensure,canonicalWireJSON,parseStagePose,parseStageFilters,parseStageCamera} from './index.js';
 import type {StageObject,StagePose,StageFilters,StageCamera,StageScene,StageLayer,StageTaskState,StageTarget,Task,Snapshot,Instruction,DeepReadonly,Expression} from './index.js';
-export type StageInstruction=Extract<Instruction,{op:'stage.image'|'stage.pose'|'stage.filter'|'stage.camera'|'stage.fade'|'stage.transition'|'stage.rule'|'stage.shake'|'stage.style'|'stage.asset'|'stage.mix'|'task.cancel'|'task.finish'}>;
-export function isStageInstruction(i:Instruction):i is StageInstruction {return ['stage.image','stage.pose','stage.filter','stage.camera','stage.fade','stage.transition','stage.rule','stage.shake','stage.style','stage.asset','stage.mix','task.cancel','task.finish'].includes(i.op);}
+export type StageInstruction=Extract<Instruction,{op:'stage.image.filtered'|'stage.image'|'stage.pose'|'stage.filter'|'stage.camera'|'stage.fade'|'stage.transition'|'stage.rule'|'stage.shake'|'stage.style'|'stage.asset'|'stage.mix'|'task.cancel'|'task.finish'}>;
+export function isStageInstruction(i:Instruction):i is StageInstruction {return ['stage.image.filtered','stage.image','stage.pose','stage.filter','stage.camera','stage.fade','stage.transition','stage.rule','stage.shake','stage.style','stage.asset','stage.mix','task.cancel','task.finish'].includes(i.op);}
 export function stageExpressions(i:StageInstruction):Expression[] {
  const out:Expression[]=[];if('duration'in i)out.push(i.duration);if('pose'in i)out.push(...Object.values(i.pose).filter((e):e is NonNullable<typeof e>=>e!==undefined));if('to'in i&&typeof i.to==='object')out.push(...Object.values(i.to).filter((e):e is NonNullable<typeof e>=>e!==undefined));if('style'in i&&i.style?.z)out.push(i.style.z);if(i.op==='stage.fade')out.push(i.alpha);if(i.op==='stage.shake')out.push(i.amplitudeX,i.amplitudeY,i.periodMs);return out;
 }

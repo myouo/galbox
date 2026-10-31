@@ -1,3 +1,4 @@
+import {verifyImageFilter} from './image-filter.js';
 import {verifyRasters} from './raster.js';
 import {verifyModuleUpgrade} from './module-upgrade.js';
 import {verifySourcePlayer} from './audio-sources.js';
@@ -82,5 +83,6 @@ button?.addEventListener('click',()=>{void(async()=>{
  await verifyInteractiveModulePlayer(mount);
  await verifyModuleUpgrade(mount);
  await verifyRasters(mount);
+ await verifyImageFilter(mount);
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore / portable backup passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});

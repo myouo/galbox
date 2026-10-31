@@ -1,3 +1,4 @@
+import {validateImageFilters} from '../protocol/image-filter.js';
 import {isRasterInstruction,executeRaster,syncRasters,pruneRasters,validateRasters} from '../protocol/raster.js';
 import {isSequenceInstruction,executeSequence,syncSequences,validateSequences} from '../protocol/sequence.js';
 import {validateComposition} from '../protocol/composition.js';
@@ -358,7 +359,7 @@ export class Core {
       case 'text.window.visible': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.visible=i.visible;break;}
       case 'text.window.theme': {const w=this.s.textLayout?.windows.find(w=>w.id===i.window);ensure(w,'TEXT_WINDOW',i.window);w.theme=i.theme;break;}
       case 'choice':wait({kind:'choice',at:i.at,prompt:++this.s.counter,options:i.options.map(o=>({...o})),dest:i.dest});return;
-      case 'stage.put': {ensure(!i.object.rasterRef,'RASTER_REF_LITERAL','Raster bindings are runtime state');ensure(!ownsParticle(this.s,i.object.id)&&(!i.object.parent||!ownsParticle(this.s,i.object.parent)),'PARTICLE_OWNERSHIP','Emitter owns this object');
+      case 'stage.put': {ensure(!i.object.rasterRef&&!i.object.imageFilter,'RASTER_REF_LITERAL','Raster bindings are runtime state');ensure(!ownsParticle(this.s,i.object.id)&&(!i.object.parent||!ownsParticle(this.s,i.object.parent)),'PARTICLE_OWNERSHIP','Emitter owns this object');
         ensure(!this.s.tasks.some(t=>taskObject(t)===i.object.id&&t.status==='running'),'STAGE_BUSY',i.object.id);
         const owned=parseInstruction(i);ensure(owned.op==='stage.put','STAGE_OBJECT','Object copy failed');const stage=[...this.s.stage.filter(o=>o.id!==i.object.id),owned.object];validateStageGraph(stage);validateComposition({...this.s,stage});this.s.stage=stage;syncMotion(this.s);break;
       }
@@ -438,7 +439,7 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
   }
   const waiting=s.invocations.filter(v=>v.phase==='waiting');
   if(w?.kind==='operation'){const active=waiting.find(v=>v.id===w.invocation);ensure(waiting.length===1&&active&&active.at===op.at&&active.frameDepth===s.frames.length&&active.wait,'RESTORE_INVOCATION_WAIT',w.invocation);}else ensure(waiting.length===0,'RESTORE_INVOCATION_WAIT','Unreferenced active invocation');
-  validateRasters(p,s);validateSequences(p,s);validateStageSnapshot(p,s);validateMotion(p,s);validateParticles(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
+  validateImageFilters(p,s);validateRasters(p,s);validateSequences(p,s);validateStageSnapshot(p,s);validateMotion(p,s);validateParticles(p,s);validateAudioSnapshot(p,s,initial);restoreInteraction(p,s);validateVideo(p,s,initial);
   ensure(new Set(s.tasks.map(t=>t.id)).size===s.tasks.length,'RESTORE_TASK','Duplicate task');
   for(const t of s.tasks) {
     ensure(t.elapsed<=t.duration&&t.attempt>0,'RESTORE_TASK',t.id);

@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03B3",
+  "current_task": "G3-12",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-10-31",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -3589,6 +3589,42 @@
       ],
       "blocker": null,
       "next_action": "按最新要求只核查因SDK缺口而预生成效果帧：电影/残像已解决，当前前三门引用帧为0；心跳精确box blur/tint仍有38张单图派生。上传保持停止，不转向通用图片/音频压缩。"
+    },
+    {
+      "id": "G3-12",
+      "milestone": "G3",
+      "title": "源绑定的实时染色和方框模糊图像",
+      "depends_on": [
+        "G3-11"
+      ],
+      "status": "in_progress",
+      "implementation": "in_progress",
+      "verification": "in_progress",
+      "outputs": [
+        "typed filtered image instruction and exact finite alpha8 kernel",
+        "source/clone/returned-writer cold restoration",
+        "private bounded cancellable shared filter surfaces"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "published-reference numeric goldens/edge/alpha and malformed input rejection",
+        "Canvas/WebGL actual image and saved restoration",
+        "candidate cancellation/budget failure retains live image and frees workspaces",
+        "independent tarball heartbeat input without derived assets"
+      ],
+      "evidence": [
+        "docs/decisions/0088-source-bound-tint-box-image-filters.md"
+      ],
+      "blocker": null,
+      "next_action": "先完成心跳实时单图滤镜并旧档验收，再推进search调查和door4；上传仍停止。"
     }
   ]
 }

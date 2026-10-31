@@ -353,6 +353,9 @@ definitions:
         type: string
         pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
         x-proto-tag: 16
+      imageFilter:
+        $ref: "#/definitions/ImageFilterState"
+        x-proto-tag: 17
     required:
       - id
       - asset
@@ -3424,6 +3427,42 @@ definitions:
           - task
         additionalProperties: false
         x-proto-tag: 81
+      - type: object
+        properties:
+          op:
+            type: string
+            const: stage.image.filtered
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          id:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          asset:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 4
+          pose:
+            $ref: "#/definitions/StagePoseExpressions"
+            x-proto-tag: 5
+          style:
+            $ref: "#/definitions/StageStyle"
+            x-proto-tag: 6
+          effect:
+            $ref: "#/definitions/ImageFilter"
+            x-proto-tag: 7
+        required:
+          - op
+          - at
+          - id
+          - asset
+          - pose
+          - effect
+        additionalProperties: false
+        x-proto-tag: 82
   Function:
     type: object
     properties:
@@ -13733,6 +13772,70 @@ definitions:
       - delayMs
       - loop
     additionalProperties: false
+  ImageFilter:
+    type: object
+    properties:
+      width:
+        type: integer
+        minimum: 1
+        maximum: 1280
+        x-proto-tag: 1
+      height:
+        type: integer
+        minimum: 1
+        maximum: 720
+        x-proto-tag: 2
+      radiusX:
+        type: integer
+        minimum: 0
+        maximum: 32
+        x-proto-tag: 3
+      radiusY:
+        type: integer
+        minimum: 0
+        maximum: 32
+        x-proto-tag: 4
+      color:
+        type: string
+        pattern: ^#[a-fA-F0-9]{6}$
+        x-proto-tag: 5
+      opacity:
+        type: integer
+        minimum: 0
+        maximum: 255
+        x-proto-tag: 6
+    required:
+      - width
+      - height
+      - radiusX
+      - radiusY
+      - color
+      - opacity
+    additionalProperties: false
+  ImageFilterState:
+    type: object
+    properties:
+      at:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 1
+      signature:
+        type: string
+        pattern: ^[^\x00]{1,65536}$
+        x-proto-tag: 2
+      asset:
+        type: string
+        pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+        x-proto-tag: 3
+      effect:
+        $ref: "#/definitions/ImageFilter"
+        x-proto-tag: 4
+    required:
+      - at
+      - signature
+      - asset
+      - effect
+    additionalProperties: false
   ModuleFunction:
     type: object
     properties:
@@ -14614,3 +14717,5 @@ x-proto-envelope:
   TextRect: 129
   RasterEffect: 130
   RasterTaskState: 131
+  ImageFilter: 132
+  ImageFilterState: 133

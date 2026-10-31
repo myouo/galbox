@@ -7,7 +7,7 @@ type BlendMap=CanvasRenderer['canvasContext']['blendModes'];
 function validateBlend(blend:StageObject['blend'],map:BlendMap):void {if(blend)ensure(map[blend]===({normal:'source-over',add:'lighter',multiply:'multiply',screen:'screen'} as const)[blend],'GRAPHICS_FEATURE_UNSUPPORTED',`Canvas device does not support ${blend} blending`);}
 export function validateCanvasProgram(program:DeepReadonly<Program>,map:BlendMap):void {
  for(const f of program.functions)for(const i of f.code){
-  if(i.op==='stage.put')validateBlend(i.object.blend,map);if(i.op==='stage.image')validateBlend(i.style?.blend,map);if(i.op==='stage.style')validateBlend(i.style.blend,map);
+  if(i.op==='stage.put')validateBlend(i.object.blend,map);if(i.op==='stage.image'||i.op==='stage.image.filtered')validateBlend(i.style?.blend,map);if(i.op==='stage.style')validateBlend(i.style.blend,map);
 
  }
 }

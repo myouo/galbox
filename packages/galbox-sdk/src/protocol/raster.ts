@@ -20,7 +20,7 @@ export function executeRaster(p:Program,s:Snapshot,i:RasterInstruction):void {
  ensure(i.policy==='replace'||objects.every(o=>!o?.rasterRef),'RASTER_BUSY','A raster image already owns the target');
  ensure(!s.tasks.some(t=>t.status==='running'&&taskLocks(t).some(k=>i.targets.some(id=>k==='object:'+id+':asset'||k==='object:'+id+':frame'))),'RASTER_BUSY','An active image writer owns the target');
  ensure(s.tasks.length<256&&s.counter<2147483647,'TASK_LIMIT','Raster task bound');const id='task:'+(s.counter+1),rasterTask=parseRasterTaskState({signature:sourceSignature(i),startedAt:s.logicalTime,asset:i.asset,effect,delayMs:i.delayMs,loop:i.loop}),task=parseTask({id,name:i.task,at:i.at,kind:'raster',status:'running',elapsed:0,duration,attempt:1,rasterTask});if(task.rasterTask)freezeJson(task.rasterTask);
- const previous=new Set(objects.flatMap(o=>o?.rasterRef?[o.rasterRef]:[]));for(const o of objects){ensure(o,'RASTER_TARGET','Target absent');o.asset=i.asset;o.rasterRef=id;delete o.frame;delete o.layers;delete o.ruleTransition;}
+ const previous=new Set(objects.flatMap(o=>o?.rasterRef?[o.rasterRef]:[]));for(const o of objects){ensure(o,'RASTER_TARGET','Target absent');o.asset=i.asset;o.rasterRef=id;delete o.imageFilter;delete o.frame;delete o.layers;delete o.ruleTransition;}
  for(const old of previous)if(!s.stage.some(o=>o.rasterRef===old)){const t=s.tasks.find(t=>t.id===old);if(t?.status==='running')t.status='superseded';}
  s.counter++;s.tasks.push(task);pruneRasters(s);syncRasters(s);
 }

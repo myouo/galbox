@@ -338,6 +338,10 @@ message Gbx_StageObject_rasterRef {
   optional string value = 1;
 }
 
+message Gbx_StageObject_imageFilter {
+  optional Gbx_ImageFilterState value = 1;
+}
+
 message Gbx_StageObject {
   optional Gbx_StageObject_id id = 1;
   optional Gbx_StageObject_asset asset = 2;
@@ -355,6 +359,7 @@ message Gbx_StageObject {
   optional Gbx_StageObject_motion motion = 14;
   optional Gbx_StageObject_frame frame = 15;
   optional Gbx_StageObject_rasterRef rasterRef = 16;
+  optional Gbx_StageObject_imageFilter imageFilter = 17;
 }
 
 message Gbx_MotionOffset_x {
@@ -3174,6 +3179,44 @@ message Gbx_Instruction_Case81 {
   optional Gbx_Instruction_Case81_task task = 3;
 }
 
+message Gbx_Instruction_Case82_op {
+  // Fixed semantic value: "stage.image.filtered"
+}
+
+message Gbx_Instruction_Case82_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case82_id {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case82_asset {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case82_pose {
+  optional Gbx_StagePoseExpressions value = 1;
+}
+
+message Gbx_Instruction_Case82_style {
+  optional Gbx_StageStyle value = 1;
+}
+
+message Gbx_Instruction_Case82_effect {
+  optional Gbx_ImageFilter value = 1;
+}
+
+message Gbx_Instruction_Case82 {
+  optional Gbx_Instruction_Case82_op op = 1;
+  optional Gbx_Instruction_Case82_at at = 2;
+  optional Gbx_Instruction_Case82_id id = 3;
+  optional Gbx_Instruction_Case82_asset asset = 4;
+  optional Gbx_Instruction_Case82_pose pose = 5;
+  optional Gbx_Instruction_Case82_style style = 6;
+  optional Gbx_Instruction_Case82_effect effect = 7;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -3257,6 +3300,7 @@ message Gbx_Instruction {
     Gbx_Instruction_Case79 v79 = 79;
     Gbx_Instruction_Case80 v80 = 80;
     Gbx_Instruction_Case81 v81 = 81;
+    Gbx_Instruction_Case82 v82 = 82;
   }
 }
 
@@ -12762,6 +12806,62 @@ message Gbx_RasterTaskState {
   optional Gbx_RasterTaskState_loop loop = 6;
 }
 
+message Gbx_ImageFilter_width {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_height {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_radiusX {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_radiusY {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter_color {
+  optional string value = 1;
+}
+
+message Gbx_ImageFilter_opacity {
+  optional sint64 value = 1;
+}
+
+message Gbx_ImageFilter {
+  optional Gbx_ImageFilter_width width = 1;
+  optional Gbx_ImageFilter_height height = 2;
+  optional Gbx_ImageFilter_radiusX radiusX = 3;
+  optional Gbx_ImageFilter_radiusY radiusY = 4;
+  optional Gbx_ImageFilter_color color = 5;
+  optional Gbx_ImageFilter_opacity opacity = 6;
+}
+
+message Gbx_ImageFilterState_at {
+  optional string value = 1;
+}
+
+message Gbx_ImageFilterState_signature {
+  optional string value = 1;
+}
+
+message Gbx_ImageFilterState_asset {
+  optional string value = 1;
+}
+
+message Gbx_ImageFilterState_effect {
+  optional Gbx_ImageFilter value = 1;
+}
+
+message Gbx_ImageFilterState {
+  optional Gbx_ImageFilterState_at at = 1;
+  optional Gbx_ImageFilterState_signature signature = 2;
+  optional Gbx_ImageFilterState_asset asset = 3;
+  optional Gbx_ImageFilterState_effect effect = 4;
+}
+
 message Gbx_ModuleFunction_id {
   optional string value = 1;
 }
@@ -13506,6 +13606,8 @@ message WireEnvelope {
     Gbx_SequenceTaskState body_SequenceTaskState = 127;
     Gbx_RasterEffect body_RasterEffect = 130;
     Gbx_RasterTaskState body_RasterTaskState = 131;
+    Gbx_ImageFilter body_ImageFilter = 132;
+    Gbx_ImageFilterState body_ImageFilterState = 133;
     Gbx_RulePresentation body_RulePresentation = 125;
     Gbx_Asset body_Asset = 123;
     Gbx_Function body_Function = 124;
