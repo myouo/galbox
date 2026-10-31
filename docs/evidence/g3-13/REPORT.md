@@ -19,3 +19,9 @@ native gamma=1、floor=0 的表公式 round(channel/255*ceil) 校正后继续 ti
 定义与顺序来自公开 KRKR2 GammaAdjust 表和作品只读 AnimationLayer.tjs 的
 参数传递。源码/日志/载荷只在实例 ignored 树。本项不宣称通用 gamma、非零
 floor、任意 shader 或原作 SIMD 像素认证；第四门实素材仍由实例验收。
+
+后续实例模块接入发现 v2 capability 注册表未接纳 text.history / stage.channel-ceil。
+已修复正式 ModuleProgram 注册，v1 仍拒绝；没有实例特判或提高预算。
+`pnpm check`、滤镜/录史/advanced-modules 三文件 10 项通过；返回写入函数的
+冷模块恢复现同时携带两项新能力。`pnpm test:consumer` 再次通过，公开实包的
+录史验证已改成实际 ModuleProgram，验证 IndexedDB 存读、推进及冷恢复。
