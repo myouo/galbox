@@ -1462,6 +1462,10 @@ message Gbx_Instruction_Case28_appendFrom {
   optional string value = 1;
 }
 
+message Gbx_Instruction_Case28_recordHistory {
+  optional bool value = 1;
+}
+
 message Gbx_Instruction_Case28 {
   optional Gbx_Instruction_Case28_at at = 1;
   optional Gbx_Instruction_Case28_op op = 2;
@@ -1471,6 +1475,7 @@ message Gbx_Instruction_Case28 {
   optional Gbx_Instruction_Case28_runs runs = 6;
   optional Gbx_Instruction_Case28_completion completion = 7;
   optional Gbx_Instruction_Case28_appendFrom appendFrom = 8;
+  optional Gbx_Instruction_Case28_recordHistory recordHistory = 9;
 }
 
 message Gbx_Instruction_Case29_at {

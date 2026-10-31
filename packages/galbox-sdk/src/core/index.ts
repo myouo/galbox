@@ -95,7 +95,7 @@ export class Core {
   private textPlan():TextPlan {const rich=this.s.text?.rich;ensure(rich,'TEXT_STATE','No structured text');return this.richPlan??=compileRichText(rich.runs);}
   private finishText(record=true):void {
     ensure(this.s.text&&this.s.wait?.kind==='text','TEXT_STATE','No active text');
-    if(record){this.read();if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}const text=parseTextState(this.s.text);if(Object.isFrozen(this.s.history))this.s.history=[...this.s.history,text];else this.s.history.push(text);confirmWindowText(this.s);}
+    if(record){this.read();if(this.s.audioState?.stopVoiceOnAdvance&&this.s.text.voice){stopAudioTasks(this.s,'voice');this.effects.push({type:'audio-stop',channel:'voice'});}const source=this.op();if(source.op!=='text.rich'||source.recordHistory!==false){const text=parseTextState(this.s.text);if(Object.isFrozen(this.s.history))this.s.history=[...this.s.history,text];else this.s.history.push(text);}confirmWindowText(this.s);}
     this.top().pc=this.next();this.s.wait=null;this.s.status='running';
   }
   private finishAutomaticText():void {

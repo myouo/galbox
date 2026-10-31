@@ -3597,9 +3597,9 @@
       "depends_on": [
         "G3-11"
       ],
-      "status": "in_progress",
-      "implementation": "in_progress",
-      "verification": "in_progress",
+      "status": "done",
+      "implementation": "done",
+      "verification": "passed",
       "outputs": [
         "typed filtered image instruction and exact finite alpha8 kernel",
         "source/clone/returned-writer cold restoration",
@@ -3621,10 +3621,42 @@
         "independent tarball heartbeat input without derived assets"
       ],
       "evidence": [
-        "docs/decisions/0088-source-bound-tint-box-image-filters.md"
+        "docs/decisions/0088-source-bound-tint-box-image-filters.md",
+        "docs/evidence/g3-12/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "先完成心跳实时单图滤镜并旧档验收，再推进search调查和door4；上传仍停止。"
+      "next_action": "心跳旧档137ms在Canvas/WebGL迁移与冷刷新通过，无派生图片请求；八语实时接入和第四门在实例继续。"
+    },
+    {
+      "id": "G2-08",
+      "milestone": "G2",
+      "title": "Authored rich text history recording policy",
+      "depends_on": [
+        "G2-07"
+      ],
+      "status": "done",
+      "implementation": "done",
+      "verification": "passed",
+      "outputs": [
+        "per-instruction typed history recording",
+        "source-bound restored policy; unchanged old wire defaults"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05"
+      ],
+      "acceptance": [
+        "read/window/voice progress preserved while history is suppressed",
+        "cold continuation restore and policy tampering",
+        "real browser journal and independent tarball consumption"
+      ],
+      "evidence": [
+        "docs/decisions/0089-authored-text-history-recording.md",
+        "docs/evidence/g2-08/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "第四门实例重新打包消费；历史-only注记和后段选择链继续由实例按源确认。"
     }
   ]
 }

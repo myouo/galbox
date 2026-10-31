@@ -1588,6 +1588,9 @@ definitions:
             type: string
             pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
             x-proto-tag: 8
+          recordHistory:
+            type: boolean
+            x-proto-tag: 9
         required:
           - at
           - op

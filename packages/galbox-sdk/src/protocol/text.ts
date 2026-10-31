@@ -28,7 +28,7 @@ export function compileRichText(runs:readonly DeepReadonly<TextRun>[]):TextPlan 
   for(const part of collectGraphemes(value)){tokens.push({kind:'unit',text:part,run:index,style:run.kind==='break'?{}:run.style??{}});units++;}
  });return {content,tokens,units};
 }
-export function richTextSignature(source:DeepReadonly<RichInstruction>):string {const signature=canonicalWireJSON({segmentation:textSegmentation,speaker:source.speaker,runs:source.runs,...(source.completion&&source.completion!=='input'?{completion:source.completion}:{}),...(source.appendFrom?{appendFrom:source.appendFrom}:{})});ensure(signature.length<=65536,'TEXT_SOURCE_SIZE','Rich source signature exceeds 65536 characters');return signature;}
+export function richTextSignature(source:DeepReadonly<RichInstruction>):string {const signature=canonicalWireJSON({...(source.recordHistory!==undefined?{recordHistory:source.recordHistory}:{}),segmentation:textSegmentation,speaker:source.speaker,runs:source.runs,...(source.completion&&source.completion!=='input'?{completion:source.completion}:{}),...(source.appendFrom?{appendFrom:source.appendFrom}:{})});ensure(signature.length<=65536,'TEXT_SOURCE_SIZE','Rich source signature exceeds 65536 characters');return signature;}
 function intervalAt(rich:DeepReadonly<RichTextState>,plan:TextPlan):number {let value=rich.baseIntervalMs;for(let j=0;j<rich.cursor;j++){const token=plan.tokens[j];if(token?.kind==='speed')value=token.user?rich.baseIntervalMs:token.intervalMs;}return rich.baseIntervalMs===0?0:value;}
 export function tickRichText(text:TextState,ms:number,plan:TextPlan,skipConfirmations=false):void {
  const rich=text.rich;ensure(rich,'TEXT_STATE','Missing structured continuation');let budget=ms,interval=intervalAt(rich,plan);

@@ -18,3 +18,10 @@
 alpha8 染色、预乘方框平均、边缘裁剪及透明输入；不是原游戏可执行文件的
 SIMD 像素认证。参考源码、编译产物、日志和图像仅在独立实例 ignored 树。
 真实作品接入及旧档迁移正在独立实例继续，未恢复上传或线上发布。
+
+独立实例随后以实包 SHA 055ac986b8430d83a74c59a640f347ec9ecb10d72c3e43d4f6b5fec332870ecd
+消费。`pnpm exec playwright test --config playwright.heartbeat.config.ts` 两项通过：
+实际旧三门心跳 137ms 档 Canvas/WebGL 映射后，文字和 frames 保持一致、
+所有相关 pose 任务 elapsed 不变；两层共用一表面，保存并刷新可恢复，
+资源请求均在新 catalog/presentation 闭包内，没有旧派生图请求。原始证据
+在实例 artifacts/heartbeat/，不进入 SDK 包或 Git。

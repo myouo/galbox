@@ -1,0 +1,9 @@
+import {ProgramBuilder,richPage,richText as R,instruction} from 'galbox-sdk/port-kit';
+import {createPlayer,createHttpProvider} from 'galbox-sdk/player';
+export async function verifyAuthoredHistory(mount:HTMLElement){
+ const program=new ProgramBuilder({gameId:'packed-authored-history',release:'v1',entry:'main'}).function({id:'main',entry:'secret',layout:1,params:[],locals:[],returns:'void',code:[richPage('secret','secret','v1','',[R.text('Displayed but suppressed')],{recordHistory:false}),richPage('visible','visible','v1','',[R.text('Recorded')]),instruction('control.end',{at:'end'})]}).build();
+ const create=()=>createPlayer({program,provider:createHttpProvider(program,location.href),database:'packed-authored-history',mount,saveCompatibilitySeries:'history',graphics:{renderer:'canvas'}});
+ const p=await create(),advance=async()=>{const v=p.getSnapshot(),w=v.core?.run.wait;if(w?.kind!=='text')throw new Error('text');await p.input('advance',w.prompt,v.epoch);};
+ try{await p.updatePreferences({text:{intervalMs:0}});await p.start();p.setPaused(true);await p.save('secret');await p.load('secret');p.setPaused(false);await advance();if(p.getSnapshot().backlog.entries.length)throw new Error('Suppressed history recorded');await advance();await p.flush();await p.save('end');if(p.capture().history.map(t=>t.content).join()!=='Recorded'||p.getSnapshot().backlog.entries.map(e=>e.text.content).join()!=='Recorded'||!p.getSnapshot().core?.profile.read.includes('secret@v1'))throw new Error('Packed authored history semantics failed');}finally{p.dispose();}
+ const cold=await create();try{cold.setPaused(true);await cold.load('end');if(cold.getSnapshot().backlog.entries.map(e=>e.text.content).join()!=='Recorded')throw new Error('Packed authored history cold IndexedDB restoration failed');}finally{cold.dispose();}
+}

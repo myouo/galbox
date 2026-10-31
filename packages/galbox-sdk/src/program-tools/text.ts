@@ -18,4 +18,4 @@ export const richText=Object.freeze({
  speed:(intervalMs:number)=>run('speed',{kind:'speed',intervalMs}),
  userSpeed:()=>run('speed',{kind:'speed',intervalMs:0,user:true})
 });
-export function richPage(at:string,textId:string,revision:string,speaker:Content,runs:readonly RichTextSourceRun[],options:{completion?:'input'|'continue'|'finish';appendFrom?:string}={}):Extract<Instruction,{op:'text.rich'}> {const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return instruction('text.rich',{at,textId,revision,speaker:expression(speaker),runs:[first,...rest],...options});}
+export function richPage(at:string,textId:string,revision:string,speaker:Content,runs:readonly RichTextSourceRun[],options:{completion?:'input'|'continue'|'finish';appendFrom?:string;recordHistory?:boolean}={}):Extract<Instruction,{op:'text.rich'}> {const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return instruction('text.rich',{at,textId,revision,speaker:expression(speaker),runs:[first,...rest],...options});}
