@@ -7,8 +7,14 @@ function validationSchema(value){if(Array.isArray(value))return value.map(valida
 import standalone from 'ajv/dist/standalone/index.js';
 const sourceSchema=parseYaml(await readFile('packages/galbox-sdk/schema/protocol.yaml','utf8'));const schema=validationSchema(sourceSchema);
 if(!process.argv.includes('--check')){await mkdir('packages/galbox-sdk/src/protocol/generated',{recursive:true});await mkdir('packages/cli/src/generated',{recursive:true});}
-const ajv=new Ajv({allErrors:false,strict:true,code:{source:true,esm:true},inlineRefs:false});
-ajv.addSchema(schema);
+// Instruction variants have unique, required opcode constants. Dispatch directly
+// to that branch while retaining every constraint in the original oneOf schema.
+// Keep this validation-only annotation out of generated types and protobuf.
+const runtimeSchema=structuredClone(schema);
+runtimeSchema.definitions.Instruction.type='object';
+runtimeSchema.definitions.Instruction.discriminator={propertyName:'op'};
+const ajv=new Ajv({allErrors:false,strict:true,discriminator:true,code:{source:true,esm:true},inlineRefs:false});
+ajv.addSchema(runtimeSchema);
 const exports={};
 for(const key of ['SequenceFrame','SequenceTaskState','RasterEffect','RasterTaskState','ImageFilter','ImageFilterState','RulePresentation','Asset','Function','PresentationAssetCatalog','DialoguePresentation','Program','Snapshot','Profile','Instruction','Value','JsonValue','OperationOutcome','SavedInvocation','OperationResume','OperationWait','RestoreRecipe','SlotMetadata','StoreImport','ProgressBatchWire','SourceMap','PortObligation','BehaviorMapping','PortableBackup','StoreBackupRestore','BackupRestoreReceipt','ResourceBudget','ResourceFact','ReleaseManifest','AudioPreferences','TextPreferences','PlayerPreferences','PreferencesRecord','PreferencesPatch','Expression','RngConfig','RngState','PreferencesValue','StoredPreferencesRecord','PlaybackPreferences','InputPreferences','DisplayPreferences','AudioPlaybackEvent','TextStyle','RichTextSourceRun','TextState','TextTheme','TextWindow','TextLayout','TextFont','StagePose','StageFilters','StageCamera','StageScene','StageTaskState','AudioState','VoiceRecipe','UISoundRequest','ProgramTextBinding','ProgramTextEntry','ProgramTextCatalog','LocaleCatalog','InterfaceTextCatalog','MediaTaskState','Task','GraphicsOptions','InteractionWait','InteractionEvent','VideoTaskState','ResolvedStreamIdentity','StreamDescriptor','IntegrityEvidence','StreamingOptions','SaveThumbnail','SaveCapture','SavePolicy','SaveGameOptions','SaveCommit','SaveReceipt','HistoryPolicy','HistoryEntry','HistoryRecord','HistoryCommit','HistoryReceipt','FlowChapter','FlowNode','FlowEdge','Flowchart','FlowProgress','FlowRun','ExtraEntry','ExtrasCatalog','ExtrasProgress','UIStyle','UIControl','UIScreen','UICatalog','UIState','UIWait','UIAction','UIEvent','GamePresentation','GamePalette','GameLabels','SystemScreen','ToolbarAction','LoadingOptions','StorageLayout','RetiredActivation','StoredSlotSummary','ModuleFunction','ModuleHeader','ModulePartition','CodeModuleDescriptor','ProgramModule','ModuleManifest','ProgramModuleBinding']) {
  const id=`https://galbox.local/${key}`;

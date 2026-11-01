@@ -148,7 +148,7 @@ export class WebHost implements HostPort {
     }catch(error){this.dispose();throw error;}
   }
   captureFontCSS():string {return [...this.loaded.values()].flatMap(r=>r.fontCSS?[r.fontCSS]:[]).join('\n');}
-  captureThumbnail(snapshot:DeepReadonly<Snapshot>,text:TextCapture,signal:AbortSignal,overlay?:TextCapture){this.assertReady();ensure(this.canvas&&this.stage,'SAVE_CAPTURE_UNAVAILABLE','Graphics not ready');this.stage.invalidate();this.stage.render(snapshot);const result=composeThumbnail(this.canvas,text,signal,overlay,this.stage.backgroundCanvas()??undefined);if(this.dialogueView)this.render(snapshot);return result;}
+  captureThumbnail(snapshot:DeepReadonly<Snapshot>,text:TextCapture,signal:AbortSignal,overlay?:TextCapture){this.assertReady();ensure(this.canvas&&this.stage,'SAVE_CAPTURE_UNAVAILABLE','Graphics not ready');this.stage.captureFrame(snapshot);const result=composeThumbnail(this.canvas,text,signal,overlay,this.stage.backgroundCanvas()??undefined);if(this.dialogueView)this.render(snapshot);return result;}
   async revalidateStreams():Promise<void> {for(const r of this.loaded.values())await r.stream?.validate();}
   async unlock():Promise<void> {
     ensure(this.context&&!this.disposed,'AUDIO_UNAVAILABLE','Host is not ready');

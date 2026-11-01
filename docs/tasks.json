@@ -3887,7 +3887,8 @@
       "implementation": "complete",
       "verification": "pending",
       "outputs": [
-        "ADR0098"
+        "ADR0098",
+        "ADR0101"
       ],
       "contracts": [
         "C01",
