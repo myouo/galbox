@@ -4004,7 +4004,8 @@
       "implementation": "complete",
       "verification": "pending",
       "outputs": [
-        "ADR0104"
+        "ADR0104",
+        "ADR0106 private verified byte receipts"
       ],
       "contracts": [
         "C01",
@@ -4023,7 +4024,7 @@
         "docs/evidence/instant-load/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Run packed real workload, then finish browser/consumer and latency targets before publication."
+      "next_action": "Validate real-browser receipt ownership and indexed immutable text checks, then finish packed latency target."
     },
     {
       "id": "W1-10",
