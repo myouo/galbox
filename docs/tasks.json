@@ -3965,9 +3965,9 @@
       "depends_on": [
         "W1-03A"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "pending",
+      "verification": "passed",
       "outputs": [
         "ADR0102",
         "bounded gzip cold records and versioned CAS root",
@@ -3991,7 +3991,7 @@
         "docs/evidence/compressed-records/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Verify 64MiB cold inventory separately from 4M hot/decoded budgets on poorly compressible and real forty-slot libraries; keep W1-03C hot-root/receipt work open."
+      "next_action": "W1-03C continues hot-root sharding, explicit receipt retention and larger portable exports; v3 cold capacity and atomic codec are accepted."
     }
   ]
 }
