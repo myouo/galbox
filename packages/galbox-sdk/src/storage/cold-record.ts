@@ -3,8 +3,16 @@ import type {StorageLayout} from '../protocol/index.js';
 import {namespaceCharacterLimit} from '../runtime/storage-layout.js';
 type Descriptor=StorageLayout['records'][number];
 export interface EncodedColdRecord {format:'galbox-gzip';version:1;bytes:ArrayBuffer;}
+// JSON accepts -0, but JSON.stringify erases its sign. Adapter persistence must
+// retain every finite numeric value, including poses and provenance metadata.
+function recordJSON(value:unknown):string {
+ if(typeof value==='number'&&Object.is(value,-0))return '-0';
+ if(Array.isArray(value))return '['+Array.from(value,v=>v===undefined?'null':recordJSON(v)).join(',')+']';
+ if(value&&typeof value==='object')return '{'+Object.entries(value).filter(([,v])=>v!==undefined).map(([k,v])=>JSON.stringify(k)+':'+recordJSON(v)).join(',')+'}';
+ const text=JSON.stringify(value);ensure(text!==undefined,'STORAGE_RECORD_SIZE','Expected owned JSON');return text;
+}
 export async function encodeColdRecord(value:unknown):Promise<{value:EncodedColdRecord;characters:number;storedBytes:number}>{
- const text=JSON.stringify(value);ensure(text!==undefined&&text.length<=namespaceCharacterLimit,'STORAGE_RECORD_SIZE','Cold record exceeds decoded budget');ensure(typeof CompressionStream==='function','STORAGE_COMPRESSION_UNAVAILABLE','Gzip storage needs CompressionStream');
+ const text=recordJSON(value);ensure(text.length<=namespaceCharacterLimit,'STORAGE_RECORD_SIZE','Cold record exceeds decoded budget');ensure(typeof CompressionStream==='function','STORAGE_COMPRESSION_UNAVAILABLE','Gzip storage needs CompressionStream');
  const bytes=await new Response(new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer();ensure(bytes.byteLength>0&&bytes.byteLength<=namespaceCharacterLimit,'STORAGE_SIZE','Compressed record exceeds namespace budget');return {value:{format:'galbox-gzip',version:1,bytes},characters:text.length,storedBytes:bytes.byteLength};
 }
 export async function decodeColdRecord(input:unknown,row:Descriptor,version:2|3):Promise<unknown>{

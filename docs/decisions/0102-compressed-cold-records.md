@@ -8,7 +8,9 @@ Do not raise a numeric limit or discard history, previous saves or receipts.
 IndexedDB layout v3 stores each cold slot/history as an owned gzip byte buffer.
 The header records decoded character count and stored byte count; namespace
 accounting charges the unchanged hot JSON plus compressed primary-record bytes.
-Secondary summaries remain indexes as in v2. Decode streams are bounded before
+Secondary summaries remain indexes as in v2. JSON encoding explicitly retains
+finite negative zero using its valid JSON numeric spelling; ordinary
+JSON.stringify would erase that sign. Decode streams are bounded before
 JSON parsing and pass the same slot/history guards. A scoped decoded read or
 summary result also stays within the existing 4M working budget; bulk backup
 may reject an oversized library before loading cold payloads, and portable
