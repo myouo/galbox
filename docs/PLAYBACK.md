@@ -11,7 +11,7 @@ const {mode,reason,voice,elapsedMs}=player.getSnapshot().playback;
 
 Auto 只在 text 等待、正文完全揭示、当前 voice 已自然结束（或没有实际播放源）之后计时。语音启动的 completed 回执仍只代表启动成功；Web Audio onended 通过 epoch/task/attempt 单独入队。旧 epoch、旧 attempt、重复/停止/替换回调不能伪造当前媒体结束。blocked/failed/loop 语音保守等待；玩家可以手动推进或关闭自动。BGM/SFX 不阻挡正文 Auto。
 
-每个 tick 最多产生一个普通剧情输入，预算续跑不重复执行。Auto 到选项/结尾/错误停止；对 group、delay、flush、operation 等等待继续正常时钟/任务规则。快进逐页发 step，先显完再消费，默认遇未读停止；允许未读必须显式启用。快进不跳过真实等待、不选择选项、不伪造媒体完成。手动推进/选择取消模式。
+每个 tick 最多产生一个普通剧情输入，预算续跑不重复执行。Auto 到选项/结尾/错误停止；对 group、delay、flush、operation 等等待继续正常时钟/任务规则。快进逐页发 step，先显完再消费，默认遇未读停止；允许未读必须显式启用。快进仅可通过普通 step 完成带 prompt 的显式 skippable group/delay，每 tick 至多一次，不给其他任务补时间；未授权等待、媒体结束及 operation 仍是屏障。Auto 保持自然演出时序。快进不选择选项、不伪造媒体完成。手动推进/选择取消模式。
 
 菜单、显式暂停、失焦、后台暂停均排除停用时间，恢复不补算整段墙钟。Auto 可暂停后续读；按住快进在暂停/失焦时清理。新运行、load、导入恢复和 pending 接管均创建 manual 模式；模式不是 Snapshot 权威状态。恢复的 voice 按 replay 重建源并等待新 onended，stop 则没有播放源；不承诺旧媒体位置延续。
 

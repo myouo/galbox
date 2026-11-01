@@ -27,6 +27,7 @@ export class PlaybackController {
  tick(view:CoreView,ms:number):CoreEvent|null {
   this.settle(view);
   if(this.paused||this.mode==='manual')return null;const run=view.run,w=run.wait;
+  if(this.mode==='skip'&&(w?.kind==='group'||w?.kind==='delay')&&w.prompt!==undefined){this.reset();this.reason='skipping';return {type:'step',prompt:w.prompt,inputId:`${this.identity}:skip:${++this.sequence}`};}
   if(w?.kind!=='text'||!run.text){this.reason='waiting';this.reset();return null;}
   if(this.prompt!==w.prompt){this.prompt=w.prompt;this.reset();}
   if(this.mode==='skip'){

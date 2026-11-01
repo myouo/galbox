@@ -3822,6 +3822,35 @@
       ],
       "blocker": null,
       "next_action": "Consumer instance packages the committed SDK and validates original source UI."
+    },
+    {
+      "id": "G1-06",
+      "milestone": "G1",
+      "title": "Fast playback respects explicitly skippable visual waits",
+      "depends_on": [
+        "G1-02",
+        "G1-04"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "prompt-bound group/delay fast steps; no synthetic elapsed time"
+      ],
+      "contracts": [
+        "C01",
+        "C03"
+      ],
+      "acceptance": [
+        "one ordinary input per tick at budgets 1/8/100",
+        "auto and forced waits retain natural timing",
+        "unread text and media remain barriers"
+      ],
+      "evidence": [
+        "docs/evidence/g1-06/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Independent consumer tests physical held Control and ships the committed tarball."
     }
   ]
 }
