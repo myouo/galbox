@@ -12541,7 +12541,7 @@ message Gbx_StorageLayout_format {
 }
 
 message Gbx_StorageLayout_version {
-  // Fixed semantic value: 2
+  optional sint64 value = 1;
 }
 
 message Gbx_StorageLayout_records_Item_kind {
@@ -12556,20 +12556,30 @@ message Gbx_StorageLayout_records_Item_characters {
   optional sint64 value = 1;
 }
 
+message Gbx_StorageLayout_records_Item_storedBytes {
+  optional sint64 value = 1;
+}
+
 message Gbx_StorageLayout_records_Item {
   optional Gbx_StorageLayout_records_Item_kind kind = 1;
   optional Gbx_StorageLayout_records_Item_id id = 2;
   optional Gbx_StorageLayout_records_Item_characters characters = 3;
+  optional Gbx_StorageLayout_records_Item_storedBytes storedBytes = 4;
 }
 
 message Gbx_StorageLayout_records {
   repeated Gbx_StorageLayout_records_Item items = 1;
 }
 
+message Gbx_StorageLayout_revision {
+  optional sint64 value = 1;
+}
+
 message Gbx_StorageLayout {
   optional Gbx_StorageLayout_format format = 1;
   optional Gbx_StorageLayout_version version = 2;
   optional Gbx_StorageLayout_records records = 3;
+  optional Gbx_StorageLayout_revision revision = 4;
 }
 
 message Gbx_RetiredActivation_id {

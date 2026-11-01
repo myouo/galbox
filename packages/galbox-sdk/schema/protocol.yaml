@@ -13471,7 +13471,9 @@ definitions:
         type: string
         x-proto-tag: 1
       version:
-        const: 2
+        enum:
+          - 2
+          - 3
         type: integer
         x-proto-tag: 2
       records:
@@ -13495,12 +13497,22 @@ definitions:
               minimum: 1
               maximum: 4000000
               x-proto-tag: 3
+            storedBytes:
+              type: integer
+              minimum: 1
+              maximum: 4000000
+              x-proto-tag: 4
           required:
             - kind
             - id
             - characters
           additionalProperties: false
         x-proto-tag: 3
+      revision:
+        type: integer
+        minimum: 0
+        maximum: 9007199254740991
+        x-proto-tag: 4
     required:
       - format
       - version

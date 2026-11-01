@@ -25,3 +25,20 @@ MemoryStore使用同一durable规约，也保留该退役行为。这个标记�
 当前head及profile/回执仍在热记录里，热记录本身变大后仍有复制/校验成本；旧激活标记数量也会增长，import/backup回执的签名仍可能较大。W1-03C负责记录粒度、明确留存与更大容量，而非简单提高上限。完整Program仍整体链接，真正的程序模块/按需执行/恢复闭包属于W1-03B。
 
 性能复现：先基线、后候选分别运行`GALBOX_EVIDENCE_DIR=... pnpm profile:storage`，再`pnpm test:storage-performance`。探针统计实际get/put载荷的JSON字符量，探针自身有序列化开销，所测时间不能等同无探针的玩家API延迟。原始证据在evidence/w1-03a。
+
+## 压缩冷记录（ADR0102，W1-03C 增量）
+
+IndexedDB 内部 layout v3 将 slot/history 编码为有界 gzip ArrayBuffer，索引分别记录
+解压字符数和实际存储字节数。仍保留 4M 总预算：热 JSON 加压缩主记录；每个
+解压记录和单次解码工作集也不超过 4M。v1 单行/v2 分段库只在成功写入时原子
+迁移；压缩准备失败/冲突/配额中断保留原布局。相同长度的旧 v2 冷写入也会在
+提交事务中逐项复验；v3 根单调 revision 防止相同尺寸覆盖绕过 CAS。
+
+编解码不持有活跃 IDB 事务；有限乐观重试在最终 readwrite 事务核对根后一起
+提交冷数据、摘要、删除和根。v3 热路径仍单事务，不读其他冷记录。损坏/CRC/
+声明长度或解压超预算显式拒绝，不改变已有槽位。旧 SDK 不认识 v3 时必须拒绝
+而非写回。平台需 CompressionStream/DecompressionStream 的 gzip 支持。
+
+Snapshot/portable backup 的 wire 与上限不变；多槽库可能超过单个备份包或
+4M 解码工作集，导出会明确拒绝，不为导出放宽预算。MemoryStore 仍是原逻辑
+JSON 预算。此增量不等于完成热根拆分/回执留存；不会删除任何成功回执。

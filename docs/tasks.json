@@ -2270,12 +2270,13 @@
       "depends_on": [
         "W1-03A"
       ],
-      "status": "todo",
-      "implementation": "not_started",
+      "status": "in_progress",
+      "implementation": "in_progress",
       "verification": "not_run",
       "outputs": [
         "per-record durable metadata",
-        "explicit bounded retention and capacity"
+        "explicit bounded retention and capacity",
+        "ADR0102 compressed cold records"
       ],
       "contracts": [
         "C05",
@@ -2291,7 +2292,7 @@
       ],
       "evidence": [],
       "blocker": null,
-      "next_action": "下一先以真实IndexedDB建立profile/head/回执热根写入量与长历史/多槽位基线，定义有限逐记录布局/留存与容量ADR，再实施原子迁移；回执幂等和被取代head不可复活必须保留，不以提高4M预算冒充支持大作。"
+      "next_action": "ADR0102 compressed cold records and optimistic atomic migration under unchanged 4M stored budget; verify forty-slot library, corruption/abort/concurrency and packed consumer. Hot-root sharding/retention remain separate."
     },
     {
       "id": "W1-03B2",
@@ -3956,6 +3957,40 @@
       ],
       "blocker": null,
       "next_action": "Independent consumer continues content integration; native seek and cross-device performance remain separately scoped."
+    },
+    {
+      "id": "W1-03C1",
+      "milestone": "W1",
+      "title": "Compressed cold records and atomic asynchronous preparation",
+      "depends_on": [
+        "W1-03A"
+      ],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0102",
+        "bounded gzip cold records and versioned CAS root"
+      ],
+      "contracts": [
+        "C05",
+        "C06",
+        "C07",
+        "C11",
+        "C12"
+      ],
+      "acceptance": [
+        "forty-valid-saves-without-budget-increase",
+        "legacy-and-v2-atomic-upgrade",
+        "equal-size-concurrent-writer-cas",
+        "corruption-expansion-and-quota-refusal",
+        "unchanged-portable-wire-and-finite-working-set"
+      ],
+      "evidence": [
+        "docs/evidence/compressed-records/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Finish real IndexedDB, isolated packed consumer and independent forty-slot consumer proof before packaging."
     }
   ]
 }
