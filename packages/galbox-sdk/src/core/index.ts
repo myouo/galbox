@@ -1,3 +1,4 @@
+import {registerRestoreValidator,validatedRestoreCopy} from './restore-proofs.js';
 import {validateImageFilters} from '../protocol/image-filter.js';
 import {isRasterInstruction,executeRaster,syncRasters,pruneRasters,validateRasters} from '../protocol/raster.js';
 import {isSequenceInstruction,executeSequence,syncSequences,validateSequences} from '../protocol/sequence.js';
@@ -394,7 +395,7 @@ export class Core {
   }
 }
 function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations,initial=false):Snapshot {
-  const source=isModuleProgram(input)?input:null,s=parseSnapshot(snapshot),p=source?moduleProgramProjection(source,source.binding(s),operations):linkProgram(input,operations).copy();ensure(source||!s.programModules,'PROGRAM_MODULE_BINDING','Use the original module source');
+  const reused=validatedRestoreCopy(input,snapshot,operations,initial);if(reused)return reused;const source=isModuleProgram(input)?input:null,s=parseSnapshot(snapshot),p=source?moduleProgramProjection(source,source.binding(s),operations):linkProgram(input,operations).copy();ensure(source||!s.programModules,'PROGRAM_MODULE_BINDING','Use the original module source');
   const historyIds=s.history.flatMap(t=>t.historyId?[t.historyId]:[]);ensure(new Set(historyIds).size===historyIds.length&&!(s.wait?.kind==='text'&&s.text?.historyId&&historyIds.includes(s.text.historyId)),'RESTORE_HISTORY_ID','History identities must remain unique');
   ensure((s.extrasSignature??null)===extrasSignature(p),'RESTORE_EXTRAS_DEFINITION','Gallery/resources changed; explicit migration required');
   ensure(s.streamCatalog===streamCatalog(p),'RESTORE_STREAM_CATALOG','Streaming catalog/version changed; explicit migration required');s.invocations=s.invocations??[];
@@ -466,3 +467,5 @@ function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationReg
 export function createCore(program:unknown,profile?:unknown,snapshot?:unknown,options:CoreOptions={}):Core {return new Core(program,profile,snapshot,options.mode??'restore',options.operations??emptyOperations,options.rngSeed,options.entryNode,options.entryScene);}
 
 export function validateRestore(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations):Snapshot {return validateSnapshot(input,snapshot,operations);}
+
+registerRestoreValidator(validateSnapshot);

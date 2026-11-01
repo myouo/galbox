@@ -40,6 +40,8 @@ export class ImageStage {
  setVideo(texture:Texture|null,rect:InteractionRect|null):void {if(this.video){this.video.destroy();this.video=null;}if(texture&&rect){this.video=new Sprite(texture);this.video.label='galbox-video';this.video.position.set(rect.x,rect.y);this.video.width=rect.width;this.video.height=rect.height;this.video.zIndex=2;this.app.stage.addChild(this.video);}this.invalidate();}
  pruneHidden(snapshot:DeepReadonly<Snapshot>):void {this.rules.prune(snapshot);if(this.effects?.releaseTransient())this.invalidate();else this.key=null;}
  invalidate():void {this.key=null;this.backgroundKey=null;this.foregroundKey=null;}
+ // Epoch changes replace callbacks, not the pixels in our owned 2D background.
+ invalidateForeground():void {this.key=null;this.foregroundKey=null;}
  // WebGL's default framebuffer may be discarded after presentation. Redraw its
  // foreground for readback, while retaining the already owned 2D background.
  captureFrame(snapshot:DeepReadonly<Snapshot>):void {if(this.app.renderer instanceof WebGLRenderer)this.key=null;this.render(snapshot);}

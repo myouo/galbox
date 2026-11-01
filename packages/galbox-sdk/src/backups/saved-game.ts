@@ -1,3 +1,4 @@
+import {validateImmutableRestore} from '../core/restore-proofs.js';
 import {isModuleProgram,moduleProgramProjection} from '../program-tools/module-program.js';
 import type {ModuleProgram} from '../program-tools/module-program.js';
 import {detached} from '../protocol/wire-input.js';
@@ -5,7 +6,7 @@ import {ensure,GalboxError,parseSnapshot,parseProfile,canonicalWireJSON} from '.
 import type {Snapshot,Profile,Program,DeepReadonly} from '../protocol/index.js';
 import {freezeJson} from '../protocol/codecs.js';
 import {linkProgram} from '../program-tools/linker.js';
-import {validateRestore} from '../core/index.js';
+import '../core/index.js';
 import {emptyOperations} from '../core/operations.js';
 import type {OperationRegistry} from '../core/operations.js';
 import type {Cancellation} from '../runtime/stream-ports.js';
@@ -41,12 +42,12 @@ export async function migrateSavedGame(handle:SavedGameMigration,program:Program
  const provided=await cancellable(d.sourceProgram(cancellation),cancellation);check();const sourceModules=isModuleProgram(provided)?provided:null,sourceOperations=d.sourceOperations??emptyOperations;let source:Program;
  let sourceSnapshot=snapshot;if(sourceModules){const header=sourceModules.describe().header;ensure(header.gameId===d.gameId&&header.release===d.fromRelease,'SAVE_MIGRATION_SOURCE','Source module identity differs');sourceModules.binding(snapshot);if(d.sourceModuleScope==='snapshot')sourceSnapshot=sourceModules.bindSnapshot(snapshot);const ids=sourceModules.binding(sourceSnapshot);if(ids.some(id=>!sourceModules.has(id))){ensure(d.prepareSourceModules,'SAVE_MIGRATION_MODULE_SOURCE','Original module closure requires its loader');await cancellable(d.prepareSourceModules(sourceModules,ids,cancellation),cancellation);check();}source=moduleProgramProjection(sourceModules,ids,sourceOperations);}
  else source=linkProgram(provided,sourceOperations).copy();check();ensure(source.gameId===d.gameId&&source.release===d.fromRelease,'SAVE_MIGRATION_SOURCE','Source program identity differs');
- const old=validateRestore(sourceModules??source,sourceSnapshot,sourceOperations),ownedProfile=parseProfile(profile);
+ const old=validateImmutableRestore(sourceModules??source,sourceSnapshot,sourceOperations),ownedProfile=parseProfile(profile);
  if(d.targetFunctions){ensure(modules&&prepareTargetModules,'SAVE_MIGRATION_MODULE_TARGET','A target planner requires its module loader');const functions=detached(await cancellable(d.targetFunctions(freezeJson(old),cancellation),cancellation));check();ensure(Array.isArray(functions)&&functions.length<=256&&functions.every(id=>typeof id==='string'&&/^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$/u.test(id)),'SAVE_MIGRATION_FUNCTION','Planner must return bounded function identities');const ids=[...new Set(functions.map(id=>modules.moduleForFunction(id)))];await cancellable(prepareTargetModules(ids,cancellation),cancellation);check();}
  const output=await cancellable(d.migrate(Object.freeze({source:freezeJson(source),target:freezeJson(modules?moduleProgramProjection(modules,modules.loaded(),operations):linkProgram(program,operations).copy()),snapshot:freezeJson(old),profile:freezeJson(ownedProfile),cancellation,...(sourceModules?{sourceModules}:{}),...(modules?{targetModules:modules}:{})})),cancellation);check();
  // Reparse before inspecting; callback-owned aliases and snapshots never enter the live state.
  const data=detached(output);ensure(data&&typeof data==='object'&&!Array.isArray(data)&&Object.keys(data).every(k=>k==='snapshot'||k==='readAliases'),'SAVE_MIGRATION_RESULT','Unexpected migration result');
- const draft=parseSnapshot(Reflect.get(data,'snapshot'));if(modules){const ids=modules.binding(draft);if(ids.some(id=>!modules.has(id))){ensure(prepareTargetModules,'SAVE_MIGRATION_MODULE_TARGET','Mapped closure requires target code');await cancellable(prepareTargetModules(ids,cancellation),cancellation);check();}}const candidate=validateRestore(modules??program,draft,operations);ensure(!candidate.replayScene&&!old.replayScene,'SAVE_MIGRATION_REPLAY','Gallery snapshots are temporary');
+ const draft=parseSnapshot(Reflect.get(data,'snapshot'));if(modules){const ids=modules.binding(draft);if(ids.some(id=>!modules.has(id))){ensure(prepareTargetModules,'SAVE_MIGRATION_MODULE_TARGET','Mapped closure requires target code');await cancellable(prepareTargetModules(ids,cancellation),cancellation);check();}}const candidate=validateImmutableRestore(modules??program,draft,operations);ensure(!candidate.replayScene&&!old.replayScene,'SAVE_MIGRATION_REPLAY','Gallery snapshots are temporary');
  const aliases=Reflect.get(data,'readAliases')??[];ensure(Array.isArray(aliases)&&aliases.length<=10000,'SAVE_MIGRATION_READS','Read aliases must be bounded');const from=aliases.length?units(source):new Set<string>(),to=aliases.length?units(modules?moduleProgramProjection(modules,modules.loaded(),operations):program):new Set<string>(),seen=new Set<string>(),reads=new Set<string>();
  for(const pair of aliases){ensure(pair&&typeof pair==='object'&&!Array.isArray(pair)&&Object.keys(pair).length===2&&typeof pair.from==='string'&&typeof pair.to==='string'&&from.has(pair.from)&&to.has(pair.to)&&!seen.has(pair.from),'SAVE_MIGRATION_READS','Aliases must name declared source and target read units');seen.add(pair.from);if(profile.read.includes(pair.from)&&!profile.read.includes(pair.to))reads.add(pair.to);}
  // Callback cannot restore its captured profile; only explicit monotonic aliases are returned.
