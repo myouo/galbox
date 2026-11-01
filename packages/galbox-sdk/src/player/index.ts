@@ -350,14 +350,15 @@ export class Player {
       const rows=await store.listSlots(),selected=selectSaveSlot(rows,profileId,this.savePolicy,options),id=crypto.randomUUID();let payload:SaveCommit|undefined;
       const capture=this.activationTail.catch(()=>{}).then(async()=>{
         this.storyOperation();ensure(!this.disposed&&this.runtime===requestedRuntime&&this.generation===gen,'SAVE_CAPTURE_CANCELLED','Session changed before capture');const runtime=requestedRuntime;await runtime.freeze();
+        let snapshot:Snapshot|undefined,captured:import('../protocol/index.js').SaveCapture|undefined,thumbnail:Promise<import('../protocol/index.js').SaveThumbnail>|undefined;
         try{
           ensure(!this.disposed&&this.runtime===runtime,'SAVE_CAPTURE_CANCELLED','Player closed');ensure(!expectedCut||expectedCut===this.autoCut(),'SAVE_CUT_CHANGED','Automatic capture superseded');
-          const snapshot=runtime.capture(),text=this.text,capture=parseSaveCapture({id,sequence:++this.captureSequence,logicalTime:snapshot.logicalTime,createdAt:Date.now(),speaker:(snapshot.text?.speaker??'').slice(0,512),text:(snapshot.text?.content??'').slice(0,4096),textId:snapshot.text?.textId??null});
-          if(options.image!=='none'){ensure(text?.capture,'SAVE_CAPTURE_UNSUPPORTED','Text renderer must implement synchronous capture');ensure(!snapshot.ui?.active||this.scriptUI,'SAVE_CAPTURE_UI','Script UI is unavailable; use a logical save and recreate the Player');text.render(snapshot);const drawing=text.capture(parseSnapshot(snapshot),this.host.captureFontCSS());capture.thumbnail=await this.host.captureThumbnail(snapshot,drawing,this.abort.signal,this.scriptUI?.capture(snapshot,this.host.captureFontCSS()));}
-          ensure(!this.disposed,'SAVE_CAPTURE_CANCELLED','Player closed during capture');
-          const metadata:SlotMetadata={profileId,label:options.label??(selected.kind==='quick'?(profileId==='main'?'快速存档':'快速存档（独立导入进度）'):selected.kind==='auto'?'自动存档':`手动存档 ${selected.slot}`),kind:selected.kind,capture,...(this.onLoad?{recipe:this.onLoad,onLoad:this.onLoad}:{}),...(this.provenance!==undefined?{provenance:this.provenance}:{})};
-          payload=parseSaveCommit({id,slot:selected.slot,expectedRevision:selected.revision,snapshot,metadata});await runtime.flushAll();
+          snapshot=runtime.capture();const text=this.text;captured=parseSaveCapture({id,sequence:++this.captureSequence,logicalTime:snapshot.logicalTime,createdAt:Date.now(),speaker:(snapshot.text?.speaker??'').slice(0,512),text:(snapshot.text?.content??'').slice(0,4096),textId:snapshot.text?.textId??null});
+          if(options.image!=='none'){ensure(text?.capture,'SAVE_CAPTURE_UNSUPPORTED','Text renderer must implement synchronous capture');ensure(!snapshot.ui?.active||this.scriptUI,'SAVE_CAPTURE_UI','Script UI is unavailable; use a logical save and recreate the Player');text.render(snapshot);const fonts=this.host.captureFontCSS(),drawing=text.capture(parseSnapshot(snapshot),fonts);thumbnail=this.host.captureThumbnail(snapshot,drawing,this.abort.signal,this.scriptUI?.capture(snapshot,fonts));}
         }finally{runtime.thaw();this.lastTime=this.pauses.size?null:performance.now();}
+        ensure(snapshot&&captured,'SAVE_CAPTURE','No captured cut');if(thumbnail)captured.thumbnail=await thumbnail;ensure(!this.disposed,'SAVE_CAPTURE_CANCELLED','Player closed during capture');
+        const metadata:SlotMetadata={profileId,label:options.label??(selected.kind==='quick'?(profileId==='main'?'快速存档':'快速存档（独立导入进度）'):selected.kind==='auto'?'自动存档':`手动存档 ${selected.slot}`),kind:selected.kind,capture:captured,...(this.onLoad?{recipe:this.onLoad,onLoad:this.onLoad}:{}),...(this.provenance!==undefined?{provenance:this.provenance}:{})};
+        payload=parseSaveCommit({id,slot:selected.slot,expectedRevision:selected.revision,snapshot,metadata});await runtime.flushAll();
       });this.activationTail=capture;await capture;ensure(payload,'SAVE_CAPTURE','No save captured');this.pendingSaves.set(id,payload);this.publish();return this.commitCaptured(store,payload);
     });this.saveTail=work.then(()=>{},()=>{});return work;
   }

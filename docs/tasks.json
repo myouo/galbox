@@ -3851,6 +3851,110 @@
       ],
       "blocker": null,
       "next_action": "Independent consumer tests physical held Control and ships the committed tarball."
+    },
+    {
+      "id": "G2-09",
+      "milestone": "G2",
+      "title": "Rich dialogue owner visibility",
+      "depends_on": [],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0097"
+      ],
+      "contracts": [
+        "C01",
+        "C03"
+      ],
+      "acceptance": [
+        "preserve authoritative cut and old snapshots",
+        "explicit failure and cancellation",
+        "actual browser and package consumer"
+      ],
+      "evidence": [
+        "docs/evidence/fifth-runtime/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Independent package consumption, then real-workload latency comparison and fifth-door integration."
+    },
+    {
+      "id": "W1-08",
+      "milestone": "W1",
+      "title": "Atomic bounded code batch preparation",
+      "depends_on": [],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0098"
+      ],
+      "contracts": [
+        "C01",
+        "C03"
+      ],
+      "acceptance": [
+        "preserve authoritative cut and old snapshots",
+        "explicit failure and cancellation",
+        "actual browser and package consumer"
+      ],
+      "evidence": [
+        "docs/evidence/fifth-runtime/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Independent package consumption, then real-workload latency comparison and fifth-door integration."
+    },
+    {
+      "id": "G3-15",
+      "milestone": "G3",
+      "title": "Element source pause and resume",
+      "depends_on": [],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0099"
+      ],
+      "contracts": [
+        "C01",
+        "C03"
+      ],
+      "acceptance": [
+        "preserve authoritative cut and old snapshots",
+        "explicit failure and cancellation",
+        "actual browser and package consumer"
+      ],
+      "evidence": [
+        "docs/evidence/fifth-runtime/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Independent package consumption, then real-workload latency comparison and fifth-door integration."
+    },
+    {
+      "id": "G4-04",
+      "milestone": "G4",
+      "title": "Thumbnail-sized capture and short narrative freeze",
+      "depends_on": [],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0100"
+      ],
+      "contracts": [
+        "C01",
+        "C03"
+      ],
+      "acceptance": [
+        "preserve authoritative cut and old snapshots",
+        "explicit failure and cancellation",
+        "actual browser and package consumer"
+      ],
+      "evidence": [
+        "docs/evidence/fifth-runtime/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Independent package consumption, then real-workload latency comparison and fifth-door integration."
     }
   ]
 }

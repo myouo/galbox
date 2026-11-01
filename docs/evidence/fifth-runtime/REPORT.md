@@ -1,0 +1,7 @@
+# Fifth-door runtime support and save responsiveness
+
+2026-11-01. G2-09/W1-08/G3-15/G4-04; ADR0097–0100. Root compositing opacity hides rich glyphs that override visibility. Code closure loads at most four leases concurrently and installs the fully verified missing batch atomically, notifying its owner once. Scripted element audio pause/resume keeps in-session position and validates saved writer provenance; buffer sources reject explicitly. Thumbnail SVG intrinsic dimensions are bounded to 320×180 while preserving viewBox/aspect. Once immutable DOM/stage captures are owned, async rasterization and storage no longer hold the narrative freeze.
+
+`pnpm check`, `pnpm test` (434), rebuilt app/harness and targeted Playwright (20) pass. Coverage includes source hashes/ABI/cancellation/late leases, real element position and paused restore, other sounds continuing, rich/Ruby opacity and resize/capture/restore, same-cut image summaries while later input advances, quota/abort/receipts/previous snapshots and Canvas/WebGL. No source payload enters the SDK. Protocol adds an optional source-bound playback state and opcode under existing audio.sources; no budgets increase. Existing snapshots without the state remain readable. Restore=replay is still replay from zero, not native seek compatibility.
+
+`pnpm test:consumer` also passes with an isolated packed consumer (playback, save/restore, backup, code closure and source provenance). Real workload comparison is pending in the independent Fata Morgana consumer; performance tasks remain in progress until it finishes.

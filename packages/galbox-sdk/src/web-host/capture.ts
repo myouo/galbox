@@ -17,7 +17,7 @@ export function captureText(roots:readonly HTMLElement[],mount:HTMLElement,fontC
  }
  for(const root of roots){const clone=copy(root),bounds=root.getBoundingClientRect();clone.style.position='absolute';clone.style.inset='auto';clone.style.left=`${bounds.left-rect.left}px`;clone.style.top=`${bounds.top-rect.top}px`;clone.style.width=`${bounds.width}px`;clone.style.height=`${bounds.height}px`;clone.style.margin='0';wrapper.append(clone);}
  const style=document.createElement('style');style.textContent=fontCSS+Array.from(styles,([css,name])=>`.${name}{${css}}`).join('\n');wrapper.prepend(style);
- const content=new XMLSerializer().serializeToString(wrapper),svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}" viewBox="0 0 ${rect.width} ${rect.height}"><foreignObject width="100%" height="100%">${content}</foreignObject></svg>`;
+ const factor=Math.min(1,320/rect.width,180/rect.height),content=new XMLSerializer().serializeToString(wrapper),svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${Math.max(1,rect.width*factor)}" height="${Math.max(1,rect.height*factor)}" viewBox="0 0 ${rect.width} ${rect.height}"><foreignObject width="${rect.width}" height="${rect.height}">${content}</foreignObject></svg>`;
  ensure(svg.length<=4_000_000,'SAVE_CAPTURE_SIZE','Text capture exceeds 4 MB');return {svg};
 }
 export async function composeThumbnail(stage:HTMLCanvasElement,text:TextCapture,signal:AbortSignal,overlay?:TextCapture,background?:HTMLCanvasElement):Promise<SaveThumbnail> {

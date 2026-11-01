@@ -3260,6 +3260,34 @@ message Gbx_Instruction_Case83 {
   optional Gbx_Instruction_Case83_enabled enabled = 7;
 }
 
+message Gbx_Instruction_Case84_op {
+  // Fixed semantic value: "audio.source.pause"
+}
+
+message Gbx_Instruction_Case84_at {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case84_source {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case84_paused {
+  optional bool value = 1;
+}
+
+message Gbx_Instruction_Case84_inactive {
+  optional string value = 1;
+}
+
+message Gbx_Instruction_Case84 {
+  optional Gbx_Instruction_Case84_op op = 1;
+  optional Gbx_Instruction_Case84_at at = 2;
+  optional Gbx_Instruction_Case84_source source = 3;
+  optional Gbx_Instruction_Case84_paused paused = 4;
+  optional Gbx_Instruction_Case84_inactive inactive = 5;
+}
+
 message Gbx_Instruction {
   oneof value {
     Gbx_Instruction_Case1 v1 = 1;
@@ -3345,6 +3373,7 @@ message Gbx_Instruction {
     Gbx_Instruction_Case81 v81 = 81;
     Gbx_Instruction_Case82 v82 = 82;
     Gbx_Instruction_Case83 v83 = 83;
+    Gbx_Instruction_Case84 v84 = 84;
   }
 }
 
@@ -9944,6 +9973,24 @@ message Gbx_MediaTaskState_loopRegion {
   optional Gbx_MediaTaskState_loopRegion_enabled enabled = 6;
 }
 
+message Gbx_MediaTaskState_playback_at {
+  optional string value = 1;
+}
+
+message Gbx_MediaTaskState_playback_signature {
+  optional string value = 1;
+}
+
+message Gbx_MediaTaskState_playback_paused {
+  optional bool value = 1;
+}
+
+message Gbx_MediaTaskState_playback {
+  optional Gbx_MediaTaskState_playback_at at = 1;
+  optional Gbx_MediaTaskState_playback_signature signature = 2;
+  optional Gbx_MediaTaskState_playback_paused paused = 3;
+}
+
 message Gbx_MediaTaskState {
   optional Gbx_MediaTaskState_version version = 1;
   optional Gbx_MediaTaskState_signature signature = 2;
@@ -9952,6 +9999,7 @@ message Gbx_MediaTaskState {
   optional Gbx_MediaTaskState_loopEndMs loopEndMs = 5;
   optional Gbx_MediaTaskState_replay replay = 6;
   optional Gbx_MediaTaskState_loopRegion loopRegion = 7;
+  optional Gbx_MediaTaskState_playback playback = 8;
 }
 
 message Gbx_AudioFadeState_signature {

@@ -48,7 +48,7 @@ export type CoreEvent =
  | {type:'task'; task:string; attempt:number; result:'completed'|'blocked'|'failed'}
  | {type:'retry'; task:string}
  | {type:'flushAck'; revision:number};
-export type Effect = {type:'audio-source-stop';task:string;attempt:number} | {type:'video';task:Task} | {type:'video-stop'} | {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
+export type Effect = {type:'audio-source-playback';task:Task} | {type:'audio-source-stop';task:string;attempt:number} | {type:'video';task:Task} | {type:'video-stop'} | {type:'audio'; task:Task} | {type:'audio-stop'; channel:'bgm'|'voice'|'sfx'} | {type:'audio-gain'; channel:'bgm'|'voice'|'sfx'; gain:number};
 export type ProgressChange = import('../protocol/index.js').ProgressChangeWire;
 export interface CoreView { readonly run: DeepReadonly<Snapshot>; readonly profile: DeepReadonly<Profile>; readonly dirty:number; readonly error:string|null; readonly canSave:boolean; readonly saveReason:string|null; }
 function positions(p: Position): Position { return {...p}; }

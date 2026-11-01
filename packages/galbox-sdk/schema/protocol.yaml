@@ -3508,6 +3508,35 @@ definitions:
           - enabled
         additionalProperties: false
         x-proto-tag: 83
+      - type: object
+        properties:
+          op:
+            type: string
+            const: audio.source.pause
+            x-proto-tag: 1
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 2
+          source:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 3
+          paused:
+            type: boolean
+            x-proto-tag: 4
+          inactive:
+            enum:
+              - error
+              - ignore
+            x-proto-tag: 5
+        required:
+          - op
+          - at
+          - source
+          - paused
+        additionalProperties: false
+        x-proto-tag: 84
   Function:
     type: object
     properties:
@@ -10810,6 +10839,26 @@ definitions:
           - enabled
         additionalProperties: false
         x-proto-tag: 7
+      playback:
+        type: object
+        properties:
+          at:
+            type: string
+            pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
+            x-proto-tag: 1
+          signature:
+            type: string
+            pattern: ^[^\x00]{1,65536}$
+            x-proto-tag: 2
+          paused:
+            type: boolean
+            x-proto-tag: 3
+        required:
+          - at
+          - signature
+          - paused
+        additionalProperties: false
+        x-proto-tag: 8
     required:
       - version
       - signature
