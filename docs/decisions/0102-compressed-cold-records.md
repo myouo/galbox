@@ -33,3 +33,5 @@ This is a finite W1-03C increment. Hot-root sharding/receipt retention and large
 portable exports remain separate work; no completed receipt or story data is
 pruned. Old narrative slots remain readable; older SDK binaries cannot write
 the v3 adapter layout and must reject it.
+
+ADR0103 supersedes the combined 4M stored-inventory clause after the real illustrated library still reaches capacity. The decoded and hot working limits remain 4M; cold disk inventory is explicitly capped separately at 64MiB.

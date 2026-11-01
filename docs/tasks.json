@@ -3970,7 +3970,8 @@
       "verification": "pending",
       "outputs": [
         "ADR0102",
-        "bounded gzip cold records and versioned CAS root"
+        "bounded gzip cold records and versioned CAS root",
+        "ADR0103 independent 64MiB cold inventory"
       ],
       "contracts": [
         "C05",
@@ -3980,7 +3981,7 @@
         "C12"
       ],
       "acceptance": [
-        "forty-valid-saves-without-budget-increase",
+        "forty-valid-saves-with-bounded-cold-inventory-and-unchanged-wire-working-budgets",
         "legacy-and-v2-atomic-upgrade",
         "equal-size-concurrent-writer-cas",
         "corruption-expansion-and-quota-refusal",
@@ -3990,7 +3991,7 @@
         "docs/evidence/compressed-records/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Finish real IndexedDB, isolated packed consumer and independent forty-slot consumer proof before packaging."
+      "next_action": "Verify 64MiB cold inventory separately from 4M hot/decoded budgets on poorly compressible and real forty-slot libraries; keep W1-03C hot-root/receipt work open."
     }
   ]
 }
