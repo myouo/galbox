@@ -3992,6 +3992,70 @@
       ],
       "blocker": null,
       "next_action": "W1-03C continues hot-root sharding, explicit receipt retention and larger portable exports; v3 cold capacity and atomic codec are accepted."
+    },
+    {
+      "id": "W1-09",
+      "milestone": "W1",
+      "title": "Immutable checked module-code reuse",
+      "depends_on": [
+        "W1-08"
+      ],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0104"
+      ],
+      "contracts": [
+        "C01",
+        "C04",
+        "C07",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "preserve-source-binding-and-complete-restore-validation",
+        "public-copies-isolated-and-private-code-immutable",
+        "failed-install-planner-and-cancellation-preserve-authority",
+        "real-browser-package-and-cold-hot-workload"
+      ],
+      "evidence": [
+        "docs/evidence/instant-load/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Run packed real workload, then finish browser/consumer and latency targets before publication."
+    },
+    {
+      "id": "W1-10",
+      "milestone": "W1",
+      "title": "Snapshot-scoped saved-game migration code",
+      "depends_on": [
+        "W1-08"
+      ],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0105"
+      ],
+      "contracts": [
+        "C01",
+        "C04",
+        "C07",
+        "C10",
+        "C11"
+      ],
+      "acceptance": [
+        "preserve-source-binding-and-complete-restore-validation",
+        "public-copies-isolated-and-private-code-immutable",
+        "failed-install-planner-and-cancellation-preserve-authority",
+        "real-browser-package-and-cold-hot-workload"
+      ],
+      "evidence": [
+        "docs/evidence/instant-load/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Run packed real workload, then finish browser/consumer and latency targets before publication."
     }
   ]
 }

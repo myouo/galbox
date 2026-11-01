@@ -1,0 +1,5 @@
+# Instant-load investigation (W1-09/W1-10, ADR0104–0105)
+
+2026-11-01. Profiles show repeated projection parsing/copying/freezing and eager whole-target migration preparation. Normalize/freeze owned checked bodies after original digest/ABI checks, share private immutable projections/header and seed exact-closure caches after atomic installation. Public copies remain isolated. Opt-in source scope/target function planning and same-release canonical bindings omit unreachable historical code while preserving every actual snapshot writer/static dependency and original binding checks. Empty read-alias maps do not scan entire code catalogs.
+
+`pnpm check` and `pnpm test` (443 / 86 files) pass, including immutable/public ownership, failed installs, continued Core restore, scoped target selection, cancellation and preservation of original broad source slots. The independent real investigation planner selects 5 target modules / 2721664 encoded bytes instead of 34 / 18684178. Real packed latency, browser and isolated-consumer acceptance remain pending; no one-second result is claimed.
