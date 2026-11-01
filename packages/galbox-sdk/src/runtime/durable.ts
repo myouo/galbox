@@ -18,6 +18,13 @@ function activation(input:unknown):Activation {
   const profileId=input.profileId??'main',mode=input.mode??'restore';if(typeof input.owner==='string')key(input.owner);ensure(typeof profileId==='string'&&(mode==='initial'||mode==='restore'),'STORAGE_CORRUPT','Activation metadata');key(profileId);
   return {id:input.id,sequence:input.sequence,status,snapshot:parseSnapshot(input.snapshot),profileId,mode,owner:typeof input.owner==='string'?input.owner:input.id,initialCommitId:typeof input.initialCommitId==='string'?input.initialCommitId:null,...(input.provenance!==undefined?{provenance:parseJsonValue(input.provenance)}:{}),...(input.onLoad?{onLoad:parseRestoreRecipe(input.onLoad)}:{}),...(typeof input.slot==='string'?{slot:input.slot}:{})};
 }
+/** Readonly projection; mutations continue to parse the complete database. */
+export function readProfileRecord(input:unknown,id='main'):Profile {key(id);if(input===undefined)return selectProfile(databaseState(),id);object(input);if(id==='main')return parseProfile(input.profile);object(input.branches);ensure(Object.hasOwn(input.branches,id),'PROFILE_MISSING',id);return parseProfile(input.branches[id]);}
+export function readDurableRecord(input:unknown,requestedProfile?:string):Durable {
+ if(input===undefined){const state=databaseState();return {profile:selectProfile(state,requestedProfile),head:null};}object(input);object(input.activations);const head=input.head===null?null:activation(input.head);
+ if(head){const current=input.activations[head.id];object(current);ensure(current.retired!==true&&current.id===head.id&&current.status===head.status&&current.sequence===head.sequence&&(current.owner??current.id)===head.owner,'STORAGE_CORRUPT','Activation head differs from its live entry');}
+ const id=requestedProfile??head?.profileId??'main';return {profile:readProfileRecord(input,id),head};
+}
 export function slotRecord(input:unknown):SlotRecord {
   object(input);ensure(Number.isInteger(input.revision)&&typeof input.revision==='number'&&input.revision>0,'STORAGE_CORRUPT','Slot revision');const r={revision:input.revision,snapshot:parseSnapshot(input.snapshot),previous:input.previous===null?null:parseSnapshot(input.previous),metadata:parseSlotMetadata(input.metadata??{profileId:'main',label:''}),...(input.previousMetadata?{previousMetadata:parseSlotMetadata(input.previousMetadata)}:{})};assertSaveCut(r.snapshot,r.metadata);if(r.previous&&r.previousMetadata)assertSaveCut(r.previous,r.previousMetadata);return r;
 }

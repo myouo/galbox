@@ -4057,6 +4057,37 @@
       ],
       "blocker": null,
       "next_action": "Run packed real workload, then finish browser/consumer and latency targets before publication."
+    },
+    {
+      "id": "W1-03C2",
+      "milestone": "W1",
+      "title": "Scoped readonly hot-root projections",
+      "depends_on": [
+        "W1-03C1"
+      ],
+      "status": "in_progress",
+      "implementation": "complete",
+      "verification": "pending",
+      "outputs": [
+        "ADR0107"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "validate-returned-fields-and-live-authority",
+        "keep-full-hot-validation-on-all-mutations",
+        "caller-owned-results-and-legacy-fallback",
+        "real-durable-load-latency-and-corruption-tests"
+      ],
+      "evidence": [
+        "docs/evidence/instant-load/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Verify real/browser/package loads with scoped readonly queries; retain mutation CAS and complete validation."
     }
   ]
 }

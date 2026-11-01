@@ -1,10 +1,10 @@
 import {encodeColdRecord,decodeColdRecord} from './cold-record.js';
-import {storageLayout,storageKey,slotSummary,assertStorageCapacity,namespaceCharacterLimit} from '../runtime/storage-layout.js';
+import {storageLayout,storageKey,slotSummary,assertStorageCapacity,assertStoredRootCapacity,namespaceCharacterLimit} from '../runtime/storage-layout.js';
 import type {StorageLayout,StoredSlotSummary} from '../protocol/index.js';
 import { ensure,parseSnapshot,parseProgressBatch,parseStoreImport,parseJsonValue,parseRestoreRecipe,parseHistoryRecord,parseStoredSlotSummary, parseStoreBackupRestore,parseSlotMetadata, parsePlayerPreferences,parseSaveCommit,parseHistoryCommit } from '../protocol/index.js';
 import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences,SaveCommit,HistoryCommit } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
-import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,protectSlot,deleteSlot,readHistory,commitHistory,historyReceipt,slotRecord,object } from '../runtime/durable.js';
+import { parseDatabase, readDurableRecord, readProfileRecord, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,protectSlot,deleteSlot,readHistory,commitHistory,historyReceipt,slotRecord,object } from '../runtime/durable.js';
 import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
@@ -25,8 +25,8 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     tx.oncomplete=()=>resolve(cut);tx.onabort=()=>reject(failure??tx.error??new Error('IDB_ABORT'));tx.onerror=()=>{};
   });}
   // A v3 hot-only mutation retains its original one-read/one-write transaction.
-  function hot<T>(mode:IDBTransactionMode,run:(state:DatabaseState,summaries:StoredSlotSummary[])=>T):Promise<{handled:true;result:T}|{handled:false}>{return new Promise((resolve,reject)=>{
-    const tx=db.transaction('namespaces',mode),store=tx.objectStore('namespaces');let result:{handled:true;result:T}|{handled:false}={handled:false},failure:unknown;const q=store.get(namespace);q.onsuccess=()=>{try{const h=header(q.result);if(mode==='readwrite'&&q.result!==undefined&&(h.legacy||h.layout.version===2))return;const state=parseDatabase(q.result);bounded(state,h.layout);const value=run(state,[]);if(mode==='readwrite'){const next=storageLayout({...h.layout,revision:(h.layout.revision??0)+1});bounded(state,next);store.put({...state,slots:{},histories:{},storageLayout:next},namespace);}result={handled:true,result:value};}catch(error){failure=error;tx.abort();}};tx.oncomplete=()=>resolve(result);tx.onabort=()=>reject(failure??tx.error??new Error('IDB_ABORT'));tx.onerror=()=>{};
+  function hot<T>(mode:IDBTransactionMode,run:(state:DatabaseState,summaries:StoredSlotSummary[])=>T,project?:(raw:unknown)=>T):Promise<{handled:true;result:T}|{handled:false}>{return new Promise((resolve,reject)=>{
+    const tx=db.transaction('namespaces',mode),store=tx.objectStore('namespaces');let result:{handled:true;result:T}|{handled:false}={handled:false},failure:unknown;const q=store.get(namespace);q.onsuccess=()=>{try{const h=header(q.result);if(mode==='readonly'&&h.layout.version===3&&!h.legacy&&project){object(q.result);assertStoredRootCapacity(q.result,h.layout);result={handled:true,result:project(q.result)};return;}if(mode==='readwrite'&&q.result!==undefined&&(h.legacy||h.layout.version===2))return;const state=parseDatabase(q.result);bounded(state,h.layout);const value=run(state,[]);if(mode==='readwrite'){const next=storageLayout({...h.layout,revision:(h.layout.revision??0)+1});bounded(state,next);store.put({...state,slots:{},histories:{},storageLayout:next},namespace);}result={handled:true,result:value};}catch(error){failure=error;tx.abort();}};tx.oncomplete=()=>resolve(result);tx.onabort=()=>reject(failure??tx.error??new Error('IDB_ABORT'));tx.onerror=()=>{};
   });}
   async function transact<T>(mode:IDBTransactionMode,run:(state:DatabaseState,summaries:StoredSlotSummary[])=>T,scope:Scope={}):Promise<T>{
     ensure(!closed,'STORAGE_CLOSED','Database closed');for(const ids of [scope.slots,scope.histories])if(ids&&ids!=='all')for(const id of ids)storageKey(id);
@@ -45,8 +45,10 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     }
     throw new Error('STORAGE_CONFLICT: Storage changed during eight preparation attempts');
   }
+  async function projectedHot<T>(project:(raw:unknown)=>T,fallback:(state:DatabaseState,summaries:StoredSlotSummary[])=>T):Promise<T>{ensure(!closed,'STORAGE_CLOSED','Database closed');const result=await hot('readonly',fallback,project);ensure(result.handled,'STORAGE_CORRUPT','Readonly hot query did not complete');return result.result;}
+  async function projectedCold<T>(scope:Scope,project:(cut:ReadCut)=>Promise<T>|T,fallback:(state:DatabaseState,summaries:StoredSlotSummary[])=>T):Promise<T>{ensure(!closed,'STORAGE_CLOSED','Database closed');for(const ids of [scope.slots,scope.histories])if(ids&&ids!=='all')ids.forEach(storageKey);const cut=await readCut(scope,'readonly');if(cut.legacy||cut.layout.version!==3)return transact('readonly',fallback,scope);object(cut.raw);assertStoredRootCapacity(cut.raw,cut.layout);return project(cut);}
   return {
-    readHistory:(id:string)=>transact('readonly',s=>readHistory(s,id),{histories:[id]}),
+    readHistory:(id:string)=>projectedCold({histories:[id]},async cut=>{readProfileRecord(cut.raw,id);const value=cut.values.find(v=>!v.summary&&v.row.kind==='history'&&v.row.id===id);return parseHistoryRecord(value?await decodeColdRecord(value.value,value.row,cut.layout.version):{revision:0,entries:[]});},s=>readHistory(s,id)),
     historyReceipt:(id:string)=>transact('readonly',s=>historyReceipt(s,id)),
     commitHistory:(input:HistoryCommit,authority:string|null)=>{const data=parseHistoryCommit(input);return transact('readwrite',s=>commitHistory(s,data,authority),{histories:[data.profileId]});},
     commitSave:(input:SaveCommit)=>{const data=parseSaveCommit(input);return transact('readwrite',s=>commitSave(s,data),{slots:[data.slot]});},
@@ -58,10 +60,10 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     writePreferences:(input:PlayerPreferences,revision:number)=>{const value=parsePlayerPreferences(input);return transact('readwrite',s=>commitPreferences(s,value,revision));},
     backup:(gameId:string,series:string,release:string)=>{ensure(namespace===storageNamespace(gameId,series),'BACKUP_NAMESPACE','Backup identity must match storage');return transact('readonly',s=>captureBackup(s,gameId,series,release),{slots:'all',histories:'all'});},
     restoreBackup:(input:StoreBackupRestore)=>{const commit=parseStoreBackupRestore(input);ensure(namespace===storageNamespace(commit.backup.gameId,commit.backup.series),'BACKUP_NAMESPACE','Restore identity must match storage');return transact('readwrite',s=>commitBackupRestore(s,commit),{slots:commit.backup.slots.map((_s,i)=>`backup:${commit.id}:s${i}`),histories:commit.backup.profiles.map((_p,i)=>`backup:${commit.id}:p${i}`)});},
-    read:(profileId?:string)=>transact<Durable>('readonly',s=>({profile:selectProfile(s,profileId),head:s.head})),
-    readSlot:(slot:string)=>transact<SlotRecord|null>('readonly',s=>Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null,{slots:[slot]}),
+    read:(profileId?:string)=>projectedHot<Durable>(raw=>readDurableRecord(raw,profileId),s=>({profile:selectProfile(s,profileId),head:s.head})),
+    readSlot:(slot:string)=>projectedCold<SlotRecord|null>({slots:[slot]},async cut=>{const value=cut.values.find(v=>!v.summary&&v.row.kind==='slot'&&v.row.id===slot);return value?slotRecord(await decodeColdRecord(value.value,value.row,cut.layout.version)):null;},s=>Object.hasOwn(s.slots,slot)?s.slots[slot]??null:null),
     listProfiles:()=>transact('readonly',s=>[{profileId:'main',revision:s.profile.revision},...Object.entries(s.branches).map(([profileId,p])=>({profileId,revision:p.revision}))]),
-    listSlots:()=>transact('readonly',(_s,rows)=>Object.values(Object.fromEntries(rows.map(r=>[r.slot,r]))),{summaries:true}),
+    listSlots:()=>projectedCold({summaries:true},cut=>cut.values.map(value=>{const data=parseStoredSlotSummary(value.value);ensure(data.slot===value.row.id,'STORAGE_CORRUPT','Summary identity');return data;}),(_s,rows)=>Object.values(Object.fromEntries(rows.map(r=>[r.slot,r])))),
     import:async(input:StoreImport)=>{const commit=parseStoreImport(input);return transact('readwrite',s=>commitImport(s,commit),{slots:[commit.slot]});},
     save:async(slot:string,snapshot:Snapshot,revision:number,metadata?:SlotMetadata)=>{const data=parseSnapshot(snapshot),meta=metadata===undefined?undefined:parseSlotMetadata(metadata);return transact('readwrite',s=>saveSlot(s,slot,data,revision,meta),{slots:[slot]});},
     progress:async(input:ProgressBatch,authority:string|null)=>{const batch=parseProgressBatch(input);return transact('readwrite',s=>commitProgress(s,batch,authority));},

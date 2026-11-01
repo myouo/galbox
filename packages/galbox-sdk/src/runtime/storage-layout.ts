@@ -4,11 +4,11 @@ import type {DatabaseState} from './durable.js';
 import type {SlotRecord} from './ports.js';
 export const namespaceCharacterLimit=4_000_000;
 export const coldStorageByteLimit=64*1024*1024;
+export function assertStoredRootCapacity(root:object,layout:StorageLayout):void {ensure(JSON.stringify(root).length<=namespaceCharacterLimit,'STORAGE_SIZE','Hot record exceeds 4M JSON characters');ensure(layout.records.reduce((sum,row)=>sum+(row.storedBytes??row.characters),0)<=coldStorageByteLimit,'STORAGE_SIZE','Cold records exceed 64MiB stored budget');}
 /** Disk inventory is separate from the bounded hot root and decoded working cut. */
 export function assertStorageCapacity(hot:DatabaseState,layout:StorageLayout):void {
  if(layout.version===2){ensure(logicalStorageCharacters(hot,layout)<=namespaceCharacterLimit,'STORAGE_SIZE','Legacy namespace exceeds 4M JSON characters');return;}
- ensure(JSON.stringify({...hot,slots:{},histories:{},storageLayout:layout}).length<=namespaceCharacterLimit,'STORAGE_SIZE','Hot record exceeds 4M JSON characters');
- ensure(layout.records.reduce((sum,row)=>sum+(row.storedBytes??row.characters),0)<=coldStorageByteLimit,'STORAGE_SIZE','Cold records exceed 64MiB stored budget');
+ assertStoredRootCapacity({...hot,slots:{},histories:{},storageLayout:layout},layout);
 }
 export function storageKey(id:string):void {ensure(typeof id==='string'&&id.length>0&&id.length<=256&&!['__proto__','constructor','prototype'].includes(id)&&!id.includes('\0'),'STORAGE_KEY','Invalid storage identity');}
 export function storageLayout(input:unknown):StorageLayout {const layout=parseStorageLayout(input),seen=new Set<string>();ensure(layout.version===3?layout.revision!==undefined:layout.revision===undefined,'STORAGE_CORRUPT','Layout revision differs from version');for(const row of layout.records){storageKey(row.id);const key=JSON.stringify([row.kind,row.id]);ensure(!seen.has(key),'STORAGE_CORRUPT','Duplicate cold record');ensure(layout.version===3?row.storedBytes!==undefined:row.storedBytes===undefined,'STORAGE_CORRUPT','Cold encoding differs from layout');seen.add(key);}return layout;}
