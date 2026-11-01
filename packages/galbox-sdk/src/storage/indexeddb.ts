@@ -3,7 +3,7 @@ import type {StorageLayout,StoredSlotSummary} from '../protocol/index.js';
 import { ensure,parseSnapshot,parseProgressBatch,parseStoreImport,parseJsonValue,parseRestoreRecipe,parseHistoryRecord,parseStoredSlotSummary, parseStoreBackupRestore,parseSlotMetadata, parsePlayerPreferences,parseSaveCommit,parseHistoryCommit } from '../protocol/index.js';
 import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences,SaveCommit,HistoryCommit } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, ActivationOptions } from '../runtime/ports.js';
-import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,deleteSlot,readHistory,commitHistory,historyReceipt,slotRecord,object } from '../runtime/durable.js';
+import { parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,protectSlot,deleteSlot,readHistory,commitHistory,historyReceipt,slotRecord,object } from '../runtime/durable.js';
 import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 import type { DatabaseState } from '../runtime/durable.js';
 export async function openStore(namespace:string,database='galbox-sdk'):Promise<Store> {
@@ -54,6 +54,7 @@ export async function openStore(namespace:string,database='galbox-sdk'):Promise<
     commitSave:(input:SaveCommit)=>{const data=parseSaveCommit(input);return transact('readwrite',s=>commitSave(s,data),{slots:[data.slot]});},
     saveReceipt:(id:string)=>transact('readonly',s=>saveReceipt(s,id)),
     renameSlot:(slot:string,revision:number,label:string)=>transact('readwrite',s=>renameSlot(s,slot,revision,label),{slots:[slot]}),
+    protectSlot:(slot:string,revision:number,protectedState:boolean)=>transact('readwrite',s=>protectSlot(s,slot,revision,protectedState),{slots:[slot]}),
     deleteSlot:(slot:string,revision:number)=>transact('readwrite',s=>deleteSlot(s,slot,revision),{slots:[slot]}),
     readPreferences:()=>transact('readonly',s=>s.preferences),
     writePreferences:(input:PlayerPreferences,revision:number)=>{const value=parsePlayerPreferences(input);return transact('readwrite',s=>commitPreferences(s,value,revision));},

@@ -4669,6 +4669,10 @@ message Gbx_SlotMetadata_capture {
   optional Gbx_SaveCapture value = 1;
 }
 
+message Gbx_SlotMetadata_protected {
+  optional bool value = 1;
+}
+
 message Gbx_SlotMetadata {
   optional Gbx_SlotMetadata_profileId profileId = 1;
   optional Gbx_SlotMetadata_label label = 2;
@@ -4677,6 +4681,7 @@ message Gbx_SlotMetadata {
   optional Gbx_SlotMetadata_provenance provenance = 5;
   optional Gbx_SlotMetadata_kind kind = 6;
   optional Gbx_SlotMetadata_capture capture = 7;
+  optional Gbx_SlotMetadata_protected protected = 8;
 }
 
 message Gbx_StoreImport_id {

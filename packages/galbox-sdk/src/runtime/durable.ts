@@ -50,7 +50,7 @@ export function commitProgress(state:DatabaseState,batch:ProgressBatch,authority
   ensure((state.head?.owner??state.head?.id??null)===authority,'SESSION_REVOKED','Activation owner changed');return applyBatch(state,batch,state.head?.profileId??'main',authority);
 }
 export function saveSlot(state:DatabaseState,slot:string,snapshot:unknown,expected:number,metadata?:SlotMetadata):SlotRecord {
-  key(slot);const old=own(state.slots,slot);ensure((old?.revision??0)===expected,'SLOT_CONFLICT',slot);const meta=parseSlotMetadata(metadata??{profileId:state.head?.profileId??'main',label:slot});selectProfile(state,meta.profileId);
+  key(slot);const old=own(state.slots,slot);ensure((old?.revision??0)===expected,'SLOT_CONFLICT',slot);ensure(!old?.metadata?.protected,'SLOT_PROTECTED',slot);const meta=parseSlotMetadata(metadata??{profileId:state.head?.profileId??'main',label:slot});selectProfile(state,meta.profileId);
   ensure(!old||(old.metadata?.profileId??'main')===meta.profileId,'SLOT_PROFILE_CONFLICT','Saving cannot overwrite another profile branch');
   const record:SlotRecord={revision:expected+1,snapshot:parseSnapshot(snapshot),previous:old?.snapshot??null,metadata:meta,...(old?.metadata?{previousMetadata:parseSlotMetadata(old.metadata)}:{})};state.slots[slot]=record;return slotRecord(record);
 }
@@ -81,7 +81,10 @@ export function saveReceipt(state:DatabaseState,id:string):SaveReceipt|null {key
 export function renameSlot(state:DatabaseState,slot:string,expected:number,label:string):SlotRecord {
  key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);ensure(typeof label==='string'&&label.length<=128&&!label.includes('\0'),'SLOT_LABEL','At most 128 characters');const record=slotRecord(old);record.metadata=parseSlotMetadata({...record.metadata,label});record.revision++;state.slots[slot]=record;return slotRecord(record);
 }
-export function deleteSlot(state:DatabaseState,slot:string,expected:number):void {key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);delete state.slots[slot];}
+export function protectSlot(state:DatabaseState,slot:string,expected:number,protectedState:boolean):SlotRecord {
+ key(slot);ensure(typeof protectedState==='boolean','SLOT_PROTECTION','Expected a boolean');const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);const record=slotRecord(old);record.metadata=parseSlotMetadata({...record.metadata,protected:protectedState});record.revision++;state.slots[slot]=record;return slotRecord(record);
+}
+export function deleteSlot(state:DatabaseState,slot:string,expected:number):void {key(slot);const old=own(state.slots,slot);ensure(old&&old.revision===expected,'SLOT_CONFLICT',slot);ensure(!old.metadata?.protected,'SLOT_PROTECTED',slot);delete state.slots[slot];}
 
 export function readHistory(state:DatabaseState,profileId:string):HistoryRecord {selectProfile(state,profileId);return parseHistoryRecord(own(state.histories,profileId)??{revision:0,entries:[]});}
 export function historyReceipt(state:DatabaseState,id:string):HistoryReceipt|null {key(id);const r=own(state.historyReceipts,id);return r?parseHistoryReceipt(r):null;}

@@ -13,7 +13,7 @@ export function selectSaveSlot(rows:readonly SlotSummary[],profileId:string,poli
  const kind=input.kind??'manual',relevant=rows.filter(r=>r.metadata.profileId===profileId);let slot=input.slot;
  if(kind==='quick'){const fixed=profileSlot(profileId,'quick');ensure(!slot||slot===fixed,'SAVE_SLOT_POLICY','Quick slot is fixed per profile');slot=fixed;}
  if(kind==='auto'){
-  ensure(!slot,'SAVE_SLOT_POLICY','Automatic slot is selected by policy');const candidates=Array.from({length:policy.autoSlots},(_,i)=>profileSlot(profileId,`auto:${i+1}`));slot=candidates.find(s=>!rows.some(r=>r.slot===s))??candidates.map(s=>rows.find(r=>r.slot===s)).filter((r):r is SlotSummary=>!!r).sort((a,b)=>(a.metadata.capture?.createdAt??0)-(b.metadata.capture?.createdAt??0)||a.slot.localeCompare(b.slot))[0]?.slot;
+  const candidates=Array.from({length:policy.autoSlots},(_,i)=>profileSlot(profileId,`auto:${i+1}`));ensure(!slot||candidates.includes(slot),'SAVE_SLOT_POLICY','Automatic slot must belong to this profile and policy');slot??=candidates.find(s=>!rows.some(r=>r.slot===s))??candidates.map(s=>rows.find(r=>r.slot===s)).filter((r):r is SlotSummary=>!!r).sort((a,b)=>(a.metadata.capture?.createdAt??0)-(b.metadata.capture?.createdAt??0)||a.slot.localeCompare(b.slot))[0]?.slot;
  }
  if(kind==='manual'){
   ensure(!slot||slot!==profileSlot(profileId,'quick')&&!slot.startsWith(profileSlot(profileId,'auto:')),'SAVE_SLOT_POLICY','Quick and auto slot names are reserved');

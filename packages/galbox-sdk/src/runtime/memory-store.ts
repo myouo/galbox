@@ -1,7 +1,7 @@
 import { parseProfile, parseSnapshot, emptyProfile, ensure, parseSaveCommit,parseHistoryCommit } from '../protocol/index.js';
 import type { Snapshot, SlotMetadata, StoreImport, StoreBackupRestore, PlayerPreferences,SaveCommit,HistoryCommit } from '../protocol/index.js';
 import type { Store, ProgressBatch, Durable, SlotRecord, HostPort, Scheduler, ActivationOptions } from '../runtime/ports.js';
-import { databaseState, parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,deleteSlot,readHistory,commitHistory,historyReceipt } from '../runtime/durable.js';
+import { databaseState, parseDatabase, commitProgress, saveSlot, commitActivation, confirmActivation, commitImport, selectProfile, claimActivation, commitPreferences,commitSave,saveReceipt,renameSlot,protectSlot,deleteSlot,readHistory,commitHistory,historyReceipt } from '../runtime/durable.js';
 import {captureBackup,commitBackupRestore,storageNamespace} from '../runtime/backup.js';
 export class MemoryStore implements Store {
   private state=databaseState();
@@ -15,6 +15,7 @@ export class MemoryStore implements Store {
   async commitSave(input:SaveCommit){const data=parseSaveCommit(input),s=parseDatabase(this.state),r=commitSave(s,data);ensure(JSON.stringify(s).length<=4_000_000,'STORAGE_SIZE','Namespace exceeds 4M JSON character budget');this.commitState(s);return r;}
   async saveReceipt(id:string){return saveReceipt(parseDatabase(this.state),id);}
   async renameSlot(slot:string,revision:number,label:string){const s=parseDatabase(this.state),r=renameSlot(s,slot,revision,label);this.commitState(s);return r;}
+  async protectSlot(slot:string,revision:number,protectedState:boolean){const s=parseDatabase(this.state),r=protectSlot(s,slot,revision,protectedState);this.commitState(s);return r;}
   async deleteSlot(slot:string,revision:number){const s=parseDatabase(this.state);deleteSlot(s,slot,revision);this.commitState(s);}
   async readPreferences(){return parseDatabase(this.state).preferences;}
   async writePreferences(value:PlayerPreferences,revision:number){const s=parseDatabase(this.state),r=commitPreferences(s,value,revision);this.commitState(s);return r;}

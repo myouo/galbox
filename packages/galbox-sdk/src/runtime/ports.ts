@@ -14,6 +14,7 @@ export interface Store {
   commitSave?(commit:SaveCommit):Promise<SaveReceipt>;
   saveReceipt?(id:string):Promise<SaveReceipt|null>;
   renameSlot?(slot:string,expectedRevision:number,label:string):Promise<SlotRecord>;
+  protectSlot?(slot:string,expectedRevision:number,protectedState:boolean):Promise<SlotRecord>;
   deleteSlot?(slot:string,expectedRevision:number):Promise<void>;
   readPreferences?():Promise<PreferencesRecord|null>;
   writePreferences?(value:PlayerPreferences,expectedRevision:number):Promise<PreferencesRecord>;

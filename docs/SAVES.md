@@ -16,6 +16,13 @@ await player.quickSave();
 await player.quickLoad();
 ```
 
+`SlotMetadata.protected` 默认为 false。`await player.protectSave(slot, revision,
+true)` 保护槽位并增加 revision；解除时传 false 和当前 revision。存储事务中的
+保存与删除都会拒绝受保护的槽（`SLOT_PROTECTED`），加载与备份仍可用。保护不
+替换当前/上一快照、缩略图、profile 或 activation。旧自定义 Store 缺保护端口
+时明确 unsupported。手动策略支持 1–64 槽，总存储容量预算保持不变。自动保存
+可显式指定当前 profile 的 `auto:1` 等配置内槽；省略时仍按环策略选择。
+
 `saveGame` 默认手动、图文必须成功；PNG 为 320×180、最多256 KiB，语义由同源 Schema 和真实 parser/工厂验证。`saveGame({image:'none'})` 明确选择没有图片的捕获。旧 `save(slot?, expectedRevision?)` 无图接口和旧槽仍可用，不自动把旧档升级成有图。自定义 Store 缺少 `commitSave/saveReceipt/listSlots` 时新系统明确 unsupported，旧接口不受此约束。
 
 Player 与激活共用串行屏障，等合法边界后 freeze，同步捕获 Core Snapshot、正文 DOM 的计算样式/滚动/字体和重绘舞台的像素，再异步栅格化；完成后 thaw。Core 的权限、资源屏障、媒体/插件恢复限制继续生效。图片不含菜单/诊断，不靠后来截图给旧快照补图。存储延迟期间可继续剧情，合法旧捕获不回写旧 profile，也不因后来禁存而变非法。捕获失败/中途 dispose/abort 不提交；提交已完成后 dispose 不撤回成功。

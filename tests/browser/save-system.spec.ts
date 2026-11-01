@@ -1,6 +1,15 @@
 import {writeFile} from 'node:fs/promises';
 import {test,expect} from '@playwright/test';
 import type * as Harness from './harness/sdk.js';
+test('save protection survives IndexedDB reopen and rejects stale or protected writers atomically',async({page})=>{
+ await page.goto('/');const result=await page.evaluate(async()=>{
+  const url='http://127.0.0.1:4174/sdk.js',sdk:typeof Harness=await import(url),program=sdk.parseProgram(await(await fetch('/program.json')).json()),namespace=sdk.storageNamespace(program.gameId,'protected'),database='protected-browser',mount=document.createElement('div');mount.style.cssText='position:relative;width:800px;height:600px';document.body.append(mount);
+  const store=await sdk.openStore(namespace,database),p=await sdk.createPlayer({program,mount,store,provider:sdk.createHttpProvider(program,location.href),saveCompatibilitySeries:'protected',saves:{manualSlots:40,autoSlots:4,auto:'off'}});
+  try{await p.start();const saved=await p.saveGame({slot:'manual:40',image:'none'}),cut=sdk.parseSnapshot(p.capture()),before=await store.read();await p.protectSave(saved.slot,1,true);const locked=p.getSnapshot().slots.find(s=>s.slot===saved.slot);const other=await sdk.openStore(namespace,database),errors:string[]=[];
+   try{for(const f of [()=>other.save(saved.slot,cut,1),()=>other.save(saved.slot,cut,2),()=>other.deleteSlot!(saved.slot,2),()=>other.protectSlot!(saved.slot,1,false)])try{await f();errors.push('accepted');}catch(e){errors.push(String(e));}const durable=await other.readSlot(saved.slot),same=JSON.stringify(before)===JSON.stringify(await other.read());await p.load(saved.slot);await p.protectSave(saved.slot,2,false);await p.deleteSave(saved.slot,3);return {locked,errors,durable:durable?.metadata?.protected,same,deleted:!(await other.readSlot(saved.slot))};}finally{other.close();}
+  }finally{p.dispose();store.close();mount.remove();}
+ });expect(result.locked).toMatchObject({protected:true,revision:2});expect(result.errors[0]).toContain('SLOT_CONFLICT');expect(result.errors[1]).toContain('SLOT_PROTECTED');expect(result.errors[2]).toContain('SLOT_PROTECTED');expect(result.errors[3]).toContain('SLOT_CONFLICT');expect(result.durable).toBe(true);expect(result.same).toBe(true);expect(result.deleted).toBe(true);
+});
 test('graphical saves capture the same DOM/stage cut and commit after later pages in real IndexedDB',async({page})=>{
  await page.goto('/');const result=await page.evaluate(async()=>{
   const url='http://127.0.0.1:4174/sdk.js',sdk:typeof Harness=await import(url),program=sdk.parseProgram(await(await fetch('/program.json')).json());const main=program.functions[0];if(!main)throw new Error('main');const second=main.code.filter(i=>i.op==='text.page')[1],index=main.code.findIndex(i=>i===second);main.code.splice(index,0,sdk.instruction('save.policy',{at:'capture:later-forbid',allow:false}));

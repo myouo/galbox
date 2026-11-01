@@ -4736,6 +4736,9 @@ definitions:
       capture:
         $ref: "#/definitions/SaveCapture"
         x-proto-tag: 7
+      protected:
+        type: boolean
+        x-proto-tag: 8
     required:
       - profileId
       - label
@@ -11622,7 +11625,7 @@ definitions:
       manualSlots:
         type: integer
         minimum: 1
-        maximum: 24
+        maximum: 64
         x-proto-tag: 1
       autoSlots:
         type: integer

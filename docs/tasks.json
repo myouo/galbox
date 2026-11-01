@@ -20,7 +20,7 @@
   ],
   "current_task": "W1-03B3",
   "engine_status": "web_delivery_scaling",
-  "last_updated": "2026-10-31",
+  "last_updated": "2026-11-01",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -3791,6 +3791,37 @@
       ],
       "blocker": null,
       "next_action": "真实作品的调查循环与旧来源升级在独立实例继续验证；不引入作品脚本或素材。"
+    },
+    {
+      "id": "G4-03",
+      "milestone": "G4",
+      "title": "Revision-checked save protection and inherited replay history",
+      "depends_on": [
+        "G4-01",
+        "G6-01"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "optional protected metadata and durable Store/Player APIs",
+        "bounded 64-slot manual policy and explicit auto slot selection",
+        "inherited isolated replay history"
+      ],
+      "contracts": [
+        "C01",
+        "C03"
+      ],
+      "acceptance": [
+        "durable lock and revision conflict enforcement",
+        "load and backup preserve protected saves",
+        "replay retains configured history without main-session writes"
+      ],
+      "evidence": [
+        "docs/evidence/g4-03/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer instance packages the committed SDK and validates original source UI."
     }
   ]
 }
