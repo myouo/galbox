@@ -485,6 +485,13 @@ export class Player {
 }
 export async function createPlayer(options:PlayerOptions):Promise<Player> {return Player.create(options);}
 
+/** Open the production browser Store. The caller owns and closes this connection. */
+export async function openIndexedDBStore(namespace:string,database='galbox-sdk'):Promise<Store> {
+  ensure(typeof namespace==='string'&&/^[^\u0000-\u001f\u007f]{1,512}$/u.test(namespace),'STORAGE_NAMESPACE','Expected a bounded nonempty namespace');
+  ensure(typeof database==='string'&&/^[^\u0000-\u001f\u007f]{1,128}$/u.test(database),'STORAGE_DATABASE','Expected a bounded nonempty database name');
+  return openStore(namespace,database);
+}
+
 export type {GraphicsOptions} from '../protocol/index.js';
 
 export type {MediaStreamProvider,MediaStreamLease,MediaStreamRequest,Cancellation} from '../runtime/stream-ports.js';

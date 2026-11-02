@@ -4002,7 +4002,7 @@
       ],
       "status": "done",
       "implementation": "complete",
-      "verification": "complete",
+      "verification": "passed",
       "outputs": [
         "ADR0104",
         "ADR0106 private verified byte receipts",
@@ -4037,7 +4037,7 @@
       ],
       "status": "done",
       "implementation": "complete",
-      "verification": "complete",
+      "verification": "passed",
       "outputs": [
         "ADR0105"
       ],
@@ -4069,7 +4069,7 @@
       ],
       "status": "done",
       "implementation": "complete",
-      "verification": "complete",
+      "verification": "passed",
       "outputs": [
         "ADR0107"
       ],
@@ -4090,6 +4090,37 @@
       ],
       "blocker": null,
       "next_action": "Accepted; retain cold-load limitations and continue W1-03C hot-root sharding/receipt retention separately."
+    },
+    {
+      "id": "W1-11",
+      "milestone": "W1",
+      "title": "Public production IndexedDB Store factory",
+      "depends_on": [
+        "W1-03C2"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0110",
+        "openIndexedDBStore"
+      ],
+      "contracts": [
+        "C05",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "bounded-public-browser-factory",
+        "caller-and-borrowed-player-ownership",
+        "durable-reopen-and-namespace-isolation",
+        "installed-tarball-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/public-browser-store/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Accepted; larger portable export and hot-root retention remain W1-03C."
     }
   ]
 }
