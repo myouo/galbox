@@ -4000,12 +4000,14 @@
       "depends_on": [
         "W1-08"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "pending",
+      "verification": "complete",
       "outputs": [
         "ADR0104",
-        "ADR0106 private verified byte receipts"
+        "ADR0106 private verified byte receipts",
+        "ADR0108 immutable restore proofs",
+        "ADR0109 retained takeover background"
       ],
       "contracts": [
         "C01",
@@ -4024,7 +4026,7 @@
         "docs/evidence/instant-load/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Validate real-browser receipt ownership and indexed immutable text checks, then finish packed latency target."
+      "next_action": "Accepted; retain cold-load limitations and continue W1-03C hot-root sharding/receipt retention separately."
     },
     {
       "id": "W1-10",
@@ -4033,9 +4035,9 @@
       "depends_on": [
         "W1-08"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "pending",
+      "verification": "complete",
       "outputs": [
         "ADR0105"
       ],
@@ -4056,7 +4058,7 @@
         "docs/evidence/instant-load/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Run packed real workload, then finish browser/consumer and latency targets before publication."
+      "next_action": "Accepted; retain cold-load limitations and continue W1-03C hot-root sharding/receipt retention separately."
     },
     {
       "id": "W1-03C2",
@@ -4065,9 +4067,9 @@
       "depends_on": [
         "W1-03C1"
       ],
-      "status": "in_progress",
+      "status": "done",
       "implementation": "complete",
-      "verification": "pending",
+      "verification": "complete",
       "outputs": [
         "ADR0107"
       ],
@@ -4087,7 +4089,7 @@
         "docs/evidence/instant-load/REPORT.md"
       ],
       "blocker": null,
-      "next_action": "Verify real/browser/package loads with scoped readonly queries; retain mutation CAS and complete validation."
+      "next_action": "Accepted; retain cold-load limitations and continue W1-03C hot-root sharding/receipt retention separately."
     }
   ]
 }
