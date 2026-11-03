@@ -4181,6 +4181,36 @@
       ],
       "blocker": null,
       "next_action": "Accepted; retain visible-scene resource budgets and native rendering scope separately."
+    },
+    {
+      "id": "W1-14",
+      "milestone": "W1",
+      "title": "Flush captured save progress before later resource rounds",
+      "depends_on": [
+        "W1-13"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0113"
+      ],
+      "contracts": [
+        "C03",
+        "C05",
+        "C07"
+      ],
+      "acceptance": [
+        "captured-progress-before-thaw",
+        "delayed-real-thumbnail-overlaps-resource-round",
+        "same-cut-pixels-and-exactly-once-autosave",
+        "failure-preservation-and-installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/save-progress-barrier/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Accepted; measure actual save/load workload latency separately."
     }
   ]
 }
