@@ -1,0 +1,11 @@
+import {it,expect} from 'vitest';
+import {readFile} from 'node:fs/promises';
+import {parse} from 'yaml';
+import {capabilities,parseProgram} from 'galbox-sdk/protocol';
+import {ProgramBuilder,instruction,compileProgramModuleParts,createModuleProgram,linkProgram} from 'galbox-sdk/port-kit';
+import {encodeWire,decodeWire} from 'galbox-sdk/wire';
+import {createCore} from 'galbox-sdk/core';
+it('the full supported capability set composes in Program and module metadata without changing execution budgets',async()=>{
+ const schema:unknown=parse(await readFile('packages/galbox-sdk/schema/protocol.yaml','utf8'));if(!schema||typeof schema!=='object'||!('definitions'in schema)||!schema.definitions||typeof schema.definitions!=='object')throw new Error('schema');for(const id of ['Program','ModuleHeader']){const d:unknown=Reflect.get(schema.definitions,id);if(!d||typeof d!=='object'||!('properties'in d)||!d.properties||typeof d.properties!=='object')throw new Error('properties');const c:unknown=Reflect.get(d.properties,'capabilities');expect(c).toMatchObject({maxItems:capabilities.length});}
+ const b=new ProgramBuilder({gameId:'all-capabilities',release:'v1',entry:'main'},{foundationMarkers:false});for(const c of capabilities.filter(c=>!['ui.controls','ui.artwork','extras','flowchart','text.windows','rng.lcg32','text.styles'].includes(c)))b.capability(c);b.function({id:'main',entry:'end',layout:1,params:[],locals:[],returns:'void',code:[instruction('control.end',{at:'end'})]});const program=b.build();expect(program.capabilities.length).toBeGreaterThan(32);const full=parseProgram({...program,capabilities:[...capabilities]});expect(decodeWire('Program',encodeWire('Program',full)).capabilities).toEqual([...capabilities]);const built=await compileProgramModuleParts({parts:b.parts(),resources:[],series:'1'}),source=createModuleProgram(built.manifest);source.installAll(built.files.map(f=>f.body));const core=createCore(source);core.run(1);expect(core.capture().status).toBe('ended');expect(()=>parseProgram({...program,capabilities:[...capabilities,'adv']})).toThrow('SCHEMA_PROGRAM');expect(()=>linkProgram({...program,capabilities:['unsupported.capability']})).toThrow('UNSUPPORTED_CAPABILITY');
+});

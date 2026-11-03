@@ -1,5 +1,10 @@
 # galbox-sdk 当前接续
 
+2026-11-03：W1-12完成（ADR0111）。Program/ModuleHeader能力名列表上限对齐
+当前43项支持集，解决既有功能组合超过旧32声明上限；没有增加执行/资源/
+存储预算。生成/check/450单元/7模块与限时浏览器/独立实包消费通过，未知能力
+和超出43项仍拒绝。见 evidence/capability-composition/REPORT.md。
+
 2026-11-02：W1-11完成（ADR0110），player公开openIndexedDBStore；复用原正式
 适配器，调用方持有连接，Player借用时不越权关闭。check/449单元/5真实浏览器/
 隔离实包消费通过，覆盖重开、隔离、非法名称、关闭访问和借用释放。存储、

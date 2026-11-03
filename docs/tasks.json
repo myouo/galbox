@@ -4121,6 +4121,36 @@
       ],
       "blocker": null,
       "next_action": "Accepted; larger portable export and hot-root retention remain W1-03C."
+    },
+    {
+      "id": "W1-12",
+      "milestone": "W1",
+      "title": "Compose supported capability metadata beyond 32 declarations",
+      "depends_on": [
+        "W1-11"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0111"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C07"
+      ],
+      "acceptance": [
+        "wire-registry-cardinality-bound",
+        "unknown-capabilities-reject",
+        "valid-composed-modular-core",
+        "installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/capability-composition/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Accepted; retain all execution/resource/storage limits and reject unknown capabilities."
     }
   ]
 }
