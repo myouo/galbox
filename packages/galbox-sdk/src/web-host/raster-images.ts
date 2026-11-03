@@ -1,3 +1,4 @@
+import {visibleStageIds} from '../protocol/loading.js';
 import {imageFilterRows} from '../protocol/image-filter.js';
 import {Texture} from 'pixi.js';
 import {ensure,canonicalWireJSON} from '../protocol/index.js';
@@ -13,7 +14,7 @@ type FilterEffect=ImageFilter&{kind:'filter'};
 interface Work {id:string;key:string;asset:string;effect:DeepReadonly<RasterEffect|FilterEffect>;step:number;}
 function taskWork(t:DeepReadonly<Task>):Work {const m=t.rasterTask;ensure(m,'RASTER_STATE','Raster state missing');return {id:t.id,key:JSON.stringify([t.id,m.startedAt,m.asset,m.signature]),asset:m.asset,effect:m.effect,step:rasterStep(t)};}
 function filterWork(m:DeepReadonly<ImageFilterState>):Work {const effect:FilterEffect={kind:'filter',...m.effect},id='filter:'+canonicalWireJSON([m.asset,effect]);return {id,key:id,asset:m.asset,effect,step:0};}
-function wanted(s:DeepReadonly<Snapshot>):Map<string,Work> {const out=new Map<string,Work>();for(const o of s.stage){if(o.rasterRef){const t=s.tasks.find(t=>t.id===o.rasterRef);ensure(t?.kind==='raster'&&t.rasterTask,'RASTER_REFERENCE','Raster task missing');out.set(t.id,taskWork(t));}if(o.imageFilter){const work=filterWork(o.imageFilter);out.set(work.id,work);}}return out;}
+function wanted(s:DeepReadonly<Snapshot>):Map<string,Work> {const visible=visibleStageIds(s),out=new Map<string,Work>();for(const o of s.stage){if(!visible.has(o.id))continue;if(o.rasterRef){const t=s.tasks.find(t=>t.id===o.rasterRef);ensure(t?.kind==='raster'&&t.rasterTask,'RASTER_REFERENCE','Raster task missing');out.set(t.id,taskWork(t));}if(o.imageFilter){const work=filterWork(o.imageFilter);out.set(work.id,work);}}return out;}
 function cost(c:Work['effect']):number {return c.width*c.height*(8+(c.kind==='accumulate'&&(c.brightness!==1||c.grayscale!==0)?8:0));}
 function surface(width:number,height:number){const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const context=canvas.getContext('2d');ensure(context,'GRAPHICS_UNAVAILABLE','Procedural surface unavailable');context.imageSmoothingEnabled=false;return {canvas,context};}
 

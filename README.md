@@ -120,3 +120,5 @@ W1-03A将IndexedDB的槽位/历史大载荷与热记录分离，普通设置/进
 基础剧情代码可按实际函数调用加载，见[PROGRAM_MODULES](docs/PROGRAM_MODULES.md)；强类型、进程内/网络/存储数据方式及i18n缺口见[核验报告](docs/TYPE_AND_DATA_AUDIT.md)。模块示例`?demo=modules`，高级模块与i18n仍有后续任务。
 
 工程边界见[ENGINEERING](docs/ENGINEERING.md)，正式传输与独立项目导入见[WIRE](docs/WIRE.md)。游戏/验证应用位于tests，原始输出位于ignored artifacts；SDK发布包不会复制这些内容。
+
+隐藏图层保留完整快照状态，按需模式在实际显示前通过既有资源屏障准备纹理；父级显隐同时生效，alpha淡入保持预备。预算与失败原子性不变，见[工作集记录](docs/evidence/hidden-working-set/REPORT.md)。

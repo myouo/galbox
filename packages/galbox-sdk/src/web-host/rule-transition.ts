@@ -1,3 +1,4 @@
+import {visibleStageIds} from '../protocol/loading.js';
 import {Texture} from 'pixi.js';
 import {ensure} from '../protocol/index.js';
 import type {Snapshot,DeepReadonly,RuleTransition} from '../protocol/index.js';
@@ -10,11 +11,11 @@ export class RuleTransitions {
  constructor(private readonly images:ReadonlyMap<string,HTMLImageElement>,private readonly limit=defaultRuleBytes,private readonly ruleAsset:(id:string)=>string=id=>id){}
  private image(id:string):HTMLImageElement {const image=this.images.get(id);ensure(image&&image.naturalWidth>0&&image.naturalHeight>0,'STAGE_RULE_IMAGE',id);return image;}
  private inputs(to:string,state:DeepReadonly<RuleTransition>):[HTMLImageElement,HTMLImageElement,HTMLImageElement] {const result:[HTMLImageElement,HTMLImageElement,HTMLImageElement]=[this.image(state.from),this.image(to),this.image(this.ruleAsset(state.rule))],first=result[0];ensure(result.every(i=>i.naturalWidth===first.naturalWidth&&i.naturalHeight===first.naturalHeight),'STAGE_RULE_SIZE','Source, target and rule dimensions must match');return result;}
- validate(snapshot:DeepReadonly<Snapshot>):number {let bytes=0;for(const object of snapshot.stage){const state=object.ruleTransition;if(!state)continue;const images=this.inputs(object.asset,state),rule=images[2],pixels=rule.naturalWidth*rule.naturalHeight;bytes+=pixels*21+512;ensure(Number.isSafeInteger(bytes)&&bytes<=this.limit,'RULE_COMPOSITION_BUDGET',`Rule surfaces require ${bytes} bytes, limit ${this.limit}`);
+ validate(snapshot:DeepReadonly<Snapshot>):number {const visible=visibleStageIds(snapshot);let bytes=0;for(const object of snapshot.stage){if(!visible.has(object.id))continue;const state=object.ruleTransition;if(!state)continue;const images=this.inputs(object.asset,state),rule=images[2],pixels=rule.naturalWidth*rule.naturalHeight;bytes+=pixels*21+512;ensure(Number.isSafeInteger(bytes)&&bytes<=this.limit,'RULE_COMPOSITION_BUDGET',`Rule surfaces require ${bytes} bytes, limit ${this.limit}`);
    if(!this.checked.has(rule)){ensure(this.diagnostics.bytesEstimated+pixels*8<=this.limit,'RULE_COMPOSITION_BUDGET','Rule validation workspace exceeds budget');const canvas=document.createElement('canvas');canvas.width=rule.naturalWidth;canvas.height=rule.naturalHeight;try{const context=canvas.getContext('2d',{willReadFrequently:true});ensure(context,'GRAPHICS_UNAVAILABLE','Rule readback context unavailable');context.drawImage(rule,0,0);const d=context.getImageData(0,0,canvas.width,canvas.height).data;for(let i=0;i<d.length;i+=4)ensure(d[i]===d[i+1]&&d[i]===d[i+2]&&d[i+3]===255,'STAGE_RULE_FORMAT','Rule must be opaque grayscale');this.checked.add(rule);}finally{canvas.width=canvas.height=0;}}
   }return bytes;
  }
- prune(snapshot:DeepReadonly<Snapshot>):void {for(const [id,entry]of this.entries){const object=snapshot.stage.find(o=>o.id===id);if(!object?.ruleTransition||this.inputs(object.asset,object.ruleTransition).some((image,i)=>image!==entry.inputs[i]))this.release(id,entry);}}
+ prune(snapshot:DeepReadonly<Snapshot>):void {const visible=visibleStageIds(snapshot);for(const [id,entry]of this.entries){const object=snapshot.stage.find(o=>o.id===id);if(!visible.has(id)||!object?.ruleTransition||this.inputs(object.asset,object.ruleTransition).some((image,i)=>image!==entry.inputs[i]))this.release(id,entry);}}
  private release(id:string,entry:Entry):void {entry.texture.destroy(true);entry.canvas.width=entry.canvas.height=0;this.entries.delete(id);this.diagnostics.bytesEstimated-=entry.bytes;this.diagnostics.surfaces--;}
  texture(id:string,to:string,state:DeepReadonly<RuleTransition>):Texture {
   const images=this.inputs(to,state);let entry=this.entries.get(id);if(entry&&entry.inputs.some((image,i)=>image!==images[i])){this.release(id,entry);entry=undefined;}

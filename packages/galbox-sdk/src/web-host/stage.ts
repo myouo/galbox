@@ -1,3 +1,4 @@
+import {visibleStageIds} from '../protocol/loading.js';
 import {rasterStep} from '../protocol/raster.js';
 import {RasterImages} from './raster-images.js';
 import {StageComposition} from './composition.js';
@@ -46,11 +47,11 @@ export class ImageStage {
  // foreground for readback, while retaining the already owned 2D background.
  captureFrame(snapshot:DeepReadonly<Snapshot>):void {if(this.app.renderer instanceof WebGLRenderer)this.key=null;this.render(snapshot);}
  render(snapshot:DeepReadonly<Snapshot>):void {
-  if(this.disposed)return;const phases=(objects:typeof snapshot.stage)=>{const refs=new Set(objects.flatMap(o=>o.rasterRef?[o.rasterRef]:[]));return snapshot.tasks.filter(t=>refs.has(t.id)).map(t=>[t.id,rasterStep(t),t.status]);};const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene,raster:phases(snapshot.stage)});if(key===this.key)return;this.rules.prune(snapshot);this.frames.begin();
+  if(this.disposed)return;const visible=visibleStageIds(snapshot);const phases=(objects:typeof snapshot.stage)=>{const refs=new Set(objects.flatMap(o=>o.rasterRef?[o.rasterRef]:[]));return snapshot.tasks.filter(t=>refs.has(t.id)).map(t=>[t.id,rasterStep(t),t.status]);};const key=JSON.stringify({stage:snapshot.stage,scene:snapshot.scene,raster:phases(snapshot.stage)});if(key===this.key)return;this.rules.prune(snapshot);this.frames.begin();
   const hierarchyKey=JSON.stringify([snapshot.stage.map(o=>[o.id,o.parent??null,o.z]),snapshot.scene?.mix?.sourceRoots,snapshot.scene?.mix?.targetRoots]),hierarchyChanged=hierarchyKey!==this.hierarchyKey;
   if(hierarchyChanged)for(const display of this.displays.values())display.root.removeFromParent();
   for(const [id,d]of this.displays)if(!snapshot.stage.some(o=>o.id===id)){d.filters.dispose();d.compositor?.destroy(false);d.root.destroy({children:true});this.displays.delete(id);}
-  for(const o of snapshot.stage){let d=this.displays.get(o.id);if(!d){const root=new Container();root.label=`galbox:${o.id}`;root.sortableChildren=true;const image=new Container();root.addChild(image);d={root,image,compositor:null,sprites:[],mask:null,clipKey:'',filters:new Filters()};this.displays.set(o.id,d);}const pose=objectPose(o),layers=o.layers??[{asset:o.asset,weight:1}];
+  for(const o of snapshot.stage){let d=this.displays.get(o.id);if(!d){const root=new Container();root.label=`galbox:${o.id}`;root.sortableChildren=true;const image=new Container();root.addChild(image);d={root,image,compositor:null,sprites:[],mask:null,clipKey:'',filters:new Filters()};this.displays.set(o.id,d);}const pose=objectPose(o),layers=visible.has(o.id)?o.layers??[{asset:o.asset,weight:1}]:[];
    while(d.sprites.length>layers.length)d.sprites.pop()?.destroy();
    layers.forEach((layer,index)=>{const raster=o.rasterRef?snapshot.tasks.find(t=>t.id===o.rasterRef):undefined;const base=o.imageFilter?this.rasters.filteredTexture(o.imageFilter):raster?this.rasters.texture(raster):o.ruleTransition?this.rules.texture(o.id,o.asset,o.ruleTransition):this.textures.get(layer.asset);ensure(base,'TEXTURE_MISSING',layer.asset);const texture=this.frames.get(base,o.frame);let sprite=d.sprites[index];if(!sprite){sprite=new Sprite(texture);d.sprites.push(sprite);d.image.addChild(sprite);}sprite.texture=texture;sprite.alpha=layer.weight;sprite.anchor.set(pose.anchorX,pose.anchorY);sprite.blendMode=layers.length>1?'add':o.blend??'normal';});
    if(layers.length>1){d.compositor??=new AlphaFilter({alpha:1});d.compositor.blendMode=o.blend??'normal';d.image.filters=[d.compositor];}else d.image.filters=[];

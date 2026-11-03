@@ -4151,6 +4151,36 @@
       ],
       "blocker": null,
       "next_action": "Accepted; retain all execution/resource/storage limits and reject unknown capabilities."
+    },
+    {
+      "id": "W1-13",
+      "milestone": "W1",
+      "title": "Defer effectively hidden stage texture working sets",
+      "depends_on": [
+        "W1-12"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0112"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C07"
+      ],
+      "acceptance": [
+        "complete-hidden-snapshot-and-hierarchy",
+        "restore-reveal-eviction-under-unchanged-budget",
+        "visible-budget-failure-preserves-authority",
+        "both-renderers-and-installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/hidden-working-set/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Accepted; retain visible-scene resource budgets and native rendering scope separately."
     }
   ]
 }
