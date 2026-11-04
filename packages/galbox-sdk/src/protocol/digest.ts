@@ -13,3 +13,6 @@ export function byteDigest(bytes:Uint8Array):string {return Array.from(sha256(by
 
 // Internal program-derived closure. Do not use for mutable runtime messages.
 export function programClosureDigest(input:unknown):string {return byteDigest(utf8ToBytes(canonicalParsedJSON(detached(input,programWireBudget))));}
+
+/** Internal exact-serialization identity for durable receipt migration. */
+export function serializedJSONDigest(serialized:string):string {return byteDigest(utf8ToBytes(serialized));}

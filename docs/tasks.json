@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-03B3",
+  "current_task": "W1-19",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-01",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4305,6 +4305,62 @@
       ],
       "blocker": null,
       "next_action": "Consumer repeats the complete larger route that exposed the capacity limit."
+    },
+    {
+      "id": "W1-18",
+      "milestone": "W1",
+      "title": "Compact import and progress receipt identities without losing idempotency",
+      "depends_on": [
+        "W1-17"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0117",
+        "runtime/receipt-signature.ts"
+      ],
+      "contracts": [
+        "C06",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "full-length-33000-unit-import-and-unchanged-hot-bound",
+        "legacy-import-progress-and-activation-retries",
+        "real-indexeddb-illustrated-save-reopen",
+        "installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/compact-receipts/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the new tarball and repeats its real full-progress import/save."
+    },
+    {
+      "id": "W1-19",
+      "milestone": "W1",
+      "title": "Bound long-session receipt cardinality with indexed cold ledgers",
+      "depends_on": [
+        "W1-18"
+      ],
+      "status": "todo",
+      "implementation": "not_started",
+      "verification": "pending",
+      "outputs": [],
+      "contracts": [
+        "C06",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "durable-full-work-progress-and-history-receipt-volume",
+        "all-old-idempotent-retries-and-atomic-upgrade",
+        "unchanged-hot-working-and-cold-budgets"
+      ],
+      "evidence": [],
+      "blocker": null,
+      "next_action": "Measure cumulative real receipt metadata, then move authoritative receipt ledgers into bounded indexed cold records if required."
     }
   ]
 }
