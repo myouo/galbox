@@ -62,3 +62,9 @@ UI/流程图运行签名绑定完整不可变manifest，加载下一模块不会
 资源仍独立使用eager/demand/balanced/chapter策略；代码当前仅实际调用触发，无自动代码预取。模块内所有函数一并下载，单个大函数内部的未选分支也在同一函数体里，作者分组决定粒度。已使用代码暂不淘汰，原输入/内存上限保持，不能据此声称任意规模大作完成。
 
 原创“分途的回声”验证root→sea→logic，未选interior不请求；原《灯塔来信》也经同一compiler分成真实函数模块，验证图片/WAV/并行任务保存恢复。试玩`?demo=modules&renderer=canvas`。实际验收以tasks和evidence/w1-03b为准；强类型/传输/i18n事实见TYPE_AND_DATA_AUDIT。
+
+## Version 3 composition catalog
+
+`compileProgramModuleParts({compositionVersion:3,parts,series,resources})` explicitly opts into 1024 function declarations, 256 code modules and 8 auxiliary catalogs of at most512 assets. Default output remains version2 and its original bounds. `builder.parts({compositionVersion:3})` and `expandModuleLeaves(parts,{compositionVersion:3})` allow the larger producer module catalog; a downloaded module still has at most128 functions/4MiB and the existing function footprint limits. A saved live closure and one installation batch remain at most64 modules.
+
+This extends catalog metadata while retaining demand loading and source-bound restore. The version is part of the composition commitment. Old v1/v2 manifests and their commitments remain accepted unchanged; changing a manifest version alone does not migrate an existing save. See [ADR0114](decisions/0114-versioned-module-catalog-scale.md) and [evidence](evidence/module-catalog-v3/REPORT.md).

@@ -4211,6 +4211,38 @@
       ],
       "blocker": null,
       "next_action": "Accepted; measure actual save/load workload latency separately."
+    },
+    {
+      "id": "W1-15",
+      "milestone": "W1",
+      "title": "Versioned large module composition catalogs",
+      "depends_on": [
+        "W1-14"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0114",
+        "compositionVersion3"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C07"
+      ],
+      "acceptance": [
+        "old-version-capacity-and-commitments-preserved",
+        "bounded-v3-catalog-with-unchanged-live-budgets",
+        "late-demand-call-and-scoped-cold-restore",
+        "invalid-body-atomicity-and-packed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/module-catalog-v3/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Independent consumer integrates the next chapters through the explicit v3 profile; fidelity gaps remain separately scoped."
     }
   ]
 }

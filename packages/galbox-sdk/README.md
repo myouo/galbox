@@ -119,3 +119,5 @@ Saved-game migrations may opt into `sourceModuleScope: "snapshot"` and provide `
 Browser adapters may call `openIndexedDBStore(storageNamespace(gameId, series), database?)` from `galbox-sdk/player` (`storageNamespace` is exported by `galbox-sdk/backups`). The factory returns the production `Store`; the caller must close it. A Player receiving `store` borrows that connection. All existing schema, capacity, CAS and activation-authority checks remain in effect. This browser API does not change the portable backup limit or certify a native-save format.
 
 Program/ModuleHeader capability metadata supports up to the complete current 43-name registry. Unknown names still fail linking; this metadata bound does not increase instruction, resource, task or storage budgets. Catalog-dependent capabilities still require their corresponding data.
+
+Module composition v3 is opt-in through `compileProgramModuleParts({compositionVersion:3,...})`: bounded 1024-function/256-module catalogs with the existing per-body, live-closure, execution and resource limits. Default v2 output remains unchanged.

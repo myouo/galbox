@@ -14357,6 +14357,7 @@ definitions:
         enum:
           - 1
           - 2
+          - 3
         type: integer
         x-proto-tag: 2
       header:
@@ -14368,21 +14369,21 @@ definitions:
       modules:
         type: array
         minItems: 1
-        maxItems: 64
+        maxItems: 256
         items:
           $ref: "#/definitions/CodeModuleDescriptor"
         x-proto-tag: 5
       functionOrder:
         type: array
         minItems: 1
-        maxItems: 256
+        maxItems: 1024
         items:
           type: string
           pattern: ^[a-zA-Z][a-zA-Z0-9_.:@/-]{0,127}$
         x-proto-tag: 6
       assetCatalogs:
         type: array
-        maxItems: 4
+        maxItems: 8
         items:
           type: object
           properties:
@@ -14451,6 +14452,27 @@ definitions:
       - modules
       - functionOrder
     additionalProperties: false
+    allOf:
+      - if:
+          type: object
+          properties:
+            version:
+              type: integer
+              enum:
+                - 1
+                - 2
+        then:
+          type: object
+          properties:
+            modules:
+              type: array
+              maxItems: 64
+            functionOrder:
+              type: array
+              maxItems: 256
+            assetCatalogs:
+              type: array
+              maxItems: 4
   ProgramModuleBinding:
     type: object
     properties:
