@@ -4243,6 +4243,38 @@
       ],
       "blocker": null,
       "next_action": "Independent consumer integrates the next chapters through the explicit v3 profile; fidelity gaps remain separately scoped."
+    },
+    {
+      "id": "W1-16",
+      "milestone": "W1",
+      "title": "Separate v3 catalog envelope and component commitments",
+      "depends_on": [
+        "W1-15"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0115",
+        "tree-v1 commitments"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C07"
+      ],
+      "acceptance": [
+        "bounded-catalog-envelope-with-unchanged-live-budgets",
+        "component-and-release-identity-commitments",
+        "legacy-v3-v2-v1-wire-compatibility",
+        "large-realistic-shape-and-installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/module-catalog-v3/ENVELOPE.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer continues whole-work composition and source-led narrative conversion."
     }
   ]
 }

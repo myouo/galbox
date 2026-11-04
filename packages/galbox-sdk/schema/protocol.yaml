@@ -14444,6 +14444,10 @@ definitions:
             - catalog
           additionalProperties: false
         x-proto-tag: 9
+      commitment:
+        type: string
+        const: tree-v1
+        x-proto-tag: 10
     required:
       - format
       - version
@@ -14464,6 +14468,9 @@ definitions:
         then:
           type: object
           properties:
+            commitment:
+              type: string
+              pattern: ^$
             modules:
               type: array
               maxItems: 64

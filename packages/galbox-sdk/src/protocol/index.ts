@@ -1,5 +1,5 @@
 import {detached} from './wire-input.js';
-import {wireBudget,programWireBudget} from './budget.js';
+import {wireBudget,programWireBudget,moduleCatalogWireBudget,ownedWireFootprint} from './budget.js';
 import {canonicalParsedJSON} from './canonical.js';
 import {isTextComplete} from './text.js';
 import {normalizeNativeValue} from './values.js';
@@ -234,7 +234,7 @@ export function parseCodeModuleDescriptor(input:unknown):CodeModuleDescriptor {c
 
 export function parseProgramModule(input:unknown):ProgramModule {const data=detached(input);ensure(validateProgramModule(data),'SCHEMA_MODULE',JSON.stringify(validateProgramModule.errors));return data;}
 
-export function parseModuleManifest(input:unknown):ModuleManifest {const data=detached(input);ensure(validateModuleManifest(data),'SCHEMA_MODULE',JSON.stringify(validateModuleManifest.errors));return data;}
+export function parseModuleManifest(input:unknown):ModuleManifest {const data=detached(input,moduleCatalogWireBudget);ensure(validateModuleManifest(data),'SCHEMA_MODULE',JSON.stringify(validateModuleManifest.errors));if(data.version!==3||data.commitment!=='tree-v1'){const n=ownedWireFootprint(data);ensure(n.nodes<=wireBudget.nodes&&n.depth<=wireBudget.depth&&n.characters<=wireBudget.characters,'INPUT_SIZE','Legacy catalog exceeds its wire budget');}return data;}
 
 export function parseProgramModuleBinding(input:unknown):ProgramModuleBinding {const data=detached(input);ensure(validateProgramModuleBinding(data),'SCHEMA_MODULE',JSON.stringify(validateProgramModuleBinding.errors));return data;}
 

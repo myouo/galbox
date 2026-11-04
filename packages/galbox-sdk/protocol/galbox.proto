@@ -13463,6 +13463,10 @@ message Gbx_ModuleManifest_extrasCompatibility {
   repeated Gbx_ModuleManifest_extrasCompatibility_Item items = 1;
 }
 
+message Gbx_ModuleManifest_commitment {
+  // Fixed semantic value: "tree-v1"
+}
+
 message Gbx_ModuleManifest {
   optional Gbx_ModuleManifest_format format = 1;
   optional Gbx_ModuleManifest_version version = 2;
@@ -13473,6 +13477,7 @@ message Gbx_ModuleManifest {
   optional Gbx_ModuleManifest_assetCatalogs assetCatalogs = 7;
   optional Gbx_ModuleManifest_points points = 8;
   optional Gbx_ModuleManifest_extrasCompatibility extrasCompatibility = 9;
+  optional Gbx_ModuleManifest_commitment commitment = 10;
 }
 
 message Gbx_ProgramModuleBinding_manifestSha256 {
