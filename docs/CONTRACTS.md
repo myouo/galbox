@@ -102,3 +102,7 @@ ADR0050补充C07/C10：balanced只沿同函数无条件jump做有界静态资源
 ADR0051补充C06/C11：已登记source release的自动load迁移须取得并验证旧Program/快照，私有冻结输入，目标Program完整验证输出；只允许当前持久profile的显式已读别名增量。原槽/previous不覆盖，沿既有freeze/dirty交接/准备/activation CAS提交；失败/取消保留当前会话和来源记录，未知版/模块/旧recipe明确拒绝。
 
 ADR0052补充C03/C04/C05：text.rich continuation保持同逻辑段落及已揭示前缀，显完后的continue不读入历史，finish才确认；appendFrom须同身份/说话者/ADV窗口且合法前缀。state.collect保留活动任务、未消费组和音源引用闭包，以及明确保留的最新结果；仅清理其余终态记录/超出保留窗口的历史，不缩减已读/解锁/counter，不产生保存切点。
+
+ADR0118：布局v4按(table,id)的固定哈希页索引保存完整回执。热根/已解码工作集仍4M，
+冷记录仍64MiB。请求只读取所需回执页，缺失或损坏必要页须拒绝；无关profile/slot读取
+不扫描账本。升级的页/目录/进度/槽位同事务，旧ID和其authority/内容幂等判定不丢失。

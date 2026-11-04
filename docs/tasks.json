@@ -4344,10 +4344,12 @@
       "depends_on": [
         "W1-18"
       ],
-      "status": "todo",
-      "implementation": "not_started",
-      "verification": "pending",
-      "outputs": [],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0118"
+      ],
       "contracts": [
         "C06",
         "C07",
@@ -4358,9 +4360,11 @@
         "all-old-idempotent-retries-and-atomic-upgrade",
         "unchanged-hot-working-and-cold-budgets"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/evidence/cold-receipt-ledgers/REPORT.md"
+      ],
       "blocker": null,
-      "next_action": "Measure cumulative real receipt metadata, then move authoritative receipt ledgers into bounded indexed cold records if required."
+      "next_action": "Consumer installs actual v4-capable tarball and repeats full-progress original UI save/reload."
     }
   ]
 }

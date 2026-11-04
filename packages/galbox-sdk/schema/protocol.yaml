@@ -13474,6 +13474,7 @@ definitions:
         enum:
           - 2
           - 3
+          - 4
         type: integer
         x-proto-tag: 2
       records:
@@ -13487,6 +13488,7 @@ definitions:
               enum:
                 - slot
                 - history
+                - receipt
               x-proto-tag: 1
             id:
               type: string
@@ -13518,6 +13520,27 @@ definitions:
       - version
       - records
     additionalProperties: false
+    allOf:
+      - if:
+          properties:
+            version:
+              enum:
+                - 2
+                - 3
+          required:
+            - version
+        then:
+          properties:
+            records:
+              type: array
+              items:
+                type: object
+                properties:
+                  kind:
+                    type: string
+                    enum:
+                      - slot
+                      - history
   RetiredActivation:
     type: object
     properties:

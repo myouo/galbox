@@ -15,7 +15,7 @@ export async function encodeColdRecord(value:unknown):Promise<{value:EncodedCold
  const text=recordJSON(value);ensure(text.length<=namespaceCharacterLimit,'STORAGE_RECORD_SIZE','Cold record exceeds decoded budget');ensure(typeof CompressionStream==='function','STORAGE_COMPRESSION_UNAVAILABLE','Gzip storage needs CompressionStream');
  const bytes=await new Response(new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer();ensure(bytes.byteLength>0&&bytes.byteLength<=namespaceCharacterLimit,'STORAGE_SIZE','Compressed record exceeds namespace budget');return {value:{format:'galbox-gzip',version:1,bytes},characters:text.length,storedBytes:bytes.byteLength};
 }
-export async function decodeColdRecord(input:unknown,row:Descriptor,version:2|3):Promise<unknown>{
+export async function decodeColdRecord(input:unknown,row:Descriptor,version:2|3|4):Promise<unknown>{
  if(version===2){ensure(JSON.stringify(input)?.length===row.characters,'STORAGE_RECORD_SIZE',row.id);return input;}
  ensure(input!==null&&typeof input==='object'&&'format'in input&&input.format==='galbox-gzip'&&'version'in input&&input.version===1&&'bytes'in input&&input.bytes instanceof ArrayBuffer&&Object.keys(input).length===3&&input.bytes.byteLength===row.storedBytes,'STORAGE_RECORD_SIZE','Invalid compressed cold record');ensure(typeof DecompressionStream==='function','STORAGE_COMPRESSION_UNAVAILABLE','Gzip storage needs DecompressionStream');
  const reader=new Blob([input.bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader(),chunks:Uint8Array[]=[];let length=0;
