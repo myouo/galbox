@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-20",
+  "current_task": "W1-21",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-01",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4396,6 +4396,38 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs the actual tarball and verifies its 1,254-function composed post-clear route."
+    },
+    {
+      "id": "W1-21",
+      "milestone": "W1",
+      "title": "Reclaim inactive Core module scopes during long sessions",
+      "depends_on": [
+        "W1-20"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0120"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C07"
+      ],
+      "acceptance": [
+        "traverse-more-than64-modules-with-small-live-scope",
+        "retain-all-live-history-tasks-ui-and-frame-origins",
+        "reenter-pruned-loaded-body-and-cold-restore",
+        "true65-module-refusal-before-core-mutation",
+        "real-player-and-installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/live-code-scope/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the actual tarball and resumes its recorded eighth chapter; revalidate cold saves and final achievements."
     }
   ]
 }

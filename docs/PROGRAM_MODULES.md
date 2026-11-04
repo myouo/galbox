@@ -70,3 +70,10 @@ UI/流程图运行签名绑定完整不可变manifest，加载下一模块不会
 This extends catalog metadata while retaining demand loading and source-bound restore. The version is part of the composition commitment. Old v1/v2 manifests and their commitments remain accepted unchanged; changing a manifest version alone does not migrate an existing save. See [ADR0114](decisions/0114-versioned-module-catalog-scale.md) and [evidence](evidence/module-catalog-v3/REPORT.md).
 
 V3 `tree-v1` catalogs use a separate bounded16M/512000-node envelope and component commitments, including the full release in identity. Snapshot/Profile/body limits are unchanged. Earlier unmarked v3 and v1/v2 keep their original4M envelopes and commitments. See [ADR0115](decisions/0115-v3-catalog-commitments.md).
+
+Core attachment now reclaims its execution projection from the exact live
+snapshot closure before adding a requested body (ADR0120). Historical visits
+alone do not consume the64-body snapshot bound. Every active origin and prefix
+dependency remains; a genuinely65-body live state is refused before mutation.
+Verified provider caches may still contain older bodies, and revisiting one
+reattaches it. This is distinct from provider cache eviction/heap budgeting.
