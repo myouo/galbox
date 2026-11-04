@@ -3,7 +3,7 @@
 2026-11-04：W1-16完成（ADR0115）。真实大目录超4M后，显式tree-v1 v3
 元数据采用16M/512000节点独立包和组件承诺；未标记v3及v1/v2仍原4M/
 旧承诺。Snapshot/Profile/执行/图像/活动闭包不变。check/455单元、2
-浏览器、独立实包通过，见evidence/module-catalog-v3/ENVELOPE.md。
+浏览器、独立实包通过，见evidence/module-catalog-envelope/REPORT.md。
 
 2026-11-04：W1-15完成（ADR0114）。显式v3组合目录支持1024函数/256模块/
 8辅助资产目录，默认v2边界及承诺不变。每模块/每函数、活动64模块、执行/

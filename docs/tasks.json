@@ -4271,7 +4271,7 @@
         "large-realistic-shape-and-installed-consumer"
       ],
       "evidence": [
-        "docs/evidence/module-catalog-v3/ENVELOPE.md"
+        "docs/evidence/module-catalog-envelope/REPORT.md"
       ],
       "blocker": null,
       "next_action": "Consumer continues whole-work composition and source-led narrative conversion."
