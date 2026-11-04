@@ -4275,6 +4275,36 @@
       ],
       "blocker": null,
       "next_action": "Consumer continues whole-work composition and source-led narrative conversion."
+    },
+    {
+      "id": "W1-17",
+      "milestone": "W1",
+      "title": "Complete-work read-unit capacity with unchanged envelopes",
+      "depends_on": [
+        "W1-16"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0116"
+      ],
+      "contracts": [
+        "C01",
+        "C05",
+        "C07"
+      ],
+      "acceptance": [
+        "retain25000-historical-units-and-confirm-new-page",
+        "count-and-character-refusal-without-partial-commit",
+        "real-durable-illustrated-reopen",
+        "installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/read-capacity/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer repeats the complete larger route that exposed the capacity limit."
     }
   ]
 }

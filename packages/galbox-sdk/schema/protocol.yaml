@@ -3741,7 +3741,7 @@ definitions:
         items:
           type: string
           pattern: ^[^\x00]{1,4096}$
-        maxItems: 20000
+        maxItems: 50000
         x-proto-tag: 3
       flow:
         $ref: "#/definitions/FlowProgress"

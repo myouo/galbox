@@ -1,5 +1,10 @@
 # galbox-sdk 当前接续
 
+2026-11-04：W1-17完成（ADR0116）。真实整作进度超20000已读，逻辑数量
+扩到50000；Profile/Snapshot/存储4M与工作集限制不变。check/457单元、
+实际IndexedDB25001已读图文保存/重开与实包消费通过，来源路由继续复验。
+见evidence/read-capacity/REPORT.md。
+
 2026-11-04：W1-16完成（ADR0115）。真实大目录超4M后，显式tree-v1 v3
 元数据采用16M/512000节点独立包和组件承诺；未标记v3及v1/v2仍原4M/
 旧承诺。Snapshot/Profile/执行/图像/活动闭包不变。check/455单元、2
