@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-19",
+  "current_task": "W1-20",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-01",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4365,6 +4365,37 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs actual v4-capable tarball and repeats full-progress original UI save/reload."
+    },
+    {
+      "id": "W1-20",
+      "milestone": "W1",
+      "title": "Complete-work v3 function declaration capacity",
+      "depends_on": [
+        "W1-19"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0119"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C07"
+      ],
+      "acceptance": [
+        "2048-function-bound-and-2049-refusal",
+        "old-version-and-live-budgets-preserved",
+        "late-demand-scoped-cold-restore",
+        "real-indexeddb-and-installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/complete-function-catalog/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the actual tarball and verifies its 1,254-function composed post-clear route."
     }
   ]
 }
