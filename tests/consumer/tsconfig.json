@@ -15,6 +15,7 @@
   "include": [
     "main.ts",
     "extension.ts",
-    "binding.ts"
+    "binding.ts",
+    "backlog-display.ts"
   ]
 }

@@ -31,3 +31,9 @@ replayHistory播放已有VoiceRecipe，支持已实现的WAV/buffer、MP3/Opus/V
 block/缓冲/失败只显示在backlog.voice，不伪装剧情成功；再次点击可用新attempt重试。预览不承诺任意seek/跨设备采样点、任意编码或无限历史。Blob URL/Native元素/PreviewContext/实际播放进度不进Snapshot/journal/备份。媒体恢复仍遵守已有replay/stop/forbid。
 
 默认历史界面有逐条回放、停止、不可回溯原因和确认回溯；关闭后回到普通Player。原创《灯塔来信·回声书签》位于 `/?demo=history`，可加 `&renderer=canvas`。其中一条禁存正文仍可重听，不能回到它的禁存切点。实际验证状态见任务表/evidence，不据此宣布G5–G7或真实两作完成。
+
+W1-22/ADR0121 adds optional maxDisplayEntries=1..2048, independent of the
+unchanged maxEntries=1..64 checkpoint journal. Omission preserves the old display
+suffix. It projects only current Core.history; expired or disabled rollback stays
+unavailable. Author state.collect retention separately; line wrapping and source
+line budgets are consumer responsibilities. Existing storage/byte bounds stay.

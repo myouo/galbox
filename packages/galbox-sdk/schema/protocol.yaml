@@ -11799,6 +11799,11 @@ definitions:
       rollback:
         type: boolean
         x-proto-tag: 3
+      maxDisplayEntries:
+        type: integer
+        minimum: 1
+        maximum: 2048
+        x-proto-tag: 4
     required:
       - maxEntries
       - maxCharacters

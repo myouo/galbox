@@ -10871,10 +10871,15 @@ message Gbx_HistoryPolicy_rollback {
   optional bool value = 1;
 }
 
+message Gbx_HistoryPolicy_maxDisplayEntries {
+  optional sint64 value = 1;
+}
+
 message Gbx_HistoryPolicy {
   optional Gbx_HistoryPolicy_maxEntries maxEntries = 1;
   optional Gbx_HistoryPolicy_maxCharacters maxCharacters = 2;
   optional Gbx_HistoryPolicy_rollback rollback = 3;
+  optional Gbx_HistoryPolicy_maxDisplayEntries maxDisplayEntries = 4;
 }
 
 message Gbx_HistoryEntry_id {

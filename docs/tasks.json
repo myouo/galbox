@@ -18,9 +18,9 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-21",
+  "current_task": "W1-22",
   "engine_status": "web_delivery_scaling",
-  "last_updated": "2026-11-01",
+  "last_updated": "2026-11-05",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -4428,6 +4428,36 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs the actual tarball and resumes its recorded eighth chapter; revalidate cold saves and final achievements."
+    },
+    {
+      "id": "W1-22",
+      "milestone": "W1",
+      "title": "Separate visible backlog capacity from bounded rollback checkpoints",
+      "depends_on": [
+        "W1-21"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0121"
+      ],
+      "contracts": [
+        "C03",
+        "C04",
+        "C07"
+      ],
+      "acceptance": [
+        "public-factory-wire-2048-display-bound-and-legacy-default",
+        "actual-2000-core-confirmations-with-bounded-journal",
+        "real-indexeddb-illustrated-save-refresh",
+        "installed-consumer-and-unchanged-budgets"
+      ],
+      "evidence": [
+        "docs/evidence/backlog-display/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the actual package and maps source retention/append semantics without expanding checkpoint or snapshot budgets."
     }
   ]
 }
