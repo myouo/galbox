@@ -9,6 +9,7 @@ import {FlowchartPanel} from './flowchart.js';
 export {FlowchartPanel} from './flowchart.js';
 import {HistoryPanel} from './history.js';
 export {HistoryPanel} from './history.js';
+export {groupHistoryEntries} from './history-groups.js';
 import {SaveLibrary} from './saves.js';
 export {SaveLibrary} from './saves.js';
 import {InteractionPanel} from './interaction.js';

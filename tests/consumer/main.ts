@@ -5,6 +5,7 @@ import {verifyArtwork} from './artwork.js';
 import {verifyLoopRegion} from './loop-region.js';
 import {verifyAuthoredHistory} from './authored-history.js';
 import {verifyCurrentBacklog} from './current-backlog.js';
+import {verifyHistoryGroups} from './history-groups.js';
 import {verifyImageFilter} from './image-filter.js';
 import {verifyRasters} from './raster.js';
 import {verifyModuleUpgrade} from './module-upgrade.js';
@@ -90,6 +91,6 @@ button?.addEventListener('click',()=>{void(async()=>{
  await verifyInteractiveModulePlayer(mount);
  await verifyModuleUpgrade(mount);
  await verifyRasters(mount);
- await verifyLeafExpansion();await verifyArtwork(mount);await verifyLoopRegion(mount);await verifyAuthoredHistory(mount);await verifyCurrentBacklog(mount);await verifyImageFilter(mount);
+ await verifyLeafExpansion();await verifyArtwork(mount);await verifyLoopRegion(mount);await verifyAuthoredHistory(mount);await verifyCurrentBacklog(mount);verifyHistoryGroups();await verifyImageFilter(mount);
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore / portable backup passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});

@@ -65,3 +65,4 @@ export {stageRaster,stopStageRaster} from './raster.js';
 export {stageFilteredImage} from './stage.js';
 
 export {expandModuleLeaves,rebaseLeafOrigins} from './leaf-expansion.js';export type {ExpandedLeaves,LeafOriginAlias} from './leaf-expansion.js';
+export {rebaseHistoryAppends} from './history-appends.js';

@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-24",
+  "current_task": "W1-25",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-05",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4523,6 +4523,37 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs the real tarball, enables the policy and validates its old slots. Native line-buffer retention remains a separate task."
+    },
+    {
+      "id": "W1-25",
+      "milestone": "W1",
+      "title": "Shared append presentation and source-checked history-only upgrades",
+      "depends_on": [
+        "W1-24"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0124"
+      ],
+      "contracts": [
+        "C01",
+        "C04",
+        "C10"
+      ],
+      "acceptance": [
+        "factory-built-records-and-explicit-append-boundaries",
+        "clipped-leading-append-and-owned-readonly-groups",
+        "default-ui-no-repeated-speaker-heading-on-appends",
+        "real-default-ui-save-reopen-and-installed-consumer",
+        "history-only-marker-signature-upgrade-and-negative-source-cases"
+      ],
+      "evidence": [
+        "docs/evidence/history-append-groups/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the real package and verifies old history-only records against its source-bound append/newline candidate. Native line retention and reset state remain separate."
     }
   ]
 }
