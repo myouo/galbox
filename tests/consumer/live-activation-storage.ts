@@ -1,0 +1,5 @@
+import {openIndexedDBStore} from 'galbox-sdk/player';import {createCore} from 'galbox-sdk/core';import {liveActivationCut} from './live-activation-fixture.js';
+export async function verifyLiveActivationStorage(){
+ const {program,snapshot,profile}=liveActivationCut(),name='packed-live-activation',store=await openIndexedDBStore(name,name);try{await store.import!({id:'cut',slot:'source',snapshot,profile,metadata:{profileId:'import:cut',label:'Synthetic long cut'}});await store.activate('live',snapshot,null,0,undefined,{profileId:'import:cut',owner:'owner'});await store.confirm('live','owner');}finally{store.close();}
+ const cold=await openIndexedDBStore(name,name);try{const saved=await cold.read(),original=await cold.readSlot('source');if(!saved.head||saved.head.snapshot.history.length!==512||JSON.stringify(saved.profile.read)!==JSON.stringify(profile.read)||JSON.stringify(original?.snapshot)!==JSON.stringify(snapshot))throw Error('Packed live activation lost data');createCore(program,saved.profile,saved.head.snapshot);}finally{cold.close();}
+}

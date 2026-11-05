@@ -106,3 +106,7 @@ ADR0052补充C03/C04/C05：text.rich continuation保持同逻辑段落及已揭�
 ADR0118：布局v4按(table,id)的固定哈希页索引保存完整回执。热根/已解码工作集仍4M，
 冷记录仍64MiB。请求只读取所需回执页，缺失或损坏必要页须拒绝；无关profile/slot读取
 不扫描账本。升级的页/目录/进度/槽位同事务，旧ID和其authority/内容幂等判定不丢失。
+
+ADR0125：布局v5仅在head存一份完整当前Activation，live表项是精确的当前键
+引用；解析后保持原逻辑Store状态。错误引用/矛盾双份数据拒绝，不能复活retired
+身份。v2/v3/v4在成功CAS写入时原子升级，4M热JSON/解码与64MiB冷预算不变。

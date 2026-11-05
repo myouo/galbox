@@ -36,3 +36,5 @@ export {receiptVolume,volumeBatch} from '../../fixtures/game-data/receipt-volume
 export {partitionReceiptTables,withoutReceiptTables,receiptPage} from '../../../packages/galbox-sdk/src/runtime/receipt-ledger.js';
 export {encodeColdRecord} from '../../../packages/galbox-sdk/src/storage/cold-record.js';
 export {writeReceiptFixture} from '../helpers/receipt-fixture.js';
+
+export {liveActivationCut} from '../../fixtures/game-data/live-activation/source.js';

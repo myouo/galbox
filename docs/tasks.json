@@ -18,9 +18,9 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-25",
+  "current_task": "W1-26",
   "engine_status": "web_delivery_scaling",
-  "last_updated": "2026-11-05",
+  "last_updated": "2026-11-06",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
   "tasks": [
     {
@@ -4554,6 +4554,38 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs the real package and verifies old history-only records against its source-bound append/newline candidate. Native line retention and reset state remain separate."
+    },
+    {
+      "id": "W1-26",
+      "milestone": "W1",
+      "title": "当前激活热存储切点去重",
+      "depends_on": [
+        "W1-25"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "packages/galbox-sdk/src/runtime/storage-layout.ts",
+        "packages/galbox-sdk/src/storage/indexeddb.ts",
+        "docs/decisions/0125-single-live-activation-storage.md"
+      ],
+      "contracts": [
+        "C06",
+        "C07",
+        "C11"
+      ],
+      "acceptance": [
+        "bounded-live-activation",
+        "legacy-storage-upgrade",
+        "indexeddb-refresh",
+        "packed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/live-activation-storage/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "v5唯一live head引用已通过480单元/check、13IndexedDB浏览器、隔离实包与分片检查；独立消费者接实际包继续累计资料验收。"
     }
   ]
 }

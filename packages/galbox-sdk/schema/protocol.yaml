@@ -13490,6 +13490,7 @@ definitions:
           - 2
           - 3
           - 4
+          - 5
         type: integer
         x-proto-tag: 2
       records:

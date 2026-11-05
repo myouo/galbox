@@ -1,3 +1,4 @@
+import {verifyLiveActivationStorage} from './live-activation-storage.js';
 import {verifyLiveScopes} from './live-scopes.js';
 import {verifyLargeModules} from './large-modules.js';
 import {verifyLeafExpansion} from './leaf-expansion.js';
@@ -91,6 +92,6 @@ button?.addEventListener('click',()=>{void(async()=>{
  await verifyInteractiveModulePlayer(mount);
  await verifyModuleUpgrade(mount);
  await verifyRasters(mount);
- await verifyLeafExpansion();await verifyArtwork(mount);await verifyLoopRegion(mount);await verifyAuthoredHistory(mount);await verifyCurrentBacklog(mount);verifyHistoryGroups();await verifyImageFilter(mount);
+ await verifyLiveActivationStorage();await verifyLeafExpansion();await verifyArtwork(mount);await verifyLoopRegion(mount);await verifyAuthoredHistory(mount);await verifyCurrentBacklog(mount);verifyHistoryGroups();await verifyImageFilter(mount);
  document.body.dataset.result='passed';document.getElementById('result')!.textContent='Packed SDK playback / save / restore / portable backup passed';
  })().catch(e=>{document.body.dataset.result='failed';document.getElementById('result')!.textContent=String(e);});});
