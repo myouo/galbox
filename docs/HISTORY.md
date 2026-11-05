@@ -37,3 +37,10 @@ unchanged maxEntries=1..64 checkpoint journal. Omission preserves the old displa
 suffix. It projects only current Core.history; expired or disabled rollback stays
 unavailable. Author state.collect retention separately; line wrapping and source
 line budgets are consumer responsibilities. Existing storage/byte bounds stay.
+
+W1-23/ADR0122: historyText(at,id,revision,runs,{append}) records immediate
+source-bound rich text only in history. It does not create a story wait, read mark
+or rollback point. Text/ruby/break and static styles are supported; controls,
+animation and narrative appendFrom are rejected. HistoryPanel joins records with
+append=true to the previous paragraph; standalone notes have no voice/rollback
+actions. Source output guards and source-native line retention remain authored.

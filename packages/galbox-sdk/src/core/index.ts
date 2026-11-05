@@ -101,7 +101,7 @@ export class Core {
   }
   private finishAutomaticText():void {
     if(this.s.wait?.kind!=='text'||!this.s.text||!isTextComplete(this.s.text))return;
-    const source=this.op();if(source.op==='text.rich'&&source.completion&&source.completion!=='input')this.finishText(source.completion==='finish');
+    const source=this.op();if(source.op==='text.rich'&&(source.completion==='continue'||source.completion==='finish'))this.finishText(source.completion==='finish');
   }
   private collectState(retain:readonly string[],limit:number):void {
     const ids=new Set(this.s.tasks.filter(t=>t.status==='running'||t.status==='blocked'||t.kind==='audio'&&t.status==='completed'&&t.restore==='replay').map(t=>t.id));
@@ -345,8 +345,9 @@ export class Core {
         if(source.appendFrom)ensure(prior?.rich?.at===source.appendFrom&&prior.textId===source.textId&&prior.revision===source.revision&&prior.speaker===speaker.value&&isTextComplete(prior)&&(!this.s.textLayout||prior.window?.id===this.s.textLayout.active&&this.program.textLayout?.windows.find(w=>w.id===prior.window?.id)?.mode==='adv'),'TEXT_APPEND_STATE','Continue only the complete matching ADV text');
         const prefixCount=prefix?.runs.length??0;
         const runs=[...(prior?.rich?.runs??[]),...source.runs.slice(prefixCount).map(run=>run.kind==='text'?{...run,content:textValue(run.content)}:run.kind==='ruby'?{...run,content:textValue(run.content),reading:textValue(run.reading)}:{...run})];
-        this.selectTextPolicy(source);const plan=compileRichText(runs),signature=richTextSignature(source),prompt=this.s.counter+1;i32(prompt);
-        const text=parseTextState({textId:source.textId,revision:source.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:source.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:this.currentTextInterval,revealedAt:[]}});
+        if(source.completion!=='history')this.selectTextPolicy(source);const plan=compileRichText(runs),signature=richTextSignature(source),prompt=this.s.counter+1;i32(prompt);
+        const text=parseTextState({textId:source.textId,revision:source.revision,speaker:speaker.value,content:plan.content,revealed:0,prompt,rich:{version:1,segmentation:textSegmentation,at:source.at,signature,runs,cursor:0,elapsedMs:0,remainderMs:0,pauseRemainingMs:0,baseIntervalMs:source.completion==='history'?0:this.currentTextInterval,revealedAt:[],...(source.completion==='history'?{historyAppend:source.historyAppend??false}:{})}});
+        if(source.completion==='history'){tickRichText(text,0,plan);validateRichText(text,source,prefixes);if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.history=Object.isFrozen(this.s.history)?[...this.s.history,text]:this.s.history.concat(text);this.s.counter=prompt;this.top().pc=this.next();return;}
         if(prior?.rich&&text.rich){text.revealed=prior.revealed;text.rich.cursor=compileRichText(prior.rich.runs).tokens.length;text.rich.elapsedMs=prior.rich.elapsedMs;text.rich.revealedAt=[...prior.rich.revealedAt];}
         tickRichText(text,0,plan,this.skipInlineConfirmations);validateRichText(text,source,prefixes);prepareWindowText(this.program,this.s,text,source.at);this.richPlan=plan;bindVoice(this.s,text);if(prior?.historyId)text.historyId=prior.historyId;else if(this.s.historySession)text.historyId=`${this.s.historySession}:${text.prompt}`;this.s.text=text;commitWindowText(this.program,this.s);this.s.counter=prompt;this.textRemainder=0;wait({kind:'text',at:source.at,prompt});this.finishAutomaticText();return;
       }
@@ -396,6 +397,7 @@ export class Core {
 }
 function validateSnapshot(input:unknown,snapshot:unknown,operations:OperationRegistry=emptyOperations,initial=false):Snapshot {
   const reused=validatedRestoreCopy(input,snapshot,operations,initial);if(reused)return reused;const source=isModuleProgram(input)?input:null,s=parseSnapshot(snapshot),p=source?moduleProgramProjection(source,source.binding(s),operations):linkProgram(input,operations).copy();ensure(source||!s.programModules,'PROGRAM_MODULE_BINDING','Use the original module source');
+  ensure(s.text?.rich?.historyAppend===undefined&&s.textLayout?.windows.every(w=>w.entries.every(t=>t.rich?.historyAppend===undefined))!==false,'RESTORE_HISTORY_PHASE','History-only records cannot occupy the visible body or windows');
   const historyIds=s.history.flatMap(t=>t.historyId?[t.historyId]:[]);ensure(new Set(historyIds).size===historyIds.length&&!(s.wait?.kind==='text'&&s.text?.historyId&&historyIds.includes(s.text.historyId)),'RESTORE_HISTORY_ID','History identities must remain unique');
   ensure((s.extrasSignature??null)===extrasSignature(p),'RESTORE_EXTRAS_DEFINITION','Gallery/resources changed; explicit migration required');
   ensure(s.streamCatalog===streamCatalog(p),'RESTORE_STREAM_CATALOG','Streaming catalog/version changed; explicit migration required');s.invocations=s.invocations??[];

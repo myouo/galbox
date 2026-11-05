@@ -1583,6 +1583,7 @@ definitions:
               - input
               - continue
               - finish
+              - history
             x-proto-tag: 7
           appendFrom:
             type: string
@@ -1591,6 +1592,9 @@ definitions:
           recordHistory:
             type: boolean
             x-proto-tag: 9
+          historyAppend:
+            type: boolean
+            x-proto-tag: 10
         required:
           - at
           - op
@@ -8289,6 +8293,9 @@ definitions:
         minimum: 1
         maximum: 200
         x-proto-tag: 13
+      historyAppend:
+        type: boolean
+        x-proto-tag: 14
     required:
       - version
       - segmentation

@@ -18,4 +18,6 @@ export const richText=Object.freeze({
  speed:(intervalMs:number)=>run('speed',{kind:'speed',intervalMs}),
  userSpeed:()=>run('speed',{kind:'speed',intervalMs:0,user:true})
 });
-export function richPage(at:string,textId:string,revision:string,speaker:Content,runs:readonly RichTextSourceRun[],options:{completion?:'input'|'continue'|'finish';appendFrom?:string;recordHistory?:boolean}={}):Extract<Instruction,{op:'text.rich'}> {const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return instruction('text.rich',{at,textId,revision,speaker:expression(speaker),runs:[first,...rest],...options});}
+export function richPage(at:string,textId:string,revision:string,speaker:Content,runs:readonly RichTextSourceRun[],options:{completion?:'input'|'continue'|'finish'|'history';appendFrom?:string;recordHistory?:boolean;historyAppend?:boolean}={}):Extract<Instruction,{op:'text.rich'}> {const [first,...rest]=runs;ensure(first,'TEXT_RUNS','At least one run is required');return instruction('text.rich',{at,textId,revision,speaker:expression(speaker),runs:[first,...rest],...options});}
+
+export function historyText(at:string,textId:string,revision:string,runs:readonly RichTextSourceRun[],options:{speaker?:Content;append?:boolean}={}):Extract<Instruction,{op:'text.rich'}>{return richPage(at,textId,revision,options.speaker??'',runs,{completion:'history',...(options.append!==undefined?{historyAppend:options.append}:{})});}

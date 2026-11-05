@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-22",
+  "current_task": "W1-23",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-05",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4458,6 +4458,38 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs the actual package and maps source retention/append semantics without expanding checkpoint or snapshot budgets."
+    },
+    {
+      "id": "W1-23",
+      "milestone": "W1",
+      "title": "Source-bound history-only rich annotations",
+      "depends_on": [
+        "W1-22"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0122"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C07"
+      ],
+      "acceptance": [
+        "public-factory-wire-and-style-source",
+        "visible-window-clock-read-voice-isolation",
+        "append-order-and-cold-source-bound-restore",
+        "forged-marker-source-phase-refusal",
+        "real-player-illustrated-save-refresh-and-installed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/history-only/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the actual package, then maps guarded source annotations and native line retention without changing visible-body authority."
     }
   ]
 }

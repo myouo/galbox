@@ -1466,6 +1466,10 @@ message Gbx_Instruction_Case28_recordHistory {
   optional bool value = 1;
 }
 
+message Gbx_Instruction_Case28_historyAppend {
+  optional bool value = 1;
+}
+
 message Gbx_Instruction_Case28 {
   optional Gbx_Instruction_Case28_at at = 1;
   optional Gbx_Instruction_Case28_op op = 2;
@@ -1476,6 +1480,7 @@ message Gbx_Instruction_Case28 {
   optional Gbx_Instruction_Case28_completion completion = 7;
   optional Gbx_Instruction_Case28_appendFrom appendFrom = 8;
   optional Gbx_Instruction_Case28_recordHistory recordHistory = 9;
+  optional Gbx_Instruction_Case28_historyAppend historyAppend = 10;
 }
 
 message Gbx_Instruction_Case29_at {
@@ -7512,6 +7517,10 @@ message Gbx_RichTextState_pauseIntervalMs {
   optional sint64 value = 1;
 }
 
+message Gbx_RichTextState_historyAppend {
+  optional bool value = 1;
+}
+
 message Gbx_RichTextState {
   optional Gbx_RichTextState_version version = 1;
   optional Gbx_RichTextState_segmentation segmentation = 2;
@@ -7526,6 +7535,7 @@ message Gbx_RichTextState {
   optional Gbx_RichTextState_revealedAt revealedAt = 11;
   optional Gbx_RichTextState_waitingForClick waitingForClick = 12;
   optional Gbx_RichTextState_pauseIntervalMs pauseIntervalMs = 13;
+  optional Gbx_RichTextState_historyAppend historyAppend = 14;
 }
 
 message Gbx_TextFont_Case1_kind {

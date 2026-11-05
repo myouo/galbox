@@ -16,6 +16,7 @@
     "main.ts",
     "extension.ts",
     "binding.ts",
-    "backlog-display.ts"
+    "backlog-display.ts",
+    "history-only.ts"
   ]
 }

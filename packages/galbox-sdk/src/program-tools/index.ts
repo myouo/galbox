@@ -11,7 +11,7 @@ export type {PortRegistration} from './registration.js';
 
 export {expr,expressionWire,expressionOperand,assignExpression,branchExpression,templatePage,randomI32,assignProfile} from './expressions.js';
 export type {TypedExpression} from './expressions.js';
-export {richText,richPage} from './text.js';
+export {richText,richPage,historyText} from './text.js';
 
 export {textTheme,textWindow,textLayout,textFont,textWindowGeometry} from './layout.js';
 

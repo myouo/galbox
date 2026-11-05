@@ -111,3 +111,5 @@ const characterProgram=new ProgramBuilder({gameId:'consumer-character-wait',rele
 {const {verifyLeafExpansion}=await import('./compiled/leaf-expansion.js');await verifyLeafExpansion();console.log('Packed public leaf expansion / atomic installation / origin binding passed');}
 
 {const {verifyBacklogDisplay}=await import('./compiled/backlog-display.js'),{decodeWire}=await import('galbox-sdk/wire');assert.equal(verifyBacklogDisplay(decodeWire('Program',new Uint8Array(await readFile('./public/large-backlog/program.pb')))),2048);console.log('Packed current-run backlog displays 2048 rows with unchanged checkpoint bound');}
+
+{const {verifyHistoryOnly}=await import('./compiled/history-only.js');assert.equal(verifyHistoryOnly(),true);console.log('Packed source-bound history-only rich records and cold restore passed');}
