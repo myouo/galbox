@@ -110,3 +110,7 @@ ADR0118：布局v4按(table,id)的固定哈希页索引保存完整回执。热�
 ADR0125：布局v5仅在head存一份完整当前Activation，live表项是精确的当前键
 引用；解析后保持原逻辑Store状态。错误引用/矛盾双份数据拒绝，不能复活retired
 身份。v2/v3/v4在成功CAS写入时原子升级，4M热JSON/解码与64MiB冷预算不变。
+
+ADR0126：includeCurrentText还可显示delay/group中的已显完continue前缀，须
+匹配当前实际rich源/签名与记录权限；只派生冻结视图，不确认/标读/写journal，
+不给回退/重放权限，不改变保存资格或把执行预算中间态当成保存点。

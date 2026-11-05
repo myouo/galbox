@@ -1,0 +1,11 @@
+import {ProgramBuilder,richPage,richText as R,instruction,textLayout,textTheme,textWindow,stageImage,stageTween} from 'galbox-sdk/port-kit';
+import type {Instruction} from 'galbox-sdk/protocol';import {string} from 'galbox-sdk/protocol';
+export function historyPrefixBuilder({mode='delay',recordHistory=true,clear=false,completion='continue',duration=8000,styled=false}:{mode?:'delay'|'group'|'choice'|'end';recordHistory?:boolean;clear?:boolean;completion?:'continue'|'finish';duration?:number;styled?:boolean}={}){
+ const b=new ProgramBuilder({gameId:'waiting-history-prefix',release:'v1',entry:'main'}).textLayout(textLayout('body',[textTheme('plain')],[textWindow('body','adv','plain',{x:0,y:0,width:1280,height:720})])),runs=styled?[R.styled('A','prefix-style'),R.rubyStyled('猫','ねこ','prefix-style')]:[R.text('A'),R.ruby('猫','ねこ')],start:Instruction[]=[],wait:Instruction[]=[];
+ if(styled)b.textStyle('prefix-style',{italic:true,color:'#9cd0e3'});
+ if(mode==='group'){const image=b.asset('image',{id:'panel',path:'panel.svg',mime:'image/svg+xml',sha256:'0'.repeat(64)});start.push(stageImage('put','panel',image,{x:0,y:0}));wait.push(stageTween('move','move','panel',{x:10},{duration}),instruction('task.join',{at:'wait',group:'moving',members:['move']}));}
+ else if(mode==='delay')wait.push(instruction('wait.delay',{at:'wait',task:'pause',duration}));
+ else if(mode==='choice'){b.global({id:'answer',kind:'string',initial:string('')});wait.push(instruction('choice',{at:'wait',dest:'answer',options:[{id:'go',text:'Continue',target:'final'}]}));}
+ b.function({id:'prefix-function',entry:'prefix',layout:1,params:[],locals:[],returns:'void',code:[richPage('prefix','paragraph','v1','Keeper',runs,{completion,recordHistory}),instruction('control.return',{at:'prefix-return'})]});
+ b.function({id:'main',entry:start[0]?.at??'call',layout:1,params:[],locals:[],returns:'void',code:[...start,instruction('control.call',{at:'call',function:'prefix-function',args:[]}),...(clear?[instruction('text.window.clear',{at:'clear',window:'body'})]:[]),...wait,...(mode==='end'?[]:[richPage('final',clear||completion==='finish'?'next':'paragraph','v1','Keeper',clear||completion==='finish'?[R.text('B')]:[...runs,R.text('B')],clear||completion==='finish'?{}:{appendFrom:'prefix'})]),instruction('control.end',{at:'end'})]});return b;
+}

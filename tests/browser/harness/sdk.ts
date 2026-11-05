@@ -38,3 +38,5 @@ export {encodeColdRecord} from '../../../packages/galbox-sdk/src/storage/cold-re
 export {writeReceiptFixture} from '../helpers/receipt-fixture.js';
 
 export {liveActivationCut} from '../../fixtures/game-data/live-activation/source.js';
+
+export {historyPrefixBuilder} from '../../consumer/history-prefix-fixture.js';

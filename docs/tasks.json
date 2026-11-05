@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-26",
+  "current_task": "W1-27",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-06",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4586,6 +4586,38 @@
       ],
       "blocker": null,
       "next_action": "v5唯一live head引用已通过480单元/check、13IndexedDB浏览器、隔离实包与分片检查；独立消费者接实际包继续累计资料验收。"
+    },
+    {
+      "id": "W1-27",
+      "milestone": "W1",
+      "title": "控制等待期间保留未确认历史前缀",
+      "depends_on": [
+        "W1-26"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "packages/galbox-sdk/src/core/index.ts",
+        "docs/decisions/0126-history-continuation-waits.md"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C05",
+        "C06"
+      ],
+      "acceptance": [
+        "source-bound-history-prefix",
+        "continuation-delay-group-cold-restore",
+        "illustrated-history-save-reopen",
+        "packed-consumer"
+      ],
+      "evidence": [
+        "docs/evidence/history-prefix/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "493单元/check、4相关浏览器、隔离实包与分片检查完成；实例接包验证实际主线等待前缀，原行缓冲与其它等待另验。"
     }
   ]
 }
