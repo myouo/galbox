@@ -11811,6 +11811,9 @@ definitions:
         minimum: 1
         maximum: 2048
         x-proto-tag: 4
+      includeCurrentText:
+        type: boolean
+        x-proto-tag: 5
     required:
       - maxEntries
       - maxCharacters

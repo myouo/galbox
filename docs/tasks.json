@@ -18,7 +18,7 @@
     "E1",
     "I1"
   ],
-  "current_task": "W1-23",
+  "current_task": "W1-24",
   "engine_status": "web_delivery_scaling",
   "last_updated": "2026-11-05",
   "status_rule": "done requires implementation=complete, verification=passed, and actual evidence; no SDK task has been executed by generating this kit.",
@@ -4490,6 +4490,39 @@
       ],
       "blocker": null,
       "next_action": "Consumer installs the actual package, then maps guarded source annotations and native line retention without changing visible-body authority."
+    },
+    {
+      "id": "W1-24",
+      "milestone": "W1",
+      "title": "Opt-in source-bound current text in read-only backlog",
+      "depends_on": [
+        "W1-23"
+      ],
+      "status": "done",
+      "implementation": "complete",
+      "verification": "passed",
+      "outputs": [
+        "ADR0123"
+      ],
+      "contracts": [
+        "C01",
+        "C03",
+        "C04",
+        "C07",
+        "C10"
+      ],
+      "acceptance": [
+        "optional-wire-default-and-source-suppression",
+        "partial-reveal-and-confirmation-without-duplicate-read-or-checkpoint",
+        "bounded-immutable-projection-and-cold-restore",
+        "real-illustrated-indexeddb-save-reopen-and-default-ui",
+        "installed-public-tarball-consumer-and-unchanged-budgets"
+      ],
+      "evidence": [
+        "docs/evidence/current-backlog/REPORT.md"
+      ],
+      "blocker": null,
+      "next_action": "Consumer installs the real tarball, enables the policy and validates its old slots. Native line-buffer retention remains a separate task."
     }
   ]
 }
